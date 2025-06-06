@@ -19,7 +19,7 @@ jest.mock('mongodb', () => ({
 describe('Database Mocking Tests', () => {
   describe('MongoDB Mocking', () => {
     it('should work with mock MongoDB operations', async () => {
-      const client = await new MongoClient('mock://mongodb').connect();
+      const client = await MongoClient.connect('mock://mongodb');
       const collection = client.db('test').collection('test');
       
       await collection.insertOne({ test: 'data' });
