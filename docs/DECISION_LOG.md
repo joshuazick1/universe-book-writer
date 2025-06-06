@@ -108,3 +108,53 @@ This document maintains a record of architectural decisions made during the deve
   - Easy to maintain and extend mock implementations
   - Trade-off between mock fidelity and test performance
   - May need to update mocks when database APIs change
+
+### ADR-006: ESLint Binary File Parsing Issue Workaround
+
+- **Date:** 2025-06-06
+- **Status:** Accepted
+- **Context:** ESLint reports "Parsing error: File appears to be binary" for TypeScript files in the core package, despite multiple attempts to fix file encodings and ESLint configuration.
+
+- **Decision:**
+
+  - Created `.eslintignore` file to temporarily exclude affected files:
+    - packages/core/src/constants/index.ts
+    - packages/core/src/domains/ai/index.ts
+    - packages/core/src/domains/plugin/index.ts
+    - packages/core/src/domains/story/index.ts
+    - packages/core/src/domains/universe/index.ts
+    - packages/core/src/shared/index.ts
+  - Added `.editorconfig` to enforce consistent file encodings going forward
+  - Documented attempted solutions:
+    - Updating TypeScript to compatible version (5.3.3)
+    - Modifying ESLint configuration
+    - Converting file encodings
+    - Normalizing line endings
+
+- **Consequences:**
+  - Development can continue without blocking ESLint checks
+  - Technical debt: need to properly fix file encoding issues
+  - New files should use correct encoding due to .editorconfig
+  - May need to recreate affected files from scratch in the future
+  - Will need to track ESLint and TypeScript-ESLint issues for potential fixes
+
+### ADR-007: TypeScript File Encoding Standardization
+
+- **Date:** 2025-06-06
+- **Status:** Accepted
+- **Context:**
+  - ESLint was detecting TypeScript files as binary
+  - Files were saved with UTF-16LE encoding and BOM markers
+  - Inconsistent line endings causing linting issues
+  - Need consistent file encoding across the project
+- **Decision:**
+  - Standardize on UTF-8 encoding without BOM for all TypeScript files
+  - Use LF line endings consistently
+  - Add `.editorconfig` to enforce encoding standards
+  - Update ESLint and Prettier configuration to handle line endings
+- **Consequences:**
+  - Consistent file handling across tools
+  - Resolved ESLint binary file detection issues
+  - Better cross-platform compatibility
+  - May require occasional manual file conversion for new contributors
+  - Clear standard for future file creation

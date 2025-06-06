@@ -36,8 +36,10 @@
     "**/node_modules",
     "**/dist",
     "**/*.test.ts",
-    "jest.config.js",
-    "jest.setup.js",
+    "**/*.config.js",
+    "**/*.config.ts",
+    "jest*.js",
+    "jest*.ts",
     "commitlint.config.js",
     "*.d.ts"
   ]

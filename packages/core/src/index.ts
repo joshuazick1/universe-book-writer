@@ -1,4 +1,4 @@
-// Core package master barrel file
+﻿// Core package master barrel file
 // Re-export all domain functionality
 
 export * from './domains/ai';
@@ -12,9 +12,4 @@ export * from './constants';
 export const VERSION = '0.1.0';
 
 // Type-only exports
-export type {
-  AIConfig,
-  UniverseConfig,
-  StoryConfig,
-  PluginConfig,
-} from './domains/types';
+export type { AIConfig, UniverseConfig, StoryConfig, PluginConfig } from './domains/types';

@@ -40,9 +40,7 @@
     "precommit": "lint-staged && npm run typecheck && npm test"
   },
   "dependencies": {
-    "@types/node": "^20.11.0",
     "tslib": "^2.6.0",
-    "typescript": "^5.3.3",
     "zod": "^3.22.0"
   },
   "devDependencies": {
@@ -58,7 +56,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/ioredis": "^4.28.10",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20.11.0",
+    "@types/node": "^20.19.0",
     "@types/redis-mock": "^0.17.3",
     "@typescript-eslint/eslint-plugin": "^6.18.0",
     "@typescript-eslint/parser": "^6.18.0",
@@ -83,6 +81,6 @@
     "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "~5.3.3"
   }
 }
