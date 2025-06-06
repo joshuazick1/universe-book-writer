@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./packages/*"]
+    },
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,
+    "types": ["node", "jest"],
+    "checkJs": false
+  },
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/ui-core" },
+    { "path": "./packages/plugin-sdk" },
+    { "path": "./frontend" },
+    { "path": "./backend" },
+    { "path": "./ai-server" }
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/dist",
+    "**/*.test.ts",
+    "jest.config.js",
+    "jest.setup.js",
+    "commitlint.config.js",
+    "*.d.ts"
+  ]
+}
