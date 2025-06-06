@@ -69,3 +69,42 @@ This document maintains a record of architectural decisions made during the deve
   - More complex infrastructure
   - Higher resource requirements
   - Better task specialization
+
+### ADR-004: Master Barrel File Pattern
+
+- **Date:** 2025-06-06
+- **Status:** Accepted
+- **Context:**
+  - Need to prevent duplicate function definitions
+  - Need to maintain consistent imports across packages
+  - Need to simplify cross-package dependencies
+- **Decision:**
+  - Implement master barrel files in core package
+  - Use path aliases for consistent imports
+  - Structure exports by domain
+- **Consequences:**
+  - Cleaner import statements
+  - Single source of truth for shared code
+  - Better TypeScript type checking
+  - May increase initial build time slightly
+  - Requires careful management of circular dependencies
+
+### ADR-005: Database Mocking Strategy
+
+- **Date:** 2025-06-06
+- **Status:** Accepted
+- **Context:**
+  - Need reliable and maintainable database mocking for tests
+  - Two different databases to mock: MongoDB and Redis
+  - Need to support both unit and integration tests
+- **Decision:**
+  - Use jest.mock for MongoDB to create lightweight unit test mocks
+  - Use ioredis-mock for Redis to provide a full Redis API implementation
+  - Implement mocks at the client level rather than the server level
+  - Create reusable mock factories for common database operations
+- **Consequences:**
+  - Faster test execution with lightweight mocks
+  - Consistent mocking approach across the codebase
+  - Easy to maintain and extend mock implementations
+  - Trade-off between mock fidelity and test performance
+  - May need to update mocks when database APIs change

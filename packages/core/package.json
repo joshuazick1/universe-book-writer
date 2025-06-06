@@ -4,6 +4,10 @@
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "peerDependencies": {
+    "typescript": "^5.3.0",
+    "zod": "^3.22.0"
+  },
   "scripts": {
     "build": "tsc",
     "test": "jest",

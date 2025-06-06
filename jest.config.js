@@ -1,11 +1,12 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  preset: 'ts-jest',
+  preset: '@shelf/jest-mongodb',
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/packages', '<rootDir>/frontend', '<rootDir>/backend', '<rootDir>/ai-server'],
   testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
+    tsconfig: 'tsconfig.json'
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/packages/$1',
