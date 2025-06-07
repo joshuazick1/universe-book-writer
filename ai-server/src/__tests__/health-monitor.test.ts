@@ -2,8 +2,9 @@
  * Ollama Health Monitor Tests
  */
 
-import { OllamaHealthMonitor, ServerHealth } from '../health/health-monitor';
+import { OllamaHealthMonitor } from '../health/health-monitor';
 import { OllamaServerConfig } from '../config/ollama.config';
+import axios from 'axios';
 
 // Mock axios for testing
 jest.mock('axios');
@@ -63,8 +64,8 @@ describe('OllamaHealthMonitor', () => {
   describe('Success/Failure Recording', () => {
     beforeEach(() => {
       // Mock axios to prevent automatic health check failure
-      const axios = require('axios');
-      axios.get = jest.fn().mockResolvedValue({
+      const mockedAxios = jest.mocked(axios);
+      mockedAxios.get = jest.fn().mockResolvedValue({
         status: 200,
         data: { models: [] }
       });

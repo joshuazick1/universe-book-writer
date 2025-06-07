@@ -3,7 +3,7 @@
  * Handles communication with Ollama servers
  */
 
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { EventEmitter } from 'events';
 import { OllamaServerConfig } from '../config/ollama.config';
 
