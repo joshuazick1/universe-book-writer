@@ -99,15 +99,17 @@ This document maintains a record of architectural decisions made during the deve
   - Need to support both unit and integration tests
 - **Decision:**
   - Use jest.mock for MongoDB to create lightweight unit test mocks
-  - Use ioredis-mock for Redis to provide a full Redis API implementation
+  - Use ioredis-mock for Redis with custom configuration to prevent timeouts
   - Implement mocks at the client level rather than the server level
   - Create reusable mock factories for common database operations
+  - Configure proper cleanup and error handling in test lifecycle
 - **Consequences:**
-  - Faster test execution with lightweight mocks
+  - Faster and more reliable test execution
   - Consistent mocking approach across the codebase
   - Easy to maintain and extend mock implementations
-  - Trade-off between mock fidelity and test performance
-  - May need to update mocks when database APIs change
+  - Better handling of edge cases and timeouts
+  - More reliable test cleanup prevents resource leaks
+  - Improved error reporting for database-related issues
 
 ### ADR-006: ESLint Binary File Parsing Issue Workaround
 
@@ -158,3 +160,49 @@ This document maintains a record of architectural decisions made during the deve
   - Better cross-platform compatibility
   - May require occasional manual file conversion for new contributors
   - Clear standard for future file creation
+
+### ADR-002: AI Configuration Management
+
+- **Date:** 2025-06-06
+- **Status:** Accepted
+- **Context:** Need to determine how to manage Ollama server configuration and AI model settings. Options considered were environment variables vs. application settings UI.
+- **Decision:** AI-related configuration (Ollama URLs, model settings, etc.) will be managed through the application settings UI and stored in the database, rather than using environment variables.
+- **Consequences:**
+  - **Positive:**
+    - Users can modify AI settings without needing to edit configuration files
+    - Settings can be changed without application restart
+    - Better user experience for non-technical users
+    - Settings can be synced across installations if needed
+  - **Negative:**
+    - Slightly more complex implementation required
+    - Need to handle default settings on first run
+    - Must ensure settings UI is available before AI features can be used
+
+### ADR-006: Database Migration Strategy
+
+- **Date:** 2025-06-06
+- **Status:** Accepted
+- **Context:**
+  - Need a reliable way to manage database schema changes
+  - Must support TypeScript for type safety
+  - Need to handle both forward and rollback migrations
+  - Must work with MongoDB schema validation
+  - Need to integrate with testing infrastructure
+- **Decision:**
+  - Use migrate-mongo as the migration framework
+  - Store migrations in TypeScript files under src/migrations
+  - Implement schema validation in migrations
+  - Create collection indexes in migrations
+  - Add npm scripts for migration management
+  - Store migration history in changelog collection
+- **Consequences:**
+  - Benefits:
+    - Type-safe migrations with TypeScript support
+    - Consistent schema validation across environments
+    - Easy rollback capability
+    - Clear migration history tracking
+    - Simple CLI commands for migration management
+  - Trade-offs:
+    - Additional development overhead for migration files
+    - Need to maintain schema validation in both migrations and application code
+    - Must ensure migrations are tested before deployment

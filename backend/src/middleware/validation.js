@@ -1,0 +1,42 @@
+import { z } from 'zod';
+/**
+ * Express middleware for validating request data against a Zod schema
+ */
+export const validateRequest = (schema) => {
+    return async (req, res, next) => {
+        try {
+            const validatedData = await schema.parseAsync({
+                body: req.body,
+                query: req.query,
+                params: req.params,
+            });
+            // Attach validated data to request
+            req.validatedData = validatedData;
+            next();
+        }
+        catch (error) {
+            if (error instanceof z.ZodError) {
+                res.status(400).json({
+                    error: 'Validation failed',
+                    details: error.errors,
+                });
+                return;
+            }
+            next(error);
+        }
+    };
+};
+/**
+ * Express error handler for validation errors
+ */
+export const validationErrorHandler = (error, req, res, next) => {
+    if (error instanceof z.ZodError) {
+        res.status(400).json({
+            error: 'Validation failed',
+            details: error.errors,
+        });
+        return;
+    }
+    next(error);
+};
+//# sourceMappingURL=validation.js.map

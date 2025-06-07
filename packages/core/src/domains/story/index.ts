@@ -1,51 +1,23 @@
 ﻿/**
  * Story domain interfaces and types
  */
+import { BaseEntity } from '../../shared/index.js';
 
-export interface Character {
-  id: string;
+export interface Character extends BaseEntity {
   name: string;
   description: string;
   attributes: Record<string, unknown>;
 }
 
-export interface StoryChapter {
-  id: string;
+export interface StoryChapter extends BaseEntity {
   title: string;
   content: string;
   characters: Character[];
-  metadata: Record<string, unknown>;
 }
 
-export interface Story {
-  id: string;
+export interface Story extends BaseEntity {
   title: string;
   summary: string;
   chapters: StoryChapter[];
   characters: Character[];
-  metadata: Record<string, unknown>;
-}
-
-export interface Character {
-  id: string;
-  name: string;
-  description: string;
-  attributes: Record<string, unknown>;
-}
-
-export interface StoryChapter {
-  id: string;
-  title: string;
-  content: string;
-  characters: Character[];
-  metadata: Record<string, unknown>;
-}
-
-export interface Story {
-  id: string;
-  title: string;
-  summary: string;
-  chapters: StoryChapter[];
-  characters: Character[];
-  metadata: Record<string, unknown>;
 }

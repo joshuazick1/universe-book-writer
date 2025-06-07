@@ -1,0 +1,65 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+export default {
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  testEnvironment: process.env.TEST_ENV === 'jsdom' 
+    ? 'jsdom'
+    : 'node',
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      useESM: true,
+      tsconfig: 'tsconfig.json'
+    }]
+  },
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/packages/$1',
+    '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
+    '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(@?mongodb.*|bson)/)'
+  ],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'mjs', 'cjs', 'jsx', 'json', 'node'],
+  roots: ['<rootDir>/packages', '<rootDir>/frontend', '<rootDir>/backend', '<rootDir>/ai-server'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
+  passWithNoTests: true,
+  verbose: true,
+  detectOpenHandles: true,
+  forceExit: true,
+  maxWorkers: 1,
+  runner: 'jest-runner',
+  testRunner: 'jest-circus/runner',
+  collectCoverageFrom: [
+    'packages/**/*.{ts,tsx}',
+    'frontend/src/**/*.{ts,tsx}',
+    'backend/src/**/*.ts',
+    'ai-server/src/**/*.ts',
+    '!**/*.d.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    }
+  },
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/__tests__/',
+    '/test/',
+    '/*.config.js',
+    '/*.setup.ts',
+  ],
+  globals: {
+    'ts-jest': {
+      diagnostics: false,
+      isolatedModules: true
+    }
+  }
+}
