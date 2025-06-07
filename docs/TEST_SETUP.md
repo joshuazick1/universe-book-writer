@@ -24,9 +24,28 @@ Key features:
 - Limited retries to prevent timeout cascades
 - Proper cleanup in test lifecycle
 
-### MongoDB Mock Configuration
+### MongoDB Test Configuration
 
-MongoDB mocking uses the `mongodb-memory-server` package for in-memory testing:
+**⚠️ Updated Approach**: The test suite now uses your **existing local MongoDB instance** instead of MongoDB Memory Server for faster and more reliable testing.
+
+See **[MongoDB Test Setup Documentation](./MONGODB_TEST_SETUP.md)** for complete details.
+
+#### Quick Setup
+
+1. Ensure MongoDB is running locally on port 27017
+2. Configure connection in `backend/tests/.env.test`:
+   ```env
+   MONGODB_URI=mongodb://localhost:27017
+   NODE_ENV=test
+   ```
+3. Tests will automatically create and clean up unique databases
+
+#### Benefits of New Approach
+
+- **No MongoDB downloads** - Uses your existing MongoDB instance
+- **Faster test startup** - No MongoDB Memory Server overhead  
+- **Better debugging** - Use standard MongoDB tools to inspect test data
+- **Isolated databases** - Each test creates unique, auto-cleaned databases
 
 ```typescript
 const mongoConfig = {

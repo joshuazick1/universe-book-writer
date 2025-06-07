@@ -4,10 +4,12 @@ export default {
   testEnvironment: process.env.TEST_ENV === 'jsdom' 
     ? 'jsdom'
     : 'node',
+  globalTeardown: '<rootDir>/jest.teardown.global.mjs',
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       useESM: true,
-      tsconfig: 'tsconfig.json'
+      tsconfig: 'tsconfig.json',
+      isolatedModules: true
     }]
   },
   moduleNameMapper: {
@@ -20,6 +22,7 @@ export default {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'mjs', 'cjs', 'jsx', 'json', 'node'],
   roots: ['<rootDir>/packages', '<rootDir>/frontend', '<rootDir>/backend', '<rootDir>/ai-server'],
+  setupFiles: ['<rootDir>/backend/tests/jest.env.mjs'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   passWithNoTests: true,
@@ -55,11 +58,5 @@ export default {
     '/test/',
     '/*.config.js',
     '/*.setup.ts',
-  ],
-  globals: {
-    'ts-jest': {
-      diagnostics: false,
-      isolatedModules: true
-    }
-  }
+  ]
 }

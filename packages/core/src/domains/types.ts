@@ -20,7 +20,7 @@ export interface StoryConfig {
   synopsis?: string;
 }
 
-export interface PluginConfig {
+export interface UniversePluginConfig {
   name: string;
   version: string;
   universeType: string;

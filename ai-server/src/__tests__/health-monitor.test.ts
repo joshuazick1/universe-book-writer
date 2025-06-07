@@ -2,8 +2,9 @@
  * Ollama Health Monitor Tests
  */
 
-import { OllamaHealthMonitor } from '../health/health-monitor';
-import { OllamaServerConfig } from '../config/ollama.config';
+import { describe, beforeEach, test, expect, jest } from '@jest/globals';
+import { OllamaHealthMonitor } from '../health/health-monitor.js';
+import { OllamaServerConfig } from '../config/ollama.config.js';
 import axios from 'axios';
 
 // Mock axios for testing
@@ -34,6 +35,7 @@ describe('OllamaHealthMonitor', () => {
 
   afterEach(() => {
     healthMonitor.destroy();
+    jest.clearAllMocks();
   });
 
   describe('Server Monitoring', () => {
@@ -131,9 +133,14 @@ describe('OllamaHealthMonitor', () => {
       fastHealthMonitor.startMonitoring(mockServer);
 
       fastHealthMonitor.on('circuitBreakerHalfOpen', (serverId) => {
-        expect(serverId).toBe(mockServer.id);
-        fastHealthMonitor.destroy();
-        done();
+        try {
+          expect(serverId).toBe(mockServer.id);
+          fastHealthMonitor.destroy();
+          done();
+        } catch (error) {
+          fastHealthMonitor.destroy();
+          done(error);
+        }
       });
 
       // Trigger circuit breaker

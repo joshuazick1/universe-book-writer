@@ -2,9 +2,10 @@
  * Load Balancer Tests
  */
 
-import { OllamaLoadBalancer, PriorityStrategy, RoundRobinStrategy, LeastConnectionsStrategy } from '../load-balancer/load-balancer';
-import { OllamaHealthMonitor } from '../health/health-monitor';
-import { OllamaServerConfig } from '../config/ollama.config';
+import { describe, beforeEach, test, expect, jest } from '@jest/globals';
+import { OllamaLoadBalancer, PriorityStrategy, RoundRobinStrategy, LeastConnectionsStrategy } from '../load-balancer/load-balancer.js';
+import { OllamaHealthMonitor } from '../health/health-monitor.js';
+import { OllamaServerConfig } from '../config/ollama.config.js';
 
 describe('OllamaLoadBalancer', () => {
   let loadBalancer: OllamaLoadBalancer;
