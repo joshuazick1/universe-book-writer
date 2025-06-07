@@ -3,9 +3,9 @@
  * Handles communication with Ollama servers
  */
 
+import { EventEmitter } from 'node:events';
 import axios, { AxiosError } from 'axios';
-import { EventEmitter } from 'events';
-import { OllamaServerConfig } from '../config/ollama.config';
+import type { OllamaServerConfig } from '../config/ollama.config.js';
 
 export interface OllamaRequest {
   model: string;
@@ -91,7 +91,7 @@ export class OllamaClient extends EventEmitter {
           timeout: this.server.timeout || 60000,
           headers: {
             'Content-Type': 'application/json',
-            ...(this.server.apiKey && { 'Authorization': `Bearer ${this.server.apiKey}` }),
+            ...(this.server.apiKey && { Authorization: `Bearer ${this.server.apiKey}` }),
           },
         }
       );
@@ -116,7 +116,7 @@ export class OllamaClient extends EventEmitter {
    * Generate streaming text completion
    */
   public async generateStream(
-    request: OllamaRequest, 
+    request: OllamaRequest,
     onChunk: (chunk: OllamaStreamResponse) => void
   ): Promise<void> {
     const requestId = ++this.requestId;
@@ -133,13 +133,13 @@ export class OllamaClient extends EventEmitter {
           responseType: 'stream',
           headers: {
             'Content-Type': 'application/json',
-            ...(this.server.apiKey && { 'Authorization': `Bearer ${this.server.apiKey}` }),
+            ...(this.server.apiKey && { Authorization: `Bearer ${this.server.apiKey}` }),
           },
         }
       );
 
       let buffer = '';
-      
+
       response.data.on('data', (chunk: Buffer) => {
         buffer += chunk.toString();
         const lines = buffer.split('\n');
@@ -150,7 +150,7 @@ export class OllamaClient extends EventEmitter {
             try {
               const data = JSON.parse(line) as OllamaStreamResponse;
               onChunk(data);
-              
+
               if (data.done) {
                 const duration = Date.now() - startTime;
                 this.emit('streamComplete', requestId, duration, true);
@@ -181,7 +181,6 @@ export class OllamaClient extends EventEmitter {
           }
         }
       });
-
     } catch (error) {
       const duration = Date.now() - startTime;
       this.emit('streamComplete', requestId, duration, false);
@@ -199,15 +198,12 @@ export class OllamaClient extends EventEmitter {
    */
   public async getModels(): Promise<ModelInfo[]> {
     try {
-      const response = await axios.get<ModelsResponse>(
-        `${this.server.url}/api/tags`,
-        {
-          timeout: this.server.timeout || 30000,
-          headers: {
-            ...(this.server.apiKey && { 'Authorization': `Bearer ${this.server.apiKey}` }),
-          },
-        }
-      );
+      const response = await axios.get<ModelsResponse>(`${this.server.url}/api/tags`, {
+        timeout: this.server.timeout || 30000,
+        headers: {
+          ...(this.server.apiKey && { Authorization: `Bearer ${this.server.apiKey}` }),
+        },
+      });
 
       return response.data.models;
     } catch (error) {
@@ -230,7 +226,7 @@ export class OllamaClient extends EventEmitter {
           timeout: this.server.timeout || 30000,
           headers: {
             'Content-Type': 'application/json',
-            ...(this.server.apiKey && { 'Authorization': `Bearer ${this.server.apiKey}` }),
+            ...(this.server.apiKey && { Authorization: `Bearer ${this.server.apiKey}` }),
           },
         }
       );
@@ -247,10 +243,7 @@ export class OllamaClient extends EventEmitter {
   /**
    * Pull a model
    */
-  public async pullModel(
-    modelName: string, 
-    onProgress?: (progress: any) => void
-  ): Promise<void> {
+  public async pullModel(modelName: string, onProgress?: (progress: any) => void): Promise<void> {
     try {
       const response = await axios.post(
         `${this.server.url}/api/pull`,
@@ -260,14 +253,14 @@ export class OllamaClient extends EventEmitter {
           responseType: onProgress ? 'stream' : 'json',
           headers: {
             'Content-Type': 'application/json',
-            ...(this.server.apiKey && { 'Authorization': `Bearer ${this.server.apiKey}` }),
+            ...(this.server.apiKey && { Authorization: `Bearer ${this.server.apiKey}` }),
           },
         }
       );
 
       if (onProgress) {
         let buffer = '';
-        
+
         response.data.on('data', (chunk: Buffer) => {
           buffer += chunk.toString();
           const lines = buffer.split('\n');
@@ -308,7 +301,7 @@ export class OllamaClient extends EventEmitter {
         timeout: this.server.timeout || 30000,
         headers: {
           'Content-Type': 'application/json',
-          ...(this.server.apiKey && { 'Authorization': `Bearer ${this.server.apiKey}` }),
+          ...(this.server.apiKey && { Authorization: `Bearer ${this.server.apiKey}` }),
         },
       });
     } catch (error) {
@@ -324,15 +317,12 @@ export class OllamaClient extends EventEmitter {
    */
   public async healthCheck(): Promise<boolean> {
     try {
-      const response = await axios.get(
-        `${this.server.url}/api/tags`,
-        {
-          timeout: 5000, // Quick health check
-          headers: {
-            ...(this.server.apiKey && { 'Authorization': `Bearer ${this.server.apiKey}` }),
-          },
-        }
-      );
+      const response = await axios.get(`${this.server.url}/api/tags`, {
+        timeout: 5000, // Quick health check
+        headers: {
+          ...(this.server.apiKey && { Authorization: `Bearer ${this.server.apiKey}` }),
+        },
+      });
 
       return response.status === 200;
     } catch (error) {

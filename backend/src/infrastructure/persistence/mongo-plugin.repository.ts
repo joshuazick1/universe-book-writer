@@ -2,13 +2,9 @@
  * MongoDB implementation of Plugin Repository
  */
 
-import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
-import { 
-  PluginRegistryEntry, 
-  PluginState, 
-  PluginType 
-} from '@universe-book-writer/core';
-import { PluginRepository } from '../../core/interfaces/plugin.repository.interface.js';
+import type { PluginRegistryEntry, PluginState, PluginType } from '@universe-book-writer/core';
+import { type Collection, type Db, type MongoClient, ObjectId } from 'mongodb';
+import type { PluginRepository } from '../../core/interfaces/plugin.repository.interface.js';
 
 /**
  * MongoDB plugin repository implementation
@@ -17,7 +13,7 @@ export class MongoPluginRepository implements PluginRepository {
   private db: Db;
   private collection: Collection<PluginRegistryEntry>;
 
-  constructor(client: MongoClient, dbName: string = 'universe_book_writer') {
+  constructor(client: MongoClient, dbName = 'universe_book_writer') {
     this.db = client.db(dbName);
     this.collection = this.db.collection<PluginRegistryEntry>('plugins');
   }
@@ -75,22 +71,25 @@ export class MongoPluginRepository implements PluginRepository {
   async save(entry: PluginRegistryEntry): Promise<PluginRegistryEntry> {
     const mongoDoc = this.mapToMongo(entry);
     const result = await this.collection.insertOne(mongoDoc);
-    
+
     const saved = await this.collection.findOne({ _id: result.insertedId });
     if (!saved) {
       throw new Error('Failed to save plugin registry entry');
     }
-    
+
     return this.mapFromMongo(saved);
   }
 
   /**
    * Update a plugin registry entry
    */
-  async update(id: string, updates: Partial<PluginRegistryEntry>): Promise<PluginRegistryEntry | null> {
+  async update(
+    id: string,
+    updates: Partial<PluginRegistryEntry>
+  ): Promise<PluginRegistryEntry | null> {
     const updateDoc = {
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     const result = await this.collection.findOneAndUpdate(
@@ -125,10 +124,10 @@ export class MongoPluginRepository implements PluginRepository {
     const cursor = this.collection.find({
       $or: [
         { dependents: pluginName },
-        { [`pluginMetadata.dependencies.${pluginName}`]: { $exists: true } }
-      ]
+        { [`pluginMetadata.dependencies.${pluginName}`]: { $exists: true } },
+      ],
     });
-    
+
     const results = await cursor.toArray();
     return results.map(r => this.mapFromMongo(r));
   }
@@ -148,7 +147,7 @@ export class MongoPluginRepository implements PluginRepository {
     }
 
     const cursor = this.collection.find({
-      'pluginMetadata.name': { $in: dependencyNames }
+      'pluginMetadata.name': { $in: dependencyNames },
     });
 
     const results = await cursor.toArray();
@@ -169,7 +168,7 @@ export class MongoPluginRepository implements PluginRepository {
       dependents: doc.dependents || [],
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
-      metadata: doc.metadata
+      metadata: doc.metadata,
     };
   }
 
@@ -181,7 +180,7 @@ export class MongoPluginRepository implements PluginRepository {
     return {
       id,
       ...rest,
-      _id: new ObjectId()
+      _id: new ObjectId(),
     };
   }
 

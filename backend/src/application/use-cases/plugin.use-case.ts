@@ -2,18 +2,18 @@
  * Plugin use cases - Application layer for plugin management
  */
 
-import { 
-  Plugin, 
-  PluginManager, 
-  PluginMetadata, 
-  PluginState, 
-  PluginType,
-  PluginConfig,
-  PluginRegistryEntry 
+import {
+  type Plugin,
+  type PluginConfig,
+  type PluginManager,
+  PluginMetadata,
+  type PluginRegistryEntry,
+  PluginState,
+  type PluginType,
 } from '@universe-book-writer/core';
-import { PluginRepository } from '../../core/interfaces/plugin.repository.interface.js';
-import { PluginDomainService } from '../../core/services/plugin.domain.service.js';
-import { PluginLoader } from '../../infrastructure/loaders/plugin.loader.js';
+import type { PluginRepository } from '../../core/interfaces/plugin.repository.interface.js';
+import type { PluginDomainService } from '../../core/services/plugin.domain.service.js';
+import type { PluginLoader } from '../../infrastructure/loaders/plugin.loader.js';
 
 /**
  * Plugin management use cases
@@ -56,13 +56,13 @@ export class PluginUseCase implements PluginManager {
 
     // Store in memory and persist
     this.loadedPlugins.set(plugin.metadata.name, plugin);
-    
+
     const registryEntry = this.pluginDomainService.createRegistryEntry(
       plugin.metadata,
       '', // Load path will be set by loader
       plugin.config
     );
-    
+
     await this.pluginRepository.save(registryEntry);
   }
 
@@ -168,7 +168,9 @@ export class PluginUseCase implements PluginManager {
     }
 
     if (!plugin.canActivate()) {
-      throw new Error(`Plugin '${pluginName}' cannot be activated in current state: ${plugin.state}`);
+      throw new Error(
+        `Plugin '${pluginName}' cannot be activated in current state: ${plugin.state}`
+      );
     }
 
     await plugin.activate();
@@ -176,9 +178,9 @@ export class PluginUseCase implements PluginManager {
     // Update registry
     const registryEntry = await this.pluginRepository.findByName(pluginName);
     if (registryEntry) {
-      await this.pluginRepository.update(registryEntry.id, { 
+      await this.pluginRepository.update(registryEntry.id, {
         state: PluginState.ACTIVE,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
   }
@@ -193,7 +195,9 @@ export class PluginUseCase implements PluginManager {
     }
 
     if (!plugin.canDeactivate()) {
-      throw new Error(`Plugin '${pluginName}' cannot be deactivated in current state: ${plugin.state}`);
+      throw new Error(
+        `Plugin '${pluginName}' cannot be deactivated in current state: ${plugin.state}`
+      );
     }
 
     await plugin.deactivate();
@@ -201,9 +205,9 @@ export class PluginUseCase implements PluginManager {
     // Update registry
     const registryEntry = await this.pluginRepository.findByName(pluginName);
     if (registryEntry) {
-      await this.pluginRepository.update(registryEntry.id, { 
+      await this.pluginRepository.update(registryEntry.id, {
         state: PluginState.INITIALIZED,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
   }
@@ -234,7 +238,7 @@ export class PluginUseCase implements PluginManager {
       config: plugin.config,
       dependencies: Object.keys(plugin.metadata.dependencies),
       dependents: dependents.map(d => d.pluginMetadata.name),
-      lastError: registryEntry.lastError
+      lastError: registryEntry.lastError,
     };
   }
 
@@ -252,9 +256,9 @@ export class PluginUseCase implements PluginManager {
     // Update registry
     const registryEntry = await this.pluginRepository.findByName(pluginName);
     if (registryEntry) {
-      await this.pluginRepository.update(registryEntry.id, { 
+      await this.pluginRepository.update(registryEntry.id, {
         config: plugin.config,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
   }
@@ -280,7 +284,7 @@ export class PluginUseCase implements PluginManager {
     // Load plugins in dependency order
     for (const pluginName of loadOrder) {
       const entry = enabledEntries.find(e => e.pluginMetadata.name === pluginName);
-      if (entry && entry.loadPath) {
+      if (entry?.loadPath) {
         try {
           await this.loadPlugin(entry.loadPath);
         } catch (error) {
@@ -289,7 +293,7 @@ export class PluginUseCase implements PluginManager {
           await this.pluginRepository.update(entry.id, {
             state: PluginState.ERROR,
             lastError: error instanceof Error ? error.message : 'Unknown error',
-            updatedAt: new Date()
+            updatedAt: new Date(),
           });
         }
       }

@@ -2,7 +2,7 @@
  * Plugin version management system - Handles semantic versioning and compatibility checks
  */
 
-import { PluginMetadata } from '@universe-book-writer/core';
+import type { PluginMetadata } from '@universe-book-writer/core';
 
 /**
  * Semantic version structure
@@ -20,15 +20,15 @@ export interface SemanticVersion {
  * Version range types
  */
 export enum VersionRangeType {
-  EXACT = 'exact',           // 1.2.3
-  CARET = 'caret',          // ^1.2.3
-  TILDE = 'tilde',          // ~1.2.3
-  GREATER = 'greater',      // >1.2.3
-  GREATER_EQUAL = 'gte',    // >=1.2.3
-  LESS = 'less',            // <1.2.3
-  LESS_EQUAL = 'lte',       // <=1.2.3
-  RANGE = 'range',          // 1.2.3 - 2.0.0
-  WILDCARD = 'wildcard'     // 1.2.x, 1.x, x
+  EXACT = 'exact', // 1.2.3
+  CARET = 'caret', // ^1.2.3
+  TILDE = 'tilde', // ~1.2.3
+  GREATER = 'greater', // >1.2.3
+  GREATER_EQUAL = 'gte', // >=1.2.3
+  LESS = 'less', // <1.2.3
+  LESS_EQUAL = 'lte', // <=1.2.3
+  RANGE = 'range', // 1.2.3 - 2.0.0
+  WILDCARD = 'wildcard', // 1.2.x, 1.x, x
 }
 
 /**
@@ -80,17 +80,17 @@ export enum ConflictType {
   VERSION_MISMATCH = 'version_mismatch',
   MISSING_DEPENDENCY = 'missing_dependency',
   CIRCULAR_DEPENDENCY = 'circular_dependency',
-  INCOMPATIBLE_VERSION = 'incompatible_version'
+  INCOMPATIBLE_VERSION = 'incompatible_version',
 }
 
 /**
  * Resolution strategies
  */
 export enum ResolutionStrategy {
-  STRICT = 'strict',           // Exact version matching
-  COMPATIBLE = 'compatible',   // Compatible version ranges
-  LATEST = 'latest',          // Use latest compatible version
-  MANUAL = 'manual'           // Manual resolution required
+  STRICT = 'strict', // Exact version matching
+  COMPATIBLE = 'compatible', // Compatible version ranges
+  LATEST = 'latest', // Use latest compatible version
+  MANUAL = 'manual', // Manual resolution required
 }
 
 /**
@@ -110,27 +110,28 @@ export class PluginVersionManager {
     }
 
     const cleaned = versionString.trim().replace(/^v/, '');
-    
+
     // Regex for semantic version with optional prerelease and build
-    const semverRegex = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
-    
+    const semverRegex =
+      /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
+
     const match = cleaned.match(semverRegex);
     if (!match) {
       throw new Error(`Invalid semantic version: ${versionString}`);
     }
 
     const version: SemanticVersion = {
-      major: parseInt(match[1], 10),
-      minor: parseInt(match[2], 10),
-      patch: parseInt(match[3], 10),
+      major: Number.parseInt(match[1], 10),
+      minor: Number.parseInt(match[2], 10),
+      patch: Number.parseInt(match[3], 10),
       prerelease: match[4],
       build: match[5],
-      original: versionString
+      original: versionString,
     };
 
     // Cache the parsed version
     this.versionCache.set(versionString, version);
-    
+
     return version;
   }
 
@@ -141,11 +142,16 @@ export class PluginVersionManager {
     const trimmed = rangeString.trim();
 
     // Exact version
-    if (/^\d+\.\d+\.\d+/.test(trimmed) && !trimmed.includes(' ') && !trimmed.startsWith('^') && !trimmed.startsWith('~')) {
+    if (
+      /^\d+\.\d+\.\d+/.test(trimmed) &&
+      !trimmed.includes(' ') &&
+      !trimmed.startsWith('^') &&
+      !trimmed.startsWith('~')
+    ) {
       return {
         type: VersionRangeType.EXACT,
         version: this.parseVersion(trimmed),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -154,7 +160,7 @@ export class PluginVersionManager {
       return {
         type: VersionRangeType.CARET,
         version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -163,7 +169,7 @@ export class PluginVersionManager {
       return {
         type: VersionRangeType.TILDE,
         version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -172,7 +178,7 @@ export class PluginVersionManager {
       return {
         type: VersionRangeType.GREATER,
         version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -181,7 +187,7 @@ export class PluginVersionManager {
       return {
         type: VersionRangeType.GREATER_EQUAL,
         version: this.parseVersion(trimmed.slice(2)),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -190,7 +196,7 @@ export class PluginVersionManager {
       return {
         type: VersionRangeType.LESS,
         version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -199,7 +205,7 @@ export class PluginVersionManager {
       return {
         type: VersionRangeType.LESS_EQUAL,
         version: this.parseVersion(trimmed.slice(2)),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -210,7 +216,7 @@ export class PluginVersionManager {
         type: VersionRangeType.RANGE,
         version: this.parseVersion(lower),
         upperBound: this.parseVersion(upper),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -220,7 +226,7 @@ export class PluginVersionManager {
       return {
         type: VersionRangeType.WILDCARD,
         version: this.parseVersion(normalized),
-        original: rangeString
+        original: rangeString,
       };
     }
 
@@ -244,10 +250,7 @@ export class PluginVersionManager {
   /**
    * Check version compatibility between plugins
    */
-  checkCompatibility(
-    requiredVersion: string,
-    availableVersion: string
-  ): CompatibilityResult {
+  checkCompatibility(requiredVersion: string, availableVersion: string): CompatibilityResult {
     try {
       const required = this.parseVersionRange(requiredVersion);
       const available = this.parseVersion(availableVersion);
@@ -257,7 +260,7 @@ export class PluginVersionManager {
       const result: CompatibilityResult = {
         compatible,
         requiredVersion,
-        actualVersion: availableVersion
+        actualVersion: availableVersion,
       };
 
       if (!compatible) {
@@ -271,7 +274,7 @@ export class PluginVersionManager {
         compatible: false,
         requiredVersion,
         actualVersion: availableVersion,
-        reason: `Invalid version format: ${error instanceof Error ? error.message : 'Unknown error'}`
+        reason: `Invalid version format: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }
@@ -290,11 +293,11 @@ export class PluginVersionManager {
     // Build dependency graph
     for (const plugin of plugins) {
       dependencyGraph.set(plugin.name, new Set());
-      
+
       if (plugin.dependencies) {
         for (const [depName, version] of Object.entries(plugin.dependencies)) {
           dependencyGraph.get(plugin.name)!.add(depName);
-          
+
           if (!allDependencies.has(depName)) {
             allDependencies.set(depName, []);
           }
@@ -316,7 +319,7 @@ export class PluginVersionManager {
       resolved: conflicts.length === 0,
       conflicts,
       resolutionStrategy: strategy,
-      suggestedVersions
+      suggestedVersions,
     };
   }
 
@@ -337,7 +340,9 @@ export class PluginVersionManager {
         })
         .sort((a, b) => this.compareVersions(a, b));
 
-      return compatibleVersions.length > 0 ? compatibleVersions[compatibleVersions.length - 1] : null;
+      return compatibleVersions.length > 0
+        ? compatibleVersions[compatibleVersions.length - 1]
+        : null;
     } catch {
       return null;
     }
@@ -423,14 +428,15 @@ export class PluginVersionManager {
 
       case VersionRangeType.CARET:
         // ^1.2.3 := >=1.2.3 <2.0.0
-        return version.major === range.version.major &&
-               this.versionGTE(version, range.version);
+        return version.major === range.version.major && this.versionGTE(version, range.version);
 
       case VersionRangeType.TILDE:
         // ~1.2.3 := >=1.2.3 <1.3.0
-        return version.major === range.version.major &&
-               version.minor === range.version.minor &&
-               this.versionGTE(version, range.version);
+        return (
+          version.major === range.version.major &&
+          version.minor === range.version.minor &&
+          this.versionGTE(version, range.version)
+        );
 
       case VersionRangeType.GREATER:
         return this.versionGT(version, range.version);
@@ -445,7 +451,7 @@ export class PluginVersionManager {
         return this.versionLTE(version, range.version);
 
       case VersionRangeType.RANGE:
-        return range.upperBound 
+        return range.upperBound
           ? this.versionGTE(version, range.version) && this.versionLTE(version, range.upperBound)
           : false;
 
@@ -499,21 +505,21 @@ export class PluginVersionManager {
    */
   private versionMatchesWildcard(version: SemanticVersion, range: VersionRange): boolean {
     const original = range.original.toLowerCase();
-    
+
     if (original === 'x' || original === '*') {
       return true; // Any version
     }
-    
+
     if (original.startsWith('x.') || original.startsWith('*.')) {
       return true; // Any major version
     }
 
     const parts = original.split('.');
     if (parts.length >= 1 && parts[0] !== 'x' && parts[0] !== '*') {
-      if (version.major !== parseInt(parts[0], 10)) return false;
+      if (version.major !== Number.parseInt(parts[0], 10)) return false;
     }
     if (parts.length >= 2 && parts[1] !== 'x' && parts[1] !== '*') {
-      if (version.minor !== parseInt(parts[1], 10)) return false;
+      if (version.minor !== Number.parseInt(parts[1], 10)) return false;
     }
 
     return true;
@@ -549,9 +555,8 @@ export class PluginVersionManager {
   private getSuggestion(range: VersionRange, version: SemanticVersion): string {
     if (this.versionLT(version, range.version)) {
       return `Consider upgrading to version ${range.version.original} or higher`;
-    } else {
-      return `Consider using a more permissive version range or upgrading the requirement`;
     }
+    return 'Consider using a more permissive version range or upgrading the requirement';
   }
 
   /**
@@ -568,12 +573,12 @@ export class PluginVersionManager {
       if (recursionStack.has(node)) {
         const cycleStart = path.indexOf(node);
         const cycle = path.slice(cycleStart).concat(node);
-        
+
         conflicts.push({
           pluginName: node,
           dependencyName: cycle[cycle.length - 2],
           requiredVersions: [],
-          conflictType: ConflictType.CIRCULAR_DEPENDENCY
+          conflictType: ConflictType.CIRCULAR_DEPENDENCY,
         });
         return;
       }
@@ -609,17 +614,17 @@ export class PluginVersionManager {
       if (versions.length > 1) {
         // Check if all versions are compatible
         const uniqueVersions = [...new Set(versions)];
-        
+
         if (uniqueVersions.length > 1) {
           // Try to find a version that satisfies all requirements
           const hasCompatibleVersion = this.findCompatibleVersion(uniqueVersions);
-          
+
           if (!hasCompatibleVersion) {
             conflicts.push({
               pluginName: depName,
               dependencyName: depName,
               requiredVersions: uniqueVersions,
-              conflictType: ConflictType.VERSION_MISMATCH
+              conflictType: ConflictType.VERSION_MISMATCH,
             });
           }
         }
@@ -634,13 +639,13 @@ export class PluginVersionManager {
     // This is a simplified check - in a real implementation,
     // you'd need to solve the constraint satisfaction problem
     for (const requirement of requirements) {
-      const compatible = requirements.every(other => 
-        other === requirement || this.rangesOverlap(requirement, other)
+      const compatible = requirements.every(
+        other => other === requirement || this.rangesOverlap(requirement, other)
       );
-      
+
       if (compatible) return true;
     }
-    
+
     return false;
   }
 
@@ -651,7 +656,7 @@ export class PluginVersionManager {
     try {
       const r1 = this.parseVersionRange(range1);
       const r2 = this.parseVersionRange(range2);
-      
+
       // Simplified overlap check - would need more sophisticated logic
       return r1.type === r2.type && this.versionsEqual(r1.version, r2.version);
     } catch {
@@ -674,14 +679,13 @@ export class PluginVersionManager {
           // Use exact versions - take the first one
           suggestions[depName] = versions[0];
           break;
-          
-        case ResolutionStrategy.LATEST:
+
+        case ResolutionStrategy.LATEST: {
           // Find the highest version
           const sortedVersions = versions.sort((a, b) => this.compareVersions(a, b));
           suggestions[depName] = sortedVersions[sortedVersions.length - 1];
           break;
-          
-        case ResolutionStrategy.COMPATIBLE:
+        }
         default:
           // Try to find a compatible version range
           suggestions[depName] = this.findMostCompatibleVersion(versions);

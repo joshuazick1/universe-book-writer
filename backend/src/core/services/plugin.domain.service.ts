@@ -2,14 +2,14 @@
  * Plugin domain service - Core business logic for plugin management
  */
 
-import { 
-  Plugin, 
-  PluginMetadata, 
-  PluginState, 
+import {
+  type Plugin,
+  type PluginMetadata,
+  type PluginRegistryEntry,
+  PluginState,
   PluginType,
-  PluginRegistryEntry 
 } from '@universe-book-writer/core';
-import { PluginRepository } from '../interfaces/plugin.repository.interface.js';
+import type { PluginRepository } from '../interfaces/plugin.repository.interface.js';
 
 /**
  * Domain service for plugin business logic
@@ -31,7 +31,7 @@ export class PluginDomainService {
     // Check each dependency
     for (const [depName, depVersion] of Object.entries(plugin.metadata.dependencies)) {
       const existingPlugin = await this.pluginRepository.findByName(depName);
-      
+
       if (!existingPlugin) {
         missing.push(`${depName}@${depVersion}`);
         continue;
@@ -48,7 +48,7 @@ export class PluginDomainService {
     return {
       valid: missing.length === 0 && conflicts.length === 0,
       missing,
-      conflicts
+      conflicts,
     };
   }
 
@@ -120,7 +120,7 @@ export class PluginDomainService {
 
     return {
       canUnload: activeDependents.length === 0,
-      dependents: activeDependents.map(p => p.pluginMetadata.name)
+      dependents: activeDependents.map(p => p.pluginMetadata.name),
     };
   }
 
@@ -166,7 +166,7 @@ export class PluginDomainService {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -187,7 +187,7 @@ export class PluginDomainService {
 
     return {
       hasConflicts: conflicts.length > 0,
-      conflicts
+      conflicts,
     };
   }
 
@@ -200,7 +200,7 @@ export class PluginDomainService {
     config?: any
   ): PluginRegistryEntry {
     const now = new Date();
-    
+
     return {
       id: `plugin-${metadata.name}-${Date.now()}`,
       pluginMetadata: metadata,
@@ -212,8 +212,8 @@ export class PluginDomainService {
       updatedAt: now,
       metadata: {
         createdBy: 'system',
-        tags: metadata.keywords || []
-      }
+        tags: metadata.keywords || [],
+      },
     };
   }
 }

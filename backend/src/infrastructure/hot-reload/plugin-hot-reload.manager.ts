@@ -2,10 +2,15 @@
  * Plugin hot reload manager - Orchestrates plugin watching and reload operations
  */
 
-import { EventEmitter } from 'events';
-import { PluginWatcher, PluginReloadEvent, ReloadReason, WatchConfig } from './plugin-watcher.js';
-import { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
+import { EventEmitter } from 'node:events';
 import { Plugin, PluginState } from '@universe-book-writer/core';
+import type { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
+import {
+  type PluginReloadEvent,
+  PluginWatcher,
+  ReloadReason,
+  type WatchConfig,
+} from './plugin-watcher.js';
 
 /**
  * Hot reload configuration
@@ -56,7 +61,7 @@ export class PluginHotReloadManager extends EventEmitter {
     successfulReloads: 0,
     failedReloads: 0,
     averageReloadTime: 0,
-    watchedPlugins: 0
+    watchedPlugins: 0,
   };
   private reloadTimes: number[] = [];
 
@@ -64,7 +69,8 @@ export class PluginHotReloadManager extends EventEmitter {
     private pluginUseCase: PluginUseCase,
     config: HotReloadConfig = { enabled: true }
   ) {
-    super();    this.config = {
+    super();
+    this.config = {
       enabled: config.enabled ?? true,
       watchConfig: config.watchConfig || {
         ignored: ['node_modules/**', 'dist/**'],
@@ -72,15 +78,15 @@ export class PluginHotReloadManager extends EventEmitter {
         ignoreInitial: true,
         awaitWriteFinish: {
           stabilityThreshold: 100,
-          pollInterval: 100
-        }
+          pollInterval: 100,
+        },
       },
       autoWatch: config.autoWatch ?? true,
       batchReloads: config.batchReloads ?? true,
       batchDelay: config.batchDelay ?? 1000,
       maxRetries: config.maxRetries ?? 3,
       retryDelay: config.retryDelay ?? 2000,
-      preserveState: config.preserveState ?? true
+      preserveState: config.preserveState ?? true,
     };
 
     this.watcher = new PluginWatcher(pluginUseCase, this.config.watchConfig);
@@ -215,7 +221,7 @@ export class PluginHotReloadManager extends EventEmitter {
       successfulReloads: 0,
       failedReloads: 0,
       averageReloadTime: 0,
-      watchedPlugins: this.watcher.getWatchedPlugins().length
+      watchedPlugins: this.watcher.getWatchedPlugins().length,
     };
     this.reloadTimes = [];
   }
@@ -225,7 +231,7 @@ export class PluginHotReloadManager extends EventEmitter {
    */
   updateConfig(config: Partial<HotReloadConfig>): void {
     this.config = { ...this.config, ...config };
-    
+
     if (!this.config.enabled) {
       this.disable();
     }
@@ -280,11 +286,11 @@ export class PluginHotReloadManager extends EventEmitter {
    */
   private handlePluginReloaded(event: PluginReloadEvent): void {
     const reloadTime = Date.now() - event.timestamp.getTime();
-    
+
     this.reloadMetrics.totalReloads++;
     this.reloadMetrics.successfulReloads++;
     this.reloadMetrics.lastReloadTime = event.timestamp;
-    
+
     this.reloadTimes.push(reloadTime);
     this.updateAverageReloadTime();
 
@@ -360,10 +366,10 @@ export class PluginHotReloadManager extends EventEmitter {
    */
   private queueDependentReloads(pluginName: string): void {
     const dependents = this.findDependentPlugins(pluginName);
-    
-    dependents.forEach(dependent => {
+
+    for (const dependent of dependents) {
       this.reloadQueue.add(dependent);
-    });
+    }
 
     if (this.reloadQueue.size > 0 && !this.batchTimer) {
       this.batchTimer = setTimeout(() => {
@@ -384,7 +390,7 @@ export class PluginHotReloadManager extends EventEmitter {
       const dependencyEvent: DependencyReloadEvent = {
         plugins: pluginsToReload,
         reason: ReloadReason.DEPENDENCY_UPDATED,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       try {
@@ -401,17 +407,17 @@ export class PluginHotReloadManager extends EventEmitter {
    */
   private async reloadDependents(pluginName: string): Promise<void> {
     const dependents = this.findDependentPlugins(pluginName);
-    
+
     if (dependents.length > 0) {
       try {
         await this.reloadPlugins(dependents);
-        
+
         const dependencyEvent: DependencyReloadEvent = {
           plugins: dependents,
           reason: ReloadReason.DEPENDENCY_UPDATED,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
-        
+
         this.emit('dependencyReload', dependencyEvent);
       } catch (error) {
         this.emit('dependencyReloadError', { plugins: dependents, error });
@@ -426,12 +432,12 @@ export class PluginHotReloadManager extends EventEmitter {
     const allPlugins = this.pluginUseCase.getAllPlugins();
     const dependents: string[] = [];
 
-    allPlugins.forEach(plugin => {
+    for (const plugin of allPlugins) {
       const dependencies = plugin.metadata.dependencies || {};
       if (dependencies[pluginName] || plugin.metadata.peerDependencies?.[pluginName]) {
         dependents.push(plugin.metadata.name);
       }
-    });
+    }
 
     return dependents;
   }
@@ -473,7 +479,9 @@ export class PluginHotReloadManager extends EventEmitter {
    * Clear all retry timers
    */
   private clearRetryTimers(): void {
-    this.retryQueues.forEach(timer => clearTimeout(timer));
+    for (const timer of this.retryQueues.values()) {
+      clearTimeout(timer);
+    }
     this.retryQueues.clear();
   }
 

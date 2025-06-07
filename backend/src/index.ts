@@ -1,9 +1,9 @@
-import express from 'express';
+import path from 'node:path';
 import cors from 'cors';
-import path from 'path';
+import express from 'express';
+import { createPluginRoutes } from './api/routes/plugin.routes.js';
 import { mongoDBConnection } from './config/mongodb.config.js';
 import { PluginSystemFactory } from './plugins/manager/plugin-system.factory.js';
-import { createPluginRoutes } from './api/routes/plugin.routes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,18 +29,18 @@ async function initializeApp() {
       pluginDirectories: [
         path.join(process.cwd(), 'plugins'),
         path.join(process.cwd(), 'src/plugins/universe'),
-        path.join(process.cwd(), 'src/plugins/core')
+        path.join(process.cwd(), 'src/plugins/core'),
       ],
-      autoLoadPlugins: true
+      autoLoadPlugins: true,
     });
     console.log('Plugin system initialized successfully');
 
     // Setup routes
     app.get('/api/health', (req, res) => {
-      res.json({ 
+      res.json({
         status: 'ok',
         timestamp: new Date().toISOString(),
-        pluginCount: pluginSystem.pluginUseCase.getAllPlugins().length
+        pluginCount: pluginSystem.pluginUseCase.getAllPlugins().length,
       });
     });
 
@@ -48,13 +48,15 @@ async function initializeApp() {
     app.use('/api/plugins', createPluginRoutes(pluginSystem.pluginController));
 
     // Global error handling middleware
-    app.use((error: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      console.error('Unhandled error:', error);
-      res.status(500).json({
-        error: 'Internal Server Error',
-        message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
-      });
-    });
+    app.use(
+      (error: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+        console.error('Unhandled error:', error);
+        res.status(500).json({
+          error: 'Internal Server Error',
+          message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong',
+        });
+      }
+    );
 
     // Start server
     app.listen(port, () => {
@@ -62,7 +64,6 @@ async function initializeApp() {
       console.log(`📡 Health check: http://localhost:${port}/api/health`);
       console.log(`🔌 Plugin API: http://localhost:${port}/api/plugins`);
     });
-
   } catch (error) {
     console.error('Failed to initialize application:', error);
     process.exit(1);

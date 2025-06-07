@@ -1,5 +1,9 @@
-const { execSync } = require('child_process');
-const path = require('path');
+import { execSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const migratePath = path.join(__dirname, '..', 'node_modules', '.bin', 'migrate-mongo');
 

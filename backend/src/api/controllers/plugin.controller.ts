@@ -2,9 +2,9 @@
  * Plugin controller - API layer for plugin management endpoints
  */
 
-import { Request, Response } from 'express';
-import { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
-import { PluginType, PluginState } from '@universe-book-writer/core';
+import { PluginState, PluginType } from '@universe-book-writer/core';
+import type { Request, Response } from 'express';
+import type { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
 
 /**
  * Plugin management controller
@@ -18,9 +18,9 @@ export class PluginController {
   async getAllPlugins(req: Request, res: Response): Promise<void> {
     try {
       const { type, state, includeInactive } = req.query;
-      
-      let plugins;
-      
+
+      let plugins: any[];
+
       if (includeInactive === 'true') {
         // Get all plugins including inactive ones from registry
         plugins = await this.pluginUseCase.getAllAvailablePlugins();
@@ -34,7 +34,7 @@ export class PluginController {
             type: p.metadata.type,
             state: p.state,
             description: p.metadata.description,
-            author: p.metadata.author
+            author: p.metadata.author,
           }));
         } else {
           const loadedPlugins = this.pluginUseCase.getAllPlugins();
@@ -44,7 +44,7 @@ export class PluginController {
             type: p.metadata.type,
             state: p.state,
             description: p.metadata.description,
-            author: p.metadata.author
+            author: p.metadata.author,
           }));
         }
       }
@@ -57,12 +57,12 @@ export class PluginController {
       res.json({
         success: true,
         data: plugins,
-        count: plugins.length
+        count: plugins.length,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -73,25 +73,25 @@ export class PluginController {
   async getPlugin(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.params;
-      
+
       const status = await this.pluginUseCase.getPluginStatus(name);
-      
+
       if (!status) {
         res.status(404).json({
           success: false,
-          error: `Plugin '${name}' not found`
+          error: `Plugin '${name}' not found`,
         });
         return;
       }
 
       res.json({
         success: true,
-        data: status
+        data: status,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -102,17 +102,17 @@ export class PluginController {
   async loadPlugin(req: Request, res: Response): Promise<void> {
     try {
       const { path } = req.body;
-      
+
       if (!path) {
         res.status(400).json({
           success: false,
-          error: 'Plugin path is required'
+          error: 'Plugin path is required',
         });
         return;
       }
 
       const plugin = await this.pluginUseCase.loadPlugin(path);
-      
+
       res.status(201).json({
         success: true,
         data: {
@@ -120,13 +120,13 @@ export class PluginController {
           version: plugin.metadata.version,
           type: plugin.metadata.type,
           state: plugin.state,
-          message: 'Plugin loaded successfully'
-        }
+          message: 'Plugin loaded successfully',
+        },
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to load plugin'
+        error: error instanceof Error ? error.message : 'Failed to load plugin',
       });
     }
   }
@@ -137,17 +137,17 @@ export class PluginController {
   async activatePlugin(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.params;
-      
+
       await this.pluginUseCase.activatePlugin(name);
-      
+
       res.json({
         success: true,
-        message: `Plugin '${name}' activated successfully`
+        message: `Plugin '${name}' activated successfully`,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to activate plugin'
+        error: error instanceof Error ? error.message : 'Failed to activate plugin',
       });
     }
   }
@@ -158,17 +158,17 @@ export class PluginController {
   async deactivatePlugin(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.params;
-      
+
       await this.pluginUseCase.deactivatePlugin(name);
-      
+
       res.json({
         success: true,
-        message: `Plugin '${name}' deactivated successfully`
+        message: `Plugin '${name}' deactivated successfully`,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to deactivate plugin'
+        error: error instanceof Error ? error.message : 'Failed to deactivate plugin',
       });
     }
   }
@@ -179,17 +179,17 @@ export class PluginController {
   async unloadPlugin(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.params;
-      
+
       await this.pluginUseCase.unregister(name);
-      
+
       res.json({
         success: true,
-        message: `Plugin '${name}' unloaded successfully`
+        message: `Plugin '${name}' unloaded successfully`,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to unload plugin'
+        error: error instanceof Error ? error.message : 'Failed to unload plugin',
       });
     }
   }
@@ -201,17 +201,17 @@ export class PluginController {
     try {
       const { name } = req.params;
       const config = req.body;
-      
+
       await this.pluginUseCase.updatePluginConfig(name, config);
-      
+
       res.json({
         success: true,
-        message: `Plugin '${name}' configuration updated successfully`
+        message: `Plugin '${name}' configuration updated successfully`,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to update plugin configuration'
+        error: error instanceof Error ? error.message : 'Failed to update plugin configuration',
       });
     }
   }
@@ -222,18 +222,18 @@ export class PluginController {
   async getDependencyGraph(req: Request, res: Response): Promise<void> {
     try {
       const graph = await this.pluginUseCase.getDependencyGraph();
-      
+
       // Convert Map to object for JSON serialization
       const graphObject = Object.fromEntries(graph);
-      
+
       res.json({
         success: true,
-        data: graphObject
+        data: graphObject,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to get dependency graph'
+        error: error instanceof Error ? error.message : 'Failed to get dependency graph',
       });
     }
   }
@@ -244,29 +244,29 @@ export class PluginController {
   async validatePlugin(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.params;
-      
+
       const plugin = this.pluginUseCase.getPlugin(name);
       if (!plugin) {
         res.status(404).json({
           success: false,
-          error: `Plugin '${name}' not found`
+          error: `Plugin '${name}' not found`,
         });
         return;
       }
 
       const isValid = await this.pluginUseCase.validateDependencies(plugin);
-      
+
       res.json({
         success: true,
         data: {
           valid: isValid,
-          plugin: name
-        }
+          plugin: name,
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to validate plugin'
+        error: error instanceof Error ? error.message : 'Failed to validate plugin',
       });
     }
   }
@@ -277,9 +277,9 @@ export class PluginController {
   async reloadAllPlugins(req: Request, res: Response): Promise<void> {
     try {
       await this.pluginUseCase.loadAllPlugins();
-      
+
       const plugins = this.pluginUseCase.getAllPlugins();
-      
+
       res.json({
         success: true,
         message: 'All plugins reloaded successfully',
@@ -287,14 +287,14 @@ export class PluginController {
           loaded: plugins.length,
           plugins: plugins.map(p => ({
             name: p.metadata.name,
-            state: p.state
-          }))
-        }
+            state: p.state,
+          })),
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to reload plugins'
+        error: error instanceof Error ? error.message : 'Failed to reload plugins',
       });
     }
   }

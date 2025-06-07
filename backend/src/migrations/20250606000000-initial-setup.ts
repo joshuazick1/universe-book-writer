@@ -1,4 +1,4 @@
-import { Db } from 'mongodb';
+import type { Db } from 'mongodb';
 
 export async function up(db: Db): Promise<void> {
   // Create collections with schema validation
@@ -12,25 +12,25 @@ export async function up(db: Db): Promise<void> {
           properties: {
             email: {
               bsonType: 'string',
-              pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
+              pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
             },
             username: {
               bsonType: 'string',
               minLength: 3,
-              maxLength: 30
+              maxLength: 30,
             },
             passwordHash: {
-              bsonType: 'string'
+              bsonType: 'string',
             },
             createdAt: {
-              bsonType: 'date'
+              bsonType: 'date',
             },
             updatedAt: {
-              bsonType: 'date'
-            }
-          }
-        }
-      }
+              bsonType: 'date',
+            },
+          },
+        },
+      },
     }),
 
     // Universes collection
@@ -43,14 +43,14 @@ export async function up(db: Db): Promise<void> {
             name: {
               bsonType: 'string',
               minLength: 1,
-              maxLength: 100
+              maxLength: 100,
             },
             description: {
               bsonType: 'string',
-              maxLength: 2000
+              maxLength: 2000,
             },
             creatorId: {
-              bsonType: 'objectId'
+              bsonType: 'objectId',
             },
             locations: {
               bsonType: 'array',
@@ -61,21 +61,21 @@ export async function up(db: Db): Promise<void> {
                   name: {
                     bsonType: 'string',
                     minLength: 1,
-                    maxLength: 100
+                    maxLength: 100,
                   },
                   description: {
                     bsonType: 'string',
-                    maxLength: 2000
+                    maxLength: 2000,
                   },
                   coordinates: {
                     bsonType: 'object',
-                    additionalProperties: { bsonType: 'number' }
+                    additionalProperties: { bsonType: 'number' },
                   },
                   metadata: {
-                    bsonType: 'object'
-                  }
-                }
-              }
+                    bsonType: 'object',
+                  },
+                },
+              },
             },
             timelines: {
               bsonType: 'array',
@@ -86,7 +86,7 @@ export async function up(db: Db): Promise<void> {
                   name: {
                     bsonType: 'string',
                     minLength: 1,
-                    maxLength: 100
+                    maxLength: 100,
                   },
                   events: {
                     bsonType: 'array',
@@ -95,33 +95,33 @@ export async function up(db: Db): Promise<void> {
                       required: ['id', 'date', 'description'],
                       properties: {
                         id: {
-                          bsonType: 'string'
+                          bsonType: 'string',
                         },
                         date: {
-                          bsonType: 'string'
+                          bsonType: 'string',
                         },
                         description: {
                           bsonType: 'string',
-                          maxLength: 2000
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+                          maxLength: 2000,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
             metadata: {
-              bsonType: 'object'
+              bsonType: 'object',
             },
             createdAt: {
-              bsonType: 'date'
+              bsonType: 'date',
             },
             updatedAt: {
-              bsonType: 'date'
-            }
-          }
-        }
-      }
+              bsonType: 'date',
+            },
+          },
+        },
+      },
     }),
 
     // Characters collection
@@ -134,27 +134,27 @@ export async function up(db: Db): Promise<void> {
             name: {
               bsonType: 'string',
               minLength: 1,
-              maxLength: 100
+              maxLength: 100,
             },
             universeId: {
-              bsonType: 'objectId'
+              bsonType: 'objectId',
             },
             description: {
               bsonType: 'string',
-              maxLength: 2000
+              maxLength: 2000,
             },
             attributes: {
-              bsonType: 'object'
+              bsonType: 'object',
             },
             createdAt: {
-              bsonType: 'date'
+              bsonType: 'date',
             },
             updatedAt: {
-              bsonType: 'date'
-            }
-          }
-        }
-      }
+              bsonType: 'date',
+            },
+          },
+        },
+      },
     }),
 
     // Books collection
@@ -167,31 +167,31 @@ export async function up(db: Db): Promise<void> {
             title: {
               bsonType: 'string',
               minLength: 1,
-              maxLength: 200
+              maxLength: 200,
             },
             universeId: {
-              bsonType: 'objectId'
+              bsonType: 'objectId',
             },
             authorId: {
-              bsonType: 'objectId'
+              bsonType: 'objectId',
             },
             synopsis: {
               bsonType: 'string',
-              maxLength: 2000
+              maxLength: 2000,
             },
             status: {
-              enum: ['draft', 'in-progress', 'review', 'published']
+              enum: ['draft', 'in-progress', 'review', 'published'],
             },
             createdAt: {
-              bsonType: 'date'
+              bsonType: 'date',
             },
             updatedAt: {
-              bsonType: 'date'
-            }
-          }
-        }
-      }
-    })
+              bsonType: 'date',
+            },
+          },
+        },
+      },
+    }),
   ]);
 
   // Create indexes
@@ -211,7 +211,7 @@ export async function up(db: Db): Promise<void> {
     // Books indexes
     db.collection('books').createIndex({ universeId: 1 }),
     db.collection('books').createIndex({ authorId: 1 }),
-    db.collection('books').createIndex({ title: 1, universeId: 1 })
+    db.collection('books').createIndex({ title: 1, universeId: 1 }),
   ]);
 }
 
@@ -221,6 +221,6 @@ export async function down(db: Db): Promise<void> {
     db.collection('books').drop(),
     db.collection('characters').drop(),
     db.collection('universes').drop(),
-    db.collection('users').drop()
+    db.collection('users').drop(),
   ]);
 }

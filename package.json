@@ -3,21 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": {
-    "packages": [
-      "packages/*",
-      "frontend",
-      "backend",
-      "ai-server",
-      "plugins/*",
-      "tools/*"
-    ],
-    "nohoist": [
-      "**/vite",
-      "**/tailwindcss",
-      "**/express",
-      "**/react",
-      "**/react-dom"
-    ]
+    "packages": ["packages/*", "frontend", "backend", "ai-server", "plugins/*", "tools/*"],
+    "nohoist": ["**/vite", "**/tailwindcss", "**/express", "**/react", "**/react-dom"]
   },
   "scripts": {
     "prepare": "husky install",
@@ -53,6 +40,7 @@
     "@babel/preset-env": "^7.23.7",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
+    "@biomejs/biome": "^1.9.4",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@playwright/test": "^1.52.0",

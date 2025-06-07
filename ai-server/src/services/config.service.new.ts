@@ -3,7 +3,7 @@
  * Manages AI settings in the database
  */
 
-import { Collection, MongoClient } from 'mongodb';
+import type { Collection, MongoClient } from 'mongodb';
 
 // Local type definitions (will move to core package later)
 export interface OllamaServerSettings {
@@ -59,15 +59,22 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
   private collection: Collection<AISettings & { _id: string }>;
   private static readonly SETTINGS_ID = 'ai_settings';
 
-  constructor(private mongoClient: MongoClient, dbName: string) {
-    this.collection = mongoClient.db(dbName).collection<AISettings & { _id: string }>('ai_settings');
+  constructor(
+    private mongoClient: MongoClient,
+    dbName: string
+  ) {
+    this.collection = mongoClient
+      .db(dbName)
+      .collection<AISettings & { _id: string }>('ai_settings');
   }
 
   /**
    * Get current AI settings
    */
   public async getSettings(): Promise<AISettings> {
-    const settings = await this.collection.findOne({ _id: DatabaseAIConfigurationService.SETTINGS_ID });
+    const settings = await this.collection.findOne({
+      _id: DatabaseAIConfigurationService.SETTINGS_ID,
+    });
     if (!settings) {
       return DefaultAISettings;
     }
@@ -88,7 +95,7 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
 
     await this.collection.replaceOne(
       { _id: DatabaseAIConfigurationService.SETTINGS_ID },
-      { _id: DatabaseAIConfigurationService.SETTINGS_ID, ...newSettings },
+      newSettings,
       { upsert: true }
     );
 
@@ -100,7 +107,7 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
    */
   public async addOllamaServer(server: OllamaServerSettings): Promise<AISettings> {
     const currentSettings = await this.getSettings();
-    
+
     // Check if server already exists
     if (currentSettings.ollamaServers.some((s: any) => s.id === server.id)) {
       throw new Error(`Server with ID ${server.id} already exists`);
@@ -119,7 +126,7 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
    */
   public async removeOllamaServer(serverId: string): Promise<AISettings> {
     const currentSettings = await this.getSettings();
-    
+
     const newSettings = {
       ...currentSettings,
       ollamaServers: currentSettings.ollamaServers.filter((s: any) => s.id !== serverId),
@@ -131,9 +138,12 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
   /**
    * Update Ollama server
    */
-  public async updateOllamaServer(serverId: string, serverUpdate: Partial<OllamaServerSettings>): Promise<AISettings> {
+  public async updateOllamaServer(
+    serverId: string,
+    serverUpdate: Partial<OllamaServerSettings>
+  ): Promise<AISettings> {
     const currentSettings = await this.getSettings();
-    
+
     const serverIndex = currentSettings.ollamaServers.findIndex((s: any) => s.id === serverId);
     if (serverIndex === -1) {
       throw new Error(`Server with ID ${serverId} not found`);
@@ -154,8 +164,10 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
    * Initialize the collection with default settings if it doesn't exist
    */
   public async initialize(): Promise<void> {
-    const existingSettings = await this.collection.findOne({ _id: DatabaseAIConfigurationService.SETTINGS_ID });
-    
+    const existingSettings = await this.collection.findOne({
+      _id: DatabaseAIConfigurationService.SETTINGS_ID,
+    });
+
     if (!existingSettings) {
       await this.collection.insertOne({
         _id: DatabaseAIConfigurationService.SETTINGS_ID,
@@ -184,7 +196,7 @@ export class InMemoryAIConfigurationService implements AIConfigurationService {
     if (this.settings.ollamaServers.some(s => s.id === server.id)) {
       throw new Error(`Server with ID ${server.id} already exists`);
     }
-    
+
     this.settings.ollamaServers.push(server);
     return { ...this.settings };
   }
@@ -194,13 +206,19 @@ export class InMemoryAIConfigurationService implements AIConfigurationService {
     return { ...this.settings };
   }
 
-  public async updateOllamaServer(serverId: string, serverUpdate: Partial<OllamaServerSettings>): Promise<AISettings> {
+  public async updateOllamaServer(
+    serverId: string,
+    serverUpdate: Partial<OllamaServerSettings>
+  ): Promise<AISettings> {
     const serverIndex = this.settings.ollamaServers.findIndex(s => s.id === serverId);
     if (serverIndex === -1) {
       throw new Error(`Server with ID ${serverId} not found`);
     }
 
-    this.settings.ollamaServers[serverIndex] = { ...this.settings.ollamaServers[serverIndex], ...serverUpdate };
+    this.settings.ollamaServers[serverIndex] = {
+      ...this.settings.ollamaServers[serverIndex],
+      ...serverUpdate,
+    };
     return { ...this.settings };
   }
 }

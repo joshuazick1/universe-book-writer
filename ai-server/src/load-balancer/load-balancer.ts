@@ -3,15 +3,15 @@
  * Manages request distribution across multiple Ollama servers
  */
 
-import { EventEmitter } from 'events';
-import { OllamaServerConfig } from '../config/ollama.config';
-import { OllamaHealthMonitor, ServerHealth } from '../health/health-monitor';
+import { EventEmitter } from 'node:events';
+import type { OllamaServerConfig } from '../config/ollama.config.js';
+import type { OllamaHealthMonitor, ServerHealth } from '../health/health-monitor.js';
 
 export interface LoadBalancingStrategy {
   name: string;
   selectServer(
-    availableServers: OllamaServerConfig[], 
-    healthStatus: Map<string, ServerHealth>, 
+    availableServers: OllamaServerConfig[],
+    healthStatus: Map<string, ServerHealth>,
     metrics?: Map<string, RequestMetrics>
   ): OllamaServerConfig | null;
 }
@@ -31,9 +31,13 @@ export class RoundRobinStrategy implements LoadBalancingStrategy {
   name = 'round-robin';
   private currentIndex = 0;
 
-  selectServer(availableServers: OllamaServerConfig[], healthStatus: Map<string, ServerHealth>, metrics?: Map<string, RequestMetrics>): OllamaServerConfig | null {
+  selectServer(
+    availableServers: OllamaServerConfig[],
+    healthStatus: Map<string, ServerHealth>,
+    metrics?: Map<string, RequestMetrics>
+  ): OllamaServerConfig | null {
     if (availableServers.length === 0) return null;
-    
+
     const server = availableServers[this.currentIndex % availableServers.length];
     this.currentIndex = (this.currentIndex + 1) % availableServers.length;
     return server;
@@ -46,9 +50,13 @@ export class RoundRobinStrategy implements LoadBalancingStrategy {
 export class PriorityStrategy implements LoadBalancingStrategy {
   name = 'priority';
 
-  selectServer(availableServers: OllamaServerConfig[], healthStatus: Map<string, ServerHealth>, metrics?: Map<string, RequestMetrics>): OllamaServerConfig | null {
+  selectServer(
+    availableServers: OllamaServerConfig[],
+    healthStatus: Map<string, ServerHealth>,
+    metrics?: Map<string, RequestMetrics>
+  ): OllamaServerConfig | null {
     if (availableServers.length === 0) return null;
-    
+
     // Sort by priority (highest first) and select the first one
     const sorted = [...availableServers].sort((a, b) => b.priority - a.priority);
     return sorted[0];
@@ -60,12 +68,16 @@ export class PriorityStrategy implements LoadBalancingStrategy {
  */
 export class LeastConnectionsStrategy implements LoadBalancingStrategy {
   name = 'least-connections';
-  selectServer(availableServers: OllamaServerConfig[], healthStatus: Map<string, ServerHealth>, metrics?: Map<string, RequestMetrics>): OllamaServerConfig | null {
+  selectServer(
+    availableServers: OllamaServerConfig[],
+    healthStatus: Map<string, ServerHealth>,
+    metrics?: Map<string, RequestMetrics>
+  ): OllamaServerConfig | null {
     if (availableServers.length === 0) return null;
-    
+
     let bestServer = availableServers[0];
     let leastConnections = metrics?.get(bestServer.id)?.activeRequests ?? 0;
-    
+
     for (const server of availableServers.slice(1)) {
       const connections = metrics?.get(server.id)?.activeRequests ?? 0;
       if (connections < leastConnections) {
@@ -73,7 +85,7 @@ export class LeastConnectionsStrategy implements LoadBalancingStrategy {
         bestServer = server;
       }
     }
-    
+
     return bestServer;
   }
 }
@@ -84,20 +96,24 @@ export class LeastConnectionsStrategy implements LoadBalancingStrategy {
 export class ResponseTimeStrategy implements LoadBalancingStrategy {
   name = 'response-time';
 
-  selectServer(availableServers: OllamaServerConfig[], healthStatus: Map<string, ServerHealth>, metrics?: Map<string, RequestMetrics>): OllamaServerConfig | null {
+  selectServer(
+    availableServers: OllamaServerConfig[],
+    healthStatus: Map<string, ServerHealth>,
+    metrics?: Map<string, RequestMetrics>
+  ): OllamaServerConfig | null {
     if (availableServers.length === 0) return null;
-    
+
     let bestServer = availableServers[0];
-    let bestTime = healthStatus.get(bestServer.id)?.responseTime ?? Infinity;
-    
+    let bestTime = healthStatus.get(bestServer.id)?.responseTime ?? Number.POSITIVE_INFINITY;
+
     for (const server of availableServers.slice(1)) {
-      const responseTime = healthStatus.get(server.id)?.responseTime ?? Infinity;
+      const responseTime = healthStatus.get(server.id)?.responseTime ?? Number.POSITIVE_INFINITY;
       if (responseTime < bestTime) {
         bestTime = responseTime;
         bestServer = server;
       }
     }
-    
+
     return bestServer;
   }
 }
@@ -108,7 +124,7 @@ export class OllamaLoadBalancer extends EventEmitter {
   private strategy: LoadBalancingStrategy;
   private healthMonitor: OllamaHealthMonitor;
 
-  constructor(strategy: LoadBalancingStrategy = new PriorityStrategy(), healthMonitor: OllamaHealthMonitor) {
+  constructor(strategy: LoadBalancingStrategy, healthMonitor: OllamaHealthMonitor) {
     super();
     this.strategy = strategy;
     this.healthMonitor = healthMonitor;
@@ -119,7 +135,7 @@ export class OllamaLoadBalancer extends EventEmitter {
    */
   public addServer(server: OllamaServerConfig): void {
     this.servers.set(server.id, server);
-    
+
     // Initialize metrics for the server
     this.metrics.set(server.id, {
       serverId: server.id,
@@ -176,7 +192,7 @@ export class OllamaLoadBalancer extends EventEmitter {
    */
   public selectServer(requiredModel?: string): OllamaServerConfig | null {
     const availableServers = this.getAvailableServers(requiredModel);
-    
+
     if (availableServers.length === 0) {
       this.emit('noServersAvailable', requiredModel);
       return null;
@@ -184,11 +200,11 @@ export class OllamaLoadBalancer extends EventEmitter {
 
     const healthStatus = this.healthMonitor.getAllServerHealth();
     const selectedServer = this.strategy.selectServer(availableServers, healthStatus, this.metrics);
-    
+
     if (selectedServer) {
       this.emit('serverSelected', selectedServer.id, this.strategy.name);
     }
-    
+
     return selectedServer;
   }
 
@@ -197,24 +213,24 @@ export class OllamaLoadBalancer extends EventEmitter {
    */
   private getAvailableServers(requiredModel?: string): OllamaServerConfig[] {
     const available: OllamaServerConfig[] = [];
-    
+
     for (const server of this.servers.values()) {
       // Check if server is active
       if (!server.isActive) continue;
-      
+
       // Check if server is healthy
       if (!this.healthMonitor.isServerAvailable(server.id)) continue;
-      
+
       // Check if server has required model
       if (requiredModel && !server.models.includes(requiredModel)) continue;
-      
+
       // Check if server has capacity
       const metrics = this.metrics.get(server.id);
       if (metrics && metrics.activeRequests >= server.maxConcurrentRequests) continue;
-      
+
       available.push(server);
     }
-    
+
     return available;
   }
 
@@ -237,12 +253,13 @@ export class OllamaLoadBalancer extends EventEmitter {
     const metrics = this.metrics.get(serverId);
     if (metrics) {
       metrics.activeRequests = Math.max(0, metrics.activeRequests - 1);
-      
+
       // Update average response time (exponential moving average)
       if (success) {
         const alpha = 0.1; // Smoothing factor
-        metrics.averageResponseTime = alpha * responseTime + (1 - alpha) * metrics.averageResponseTime;
-        
+        metrics.averageResponseTime =
+          alpha * responseTime + (1 - alpha) * metrics.averageResponseTime;
+
         // Record success in health monitor
         this.healthMonitor.recordSuccess(serverId, responseTime);
       } else {
@@ -265,11 +282,11 @@ export class OllamaLoadBalancer extends EventEmitter {
     averageResponseTime: number;
   }> {
     const utilization: Array<any> = [];
-    
+
     for (const [serverId, server] of this.servers) {
       const metrics = this.metrics.get(serverId);
       const health = this.healthMonitor.getServerHealth(serverId);
-      
+
       if (metrics && health) {
         utilization.push({
           serverId,
@@ -282,7 +299,7 @@ export class OllamaLoadBalancer extends EventEmitter {
         });
       }
     }
-    
+
     return utilization;
   }
 

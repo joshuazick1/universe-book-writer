@@ -2,7 +2,7 @@
  * Plugin system interfaces and types for the Multi-Universe Book Series Writing Assistant
  */
 
-import { BaseEntity } from '../../shared/index.js';
+import type { BaseEntity } from '../../shared/index.js';
 
 /**
  * Plugin lifecycle states
@@ -12,7 +12,7 @@ export enum PluginState {
   LOADED = 'loaded',
   INITIALIZED = 'initialized',
   ACTIVE = 'active',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 /**
@@ -22,7 +22,7 @@ export enum PluginType {
   UNIVERSE = 'universe',
   THEME = 'theme',
   AI = 'ai',
-  CORE = 'core'
+  CORE = 'core',
 }
 
 /**

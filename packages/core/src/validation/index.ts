@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BaseEntity } from '../shared/index.js';
+import type { BaseEntity } from '../shared/index.js';
 
 /**
  * Base schema for entities with common fields

@@ -2,9 +2,9 @@
  * Simple plugin system integration test - Backend API testing
  */
 
-import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
-import { setupMongoForTest } from '../helpers/mongodb-test-helper.js';
+import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { PluginSystemFactory } from '../../src/plugins/manager/plugin-system.factory.js';
+import { setupMongoForTest } from '../helpers/mongodb-test-helper.js';
 
 describe('Plugin System Backend Integration', () => {
   let mongoClient: any;
@@ -22,7 +22,7 @@ describe('Plugin System Backend Integration', () => {
       pluginSystem = await PluginSystemFactory.create({
         mongoClient,
         databaseName: 'test-simple-plugin',
-        autoLoadPlugins: false
+        autoLoadPlugins: false,
       });
 
       console.log('Plugin system integration test setup complete');

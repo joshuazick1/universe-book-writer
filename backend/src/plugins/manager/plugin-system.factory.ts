@@ -32,11 +32,8 @@ export class PluginSystemFactory {
     repository: MongoPluginRepository;
   }> {
     // Create repository
-    const repository = new MongoPluginRepository(
-      config.mongoClient,
-      config.databaseName
-    );
-    
+    const repository = new MongoPluginRepository(config.mongoClient, config.databaseName);
+
     // Initialize repository (create indexes)
     await repository.initialize();
 
@@ -47,11 +44,7 @@ export class PluginSystemFactory {
     const loader = new FileSystemPluginLoader();
 
     // Create use case
-    const pluginUseCase = new PluginUseCase(
-      repository,
-      domainService,
-      loader
-    );
+    const pluginUseCase = new PluginUseCase(repository, domainService, loader);
 
     // Create controller
     const pluginController = new PluginController(pluginUseCase);
@@ -64,7 +57,7 @@ export class PluginSystemFactory {
     return {
       pluginUseCase,
       pluginController,
-      repository
+      repository,
     };
   }
 
@@ -80,7 +73,7 @@ export class PluginSystemFactory {
     for (const directory of directories) {
       try {
         const plugins = await loader.loadFromDirectory(directory);
-        
+
         for (const plugin of plugins) {
           try {
             await pluginUseCase.register(plugin);

@@ -1,235 +1,295 @@
 import { z } from 'zod';
-import { BaseValidator } from './index.js';
 import type { Universe } from '../domains/universe/index.js';
+import { BaseValidator } from './index.js';
 /**
  * Location schema for universe validation
  */
-export declare const LocationSchema: z.ZodObject<{
+export declare const LocationSchema: z.ZodObject<
+  {
     id: z.ZodString;
     createdAt: z.ZodDate;
     updatedAt: z.ZodDate;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-} & {
+  } & {
     name: z.ZodString;
     description: z.ZodString;
     coordinates: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodNumber>>;
-}, "strip", z.ZodTypeAny, {
+  },
+  'strip',
+  z.ZodTypeAny,
+  {
+    id: string;
     name: string;
     description: string;
     createdAt: Date;
     updatedAt: Date;
-    id: string;
     metadata?: Record<string, unknown> | undefined;
     coordinates?: Record<string, number> | undefined;
-}, {
+  },
+  {
+    id: string;
     name: string;
     description: string;
     createdAt: Date;
     updatedAt: Date;
-    id: string;
     metadata?: Record<string, unknown> | undefined;
     coordinates?: Record<string, number> | undefined;
-}>;
+  }
+>;
 /**
  * Timeline event schema
  */
-export declare const TimelineEventSchema: z.ZodObject<{
+export declare const TimelineEventSchema: z.ZodObject<
+  {
     id: z.ZodString;
     date: z.ZodString;
     description: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    date: string;
-    description: string;
+  },
+  'strip',
+  z.ZodTypeAny,
+  {
     id: string;
-}, {
-    date: string;
     description: string;
+    date: string;
+  },
+  {
     id: string;
-}>;
+    description: string;
+    date: string;
+  }
+>;
 /**
  * Timeline schema
  */
-export declare const TimelineSchema: z.ZodObject<{
+export declare const TimelineSchema: z.ZodObject<
+  {
     id: z.ZodString;
     createdAt: z.ZodDate;
     updatedAt: z.ZodDate;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-} & {
+  } & {
     name: z.ZodString;
-    events: z.ZodArray<z.ZodObject<{
-        id: z.ZodString;
-        date: z.ZodString;
-        description: z.ZodString;
-    }, "strip", z.ZodTypeAny, {
-        date: string;
-        description: string;
-        id: string;
-    }, {
-        date: string;
-        description: string;
-        id: string;
-    }>, "many">;
-}, "strip", z.ZodTypeAny, {
+    events: z.ZodArray<
+      z.ZodObject<
+        {
+          id: z.ZodString;
+          date: z.ZodString;
+          description: z.ZodString;
+        },
+        'strip',
+        z.ZodTypeAny,
+        {
+          id: string;
+          description: string;
+          date: string;
+        },
+        {
+          id: string;
+          description: string;
+          date: string;
+        }
+      >,
+      'many'
+    >;
+  },
+  'strip',
+  z.ZodTypeAny,
+  {
+    id: string;
     name: string;
     createdAt: Date;
     updatedAt: Date;
     events: {
-        date: string;
-        description: string;
-        id: string;
+      id: string;
+      description: string;
+      date: string;
     }[];
-    id: string;
     metadata?: Record<string, unknown> | undefined;
-}, {
+  },
+  {
+    id: string;
     name: string;
     createdAt: Date;
     updatedAt: Date;
     events: {
-        date: string;
-        description: string;
-        id: string;
+      id: string;
+      description: string;
+      date: string;
     }[];
-    id: string;
     metadata?: Record<string, unknown> | undefined;
-}>;
-export declare const UniverseSchema: z.ZodObject<{
+  }
+>;
+export declare const UniverseSchema: z.ZodObject<
+  {
     id: z.ZodString;
     createdAt: z.ZodDate;
     updatedAt: z.ZodDate;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-} & {
+  } & {
     name: z.ZodString;
     description: z.ZodString;
-    locations: z.ZodArray<z.ZodObject<{
-        id: z.ZodString;
-        createdAt: z.ZodDate;
-        updatedAt: z.ZodDate;
-        metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-    } & {
-        name: z.ZodString;
-        description: z.ZodString;
-        coordinates: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodNumber>>;
-    }, "strip", z.ZodTypeAny, {
-        name: string;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        metadata?: Record<string, unknown> | undefined;
-        coordinates?: Record<string, number> | undefined;
-    }, {
-        name: string;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        metadata?: Record<string, unknown> | undefined;
-        coordinates?: Record<string, number> | undefined;
-    }>, "many">;
-    timelines: z.ZodArray<z.ZodObject<{
-        id: z.ZodString;
-        createdAt: z.ZodDate;
-        updatedAt: z.ZodDate;
-        metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-    } & {
-        name: z.ZodString;
-        events: z.ZodArray<z.ZodObject<{
-            id: z.ZodString;
-            date: z.ZodString;
-            description: z.ZodString;
-        }, "strip", z.ZodTypeAny, {
-            date: string;
-            description: string;
+    locations: z.ZodArray<
+      z.ZodObject<
+        {
+          id: z.ZodString;
+          createdAt: z.ZodDate;
+          updatedAt: z.ZodDate;
+          metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+        } & {
+          name: z.ZodString;
+          description: z.ZodString;
+          coordinates: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodNumber>>;
+        },
+        'strip',
+        z.ZodTypeAny,
+        {
+          id: string;
+          name: string;
+          description: string;
+          createdAt: Date;
+          updatedAt: Date;
+          metadata?: Record<string, unknown> | undefined;
+          coordinates?: Record<string, number> | undefined;
+        },
+        {
+          id: string;
+          name: string;
+          description: string;
+          createdAt: Date;
+          updatedAt: Date;
+          metadata?: Record<string, unknown> | undefined;
+          coordinates?: Record<string, number> | undefined;
+        }
+      >,
+      'many'
+    >;
+    timelines: z.ZodArray<
+      z.ZodObject<
+        {
+          id: z.ZodString;
+          createdAt: z.ZodDate;
+          updatedAt: z.ZodDate;
+          metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+        } & {
+          name: z.ZodString;
+          events: z.ZodArray<
+            z.ZodObject<
+              {
+                id: z.ZodString;
+                date: z.ZodString;
+                description: z.ZodString;
+              },
+              'strip',
+              z.ZodTypeAny,
+              {
+                id: string;
+                description: string;
+                date: string;
+              },
+              {
+                id: string;
+                description: string;
+                date: string;
+              }
+            >,
+            'many'
+          >;
+        },
+        'strip',
+        z.ZodTypeAny,
+        {
+          id: string;
+          name: string;
+          createdAt: Date;
+          updatedAt: Date;
+          events: {
             id: string;
-        }, {
-            date: string;
             description: string;
-            id: string;
-        }>, "many">;
-    }, "strip", z.ZodTypeAny, {
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        events: {
             date: string;
-            description: string;
+          }[];
+          metadata?: Record<string, unknown> | undefined;
+        },
+        {
+          id: string;
+          name: string;
+          createdAt: Date;
+          updatedAt: Date;
+          events: {
             id: string;
-        }[];
-        id: string;
-        metadata?: Record<string, unknown> | undefined;
-    }, {
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        events: {
+            description: string;
             date: string;
-            description: string;
-            id: string;
-        }[];
-        id: string;
-        metadata?: Record<string, unknown> | undefined;
-    }>, "many">;
-}, "strip", z.ZodTypeAny, {
+          }[];
+          metadata?: Record<string, unknown> | undefined;
+        }
+      >,
+      'many'
+    >;
+  },
+  'strip',
+  z.ZodTypeAny,
+  {
+    id: string;
     name: string;
     description: string;
     createdAt: Date;
     updatedAt: Date;
-    id: string;
     locations: {
-        name: string;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        metadata?: Record<string, unknown> | undefined;
-        coordinates?: Record<string, number> | undefined;
+      id: string;
+      name: string;
+      description: string;
+      createdAt: Date;
+      updatedAt: Date;
+      metadata?: Record<string, unknown> | undefined;
+      coordinates?: Record<string, number> | undefined;
     }[];
     timelines: {
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        events: {
-            date: string;
-            description: string;
-            id: string;
-        }[];
+      id: string;
+      name: string;
+      createdAt: Date;
+      updatedAt: Date;
+      events: {
         id: string;
-        metadata?: Record<string, unknown> | undefined;
+        description: string;
+        date: string;
+      }[];
+      metadata?: Record<string, unknown> | undefined;
     }[];
     metadata?: Record<string, unknown> | undefined;
-}, {
+  },
+  {
+    id: string;
     name: string;
     description: string;
     createdAt: Date;
     updatedAt: Date;
-    id: string;
     locations: {
-        name: string;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        metadata?: Record<string, unknown> | undefined;
-        coordinates?: Record<string, number> | undefined;
+      id: string;
+      name: string;
+      description: string;
+      createdAt: Date;
+      updatedAt: Date;
+      metadata?: Record<string, unknown> | undefined;
+      coordinates?: Record<string, number> | undefined;
     }[];
     timelines: {
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        events: {
-            date: string;
-            description: string;
-            id: string;
-        }[];
+      id: string;
+      name: string;
+      createdAt: Date;
+      updatedAt: Date;
+      events: {
         id: string;
-        metadata?: Record<string, unknown> | undefined;
+        description: string;
+        date: string;
+      }[];
+      metadata?: Record<string, unknown> | undefined;
     }[];
     metadata?: Record<string, unknown> | undefined;
-}>;
+  }
+>;
 /**
  * Universe validator implementation
  */
 export declare class UniverseValidator extends BaseValidator<Universe> {
-    constructor();
+  constructor();
 }
 //# sourceMappingURL=universe.d.ts.map

@@ -2,11 +2,11 @@
  * Plugin hot reload system - File watching and state preservation
  */
 
-import { FSWatcher, watch } from 'chokidar';
-import { EventEmitter } from 'events';
-import path from 'path';
-import { Plugin, PluginState } from '@universe-book-writer/core';
-import { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
+import { EventEmitter } from 'node:events';
+import path from 'node:path';
+import { type Plugin, PluginState } from '@universe-book-writer/core';
+import { type FSWatcher, watch } from 'chokidar';
+import type { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
 
 /**
  * Plugin reload event data
@@ -26,7 +26,7 @@ export enum ReloadReason {
   FILE_CHANGED = 'file_changed',
   DEPENDENCY_UPDATED = 'dependency_updated',
   CONFIGURATION_CHANGED = 'configuration_changed',
-  MANUAL_RELOAD = 'manual_reload'
+  MANUAL_RELOAD = 'manual_reload',
 }
 
 /**
@@ -50,10 +50,12 @@ export interface WatchConfig {
   ignoreInitial?: boolean;
   followSymlinks?: boolean;
   depth?: number;
-  awaitWriteFinish?: boolean | {
-    stabilityThreshold?: number;
-    pollInterval?: number;
-  };
+  awaitWriteFinish?:
+    | boolean
+    | {
+        stabilityThreshold?: number;
+        pollInterval?: number;
+      };
 }
 
 /**
@@ -91,15 +93,15 @@ export class PluginWatcher extends EventEmitter {
       // Set up file watcher
       const watcher = watch(pluginPath, {
         ...this.watchConfig,
-        ignoreInitial: true
+        ignoreInitial: true,
       });
 
       // Set up event handlers
       watcher
-        .on('change', (filePath) => this.handleFileChange(pluginName, filePath))
-        .on('add', (filePath) => this.handleFileChange(pluginName, filePath))
-        .on('unlink', (filePath) => this.handleFileChange(pluginName, filePath))
-        .on('error', (error) => this.handleWatchError(pluginName, error));
+        .on('change', filePath => this.handleFileChange(pluginName, filePath))
+        .on('add', filePath => this.handleFileChange(pluginName, filePath))
+        .on('unlink', filePath => this.handleFileChange(pluginName, filePath))
+        .on('error', error => this.handleWatchError(pluginName, error));
 
       this.watchers.set(pluginName, watcher);
       this.pluginPaths.set(pluginName, pluginPath);
@@ -121,7 +123,7 @@ export class PluginWatcher extends EventEmitter {
       this.watchers.delete(pluginName);
       this.pluginPaths.delete(pluginName);
       this.clearDebounceTimer(pluginName);
-      
+
       this.emit('watchStopped', { pluginName });
     }
   }
@@ -130,8 +132,8 @@ export class PluginWatcher extends EventEmitter {
    * Stop watching all plugins
    */
   async unwatchAll(): Promise<void> {
-    const unwatchPromises = Array.from(this.watchers.keys()).map(
-      pluginName => this.unwatchPlugin(pluginName)
+    const unwatchPromises = Array.from(this.watchers.keys()).map(pluginName =>
+      this.unwatchPlugin(pluginName)
     );
     await Promise.all(unwatchPromises);
   }
@@ -178,7 +180,7 @@ export class PluginWatcher extends EventEmitter {
       state: plugin.state,
       config: { ...plugin.config },
       metadata: { ...plugin.metadata },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Allow plugins to provide custom state data
@@ -285,12 +287,17 @@ export class PluginWatcher extends EventEmitter {
         oldPlugin,
         newPlugin,
         reloadReason: reason,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      this.emit('pluginReloaded', reloadEvent);    } catch (error) {
+      this.emit('pluginReloaded', reloadEvent);
+    } catch (error) {
       // Attempt recovery
-      await this.attemptRecovery(pluginName, pluginPath, error instanceof Error ? error : new Error(String(error)));
+      await this.attemptRecovery(
+        pluginName,
+        pluginPath,
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -300,19 +307,23 @@ export class PluginWatcher extends EventEmitter {
    */
   private clearModuleCache(pluginPath: string): void {
     const resolvedPath = path.resolve(pluginPath);
-    
+
     // Clear from require cache
-    Object.keys(require.cache).forEach(key => {
+    for (const key of Object.keys(require.cache)) {
       if (key.startsWith(resolvedPath)) {
         delete require.cache[key];
       }
-    });
+    }
   }
 
   /**
    * Attempt to recover from reload failure
    */
-  private async attemptRecovery(pluginName: string, pluginPath: string, error: Error): Promise<void> {
+  private async attemptRecovery(
+    pluginName: string,
+    pluginPath: string,
+    error: Error
+  ): Promise<void> {
     this.emit('recoveryAttempt', { pluginName, error });
 
     try {
@@ -351,7 +362,7 @@ export class PluginWatcher extends EventEmitter {
         '**/build/**',
         '**/*.log',
         '**/*.tmp',
-        '**/.DS_Store'
+        '**/.DS_Store',
       ],
       persistent: true,
       ignoreInitial: true,
@@ -359,9 +370,9 @@ export class PluginWatcher extends EventEmitter {
       depth: 10,
       awaitWriteFinish: {
         stabilityThreshold: 100,
-        pollInterval: 50
+        pollInterval: 50,
       },
-      ...this.watchConfig
+      ...this.watchConfig,
     };
   }
 

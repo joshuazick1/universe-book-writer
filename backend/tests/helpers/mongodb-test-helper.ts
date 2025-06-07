@@ -1,6 +1,6 @@
 /**
  * MongoDB Test Helper - Uses Existing Local MongoDB Instance
- * 
+ *
  * This helper connects to your existing MongoDB instance instead of
  * downloading and running MongoDB Memory Server. This is faster and
  * uses your actual MongoDB setup.
@@ -22,7 +22,7 @@ export async function setupMongoForTest(databaseName: string): Promise<MongoTest
   try {
     // Use your existing MongoDB instance
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-    
+
     // Reuse existing connection or create new one
     if (!globalMongoClient) {
       globalMongoClient = new MongoClient(mongoUri);
@@ -50,11 +50,13 @@ export async function setupMongoForTest(databaseName: string): Promise<MongoTest
 
     return {
       mongoClient: globalMongoClient,
-      cleanup
+      cleanup,
     };
   } catch (error) {
     console.error('MongoDB setup failed:', error);
-    throw new Error(`Failed to connect to MongoDB at ${process.env.MONGODB_URI || 'mongodb://localhost:27017'}: ${error}`);
+    throw new Error(
+      `Failed to connect to MongoDB at ${process.env.MONGODB_URI || 'mongodb://localhost:27017'}: ${error}`
+    );
   }
 }
 
@@ -77,5 +79,5 @@ export async function globalMongoCleanup(): Promise<void> {
 export const mongoHelper = {
   async forceCleanup() {
     await globalMongoCleanup();
-  }
+  },
 };

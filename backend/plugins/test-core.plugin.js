@@ -10,7 +10,7 @@ export const metadata = {
   author: 'Universe Book Writer',
   type: 'core',
   dependencies: {},
-  keywords: ['test', 'core']
+  keywords: ['test', 'core'],
 };
 
 // Plugin class
@@ -20,8 +20,8 @@ export class TestCorePlugin {
     this._config = {
       enabled: true,
       settings: {
-        testSetting: 'default-value'
-      }
+        testSetting: 'default-value',
+      },
     };
     this._loadPath = null;
   }
@@ -70,7 +70,7 @@ export class TestCorePlugin {
   async updateConfig(newConfig) {
     this._config = {
       ...this._config,
-      ...newConfig
+      ...newConfig,
     };
   }
 

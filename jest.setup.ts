@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { MongoClient, MongoServerError } from 'mongodb';
 import { jest } from '@jest/globals';
+import { MongoClient, MongoServerError } from 'mongodb';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 // Import Redis mock dynamically to work around ESM issues
 const IORedis = await import('ioredis-mock').then(m => m.default);

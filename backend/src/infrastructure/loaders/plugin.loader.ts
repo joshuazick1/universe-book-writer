@@ -2,10 +2,10 @@
  * Plugin loader - Infrastructure layer for loading plugins from files
  */
 
-import { promises as fs } from 'fs';
-import path from 'path';
-import { pathToFileURL } from 'url';
-import { Plugin, PluginMetadata, PluginType } from '@universe-book-writer/core';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { type Plugin, type PluginMetadata, PluginType } from '@universe-book-writer/core';
 import { PluginEntity } from '../../core/entities/plugin.entity.js';
 
 /**
@@ -34,14 +34,14 @@ export class FileSystemPluginLoader implements PluginLoader {
 
     // Load plugin metadata
     const metadata = await this.loadPluginMetadata(pluginPath);
-    
+
     // Load plugin implementation
     const pluginModule = await this.loadPluginModule(pluginPath);
-    
+
     // Create plugin instance
     const plugin = this.createPluginInstance(metadata, pluginModule);
     plugin.setLoadPath(pluginPath);
-    
+
     return plugin;
   }
 
@@ -50,14 +50,14 @@ export class FileSystemPluginLoader implements PluginLoader {
    */
   async loadFromDirectory(directory: string): Promise<Plugin[]> {
     const plugins: Plugin[] = [];
-    
+
     try {
       const entries = await fs.readdir(directory, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         if (entry.isDirectory()) {
           const pluginPath = path.join(directory, entry.name);
-          
+
           try {
             const plugin = await this.loadFromPath(pluginPath);
             plugins.push(plugin);
@@ -69,7 +69,7 @@ export class FileSystemPluginLoader implements PluginLoader {
     } catch (error) {
       throw new Error(`Failed to read plugin directory ${directory}: ${error}`);
     }
-    
+
     return plugins;
   }
 
@@ -79,29 +79,29 @@ export class FileSystemPluginLoader implements PluginLoader {
   async validatePluginStructure(pluginPath: string): Promise<boolean> {
     try {
       const stat = await fs.stat(pluginPath);
-      
+
       if (stat.isFile()) {
         // Single file plugin
         return this.supportedExtensions.includes(path.extname(pluginPath));
       }
-      
+
       if (stat.isDirectory()) {
         // Directory plugin - check for package.json and main file
         const packageJsonPath = path.join(pluginPath, 'package.json');
         const packageJsonExists = await this.fileExists(packageJsonPath);
-        
+
         if (!packageJsonExists) {
           return false;
         }
-        
+
         // Check if main file exists
         const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
         const mainFile = packageJson.main || 'index.js';
         const mainFilePath = path.join(pluginPath, mainFile);
-        
+
         return await this.fileExists(mainFilePath);
       }
-      
+
       return false;
     } catch (error) {
       return false;
@@ -113,7 +113,7 @@ export class FileSystemPluginLoader implements PluginLoader {
    */
   private async loadPluginMetadata(pluginPath: string): Promise<PluginMetadata> {
     const stat = await fs.stat(pluginPath);
-      if (stat.isFile()) {
+    if (stat.isFile()) {
       // Single file plugin - metadata should be exported
       const fileUrl = pathToFileURL(path.resolve(pluginPath)).href;
       const module = await import(fileUrl);
@@ -122,38 +122,38 @@ export class FileSystemPluginLoader implements PluginLoader {
       }
       throw new Error('Plugin metadata not found in module exports');
     }
-    
+
     if (stat.isDirectory()) {
       // Directory plugin - read from package.json
       const packageJsonPath = path.join(pluginPath, 'package.json');
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
-      
+
       return this.extractMetadataFromPackageJson(packageJson);
     }
-    
+
     throw new Error('Invalid plugin path');
   }
 
   /**
    * Load plugin module
-   */  private async loadPluginModule(pluginPath: string): Promise<any> {
+   */ private async loadPluginModule(pluginPath: string): Promise<any> {
     const stat = await fs.stat(pluginPath);
-    
+
     if (stat.isFile()) {
       // Convert absolute path to file URL for ES modules
       const fileUrl = pathToFileURL(path.resolve(pluginPath)).href;
       return await import(fileUrl);
     }
-    
+
     if (stat.isDirectory()) {
       const packageJsonPath = path.join(pluginPath, 'package.json');
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
       const mainFile = packageJson.main || 'index.js';
       const mainFilePath = path.join(pluginPath, mainFile);
-      
+
       return await import(mainFilePath);
     }
-    
+
     throw new Error('Invalid plugin path');
   }
 
@@ -166,12 +166,12 @@ export class FileSystemPluginLoader implements PluginLoader {
       // Plugin class constructor
       return new module.default(metadata);
     }
-    
+
     if (module.Plugin && typeof module.Plugin === 'function') {
       // Named plugin class export
       return new module.Plugin(metadata);
     }
-    
+
     // Create a generic plugin wrapper
     return new GenericPluginWrapper(metadata, module);
   }
@@ -181,7 +181,7 @@ export class FileSystemPluginLoader implements PluginLoader {
    */
   private extractMetadataFromPackageJson(packageJson: any): PluginMetadata {
     const universeBookWriter = packageJson['universe-book-writer'] || {};
-    
+
     return {
       name: packageJson.name,
       version: packageJson.version,
@@ -194,7 +194,7 @@ export class FileSystemPluginLoader implements PluginLoader {
       type: universeBookWriter.type || PluginType.CORE,
       dependencies: packageJson.dependencies || {},
       peerDependencies: packageJson.peerDependencies,
-      engines: packageJson.engines
+      engines: packageJson.engines,
     };
   }
 

@@ -2,12 +2,12 @@
  * Plugin entity - Core domain model for plugins
  */
 
-import { 
-  Plugin, 
-  PluginState, 
-  PluginConfig, 
-  PluginMetadata, 
-  PluginType 
+import {
+  type Plugin,
+  type PluginConfig,
+  type PluginMetadata,
+  PluginState,
+  PluginType,
 } from '@universe-book-writer/core';
 
 /**
@@ -26,7 +26,7 @@ export class PluginEntity implements Plugin {
     this._config = {
       enabled: true,
       settings: {},
-      ...config
+      ...config,
     };
   }
 
@@ -134,7 +134,7 @@ export class PluginEntity implements Plugin {
    */
   async updateConfig(config: Partial<PluginConfig>): Promise<void> {
     const newConfig = { ...this._config, ...config };
-    
+
     if (await this.validateConfig(newConfig)) {
       this._config = newConfig;
       await this.onConfigUpdate(newConfig);

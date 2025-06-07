@@ -2,10 +2,10 @@
  * Plugin discovery system - Automatically discovers and catalogs available plugins
  */
 
-import { promises as fs } from 'fs';
-import path from 'path';
-import { EventEmitter } from 'events';
-import { Plugin, PluginMetadata, PluginType } from '@universe-book-writer/core';
+import { EventEmitter } from 'node:events';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { type Plugin, type PluginMetadata, PluginType } from '@universe-book-writer/core';
 import { FileSystemPluginLoader } from '../loaders/plugin.loader.js';
 
 /**
@@ -78,7 +78,7 @@ export class PluginDiscoveryService extends EventEmitter {
 
   constructor(config: Partial<DiscoveryConfig> = {}) {
     super();
-    
+
     this.config = {
       searchPaths: ['./plugins', './node_modules'],
       recursive: true,
@@ -89,7 +89,7 @@ export class PluginDiscoveryService extends EventEmitter {
         '**/dist/**',
         '**/build/**',
         '**/*.test.*',
-        '**/*.spec.*'
+        '**/*.spec.*',
       ],
       includeDotFiles: false,
       followSymlinks: false,
@@ -97,11 +97,11 @@ export class PluginDiscoveryService extends EventEmitter {
       scanInterval: 60000, // 1 minute
       cacheResults: true,
       validateOnDiscovery: true,
-      ...config
+      ...config,
     };
 
     this.loader = new FileSystemPluginLoader();
-    
+
     if (this.config.autoScan) {
       this.startAutoScan();
     }
@@ -117,7 +117,7 @@ export class PluginDiscoveryService extends EventEmitter {
 
     this.isScanning = true;
     const startTime = Date.now();
-    
+
     try {
       this.emit('scanStarted');
 
@@ -128,9 +128,9 @@ export class PluginDiscoveryService extends EventEmitter {
       for (const searchPath of this.config.searchPaths) {
         try {
           const plugins = await this.scanPath(searchPath);
-          plugins.forEach(plugin => {
+          for (const plugin of plugins) {
             currentPlugins.set(plugin.name, plugin);
-          });
+          }
         } catch (error) {
           this.emit('scanError', { path: searchPath, error });
         }
@@ -138,7 +138,7 @@ export class PluginDiscoveryService extends EventEmitter {
 
       // Calculate scan statistics
       const result = this.calculateScanResult(previousPlugins, currentPlugins, startTime);
-      
+
       // Update cached results if enabled
       if (this.config.cacheResults) {
         this.discoveredPlugins = currentPlugins;
@@ -146,7 +146,6 @@ export class PluginDiscoveryService extends EventEmitter {
 
       this.emit('scanCompleted', result);
       return result;
-
     } finally {
       this.isScanning = false;
     }
@@ -157,7 +156,7 @@ export class PluginDiscoveryService extends EventEmitter {
    */
   findPlugins(filter: PluginFilter = {}): PluginDiscoveryEntry[] {
     const plugins = Array.from(this.discoveredPlugins.values());
-    
+
     return plugins.filter(plugin => {
       // Type filter
       if (filter.type) {
@@ -182,11 +181,17 @@ export class PluginDiscoveryService extends EventEmitter {
         return false;
       }
 
-      if (filter.minVersion && this.compareVersions(plugin.metadata.version, filter.minVersion) < 0) {
+      if (
+        filter.minVersion &&
+        this.compareVersions(plugin.metadata.version, filter.minVersion) < 0
+      ) {
         return false;
       }
 
-      if (filter.maxVersion && this.compareVersions(plugin.metadata.version, filter.maxVersion) > 0) {
+      if (
+        filter.maxVersion &&
+        this.compareVersions(plugin.metadata.version, filter.maxVersion) > 0
+      ) {
         return false;
       }
 
@@ -295,21 +300,25 @@ export class PluginDiscoveryService extends EventEmitter {
     const validPlugins = plugins.filter(p => p.isValid);
     const invalidPlugins = plugins.filter(p => !p.isValid);
 
-    const pluginsByType = Object.values(PluginType).reduce((acc, type) => {
-      acc[type] = plugins.filter(p => p.metadata.type === type).length;
-      return acc;
-    }, {} as Record<PluginType, number>);
+    const pluginsByType = Object.values(PluginType).reduce(
+      (acc, type) => {
+        acc[type] = plugins.filter(p => p.metadata.type === type).length;
+        return acc;
+      },
+      {} as Record<PluginType, number>
+    );
 
-    const lastScanTime = plugins.length > 0 
-      ? new Date(Math.max(...plugins.map(p => p.lastScanned.getTime())))
-      : undefined;
+    const lastScanTime =
+      plugins.length > 0
+        ? new Date(Math.max(...plugins.map(p => p.lastScanned.getTime())))
+        : undefined;
 
     return {
       totalPlugins: plugins.length,
       validPlugins: validPlugins.length,
       invalidPlugins: invalidPlugins.length,
       pluginsByType,
-      lastScanTime
+      lastScanTime,
     };
   }
 
@@ -385,9 +394,12 @@ export class PluginDiscoveryService extends EventEmitter {
 
       if (packageJsonExists) {
         const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
-        
+
         // Check if it's a valid plugin package
-        if (packageJson['universe-book-writer'] || packageJson.keywords?.includes('universe-book-writer-plugin')) {
+        if (
+          packageJson['universe-book-writer'] ||
+          packageJson.keywords?.includes('universe-book-writer-plugin')
+        ) {
           return await this.createDiscoveryEntry(dirPath, packageJson);
         }
       }
@@ -431,7 +443,8 @@ export class PluginDiscoveryService extends EventEmitter {
 
       if (stats.isDirectory()) {
         return await this.checkDirectoryForPlugin(realPath);
-      } else if (stats.isFile()) {
+      }
+      if (stats.isFile()) {
         return await this.checkFileForPlugin(realPath);
       }
     } catch (error) {
@@ -444,10 +457,13 @@ export class PluginDiscoveryService extends EventEmitter {
   /**
    * Create discovery entry from package.json
    */
-  private async createDiscoveryEntry(pluginPath: string, packageJson: any): Promise<PluginDiscoveryEntry> {
+  private async createDiscoveryEntry(
+    pluginPath: string,
+    packageJson: any
+  ): Promise<PluginDiscoveryEntry> {
     const stats = await fs.stat(pluginPath);
     const metadata = this.extractMetadataFromPackageJson(packageJson);
-    
+
     let isValid = true;
     if (this.config.validateOnDiscovery) {
       try {
@@ -464,14 +480,17 @@ export class PluginDiscoveryService extends EventEmitter {
       isValid,
       lastScanned: new Date(),
       size: await this.calculateDirectorySize(pluginPath),
-      checksum: await this.calculateChecksum(pluginPath)
+      checksum: await this.calculateChecksum(pluginPath),
     };
   }
 
   /**
    * Create discovery entry from loaded plugin
    */
-  private async createDiscoveryEntryFromPlugin(pluginPath: string, plugin: Plugin): Promise<PluginDiscoveryEntry> {
+  private async createDiscoveryEntryFromPlugin(
+    pluginPath: string,
+    plugin: Plugin
+  ): Promise<PluginDiscoveryEntry> {
     const stats = await fs.stat(pluginPath);
 
     return {
@@ -481,7 +500,7 @@ export class PluginDiscoveryService extends EventEmitter {
       isValid: true,
       lastScanned: new Date(),
       size: stats.size,
-      checksum: await this.calculateChecksum(pluginPath)
+      checksum: await this.calculateChecksum(pluginPath),
     };
   }
 
@@ -490,7 +509,7 @@ export class PluginDiscoveryService extends EventEmitter {
    */
   private extractMetadataFromPackageJson(packageJson: any): PluginMetadata {
     const universeBookWriter = packageJson['universe-book-writer'] || {};
-    
+
     return {
       name: packageJson.name,
       version: packageJson.version,
@@ -503,7 +522,7 @@ export class PluginDiscoveryService extends EventEmitter {
       type: universeBookWriter.type || PluginType.CORE,
       dependencies: packageJson.dependencies || {},
       peerDependencies: packageJson.peerDependencies,
-      engines: packageJson.engines
+      engines: packageJson.engines,
     };
   }
 
@@ -512,14 +531,14 @@ export class PluginDiscoveryService extends EventEmitter {
    */
   private isExcluded(filePath: string): boolean {
     const relativePath = path.relative(process.cwd(), filePath);
-    
+
     return this.config.excludePatterns.some(pattern => {
       // Convert glob pattern to regex
       const regexPattern = pattern
         .replace(/\*\*/g, '.*')
         .replace(/\*/g, '[^/]*')
         .replace(/\?/g, '[^/]');
-      
+
       const regex = new RegExp(`^${regexPattern}$`);
       return regex.test(relativePath);
     });
@@ -567,7 +586,7 @@ export class PluginDiscoveryService extends EventEmitter {
    * Calculate checksum for file or directory
    */
   private async calculateChecksum(filePath: string): Promise<string> {
-    const crypto = await import('crypto');
+    const crypto = await import('node:crypto');
     const hash = crypto.createHash('sha256');
 
     try {
@@ -607,7 +626,7 @@ export class PluginDiscoveryService extends EventEmitter {
     // Calculate changes
     let newPlugins = 0;
     let updatedPlugins = 0;
-    
+
     for (const [name, plugin] of current) {
       const previousPlugin = previous.get(name);
       if (!previousPlugin) {
@@ -628,7 +647,7 @@ export class PluginDiscoveryService extends EventEmitter {
       removedPlugins: Math.max(0, removedPlugins),
       scanDuration: Date.now() - startTime,
       timestamp: new Date(),
-      plugins: currentPlugins
+      plugins: currentPlugins,
     };
   }
 
@@ -637,7 +656,7 @@ export class PluginDiscoveryService extends EventEmitter {
    */
   private compareVersions(a: string, b: string): number {
     const parseVersion = (version: string) => {
-      const parts = version.split('.').map(n => parseInt(n, 10));
+      const parts = version.split('.').map(n => Number.parseInt(n, 10));
       return { major: parts[0] || 0, minor: parts[1] || 0, patch: parts[2] || 0 };
     };
 

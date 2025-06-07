@@ -2,10 +2,10 @@
  * Ollama Health Monitor Tests
  */
 
-import { describe, beforeEach, test, expect, jest } from '@jest/globals';
-import { OllamaHealthMonitor } from '../health/health-monitor.js';
-import { OllamaServerConfig } from '../config/ollama.config.js';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import axios from 'axios';
+import type { OllamaServerConfig } from '../config/ollama.config.js';
+import { OllamaHealthMonitor } from '../health/health-monitor.js';
 
 // Mock axios for testing
 jest.mock('axios');
@@ -41,7 +41,7 @@ describe('OllamaHealthMonitor', () => {
   describe('Server Monitoring', () => {
     it('should initialize server health status', () => {
       healthMonitor.startMonitoring(mockServer);
-      
+
       const health = healthMonitor.getServerHealth(mockServer.id);
       expect(health).toBeDefined();
       expect(health?.serverId).toBe(mockServer.id);
@@ -51,14 +51,14 @@ describe('OllamaHealthMonitor', () => {
     it('should stop monitoring when requested', () => {
       healthMonitor.startMonitoring(mockServer);
       healthMonitor.stopMonitoring(mockServer.id);
-      
+
       const health = healthMonitor.getServerHealth(mockServer.id);
       expect(health).toBeUndefined();
     });
 
     it('should track server availability', () => {
       healthMonitor.startMonitoring(mockServer);
-      
+
       // Initially should not be available (health check hasn't run)
       expect(healthMonitor.isServerAvailable(mockServer.id)).toBe(false);
     });
@@ -69,15 +69,15 @@ describe('OllamaHealthMonitor', () => {
       const mockedAxios = jest.mocked(axios);
       mockedAxios.get = jest.fn().mockResolvedValue({
         status: 200,
-        data: { models: [] }
+        data: { models: [] },
       });
-      
+
       healthMonitor.startMonitoring(mockServer);
     });
 
     it('should record successful requests', () => {
       healthMonitor.recordSuccess(mockServer.id, 100);
-      
+
       const health = healthMonitor.getServerHealth(mockServer.id);
       expect(health?.consecutiveFailures).toBe(0);
       expect(health?.responseTime).toBe(100);
@@ -85,7 +85,7 @@ describe('OllamaHealthMonitor', () => {
 
     it('should record failed requests', () => {
       healthMonitor.recordFailure(mockServer.id, 'Connection error');
-      
+
       const health = healthMonitor.getServerHealth(mockServer.id);
       expect(health?.consecutiveFailures).toBe(1);
       expect(health?.errorCount).toBe(1);
@@ -94,11 +94,11 @@ describe('OllamaHealthMonitor', () => {
 
     it('should open circuit breaker after threshold failures', () => {
       const threshold = 3;
-      
+
       for (let i = 0; i < threshold; i++) {
         healthMonitor.recordFailure(mockServer.id, 'Error');
       }
-      
+
       const health = healthMonitor.getServerHealth(mockServer.id);
       expect(health?.circuitBreakerState).toBe('OPEN');
     });
@@ -109,8 +109,8 @@ describe('OllamaHealthMonitor', () => {
       healthMonitor.startMonitoring(mockServer);
     });
 
-    it('should emit circuit breaker events', (done) => {
-      healthMonitor.on('circuitBreakerOpened', (serverId) => {
+    it('should emit circuit breaker events', done => {
+      healthMonitor.on('circuitBreakerOpened', serverId => {
         expect(serverId).toBe(mockServer.id);
         done();
       });
@@ -121,7 +121,7 @@ describe('OllamaHealthMonitor', () => {
       }
     });
 
-    it('should transition to half-open state after timeout', (done) => {
+    it('should transition to half-open state after timeout', done => {
       // Use shorter timeout for testing
       const fastHealthMonitor = new OllamaHealthMonitor({
         timeout: 5000,
@@ -132,7 +132,7 @@ describe('OllamaHealthMonitor', () => {
 
       fastHealthMonitor.startMonitoring(mockServer);
 
-      fastHealthMonitor.on('circuitBreakerHalfOpen', (serverId) => {
+      fastHealthMonitor.on('circuitBreakerHalfOpen', serverId => {
         try {
           expect(serverId).toBe(mockServer.id);
           fastHealthMonitor.destroy();
@@ -151,10 +151,10 @@ describe('OllamaHealthMonitor', () => {
   describe('Health Status Aggregation', () => {
     it('should return all server health status', () => {
       const server2: OllamaServerConfig = { ...mockServer, id: 'test-server-2' };
-      
+
       healthMonitor.startMonitoring(mockServer);
       healthMonitor.startMonitoring(server2);
-      
+
       const allHealth = healthMonitor.getAllServerHealth();
       expect(allHealth.size).toBe(2);
       expect(allHealth.has(mockServer.id)).toBe(true);

@@ -1,7 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
 import { z } from 'zod';
-import { UniverseSchema, LocationSchema, TimelineSchema, UniverseValidator } from '../validation/universe.js';
 import { ValidationError } from '../validation/index.js';
+import {
+  LocationSchema,
+  TimelineSchema,
+  UniverseSchema,
+  UniverseValidator,
+} from '../validation/universe.js';
 
 describe('Universe Validation', () => {
   describe('Location Schema', () => {
@@ -23,16 +28,16 @@ describe('Universe Validation', () => {
       const testCases = [
         {
           data: { ...validLocation, name: '' },
-          error: 'Empty name not allowed'
+          error: 'Empty name not allowed',
         },
         {
           data: { ...validLocation, name: 'A'.repeat(101) },
-          error: 'Name too long'
+          error: 'Name too long',
         },
         {
           data: { ...validLocation, description: 'A'.repeat(2001) },
-          error: 'Description too long'
-        }
+          error: 'Description too long',
+        },
       ];
 
       for (const testCase of testCases) {
@@ -68,19 +73,19 @@ describe('Universe Validation', () => {
     it('should reject invalid timeline data', () => {
       const testCases = [
         {
-          data: { 
+          data: {
             ...validTimeline,
-            name: ''
+            name: '',
           },
-          error: 'Empty name not allowed'
+          error: 'Empty name not allowed',
         },
         {
           data: {
             ...validTimeline,
-            events: []
+            events: [],
           },
-          error: 'Must have at least one event'
-        }
+          error: 'Must have at least one event',
+        },
       ];
 
       for (const testCase of testCases) {
@@ -106,11 +111,13 @@ describe('Universe Validation', () => {
     const validTimeline = {
       id: '123',
       name: 'Test Timeline',
-      events: [{
-        id: '1',
-        date: '2025-01-01',
-        description: 'Event 1',
-      }],
+      events: [
+        {
+          id: '1',
+          date: '2025-01-01',
+          description: 'Event 1',
+        },
+      ],
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -134,7 +141,7 @@ describe('Universe Validation', () => {
     it('should validate partial universe updates', () => {
       const validPartialUpdate = {
         name: 'Updated Universe',
-        metadata: { status: 'updated' }
+        metadata: { status: 'updated' },
       };
 
       const validator = new UniverseValidator();
@@ -144,33 +151,35 @@ describe('Universe Validation', () => {
     it('should reject invalid universe data with proper errors', () => {
       const testCases = [
         {
-          data: { 
+          data: {
             ...validUniverse,
-            name: 'A'.repeat(101)
+            name: 'A'.repeat(101),
           },
-          error: 'Name too long'
+          error: 'Name too long',
         },
         {
           data: {
             ...validUniverse,
-            description: 'A'.repeat(2001)
+            description: 'A'.repeat(2001),
           },
-          error: 'Description too long'
+          error: 'Description too long',
         },
         {
           data: {
             ...validUniverse,
-            locations: [{ 
-              ...validLocation,
-              name: ''
-            }]
+            locations: [
+              {
+                ...validLocation,
+                name: '',
+              },
+            ],
           },
-          error: 'Empty name not allowed'
-        }
+          error: 'Empty name not allowed',
+        },
       ];
 
       const validator = new UniverseValidator();
-      
+
       for (const testCase of testCases) {
         try {
           validator.validate(testCase.data);

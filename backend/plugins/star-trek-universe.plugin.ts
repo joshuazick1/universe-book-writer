@@ -2,7 +2,16 @@
  * Star Trek Universe Plugin - Example implementation
  */
 
-import { UniversePlugin, PluginType, PluginState, UniverseValidation, UniverseUIComponents, UniverseAIPrompts } from '@universe-book-writer/core';
+import {
+  PluginState,
+  PluginType,
+  type PluginConfig,
+  type UniversePlugin,
+  type UniverseValidation,
+  type UniverseUIComponents,
+  type UniverseAIPrompts,
+  type ComponentType,
+} from '@universe-book-writer/core';
 
 export const metadata = {
   name: 'star-trek-universe',
@@ -15,8 +24,8 @@ export const metadata = {
   type: PluginType.UNIVERSE,
   dependencies: {},
   engines: {
-    node: '>=18.0.0'
-  }
+    node: '>=18.0.0',
+  },
 };
 
 /**
@@ -27,73 +36,100 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   public state: PluginState = PluginState.UNLOADED;
   public config = {
     enabled: true,
-    theme: 'lcars',
-    era: 'tng', // tos, tng, ds9, voy, ent, dsc, pic
-    useStarfleetProtocols: true,
-    enableTechnicalValidation: true,
-    defaultShipClass: 'Galaxy'
+    settings: {
+      theme: 'lcars',
+      era: 'tng', // tos, tng, ds9, voy, ent, dsc, pic
+      useStarfleetProtocols: true,
+      enableTechnicalValidation: true,
+      defaultShipClass: 'Galaxy',
+    },
   };
 
-  // Universe-specific implementations
-  public readonly validationRules: UniverseValidation = {
-    characterRules: {
-      validateSpecies: true,
-      requiredFields: ['species', 'rank', 'assignment'],
-      speciesValidation: (species: string) => {
-        const validSpecies = [
-          'Human', 'Vulcan', 'Klingon', 'Romulan', 'Cardassian', 
-          'Bajoran', 'Ferengi', 'Andorian', 'Betazoid', 'Trill'
-        ];
-        return validSpecies.includes(species);
-      }
+  // Required UniversePlugin properties
+  public readonly universeType = 'star-trek';
+
+  public readonly validation: UniverseValidation = {
+    async validateCharacter(character: unknown): Promise<boolean> {
+      // Implementation of character validation
+      if (!character || typeof character !== 'object') return false;
+      const char = character as any;
+
+      // Validate required fields
+      if (!char.species || !char.rank || !char.assignment) return false;
+
+      // Validate species
+      const validSpecies = [
+        'Human',
+        'Vulcan',
+        'Klingon',
+        'Romulan',
+        'Cardassian',
+        'Bajoran',
+        'Ferengi',
+        'Andorian',
+        'Betazoid',
+        'Trill',
+      ];
+      return validSpecies.includes(char.species);
     },
-    locationRules: {
-      validateCoordinates: true,
-      requiredFields: ['sector', 'system', 'classification'],
-      coordinateSystem: 'galactic',
-      sectorValidation: (sector: string) => {
-        return /^\d{3}-\d{3}$/.test(sector); // Format: 123-456
-      }
+
+    async validateLocation(location: unknown): Promise<boolean> {
+      // Implementation of location validation
+      if (!location || typeof location !== 'object') return false;
+      const loc = location as any;
+
+      // Validate required fields
+      if (!loc.sector || !loc.system || !loc.classification) return false;
+
+      // Validate sector format (123-456)
+      return /^\d{3}-\d{3}$/.test(loc.sector);
     },
-    technologyRules: {
-      validateTechLevel: true,
-      maxWarpFactor: 9.9,
-      energyUnits: 'TJ', // Terajoules
-      validateReplicatorItems: true
-    }
+
+    async validateTimeline(timeline: unknown): Promise<boolean> {
+      // Implementation of timeline validation
+      if (!timeline || typeof timeline !== 'object') return false;
+      const tl = timeline as any;
+
+      return !!(tl.events && Array.isArray(tl.events));
+    },
+
+    async validateStory(story: unknown): Promise<boolean> {
+      // Implementation of story validation
+      if (!story || typeof story !== 'object') return false;
+      const s = story as any;
+
+      return !!(s.title && s.content);
+    },
   };
 
-  public readonly uiComponents: UniverseUIComponents = {
-    characterCreator: 'StarfleetPersonnelForm',
-    locationManager: 'StellarCartography',
-    shipDesigner: 'StarshipDesignStudio',
-    timelineViewer: 'HistoricalDatabase',
-    customWidgets: [
-      'LCARSInterface',
-      'WarpCoreMonitor',
-      'TacticalDisplay',
-      'TransporterRoom',
-      'Holodeck'
-    ]
+  public readonly ui: UniverseUIComponents = {
+    CharacterForm: { name: 'StarfleetPersonnelForm' },
+    LocationForm: { name: 'StellarCartography' },
+    TimelineView: { name: 'HistoricalDatabase' },
+    ThemeProvider: { name: 'LCARSThemeProvider' },
   };
 
-  public readonly aiPrompts: UniverseAIPrompts = {
-    characterVoice: {
-      vulcan: "Respond with logical, emotionally controlled language. Use precise terminology and avoid contractions.",
-      klingon: "Respond with honor-focused, direct language. Reference combat and warrior culture.",
-      ferengi: "Respond with profit-focused language. Reference the Rules of Acquisition when appropriate.",
-      starfleet: "Respond professionally using Starfleet protocols and terminology."
-    },
-    narrativeStyle: {
-      technical: "Use Star Trek technical terminology accurately. Reference established technology and procedures.",
-      diplomatic: "Focus on peaceful resolution and Federation ideals. Use diplomatic language.",
-      exploration: "Emphasize discovery, scientific method, and wonder at the unknown."
-    },
-    consistencyPrompts: {
-      timeline: "Verify events align with established Star Trek timeline. Check for canon conflicts.",
-      technology: "Ensure technology usage is consistent with established capabilities and limitations.",
-      culture: "Validate cultural representations match established species characteristics."
-    }
+  public readonly ai: UniverseAIPrompts = {
+    characterCreation: [
+      'Create characters consistent with Star Trek universe and established species characteristics.',
+      'Use proper Starfleet ranks and protocols when applicable.',
+      'Consider species-specific traits and cultural backgrounds.',
+    ],
+    worldBuilding: [
+      'Maintain consistency with established Star Trek canon and technology.',
+      'Use appropriate sector designations and galactic coordinates.',
+      'Reference established locations, ships, and organizations when relevant.',
+    ],
+    storyGeneration: [
+      'Follow Federation ideals of peaceful exploration and diplomacy.',
+      'Use appropriate Star Trek terminology and technology.',
+      'Maintain consistency with chosen era (TOS, TNG, DS9, VOY, etc.).',
+    ],
+    consistency: [
+      'Verify events align with established Star Trek timeline.',
+      'Check for canon conflicts and technical inconsistencies.',
+      'Ensure cultural representations match established species characteristics.',
+    ],
   };
 
   /**
@@ -101,16 +137,16 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
    */
   async initialize(): Promise<void> {
     console.log('Initializing Star Trek Universe Plugin...');
-    
+
     // Load Star Trek database
     await this.loadStarTrekDatabase();
-    
+
     // Initialize LCARS theme
     await this.initializeLCARSTheme();
-    
+
     // Setup validation rules
     await this.setupValidationRules();
-    
+
     this.state = PluginState.INITIALIZED;
     console.log('Star Trek Universe Plugin initialized successfully');
   }
@@ -124,16 +160,16 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     }
 
     console.log('Activating Star Trek Universe Plugin...');
-    
+
     // Register UI components
     await this.registerUIComponents();
-    
+
     // Apply LCARS theme
     await this.applyLCARSTheme();
-    
+
     // Initialize AI knowledge base
     await this.initializeStarTrekAI();
-    
+
     this.state = PluginState.ACTIVE;
     console.log('Star Trek Universe Plugin activated');
   }
@@ -147,13 +183,13 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     }
 
     console.log('Deactivating Star Trek Universe Plugin...');
-    
+
     // Unregister UI components
     await this.unregisterUIComponents();
-    
+
     // Revert theme changes
     await this.revertTheme();
-    
+
     this.state = PluginState.INITIALIZED;
     console.log('Star Trek Universe Plugin deactivated');
   }
@@ -163,10 +199,10 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
    */
   async destroy(): Promise<void> {
     console.log('Destroying Star Trek Universe Plugin...');
-    
+
     // Clean up resources
     await this.cleanup();
-    
+
     this.state = PluginState.UNLOADED;
     console.log('Star Trek Universe Plugin destroyed');
   }
@@ -186,21 +222,45 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   }
 
   /**
+   * Validate plugin configuration
+   */
+  async validateConfig(config: PluginConfig): Promise<boolean> {
+    try {
+      if (!config || typeof config !== 'object') return false;
+      if (typeof config.enabled !== 'boolean') return false;
+      if (!config.settings || typeof config.settings !== 'object') return false;
+
+      const settings = config.settings as any;
+      const requiredFields = [
+        'theme',
+        'era',
+        'useStarfleetProtocols',
+        'enableTechnicalValidation',
+        'defaultShipClass',
+      ];
+      return requiredFields.every(field => settings[field] !== undefined);
+    } catch (error) {
+      console.error('Config validation error:', error);
+      return false;
+    }
+  }
+
+  /**
    * Update plugin configuration
    */
   async updateConfig(newConfig: Partial<typeof this.config>): Promise<void> {
     const oldConfig = { ...this.config };
     this.config = { ...this.config, ...newConfig };
-    
+
     console.log('Star Trek plugin configuration updated:', { oldConfig, newConfig });
-    
+
     // Apply configuration changes
     if (this.state === PluginState.ACTIVE) {
-      if (newConfig.theme !== oldConfig.theme) {
+      if (newConfig.settings?.theme !== oldConfig.settings?.theme) {
         await this.applyLCARSTheme();
       }
-      
-      if (newConfig.era !== oldConfig.era) {
+
+      if (newConfig.settings?.era !== oldConfig.settings?.era) {
         await this.updateEraSettings();
       }
     }
@@ -216,11 +276,13 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     // Validate characters
     if (content.characters) {
       for (const character of content.characters) {
-        if (!this.validationRules.characterRules.speciesValidation(character.species)) {
+        if (!this.isValidSpecies(character.species)) {
           errors.push(`Invalid species: ${character.species}`);
-          suggestions.push('Use established Star Trek species or create new species with proper background');
+          suggestions.push(
+            'Use established Star Trek species or create new species with proper background'
+          );
         }
-        
+
         if (character.rank && !this.isValidStarfleetRank(character.rank)) {
           errors.push(`Invalid Starfleet rank: ${character.rank}`);
           suggestions.push('Use official Starfleet rank structure');
@@ -231,8 +293,8 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     // Validate technology
     if (content.technology) {
       for (const tech of content.technology) {
-        if (tech.warpFactor && tech.warpFactor > this.validationRules.technologyRules.maxWarpFactor) {
-          errors.push(`Warp factor ${tech.warpFactor} exceeds maximum of ${this.validationRules.technologyRules.maxWarpFactor}`);
+        if (tech.warpFactor && tech.warpFactor > 9.9) {
+          errors.push(`Warp factor ${tech.warpFactor} exceeds maximum of 9.9`);
           suggestions.push('Consider using transwarp or other advanced propulsion methods');
         }
       }
@@ -241,7 +303,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     return {
       valid: errors.length === 0,
       errors,
-      suggestions
+      suggestions,
     };
   }
 
@@ -250,38 +312,37 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
    */
   getAIPrompts(context: string): string[] {
     const prompts: string[] = [];
-    
+
     // Add base Star Trek context
     prompts.push(
-      "You are writing in the Star Trek universe. Maintain consistency with established canon, " +
-      "use appropriate technical terminology, and respect the Federation's ideals of peaceful exploration and diplomacy."
+      'You are writing in the Star Trek universe. Maintain consistency with established canon, ' +
+        "use appropriate technical terminology, and respect the Federation's ideals of peaceful exploration and diplomacy."
     );
-    
+
     // Add era-specific context
-    switch (this.config.era) {
+    switch (this.config.settings.era) {
       case 'tos':
-        prompts.push("Setting: Original Series era (2260s). Technology is less advanced, focus on exploration and first contact.");
+        prompts.push(
+          'Setting: Original Series era (2260s). Technology is less advanced, focus on exploration and first contact.'
+        );
         break;
       case 'tng':
-        prompts.push("Setting: Next Generation era (2360s-2370s). Advanced technology, diplomatic missions, family-friendly tone.");
+        prompts.push(
+          'Setting: Next Generation era (2360s-2370s). Advanced technology, diplomatic missions, family-friendly tone.'
+        );
         break;
       case 'ds9':
-        prompts.push("Setting: Deep Space Nine era (2370s). Darker themes, war with Dominion, complex moral choices.");
+        prompts.push(
+          'Setting: Deep Space Nine era (2370s). Darker themes, war with Dominion, complex moral choices.'
+        );
         break;
       case 'voy':
-        prompts.push("Setting: Voyager era (2370s). Stranded in Delta Quadrant, survival themes, unknown species.");
+        prompts.push(
+          'Setting: Voyager era (2370s). Stranded in Delta Quadrant, survival themes, unknown species.'
+        );
         break;
     }
-    
-    // Add context-specific prompts
-    if (context.includes('character')) {
-      prompts.push(...Object.values(this.aiPrompts.characterVoice));
-    }
-    
-    if (context.includes('technical')) {
-      prompts.push(this.aiPrompts.narrativeStyle.technical);
-    }
-    
+
     return prompts;
   }
 
@@ -297,22 +358,22 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
         accent: '#FFCC99', // LCARS Tan
         background: '#000000', // Black
         surface: '#333333', // Dark Gray
-        text: '#FFFFFF' // White
+        text: '#FFFFFF', // White
       },
       fonts: {
         primary: 'Okuda', // LCARS-style font
-        secondary: 'Arial, sans-serif'
+        secondary: 'Arial, sans-serif',
       },
       layout: {
         borderRadius: '20px', // LCARS rounded corners
         padding: '12px',
-        margin: '8px'
+        margin: '8px',
       },
       animations: {
         transition: '0.3s ease',
         hover: 'scale(1.05)',
-        active: 'brightness(1.2)'
-      }
+        active: 'brightness(1.2)',
+      },
     };
   }
 
@@ -364,13 +425,39 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
 
   private async updateEraSettings(): Promise<void> {
     // Update era-specific settings
-    console.log(`Updating settings for era: ${this.config.era}`);
+    console.log(`Updating settings for era: ${this.config.settings.era}`);
+  }
+
+  private isValidSpecies(species: string): boolean {
+    const validSpecies = [
+      'Human',
+      'Vulcan',
+      'Klingon',
+      'Romulan',
+      'Cardassian',
+      'Bajoran',
+      'Ferengi',
+      'Andorian',
+      'Betazoid',
+      'Trill',
+    ];
+    return validSpecies.includes(species);
   }
 
   private isValidStarfleetRank(rank: string): boolean {
     const validRanks = [
-      'Cadet', 'Ensign', 'Lieutenant JG', 'Lieutenant', 'Lieutenant Commander',
-      'Commander', 'Captain', 'Commodore', 'Rear Admiral', 'Vice Admiral', 'Admiral', 'Fleet Admiral'
+      'Cadet',
+      'Ensign',
+      'Lieutenant JG',
+      'Lieutenant',
+      'Lieutenant Commander',
+      'Commander',
+      'Captain',
+      'Commodore',
+      'Rear Admiral',
+      'Vice Admiral',
+      'Admiral',
+      'Fleet Admiral',
     ];
     return validRanks.includes(rank);
   }

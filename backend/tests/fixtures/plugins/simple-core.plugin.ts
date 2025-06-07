@@ -1,8 +1,19 @@
 /**
- * Simple Core Plugin - Example implementation
+ * Simple Core Plugin   public config = {
+    enabled: true,
+    settings: {
+      debugMode: false,
+      timeout: 5000
+    }
+  };mple implementation
  */
 
-import { Plugin, PluginType, PluginState } from '@universe-book-writer/core';
+import {
+  type Plugin,
+  PluginState,
+  PluginType,
+  type PluginConfig,
+} from '@universe-book-writer/core';
 
 export const metadata = {
   name: 'simple-core-plugin',
@@ -14,8 +25,8 @@ export const metadata = {
   type: PluginType.CORE,
   dependencies: {},
   engines: {
-    node: '>=18.0.0'
-  }
+    node: '>=18.0.0',
+  },
 };
 
 /**
@@ -26,27 +37,29 @@ export default class SimpleCorePlugin implements Plugin {
   public state: PluginState = PluginState.UNLOADED;
   public config = {
     enabled: true,
-    debugMode: false,
-    timeout: 5000
+    settings: {
+      debugMode: false,
+      timeout: 5000,
+    },
   };
 
-  private initializationTime: number = 0;
-  private activationCount: number = 0;
+  private initializationTime = 0;
+  private activationCount = 0;
 
   /**
    * Initialize the plugin
    */
   async initialize(): Promise<void> {
     console.log('Initializing Simple Core Plugin...');
-    
+
     const startTime = Date.now();
-    
+
     // Simulate initialization work
     await this.simulateAsyncWork(100);
-    
+
     this.initializationTime = Date.now() - startTime;
     this.state = PluginState.INITIALIZED;
-    
+
     console.log(`Simple Core Plugin initialized in ${this.initializationTime}ms`);
   }
 
@@ -59,13 +72,13 @@ export default class SimpleCorePlugin implements Plugin {
     }
 
     console.log('Activating Simple Core Plugin...');
-    
+
     // Simulate activation work
     await this.simulateAsyncWork(50);
-    
+
     this.activationCount++;
     this.state = PluginState.ACTIVE;
-    
+
     console.log(`Simple Core Plugin activated (activation #${this.activationCount})`);
   }
 
@@ -78,12 +91,12 @@ export default class SimpleCorePlugin implements Plugin {
     }
 
     console.log('Deactivating Simple Core Plugin...');
-    
+
     // Simulate deactivation work
     await this.simulateAsyncWork(25);
-    
+
     this.state = PluginState.INITIALIZED;
-    
+
     console.log('Simple Core Plugin deactivated');
   }
 
@@ -92,12 +105,12 @@ export default class SimpleCorePlugin implements Plugin {
    */
   async destroy(): Promise<void> {
     console.log('Destroying Simple Core Plugin...');
-    
+
     // Clean up any resources
     await this.cleanup();
-    
+
     this.state = PluginState.UNLOADED;
-    
+
     console.log('Simple Core Plugin destroyed');
   }
 
@@ -116,17 +129,39 @@ export default class SimpleCorePlugin implements Plugin {
   }
 
   /**
+   * Validate plugin configuration
+   */
+  async validateConfig(config: PluginConfig): Promise<boolean> {
+    try {
+      if (!config || typeof config !== 'object') return false;
+      if (typeof config.enabled !== 'boolean') return false;
+      if (!config.settings || typeof config.settings !== 'object') return false;
+
+      const { debugMode, timeout } = config.settings as any;
+      if (typeof debugMode !== 'boolean' || typeof timeout !== 'number') return false;
+
+      return true;
+    } catch (error) {
+      console.error('Config validation error:', error);
+      return false;
+    }
+  }
+
+  /**
    * Update plugin configuration
    */
   async updateConfig(newConfig: Partial<typeof this.config>): Promise<void> {
     const oldConfig = { ...this.config };
     this.config = { ...this.config, ...newConfig };
-    
+
     console.log('Simple Core Plugin configuration updated:', { oldConfig, newConfig });
-    
+
     // Handle debug mode changes
-    if (newConfig.debugMode !== undefined && newConfig.debugMode !== oldConfig.debugMode) {
-      console.log(`Debug mode ${newConfig.debugMode ? 'enabled' : 'disabled'}`);
+    if (
+      newConfig.settings?.debugMode !== undefined &&
+      newConfig.settings.debugMode !== oldConfig.settings.debugMode
+    ) {
+      console.log(`Debug mode ${newConfig.settings.debugMode ? 'enabled' : 'disabled'}`);
     }
   }
 
@@ -143,7 +178,7 @@ export default class SimpleCorePlugin implements Plugin {
       initializationTime: this.initializationTime,
       activationCount: this.activationCount,
       state: this.state,
-      uptime: this.state === PluginState.ACTIVE ? Date.now() : 0
+      uptime: this.state === PluginState.ACTIVE ? Date.now() : 0,
     };
   }
 
@@ -162,7 +197,7 @@ export default class SimpleCorePlugin implements Plugin {
   private async cleanup(): Promise<void> {
     // Clean up any resources
     console.log('Cleaning up Simple Core Plugin resources...');
-    
+
     // Reset counters
     this.initializationTime = 0;
     this.activationCount = 0;

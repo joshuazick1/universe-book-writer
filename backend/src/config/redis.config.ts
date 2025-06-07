@@ -5,13 +5,13 @@ interface RedisConfig {
   port: number;
   db: number;
   keyPrefix: string;
-  retryStrategy: (times: number) => number | void;
+  retryStrategy: (times: number) => number | undefined;
 }
 
 const config: RedisConfig = {
   host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379', 10),
-  db: parseInt(process.env.REDIS_DB || '0', 10),
+  port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
+  db: Number.parseInt(process.env.REDIS_DB || '0', 10),
   keyPrefix: 'ubw:', // Universe Book Writer prefix
   retryStrategy(times: number) {
     const delay = Math.min(times * 50, 2000);

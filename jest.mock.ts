@@ -1,7 +1,7 @@
 import Redis from 'ioredis-mock';
 
 // Extend Redis mock with custom configuration
-const CustomRedisMock = function (...args) {
+const CustomRedisMock = (...args) => {
   const instance = new Redis({
     data: {},
     lazyConnect: false,
@@ -10,9 +10,7 @@ const CustomRedisMock = function (...args) {
   });
 
   // Add missing methods that might be needed
-  instance.duplicate = function () {
-    return new CustomRedisMock(...args);
-  };
+  instance.duplicate = () => new CustomRedisMock(...args);
 
   return instance;
 };

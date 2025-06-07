@@ -3,9 +3,9 @@
  * Manages health checks and server status tracking
  */
 
+import { EventEmitter } from 'node:events';
 import axios, { AxiosError } from 'axios';
-import { EventEmitter } from 'events';
-import { OllamaServerConfig } from '../config/ollama.config';
+import type { OllamaServerConfig } from '../config/ollama.config.js';
 
 export interface ServerHealth {
   serverId: string;
@@ -51,15 +51,15 @@ export class OllamaHealthMonitor extends EventEmitter {
     };
 
     this.healthStatus.set(server.id, initialHealth);
-    
+
     // Perform initial health check
     this.performHealthCheck(server);
-    
+
     // Schedule periodic health checks
     const interval = setInterval(() => {
       this.performHealthCheck(server);
     }, this.options.interval);
-    
+
     this.checkIntervals.set(server.id, interval);
   }
 
@@ -113,7 +113,7 @@ export class OllamaHealthMonitor extends EventEmitter {
 
     health.consecutiveFailures = 0;
     health.responseTime = responseTime;
-    
+
     // Close circuit breaker if it was open
     if (health.circuitBreakerState === 'HALF_OPEN') {
       health.circuitBreakerState = 'CLOSED';
@@ -133,8 +133,10 @@ export class OllamaHealthMonitor extends EventEmitter {
     health.lastError = error;
 
     // Open circuit breaker if threshold is reached
-    if (health.consecutiveFailures >= this.options.circuitBreakerThreshold && 
-        health.circuitBreakerState === 'CLOSED') {
+    if (
+      health.consecutiveFailures >= this.options.circuitBreakerThreshold &&
+      health.circuitBreakerState === 'CLOSED'
+    ) {
       this.openCircuitBreaker(serverId);
     }
   }
@@ -147,21 +149,21 @@ export class OllamaHealthMonitor extends EventEmitter {
     if (!health) return;
 
     const startTime = Date.now();
-    
+
     try {
       const healthCheckUrl = `${server.url}${server.healthCheckPath || '/api/tags'}`;
       const response = await axios.get(healthCheckUrl, {
         timeout: this.options.timeout,
-        headers: server.apiKey ? { 'Authorization': `Bearer ${server.apiKey}` } : {},
+        headers: server.apiKey ? { Authorization: `Bearer ${server.apiKey}` } : {},
       });
 
       const responseTime = Date.now() - startTime;
-      
+
       // Update health status
       health.isHealthy = response.status === 200;
       health.lastCheck = new Date();
       health.responseTime = responseTime;
-      
+
       if (response.data?.models) {
         health.models = response.data.models.map((model: any) => model.name);
       }
@@ -169,7 +171,7 @@ export class OllamaHealthMonitor extends EventEmitter {
       // Reset failure count on successful health check
       if (health.isHealthy) {
         health.consecutiveFailures = 0;
-        
+
         // Transition from HALF_OPEN to CLOSED if successful
         if (health.circuitBreakerState === 'HALF_OPEN') {
           health.circuitBreakerState = 'CLOSED';
@@ -178,16 +180,15 @@ export class OllamaHealthMonitor extends EventEmitter {
       }
 
       this.emit('healthCheckSuccess', server.id, health);
-
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       health.isHealthy = false;
       health.lastCheck = new Date();
       health.responseTime = responseTime;
       health.errorCount++;
       health.consecutiveFailures++;
-      
+
       if (error instanceof AxiosError) {
         health.lastError = `${error.code}: ${error.message}`;
       } else {
@@ -195,8 +196,10 @@ export class OllamaHealthMonitor extends EventEmitter {
       }
 
       // Open circuit breaker if threshold reached
-      if (health.consecutiveFailures >= this.options.circuitBreakerThreshold && 
-          health.circuitBreakerState === 'CLOSED') {
+      if (
+        health.consecutiveFailures >= this.options.circuitBreakerThreshold &&
+        health.circuitBreakerState === 'CLOSED'
+      ) {
         this.openCircuitBreaker(server.id);
       }
 

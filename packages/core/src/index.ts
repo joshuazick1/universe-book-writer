@@ -12,4 +12,9 @@ export * from './constants/index.js';
 export const VERSION = '0.1.0';
 
 // Type-only exports
-export type { AIConfig, UniverseConfig, StoryConfig, UniversePluginConfig } from './domains/types.js';
+export type {
+  AIConfig,
+  UniverseConfig,
+  StoryConfig,
+  UniversePluginConfig,
+} from './domains/types.js';

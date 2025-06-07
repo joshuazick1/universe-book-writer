@@ -10,21 +10,9 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "typeRoots": [
-      "../node_modules/@types",
-      "./node_modules/@types",
-      "./src/types"
-    ]
+    "typeRoots": ["../node_modules/@types", "./node_modules/@types", "./src/types"]
   },
-  "references": [
-    { "path": "../packages/core" },
-    { "path": "../packages/plugin-sdk" }
-  ],
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "references": [{ "path": "../packages/core" }, { "path": "../packages/plugin-sdk" }],
+  "include": ["src/**/*"],
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
 }

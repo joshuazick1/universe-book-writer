@@ -2,7 +2,7 @@
  * Plugin repository interface - Core domain repository
  */
 
-import { PluginRegistryEntry, PluginState, PluginType } from '@universe-book-writer/core';
+import type { PluginRegistryEntry, PluginState, PluginType } from '@universe-book-writer/core';
 
 /**
  * Repository interface for plugin persistence

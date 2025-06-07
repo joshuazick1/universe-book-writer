@@ -1,7 +1,7 @@
 ﻿/**
  * Story domain interfaces and types
  */
-import { BaseEntity } from '../../shared/index.js';
+import type { BaseEntity } from '../../shared/index.js';
 
 export interface Character extends BaseEntity {
   name: string;

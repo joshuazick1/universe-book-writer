@@ -2,15 +2,15 @@
  * Plugin Hot Reload System Integration Tests (Fixed)
  */
 
-import { describe, beforeEach, afterEach, test, expect, beforeAll, afterAll } from '@jest/globals';
-import { setupMongoForTest } from '../helpers/mongodb-test-helper.js';
-import path from 'path';
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import { PluginSystemFactory } from '../../src/plugins/manager/plugin-system.factory.js';
-import { PluginUseCase } from '../../src/application/use-cases/plugin.use-case.js';
-import { FileSystemPluginLoader } from '../../src/infrastructure/loaders/plugin.loader.js';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
 import { PluginState } from '@universe-book-writer/core';
+import type { PluginUseCase } from '../../src/application/use-cases/plugin.use-case.js';
+import { FileSystemPluginLoader } from '../../src/infrastructure/loaders/plugin.loader.js';
+import { PluginSystemFactory } from '../../src/plugins/manager/plugin-system.factory.js';
+import { setupMongoForTest } from '../helpers/mongodb-test-helper.js';
 
 describe('Plugin Hot Reload Integration Tests', () => {
   let mongoClient: any;
@@ -44,7 +44,7 @@ describe('Plugin Hot Reload Integration Tests', () => {
     const system = await PluginSystemFactory.create({
       mongoClient,
       databaseName: 'test-hot-reload',
-      autoLoadPlugins: false
+      autoLoadPlugins: false,
     });
 
     pluginUseCase = system.pluginUseCase;
@@ -80,7 +80,9 @@ describe('Plugin Hot Reload Integration Tests', () => {
     }
   });
 
-  describe('Basic Plugin Loading', () => {    test('should load and activate a simple plugin', async () => {      // Create a simple plugin with exported functions
+  describe('Basic Plugin Loading', () => {
+    test('should load and activate a simple plugin', async () => {
+      // Create a simple plugin with exported functions
       const pluginCode = `
         export const metadata = {
           name: 'simple-test-plugin',
@@ -120,7 +122,8 @@ describe('Plugin Hot Reload Integration Tests', () => {
       const activePlugin = pluginUseCase.getPlugin('simple-test-plugin');
       expect(activePlugin).toBeDefined();
       expect(activePlugin!.state).toBe(PluginState.ACTIVE);
-    });    test('should handle plugin loading errors gracefully', async () => {
+    });
+    test('should handle plugin loading errors gracefully', async () => {
       // Create invalid plugin code with a different type of error
       const invalidPluginCode = `
         // This will cause a runtime error instead of a syntax error
@@ -142,7 +145,9 @@ describe('Plugin Hot Reload Integration Tests', () => {
 
       // Attempt to load invalid plugin
       await expect(pluginUseCase.loadPlugin(pluginPath)).rejects.toThrow();
-    });    test('should manage multiple plugins', async () => {      // Create first plugin with exported functions
+    });
+    test('should manage multiple plugins', async () => {
+      // Create first plugin with exported functions
       const plugin1Code = `
         export const metadata = {
           name: 'multi-test-plugin-1',
@@ -196,7 +201,8 @@ describe('Plugin Hot Reload Integration Tests', () => {
         export async function destroy() {
           console.log('Plugin 2 destroyed');
         }
-      `;const plugin1Path = path.join(testPluginDir, 'multi-test-plugin-1.mjs');
+      `;
+      const plugin1Path = path.join(testPluginDir, 'multi-test-plugin-1.mjs');
       const plugin2Path = path.join(testPluginDir, 'multi-test-plugin-2.mjs');
 
       await fs.writeFile(plugin1Path, plugin1Code);
@@ -226,7 +232,9 @@ describe('Plugin Hot Reload Integration Tests', () => {
     });
   });
 
-  describe('Plugin Configuration', () => {    test('should update plugin configuration', async () => {      // Create plugin with configurable settings using exported functions
+  describe('Plugin Configuration', () => {
+    test('should update plugin configuration', async () => {
+      // Create plugin with configurable settings using exported functions
       const pluginCode = `
         export const metadata = {
           name: 'config-test-plugin',
@@ -267,7 +275,7 @@ describe('Plugin Hot Reload Integration Tests', () => {
       `;
 
       const pluginPath = path.join(testPluginDir, 'config-test-plugin.mjs');
-      await fs.writeFile(pluginPath, pluginCode);      // Load and activate plugin
+      await fs.writeFile(pluginPath, pluginCode); // Load and activate plugin
       const plugin = await pluginUseCase.loadPlugin(pluginPath);
       await pluginUseCase.activatePlugin('config-test-plugin');
 

@@ -2,7 +2,12 @@
  * Plugin with Dependencies - Example implementation
  */
 
-import { Plugin, PluginType, PluginState } from '@universe-book-writer/core';
+import {
+  type Plugin,
+  PluginState,
+  PluginType,
+  type PluginConfig,
+} from '@universe-book-writer/core';
 
 export const metadata = {
   name: 'dependent-plugin',
@@ -13,11 +18,11 @@ export const metadata = {
   keywords: ['test', 'dependencies'],
   type: PluginType.CORE,
   dependencies: {
-    'simple-core-plugin': '^1.0.0'
+    'simple-core-plugin': '^1.0.0',
   },
   engines: {
-    node: '>=18.0.0'
-  }
+    node: '>=18.0.0',
+  },
 };
 
 /**
@@ -28,8 +33,10 @@ export default class DependentPlugin implements Plugin {
   public state: PluginState = PluginState.UNLOADED;
   public config = {
     enabled: true,
-    useBaseFunctionality: true,
-    enhancedMode: false
+    settings: {
+      useBaseFunctionality: true,
+      enhancedMode: false,
+    },
   };
 
   private dependencyPlugin?: Plugin;
@@ -39,12 +46,12 @@ export default class DependentPlugin implements Plugin {
    */
   async initialize(): Promise<void> {
     console.log('Initializing Dependent Plugin...');
-    
+
     // Check if dependency is available
     // Note: In a real implementation, this would use the plugin manager
     // to get the dependency plugin instance
     console.log('Checking dependencies...');
-    
+
     this.state = PluginState.INITIALIZED;
     console.log('Dependent Plugin initialized successfully');
   }
@@ -58,12 +65,12 @@ export default class DependentPlugin implements Plugin {
     }
 
     console.log('Activating Dependent Plugin...');
-    
+
     // Activate enhanced functionality if dependency is available
-    if (this.config.useBaseFunctionality && this.dependencyPlugin) {
+    if (this.config.settings.useBaseFunctionality && this.dependencyPlugin) {
       console.log('Using base plugin functionality');
     }
-    
+
     this.state = PluginState.ACTIVE;
     console.log('Dependent Plugin activated');
   }
@@ -77,7 +84,7 @@ export default class DependentPlugin implements Plugin {
     }
 
     console.log('Deactivating Dependent Plugin...');
-    
+
     this.state = PluginState.INITIALIZED;
     console.log('Dependent Plugin deactivated');
   }
@@ -87,10 +94,10 @@ export default class DependentPlugin implements Plugin {
    */
   async destroy(): Promise<void> {
     console.log('Destroying Dependent Plugin...');
-    
+
     // Clean up dependency references
     this.dependencyPlugin = undefined;
-    
+
     this.state = PluginState.UNLOADED;
     console.log('Dependent Plugin destroyed');
   }
@@ -110,12 +117,45 @@ export default class DependentPlugin implements Plugin {
   }
 
   /**
+   * Validate plugin configuration
+   */
+  async validateConfig(config: PluginConfig): Promise<boolean> {
+    try {
+      // Basic validation for the config structure
+      if (!config || typeof config !== 'object') {
+        return false;
+      }
+
+      // Check if enabled is a boolean
+      if (typeof config.enabled !== 'boolean') {
+        return false;
+      }
+
+      // Check if settings exist and is an object
+      if (!config.settings || typeof config.settings !== 'object') {
+        return false;
+      }
+
+      // Validate settings structure for this plugin
+      const { useBaseFunctionality, enhancedMode } = config.settings as any;
+      if (typeof useBaseFunctionality !== 'boolean' || typeof enhancedMode !== 'boolean') {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Config validation error:', error);
+      return false;
+    }
+  }
+
+  /**
    * Update plugin configuration
    */
   async updateConfig(newConfig: Partial<typeof this.config>): Promise<void> {
     const oldConfig = { ...this.config };
     this.config = { ...this.config, ...newConfig };
-    
+
     console.log('Dependent Plugin configuration updated:', { oldConfig, newConfig });
   }
 

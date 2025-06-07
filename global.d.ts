@@ -1,6 +1,6 @@
-import { MongoClient, MongoServerError } from 'mongodb';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
+import { type MongoClient, MongoServerError } from 'mongodb';
+import type { MongoMemoryServer } from 'mongodb-memory-server';
 
 declare global {
   let mongoUri: string;

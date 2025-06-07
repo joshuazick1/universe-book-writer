@@ -3,11 +3,27 @@
  * Orchestrates multiple Ollama servers with load balancing and health monitoring
  */
 
-import { EventEmitter } from 'events';
-import { OllamaServerConfig, OllamaConfig, getOllamaConfig } from '../config/ollama.config';
-import { OllamaHealthMonitor } from '../health/health-monitor';
-import { OllamaLoadBalancer, PriorityStrategy, RoundRobinStrategy, LeastConnectionsStrategy, ResponseTimeStrategy } from '../load-balancer/load-balancer';
-import { OllamaClient, OllamaRequest, OllamaResponse, OllamaStreamResponse, ModelInfo } from '../client/ollama-client';
+import { EventEmitter } from 'node:events';
+import {
+  type ModelInfo,
+  OllamaClient,
+  type OllamaRequest,
+  type OllamaResponse,
+  type OllamaStreamResponse,
+} from '../client/ollama-client.js';
+import {
+  type OllamaConfig,
+  type OllamaServerConfig,
+  getOllamaConfig,
+} from '../config/ollama.config.js';
+import { OllamaHealthMonitor } from '../health/health-monitor.js';
+import {
+  LeastConnectionsStrategy,
+  OllamaLoadBalancer,
+  PriorityStrategy,
+  ResponseTimeStrategy,
+  RoundRobinStrategy,
+} from '../load-balancer/load-balancer.js';
 
 export interface ServerManagerOptions {
   config?: OllamaConfig;
@@ -30,9 +46,9 @@ export class OllamaServerManager extends EventEmitter {
 
   constructor(options: ServerManagerOptions = {}) {
     super();
-    
+
     this.config = options.config || getOllamaConfig();
-    
+
     // Initialize health monitor
     this.healthMonitor = new OllamaHealthMonitor({
       timeout: this.config.requestTimeout,
@@ -122,7 +138,10 @@ export class OllamaServerManager extends EventEmitter {
   /**
    * Generate text completion
    */
-  public async generate(request: OllamaRequest, options: GenerationOptions = {}): Promise<OllamaResponse> {
+  public async generate(
+    request: OllamaRequest,
+    options: GenerationOptions = {}
+  ): Promise<OllamaResponse> {
     if (!this.isInitialized) {
       await this.initialize();
     }
@@ -242,7 +261,7 @@ export class OllamaServerManager extends EventEmitter {
     onProgress?: (progress: any) => void
   ): Promise<void> {
     let targetServerId = serverId;
-    
+
     if (!targetServerId) {
       const server = this.selectServer({ requiredModel: undefined });
       if (!server) {
@@ -306,7 +325,9 @@ export class OllamaServerManager extends EventEmitter {
   /**
    * Set load balancing strategy
    */
-  public setLoadBalancingStrategy(strategy: 'priority' | 'round-robin' | 'least-connections' | 'response-time'): void {
+  public setLoadBalancingStrategy(
+    strategy: 'priority' | 'round-robin' | 'least-connections' | 'response-time'
+  ): void {
     const strategyImpl = this.createLoadBalancingStrategy(strategy);
     this.loadBalancer.setStrategy(strategyImpl);
   }
@@ -371,7 +392,6 @@ export class OllamaServerManager extends EventEmitter {
         return new LeastConnectionsStrategy();
       case 'response-time':
         return new ResponseTimeStrategy();
-      case 'priority':
       default:
         return new PriorityStrategy();
     }
@@ -392,7 +412,7 @@ export class OllamaServerManager extends EventEmitter {
         return await fn();
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         if (attempt === maxAttempts) {
           break;
         }
@@ -413,11 +433,11 @@ export class OllamaServerManager extends EventEmitter {
       this.emit('serverHealthCheckFailed', serverId, health, error);
     });
 
-    this.healthMonitor.on('circuitBreakerOpened', (serverId) => {
+    this.healthMonitor.on('circuitBreakerOpened', serverId => {
       this.emit('serverCircuitBreakerOpened', serverId);
     });
 
-    this.loadBalancer.on('noServersAvailable', (requiredModel) => {
+    this.loadBalancer.on('noServersAvailable', requiredModel => {
       this.emit('noServersAvailable', requiredModel);
     });
   }

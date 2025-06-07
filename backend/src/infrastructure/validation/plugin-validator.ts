@@ -2,10 +2,15 @@
  * Enhanced plugin validation system with security checks and advanced validation rules
  */
 
-import { Plugin, PluginMetadata, PluginType, PluginConfig } from '@universe-book-writer/core';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import {
+  type Plugin,
+  type PluginConfig,
+  type PluginMetadata,
+  PluginType,
+} from '@universe-book-writer/core';
 
 /**
  * Validation severity levels
@@ -13,7 +18,7 @@ import { createHash } from 'crypto';
 export enum ValidationSeverity {
   ERROR = 'error',
   WARNING = 'warning',
-  INFO = 'info'
+  INFO = 'info',
 }
 
 /**
@@ -81,7 +86,11 @@ export interface ValidationRule {
   name: string;
   description: string;
   severity: ValidationSeverity;
-  validate: (plugin: Plugin, metadata: PluginMetadata, config?: PluginConfig) => Promise<ValidationResult>;
+  validate: (
+    plugin: Plugin,
+    metadata: PluginMetadata,
+    config?: PluginConfig
+  ) => Promise<ValidationResult>;
 }
 
 /**
@@ -100,7 +109,7 @@ const MALICIOUS_PATTERNS = [
   /password/i,
   /token/i,
   /secret/i,
-  /crypto/i
+  /crypto/i,
 ];
 
 /**
@@ -119,20 +128,20 @@ export class PluginValidator {
         checkDependencyVulnerabilities: true,
         enforceFileExtensions: true,
         maxFileSize: 10 * 1024 * 1024, // 10MB
-        ...config?.security
+        ...config?.security,
       },
       performance: {
         maxInitializationTime: 5000, // 5 seconds
         maxMemoryUsage: 100 * 1024 * 1024, // 100MB
         maxFileSize: 5 * 1024 * 1024, // 5MB
         checkAsyncOperations: true,
-        ...config?.performance
+        ...config?.performance,
       },
       enableStrictMode: false,
       allowedPluginTypes: Object.values(PluginType),
       requiredFields: ['name', 'version', 'type'],
       customValidators: [],
-      ...config
+      ...config,
     };
 
     this.initializeBuiltInRules();
@@ -147,41 +156,40 @@ export class PluginValidator {
 
     try {
       // Basic metadata validation
-      results.push(...await this.validateMetadata(plugin.metadata));
+      results.push(...(await this.validateMetadata(plugin.metadata)));
 
       // Configuration validation
       if (plugin.config) {
-        results.push(...await this.validateConfiguration(plugin.config));
+        results.push(...(await this.validateConfiguration(plugin.config)));
       }
 
       // Security validation
       if (pluginPath) {
-        results.push(...await this.validateSecurity(plugin, pluginPath));
+        results.push(...(await this.validateSecurity(plugin, pluginPath)));
       }
 
       // Performance validation
-      results.push(...await this.validatePerformance(plugin));
+      results.push(...(await this.validatePerformance(plugin)));
 
       // Type-specific validation
-      results.push(...await this.validatePluginType(plugin));
+      results.push(...(await this.validatePluginType(plugin)));
 
       // Custom validation rules
-      results.push(...await this.runCustomValidators(plugin));
+      results.push(...(await this.runCustomValidators(plugin)));
 
       // Dependencies validation
-      results.push(...await this.validateDependencies(plugin.metadata));
+      results.push(...(await this.validateDependencies(plugin.metadata)));
 
       const report = this.generateReport(plugin.metadata.name, results);
-      
-      return report;
 
+      return report;
     } catch (error) {
       results.push({
         valid: false,
         severity: ValidationSeverity.ERROR,
         rule: 'validation_error',
         message: `Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        details: { error }
+        details: { error },
       });
 
       return this.generateReport(plugin.metadata.name, results);
@@ -230,7 +238,7 @@ export class PluginValidator {
           severity: ValidationSeverity.ERROR,
           rule: 'required_field',
           message: `Required field '${field}' is missing`,
-          details: { field }
+          details: { field },
         });
       }
     }
@@ -242,7 +250,7 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.ERROR,
           rule: 'invalid_name',
-          message: 'Plugin name contains invalid characters'
+          message: 'Plugin name contains invalid characters',
         });
       }
 
@@ -251,20 +259,20 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.WARNING,
           rule: 'name_too_long',
-          message: 'Plugin name is too long (max 50 characters)'
+          message: 'Plugin name is too long (max 50 characters)',
         });
       }
     }
 
     // Version validation
     if (metadata.version) {
-      const semverRegex = /^\d+\.\d+\.\d+(-[a-zA-Z0-9\-]+)?$/;
+      const semverRegex = /^\d+\.\d+\.\d+(-[a-zA-Z0-9-]+)?$/;
       if (!semverRegex.test(metadata.version)) {
         results.push({
           valid: false,
           severity: ValidationSeverity.WARNING,
           rule: 'invalid_version',
-          message: 'Plugin version does not follow semantic versioning'
+          message: 'Plugin version does not follow semantic versioning',
         });
       }
     }
@@ -276,7 +284,7 @@ export class PluginValidator {
         severity: ValidationSeverity.ERROR,
         rule: 'invalid_type',
         message: `Plugin type '${metadata.type}' is not allowed`,
-        details: { allowedTypes: this.config.allowedPluginTypes }
+        details: { allowedTypes: this.config.allowedPluginTypes },
       });
     }
 
@@ -295,7 +303,7 @@ export class PluginValidator {
         valid: false,
         severity: ValidationSeverity.ERROR,
         rule: 'invalid_config',
-        message: 'Plugin configuration must be an object'
+        message: 'Plugin configuration must be an object',
       });
       return results;
     }
@@ -303,14 +311,14 @@ export class PluginValidator {
     // Check for sensitive data in configuration
     const configStr = JSON.stringify(config);
     const sensitivePatterns = [/password/i, /secret/i, /token/i, /key/i];
-    
+
     for (const pattern of sensitivePatterns) {
       if (pattern.test(configStr)) {
         results.push({
           valid: false,
           severity: ValidationSeverity.WARNING,
           rule: 'sensitive_data',
-          message: 'Configuration may contain sensitive data'
+          message: 'Configuration may contain sensitive data',
         });
         break;
       }
@@ -333,19 +341,20 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.WARNING,
           rule: 'file_too_large',
-          message: `Plugin file is too large (${stats.size} bytes, max: ${this.config.security.maxFileSize})`
+          message: `Plugin file is too large (${stats.size} bytes, max: ${this.config.security.maxFileSize})`,
         });
       }
 
       // File permissions validation
       if (this.config.security.checkFilePermissions) {
-        const mode = stats.mode & parseInt('777', 8);
-        if (mode & parseInt('002', 8)) { // World writable
+        const mode = stats.mode & 0o777;
+        if (mode & 0o002) {
+          // World writable
           results.push({
             valid: false,
             severity: ValidationSeverity.ERROR,
             rule: 'insecure_permissions',
-            message: 'Plugin file has insecure permissions (world writable)'
+            message: 'Plugin file has insecure permissions (world writable)',
           });
         }
       }
@@ -359,7 +368,7 @@ export class PluginValidator {
             valid: false,
             severity: ValidationSeverity.ERROR,
             rule: 'invalid_extension',
-            message: `Plugin file has invalid extension '${ext}'`
+            message: `Plugin file has invalid extension '${ext}'`,
           });
         }
       }
@@ -374,7 +383,7 @@ export class PluginValidator {
               severity: ValidationSeverity.ERROR,
               rule: 'malicious_pattern',
               message: `Potentially malicious pattern detected: ${pattern.source}`,
-              details: { pattern: pattern.source }
+              details: { pattern: pattern.source },
             });
           }
         }
@@ -387,16 +396,15 @@ export class PluginValidator {
           valid: true,
           severity: ValidationSeverity.INFO,
           rule: 'code_signature',
-          message: 'Code signature validation not implemented'
+          message: 'Code signature validation not implemented',
         });
       }
-
     } catch (error) {
       results.push({
         valid: false,
         severity: ValidationSeverity.ERROR,
         rule: 'security_check_failed',
-        message: `Security validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        message: `Security validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       });
     }
 
@@ -417,12 +425,15 @@ export class PluginValidator {
       if (typeof testPlugin.initialize === 'function') {
         await Promise.race([
           testPlugin.initialize(),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Initialization timeout')), this.config.performance.maxInitializationTime)
-          )
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('Initialization timeout')),
+              this.config.performance.maxInitializationTime
+            )
+          ),
         ]);
       }
-      
+
       const endTime = process.hrtime.bigint();
       const initTime = Number(endTime - startTime) / 1000000; // Convert to milliseconds
 
@@ -431,17 +442,16 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.WARNING,
           rule: 'slow_initialization',
-          message: `Plugin initialization is too slow (${initTime}ms, max: ${this.config.performance.maxInitializationTime}ms)`
+          message: `Plugin initialization is too slow (${initTime}ms, max: ${this.config.performance.maxInitializationTime}ms)`,
         });
       }
-
     } catch (error) {
       if (error instanceof Error && error.message === 'Initialization timeout') {
         results.push({
           valid: false,
           severity: ValidationSeverity.ERROR,
           rule: 'initialization_timeout',
-          message: 'Plugin initialization timed out'
+          message: 'Plugin initialization timed out',
         });
       }
     }
@@ -457,7 +467,7 @@ export class PluginValidator {
         valid: false,
         severity: ValidationSeverity.WARNING,
         rule: 'high_memory_usage',
-        message: `Plugin uses too much memory (${memUsed} bytes, max: ${this.config.performance.maxMemoryUsage})`
+        message: `Plugin uses too much memory (${memUsed} bytes, max: ${this.config.performance.maxMemoryUsage})`,
       });
     }
 
@@ -472,16 +482,16 @@ export class PluginValidator {
 
     switch (plugin.metadata.type) {
       case PluginType.UNIVERSE:
-        results.push(...await this.validateUniversePlugin(plugin));
+        results.push(...(await this.validateUniversePlugin(plugin)));
         break;
       case PluginType.THEME:
-        results.push(...await this.validateThemePlugin(plugin));
+        results.push(...(await this.validateThemePlugin(plugin)));
         break;
       case PluginType.AI:
-        results.push(...await this.validateAIPlugin(plugin));
+        results.push(...(await this.validateAIPlugin(plugin)));
         break;
       case PluginType.CORE:
-        results.push(...await this.validateCorePlugin(plugin));
+        results.push(...(await this.validateCorePlugin(plugin)));
         break;
     }
 
@@ -502,7 +512,7 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.ERROR,
           rule: 'missing_universe_method',
-          message: `Universe plugin missing required method: ${method}`
+          message: `Universe plugin missing required method: ${method}`,
         });
       }
     }
@@ -524,7 +534,7 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.ERROR,
           rule: 'missing_theme_method',
-          message: `Theme plugin missing required method: ${method}`
+          message: `Theme plugin missing required method: ${method}`,
         });
       }
     }
@@ -546,7 +556,7 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.ERROR,
           rule: 'missing_ai_method',
-          message: `AI plugin missing required method: ${method}`
+          message: `AI plugin missing required method: ${method}`,
         });
       }
     }
@@ -566,7 +576,7 @@ export class PluginValidator {
         valid: false,
         severity: ValidationSeverity.WARNING,
         rule: 'missing_description',
-        message: 'Core plugin should have a description'
+        message: 'Core plugin should have a description',
       });
     }
 
@@ -587,7 +597,7 @@ export class PluginValidator {
             valid: false,
             severity: ValidationSeverity.ERROR,
             rule: 'invalid_dependency_version',
-            message: `Invalid version for dependency ${depName}`
+            message: `Invalid version for dependency ${depName}`,
           });
         }
 
@@ -598,7 +608,7 @@ export class PluginValidator {
             valid: true,
             severity: ValidationSeverity.INFO,
             rule: 'dependency_security',
-            message: `Dependency vulnerability check not implemented for ${depName}`
+            message: `Dependency vulnerability check not implemented for ${depName}`,
           });
         }
       }
@@ -622,7 +632,7 @@ export class PluginValidator {
           valid: false,
           severity: ValidationSeverity.ERROR,
           rule: rule.name,
-          message: `Custom validation rule '${rule.name}' failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Custom validation rule '${rule.name}' failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         });
       }
     }
@@ -636,20 +646,26 @@ export class PluginValidator {
   private generateReport(pluginName: string, results: ValidationResult[]): PluginValidationReport {
     const errors = results.filter(r => !r.valid && r.severity === ValidationSeverity.ERROR);
     const warnings = results.filter(r => !r.valid && r.severity === ValidationSeverity.WARNING);
-    
+
     const valid = errors.length === 0;
-    
+
     // Calculate scores
-    const securityResults = results.filter(r => 
-      r.rule.includes('security') || r.rule.includes('malicious') || r.rule.includes('permissions')
+    const securityResults = results.filter(
+      r =>
+        r.rule.includes('security') ||
+        r.rule.includes('malicious') ||
+        r.rule.includes('permissions')
     );
     const securityScore = this.calculateScore(securityResults);
-    
-    const performanceResults = results.filter(r => 
-      r.rule.includes('performance') || r.rule.includes('memory') || r.rule.includes('initialization')
+
+    const performanceResults = results.filter(
+      r =>
+        r.rule.includes('performance') ||
+        r.rule.includes('memory') ||
+        r.rule.includes('initialization')
     );
     const performanceScore = this.calculateScore(performanceResults);
-    
+
     const overallScore = this.calculateOverallScore(results);
 
     return {
@@ -659,7 +675,7 @@ export class PluginValidator {
       securityScore,
       performanceScore,
       overallScore,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
+import type { Character, Story, StoryChapter } from '../domains/story/index.js';
 import { BaseEntitySchema, BaseValidator } from './index.js';
-import type { Story, Character, StoryChapter } from '../domains/story/index.js';
 
 /**
  * Character schema for validation
@@ -31,7 +31,7 @@ const storyCreationSchema = z.object({
   characters: z.array(CharacterSchema),
 });
 
-export const StorySchema = BaseEntitySchema.extend({...storyCreationSchema.shape});
+export const StorySchema = BaseEntitySchema.extend({ ...storyCreationSchema.shape });
 
 /**
  * Story validator implementation

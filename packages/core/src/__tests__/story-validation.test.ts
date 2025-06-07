@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { StorySchema, CharacterSchema, StoryChapterSchema } from '../validation/story.js';
+import { CharacterSchema, StoryChapterSchema, StorySchema } from '../validation/story.js';
 
 describe('Story Validation', () => {
   describe('Character Schema', () => {

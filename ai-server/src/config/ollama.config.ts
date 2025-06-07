@@ -41,7 +41,7 @@ export const DEFAULT_OLLAMA_CONFIG: OllamaConfig = {
       tags: ['local', 'cpu-only'],
       healthCheckPath: '/api/tags',
       timeout: 30000,
-    }
+    },
   ],
   defaultServer: 'local',
   healthCheckInterval: 30000, // 30 seconds
@@ -57,19 +57,19 @@ export const DEFAULT_OLLAMA_CONFIG: OllamaConfig = {
  */
 export function getOllamaConfig(): OllamaConfig {
   const config = { ...DEFAULT_OLLAMA_CONFIG };
-  
+
   // Allow override from environment for development
   if (process.env.OLLAMA_SERVER_URL) {
     config.servers[0].url = process.env.OLLAMA_SERVER_URL;
   }
-  
+
   if (process.env.OLLAMA_REQUEST_TIMEOUT) {
-    config.requestTimeout = parseInt(process.env.OLLAMA_REQUEST_TIMEOUT, 10);
+    config.requestTimeout = Number.parseInt(process.env.OLLAMA_REQUEST_TIMEOUT, 10);
   }
-  
+
   if (process.env.OLLAMA_HEALTH_CHECK_INTERVAL) {
-    config.healthCheckInterval = parseInt(process.env.OLLAMA_HEALTH_CHECK_INTERVAL, 10);
+    config.healthCheckInterval = Number.parseInt(process.env.OLLAMA_HEALTH_CHECK_INTERVAL, 10);
   }
-  
+
   return config;
 }

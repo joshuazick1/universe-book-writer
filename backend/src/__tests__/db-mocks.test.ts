@@ -1,9 +1,9 @@
-import { describe, expect, it, beforeAll } from '@jest/globals';
+import { beforeAll, describe, expect, it } from '@jest/globals';
 import { MongoServerError } from 'mongodb';
 
 describe('Database Infrastructure', () => {
   describe('MongoDB Memory Server', () => {
-    let testCollection;
+    let testCollection: any;
 
     beforeAll(async () => {
       testCollection = global.mongoClient.db().collection('test');

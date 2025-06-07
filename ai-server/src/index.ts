@@ -1,21 +1,26 @@
 /**
  * AI Server Entry Point
- * 
+ *
  * Main server file that orchestrates Ollama server management and provides
  * REST API endpoints for AI text generation, model management, and server configuration.
  */
 
 // Export all modules for external use
-export * from './config/ollama.config';
-export * from './health/health-monitor';
-export * from './load-balancer/load-balancer';
-export * from './client/ollama-client';
-export * from './manager/server-manager';
-export * from './services/config.service';
+export * from './config/ollama.config.js';
+export * from './health/health-monitor.js';
+export * from './load-balancer/load-balancer.js';
+export * from './client/ollama-client.js';
+export * from './manager/server-manager.js';
+export * from './services/config.service.js';
 
-import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import cors from 'cors';
-import { OllamaServerManager } from './manager/server-manager';
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+  type RequestHandler,
+} from 'express';
+import { OllamaServerManager } from './manager/server-manager.js';
 
 const app = express();
 const port = process.env.PORT || 5100;
@@ -55,9 +60,9 @@ app.get('/api/models', async (_req: Request, res: Response) => {
     const models = await serverManager.getAllModels();
     res.json({ models });
   } catch (error) {
-    res.status(500).json({ 
-      error: 'Failed to get models', 
-      message: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: 'Failed to get models',
+      message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 });
@@ -68,7 +73,7 @@ app.get('/api/models', async (_req: Request, res: Response) => {
 const generateHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
     const { model, prompt, ...options } = req.body;
-    
+
     if (!model || !prompt) {
       res.status(400).json({ error: 'Model and prompt are required' });
       return;
@@ -82,9 +87,9 @@ const generateHandler: RequestHandler = async (req: Request, res: Response) => {
 
     res.json(response);
   } catch (error) {
-    res.status(500).json({ 
-      error: 'Generation failed', 
-      message: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: 'Generation failed',
+      message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -96,7 +101,7 @@ app.post('/api/generate', generateHandler);
 const generateStreamHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
     const { model, prompt, ...options } = req.body;
-    
+
     if (!model || !prompt) {
       res.status(400).json({ error: 'Model and prompt are required' });
       return;
@@ -105,19 +110,16 @@ const generateStreamHandler: RequestHandler = async (req: Request, res: Response
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Transfer-Encoding', 'chunked');
 
-    await serverManager.generateStream(
-      { model, prompt, ...options },
-      (chunk) => {
-        res.write(JSON.stringify(chunk) + '\n');
-      }
-    );
+    await serverManager.generateStream({ model, prompt, ...options }, chunk => {
+      res.write(`${JSON.stringify(chunk)}\n`);
+    });
 
     res.end();
   } catch (error) {
     if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Stream generation failed', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Stream generation failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -130,7 +132,7 @@ app.post('/api/generate/stream', generateStreamHandler);
 const pullModelHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
     const { model, serverId } = req.body;
-    
+
     if (!model) {
       res.status(400).json({ error: 'Model name is required' });
       return;
@@ -139,20 +141,16 @@ const pullModelHandler: RequestHandler = async (req: Request, res: Response) => 
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Transfer-Encoding', 'chunked');
 
-    await serverManager.pullModel(
-      model,
-      serverId,
-      (progress) => {
-        res.write(JSON.stringify(progress) + '\n');
-      }
-    );
+    await serverManager.pullModel(model, serverId, progress => {
+      res.write(`${JSON.stringify(progress)}\n`);
+    });
 
     res.end();
   } catch (error) {
     if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Model pull failed', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Model pull failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -172,7 +170,7 @@ app.get('/api/config', (_req: Request, res: Response) => {
 const updateStrategyHandler: RequestHandler = (req: Request, res: Response) => {
   try {
     const { strategy } = req.body;
-    
+
     if (!['priority', 'round-robin', 'least-connections', 'response-time'].includes(strategy)) {
       res.status(400).json({ error: 'Invalid strategy' });
       return;
@@ -181,9 +179,9 @@ const updateStrategyHandler: RequestHandler = (req: Request, res: Response) => {
     serverManager.setLoadBalancingStrategy(strategy);
     res.json({ success: true, strategy });
   } catch (error) {
-    res.status(500).json({ 
-      error: 'Failed to update strategy', 
-      message: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: 'Failed to update strategy',
+      message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -194,9 +192,9 @@ app.post('/api/config/strategy', updateStrategyHandler);
  */
 app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled error:', error);
-  res.status(500).json({ 
-    error: 'Internal server error', 
-    message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong' 
+  res.status(500).json({
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong',
   });
 });
 
@@ -207,7 +205,7 @@ async function startServer(): Promise<void> {
   try {
     // Initialize the server manager
     await serverManager.initialize();
-    
+
     // Setup event handlers for monitoring
     serverManager.on('initialized', () => {
       console.log('✅ Ollama Server Manager initialized');
@@ -218,7 +216,10 @@ async function startServer(): Promise<void> {
     });
 
     serverManager.on('serverHealthCheckFailed', (serverId: string, health: any, error: any) => {
-      console.warn(`⚠️  Health check failed for ${serverId}:`, error instanceof Error ? error.message : error);
+      console.warn(
+        `⚠️  Health check failed for ${serverId}:`,
+        error instanceof Error ? error.message : error
+      );
     });
 
     serverManager.on('serverCircuitBreakerOpened', (serverId: string) => {
@@ -226,7 +227,9 @@ async function startServer(): Promise<void> {
     });
 
     serverManager.on('noServersAvailable', (requiredModel?: string) => {
-      console.error(`❌ No servers available${requiredModel ? ` for model: ${requiredModel}` : ''}`);
+      console.error(
+        `❌ No servers available${requiredModel ? ` for model: ${requiredModel}` : ''}`
+      );
     });
 
     // Start Express server
@@ -235,7 +238,6 @@ async function startServer(): Promise<void> {
       console.log(`📊 Health check: http://localhost:${port}/health`);
       console.log(`🤖 API endpoints available at http://localhost:${port}/api/`);
     });
-
   } catch (error) {
     console.error('❌ Failed to start AI server:', error);
     process.exit(1);

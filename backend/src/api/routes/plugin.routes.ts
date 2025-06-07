@@ -3,7 +3,7 @@
  */
 
 import { Router } from 'express';
-import { PluginController } from '../controllers/plugin.controller.js';
+import type { PluginController } from '../controllers/plugin.controller.js';
 
 /**
  * Create plugin routes
