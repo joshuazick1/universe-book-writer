@@ -6,7 +6,6 @@ import {
   type Plugin,
   type PluginConfig,
   type PluginManager,
-  PluginMetadata,
   type PluginRegistryEntry,
   PluginState,
   type PluginType,

@@ -1,12 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import { z } from 'zod';
 import { ValidationError } from '../validation/index.js';
-import {
-  LocationSchema,
-  TimelineSchema,
-  UniverseSchema,
-  UniverseValidator,
-} from '../validation/universe.js';
+import { LocationSchema, TimelineSchema, UniverseValidator } from '../validation/universe.js';
 
 describe('Universe Validation', () => {
   describe('Location Schema', () => {

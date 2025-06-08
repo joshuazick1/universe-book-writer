@@ -68,7 +68,9 @@ export class PluginValidator {
      */
     async validatePlugin(plugin, pluginPath) {
         const results = [];
-        const startTime = Date.now();
+        // Record start time for potential performance tracking
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _startTime = Date.now();
         try {
             // Basic metadata validation
             results.push(...(await this.validateMetadata(plugin.metadata)));
@@ -497,7 +499,9 @@ export class PluginValidator {
      */
     generateReport(pluginName, results) {
         const errors = results.filter(r => !r.valid && r.severity === ValidationSeverity.ERROR);
-        const warnings = results.filter(r => !r.valid && r.severity === ValidationSeverity.WARNING);
+        // Track warnings for potential future use
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _warnings = results.filter(r => !r.valid && r.severity === ValidationSeverity.WARNING);
         const valid = errors.length === 0;
         // Calculate scores
         const securityResults = results.filter(r => r.rule.includes('security') ||

@@ -52,7 +52,7 @@ export async function setupMongoForTest(databaseName) {
 export async function globalMongoCleanup() {
   if (globalMongoClient) {
     try {
-      await globalMongoClient.close();
+      await globalMongoClient.close(true); // Force close to terminate connections immediately
       globalMongoClient = null;
       console.log('Global MongoDB connection closed');
     } catch (error) {

@@ -7,7 +7,6 @@ import {
   type PluginConfig,
   type PluginMetadata,
   PluginState,
-  PluginType,
 } from '@universe-book-writer/core';
 
 /**
@@ -197,7 +196,7 @@ export class PluginEntity implements Plugin {
   /**
    * Override in subclasses to provide configuration validation
    */
-  protected async onValidateConfig(config: PluginConfig): Promise<boolean> {
+  protected async onValidateConfig(_config: PluginConfig): Promise<boolean> {
     // Default implementation - always valid
     return true;
   }
@@ -205,7 +204,7 @@ export class PluginEntity implements Plugin {
   /**
    * Override in subclasses to handle configuration updates
    */
-  protected async onConfigUpdate(config: PluginConfig): Promise<void> {
+  protected async onConfigUpdate(_config: PluginConfig): Promise<void> {
     // Default implementation - no-op
   }
 }

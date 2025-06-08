@@ -76,10 +76,10 @@ export declare class PluginEntity implements Plugin {
   /**
    * Override in subclasses to provide configuration validation
    */
-  protected onValidateConfig(config: PluginConfig): Promise<boolean>;
+  protected onValidateConfig(_config: PluginConfig): Promise<boolean>;
   /**
    * Override in subclasses to handle configuration updates
    */
-  protected onConfigUpdate(config: PluginConfig): Promise<void>;
+  protected onConfigUpdate(_config: PluginConfig): Promise<void>;
 }
 //# sourceMappingURL=plugin.entity.d.ts.map

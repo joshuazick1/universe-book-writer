@@ -16,7 +16,7 @@ const redisMockConfig = {
 
 // Initialize Redis mock with config
 const redisClient = new IORedis(redisMockConfig);
-(global as { redisClient: typeof redisClient }).redisClient = redisClient;
+(global as unknown as { redisClient: typeof redisClient }).redisClient = redisClient;
 
 let mongod: MongoMemoryServer;
 let mongoClient: MongoClient;
@@ -50,10 +50,13 @@ beforeAll(async () => {
 
     // Verify connections
     await Promise.all([mongoClient.db().command({ ping: 1 }), redisClient.ping()]);
+    // eslint-disable-next-line no-console
     console.log('Connected successfully to test environment');
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Failed to start test environment:', error);
     if (error instanceof MongoServerError) {
+      // eslint-disable-next-line no-console
       console.error('MongoDB Error Details:', error.errInfo);
     }
     throw error;
@@ -70,6 +73,7 @@ afterEach(async () => {
     // Clear Redis mock data
     await redisClient.flushall();
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error in afterEach cleanup:', error);
   }
 });
@@ -91,6 +95,7 @@ afterAll(async () => {
         await mongod.stop({ doCleanup: true, force: true });
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error in afterAll cleanup:', error);
       // Don't throw here to ensure all cleanup attempts run
     }

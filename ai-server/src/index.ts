@@ -215,12 +215,15 @@ async function startServer(): Promise<void> {
       console.log(`🔗 Server added: ${serverId}`);
     });
 
-    serverManager.on('serverHealthCheckFailed', (serverId: string, health: any, error: any) => {
-      console.warn(
-        `⚠️  Health check failed for ${serverId}:`,
-        error instanceof Error ? error.message : error
-      );
-    });
+    serverManager.on(
+      'serverHealthCheckFailed',
+      (serverId: string, health: unknown, error: unknown) => {
+        console.warn(
+          `⚠️  Health check failed for ${serverId}:`,
+          error instanceof Error ? error.message : error
+        );
+      }
+    );
 
     serverManager.on('serverCircuitBreakerOpened', (serverId: string) => {
       console.warn(`🚨 Circuit breaker opened for server: ${serverId}`);

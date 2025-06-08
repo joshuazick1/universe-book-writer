@@ -39,11 +39,13 @@ TEST_DB_PREFIX=universe_book_writer_test
 ### Test Database Isolation
 
 Each test suite creates a unique database with the pattern:
+
 ```
 test_{databaseName}_{timestamp}
 ```
 
 For example:
+
 - `test_hot_reload_1733123456789`
 - `test_plugin_system_1733123456790`
 
@@ -91,12 +93,12 @@ beforeAll(async () => {
   const mongoSetup = await setupMongoForTest('test-hot-reload');
   mongoClient = mongoSetup.mongoClient;
   mongoCleanup = mongoSetup.cleanup;
-  
+
   // Use mongoClient for plugin system initialization
   const system = await PluginSystemFactory.create({
     mongoClient,
     databaseName: 'test-hot-reload',
-    autoLoadPlugins: false
+    autoLoadPlugins: false,
   });
 });
 ```
@@ -118,11 +120,13 @@ beforeAll(async () => {
 ### Update Your Tests
 
 **Before:**
+
 ```typescript
 const { client } = await mongoHelper.getMongoInstance();
 ```
 
 **After:**
+
 ```typescript
 const { mongoClient } = await setupMongoForTest('test-db-name');
 ```
@@ -132,15 +136,17 @@ const { mongoClient } = await setupMongoForTest('test-db-name');
 ### MongoDB Connection Issues
 
 1. **Check MongoDB is running**:
+
    ```powershell
    # Check if MongoDB service is running
    Get-Service -Name "MongoDB"
-   
+
    # Or check if MongoDB is listening on port 27017
    Test-NetConnection -ComputerName localhost -Port 27017
    ```
 
 2. **Verify connection string**:
+
    ```powershell
    # Test connection using mongo shell
    mongo mongodb://localhost:27017/test

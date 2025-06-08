@@ -22,7 +22,15 @@ export interface OllamaRequest {
   stream?: boolean;
   raw?: boolean;
   format?: 'json';
-  options?: Record<string, any>;
+  options?: {
+    temperature?: number;
+    top_p?: number;
+    top_k?: number;
+    repeat_penalty?: number;
+    seed?: number;
+    num_predict?: number;
+    [key: string]: unknown;
+  };
 }
 
 export interface OllamaResponse {
@@ -63,6 +71,13 @@ export interface ModelInfo {
 
 export interface ModelsResponse {
   models: ModelInfo[];
+}
+
+export interface PullProgress {
+  status: string;
+  digest?: string;
+  total?: number;
+  completed?: number;
 }
 
 export class OllamaClient extends EventEmitter {
@@ -217,7 +232,7 @@ export class OllamaClient extends EventEmitter {
   /**
    * Get model information
    */
-  public async getModelInfo(modelName: string): Promise<any> {
+  public async getModelInfo(modelName: string): Promise<ModelInfo> {
     try {
       const response = await axios.post(
         `${this.server.url}/api/show`,
@@ -243,7 +258,10 @@ export class OllamaClient extends EventEmitter {
   /**
    * Pull a model
    */
-  public async pullModel(modelName: string, onProgress?: (progress: any) => void): Promise<void> {
+  public async pullModel(
+    modelName: string,
+    onProgress?: (progress: PullProgress) => void
+  ): Promise<void> {
     try {
       const response = await axios.post(
         `${this.server.url}/api/pull`,

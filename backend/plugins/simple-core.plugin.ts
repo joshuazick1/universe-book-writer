@@ -17,7 +17,7 @@ export const metadata = {
   license: 'MIT',
   keywords: ['test', 'core', 'simple'],
   type: PluginType.CORE,
-  dependencies: {},
+  dependencies: {} as Record<string, string>,
   engines: {
     node: '>=18.0.0',
   },
@@ -143,7 +143,8 @@ export default class SimpleCorePlugin implements Plugin {
       }
 
       // Validate settings structure for this plugin
-      const { debugMode, timeout } = config.settings as any;
+      const settings = config.settings as Record<string, unknown>;
+      const { debugMode, timeout } = settings;
       if (typeof debugMode !== 'boolean' || typeof timeout !== 'number') {
         return false;
       }

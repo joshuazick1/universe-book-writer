@@ -3,7 +3,6 @@
  */
 
 import { EventEmitter } from 'node:events';
-import { Plugin, PluginState } from '@universe-book-writer/core';
 import type { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
 import {
   type PluginReloadEvent,
@@ -131,7 +130,7 @@ export class PluginHotReloadManager extends EventEmitter {
       throw new Error(`Plugin ${pluginName} not found`);
     }
 
-    const pluginPath = (plugin as any).loadPath;
+    const pluginPath = (plugin as unknown as { loadPath?: string }).loadPath;
     if (!pluginPath) {
       throw new Error(`Plugin ${pluginName} has no load path`);
     }
@@ -159,7 +158,7 @@ export class PluginHotReloadManager extends EventEmitter {
 
     const plugins = this.pluginUseCase.getAllPlugins();
     const watchPromises = plugins
-      .filter(plugin => (plugin as any).loadPath)
+      .filter(plugin => (plugin as unknown as { loadPath?: string }).loadPath)
       .map(plugin => this.startWatching(plugin.metadata.name));
 
     await Promise.allSettled(watchPromises);

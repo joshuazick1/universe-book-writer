@@ -50,7 +50,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   // Universe validation rules
   public readonly validation: UniverseValidation = {
     async validateCharacter(character: unknown): Promise<boolean> {
-      const char = character as any;
+      const char = character as Record<string, unknown>;
       if (!char.species || !char.rank || !char.assignment) {
         return false;
       }
@@ -68,21 +68,21 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
         'betazoid',
       ];
 
-      return validSpecies.includes(char.species.toLowerCase());
+      return validSpecies.includes((char.species as string).toLowerCase());
     },
 
     async validateLocation(location: unknown): Promise<boolean> {
-      const loc = location as any;
+      const loc = location as Record<string, unknown>;
       return !!(loc.sector && loc.quadrant);
     },
 
     async validateTimeline(timeline: unknown): Promise<boolean> {
-      const tl = timeline as any;
+      const tl = timeline as Record<string, unknown>;
       return !!(tl.stardate || tl.year);
     },
 
     async validateStory(story: unknown): Promise<boolean> {
-      const s = story as any;
+      const s = story as Record<string, unknown>;
       return !!(s.title && s.content);
     },
   };
@@ -153,7 +153,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     if (!config.settings || typeof config.settings !== 'object') {
       return false;
     }
-    const settings = config.settings as any;
+    const settings = config.settings as Record<string, unknown>;
     return (
       typeof settings.theme === 'string' &&
       typeof settings.era === 'string' &&

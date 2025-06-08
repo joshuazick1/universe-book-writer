@@ -2,7 +2,7 @@
  * Ollama Health Monitor Tests
  */
 
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest } from '@jest/globals';
 import axios from 'axios';
 import type { OllamaServerConfig } from '../config/ollama.config.js';
 import { OllamaHealthMonitor } from '../health/health-monitor.js';

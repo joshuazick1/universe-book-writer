@@ -10,6 +10,7 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
     "typeRoots": ["../node_modules/@types", "./node_modules/@types", "./src/types"]
   },
   "references": [{ "path": "../packages/core" }, { "path": "../packages/plugin-sdk" }],

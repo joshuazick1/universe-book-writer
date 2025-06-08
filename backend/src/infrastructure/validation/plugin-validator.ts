@@ -2,7 +2,6 @@
  * Enhanced plugin validation system with security checks and advanced validation rules
  */
 
-import { createHash } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import {
@@ -29,7 +28,7 @@ export interface ValidationResult {
   severity: ValidationSeverity;
   rule: string;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 /**
@@ -152,7 +151,9 @@ export class PluginValidator {
    */
   async validatePlugin(plugin: Plugin, pluginPath?: string): Promise<PluginValidationReport> {
     const results: ValidationResult[] = [];
-    const startTime = Date.now();
+    // Record start time for potential performance tracking
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _startTime = Date.now();
 
     try {
       // Basic metadata validation
@@ -507,7 +508,7 @@ export class PluginValidator {
     // Check for required universe plugin methods
     const requiredMethods = ['getUniverseData', 'validateStoryElement'];
     for (const method of requiredMethods) {
-      if (typeof (plugin as any)[method] !== 'function') {
+      if (typeof (plugin as unknown as Record<string, unknown>)[method] !== 'function') {
         results.push({
           valid: false,
           severity: ValidationSeverity.ERROR,
@@ -529,7 +530,7 @@ export class PluginValidator {
     // Check for required theme plugin methods
     const requiredMethods = ['getThemeData', 'applyTheme'];
     for (const method of requiredMethods) {
-      if (typeof (plugin as any)[method] !== 'function') {
+      if (typeof (plugin as unknown as Record<string, unknown>)[method] !== 'function') {
         results.push({
           valid: false,
           severity: ValidationSeverity.ERROR,
@@ -551,7 +552,7 @@ export class PluginValidator {
     // Check for required AI plugin methods
     const requiredMethods = ['processRequest', 'getModelInfo'];
     for (const method of requiredMethods) {
-      if (typeof (plugin as any)[method] !== 'function') {
+      if (typeof (plugin as unknown as Record<string, unknown>)[method] !== 'function') {
         results.push({
           valid: false,
           severity: ValidationSeverity.ERROR,
@@ -645,7 +646,9 @@ export class PluginValidator {
    */
   private generateReport(pluginName: string, results: ValidationResult[]): PluginValidationReport {
     const errors = results.filter(r => !r.valid && r.severity === ValidationSeverity.ERROR);
-    const warnings = results.filter(r => !r.valid && r.severity === ValidationSeverity.WARNING);
+    // Track warnings for potential future use
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _warnings = results.filter(r => !r.valid && r.severity === ValidationSeverity.WARNING);
 
     const valid = errors.length === 0;
 

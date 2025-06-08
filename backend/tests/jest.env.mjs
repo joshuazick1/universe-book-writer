@@ -13,4 +13,6 @@ const __dirname = path.dirname(__filename);
 // Load test environment variables
 dotenv.config({ path: path.join(__dirname, '.env.test') });
 
-console.log(`Test environment loaded. MongoDB URI: ${process.env.MONGODB_URI || 'mongodb://localhost:27017'}`);
+console.log(
+  `Test environment loaded. MongoDB URI: ${process.env.MONGODB_URI || 'mongodb://localhost:27017'}`
+);

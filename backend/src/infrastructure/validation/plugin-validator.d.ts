@@ -23,7 +23,7 @@ export interface ValidationResult {
   severity: ValidationSeverity;
   rule: string;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 /**
  * Plugin validation report

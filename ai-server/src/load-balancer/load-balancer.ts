@@ -33,8 +33,8 @@ export class RoundRobinStrategy implements LoadBalancingStrategy {
 
   selectServer(
     availableServers: OllamaServerConfig[],
-    healthStatus: Map<string, ServerHealth>,
-    metrics?: Map<string, RequestMetrics>
+    _healthStatus: Map<string, ServerHealth>,
+    _metrics?: Map<string, RequestMetrics>
   ): OllamaServerConfig | null {
     if (availableServers.length === 0) return null;
 
@@ -52,8 +52,8 @@ export class PriorityStrategy implements LoadBalancingStrategy {
 
   selectServer(
     availableServers: OllamaServerConfig[],
-    healthStatus: Map<string, ServerHealth>,
-    metrics?: Map<string, RequestMetrics>
+    _healthStatus: Map<string, ServerHealth>,
+    _metrics?: Map<string, RequestMetrics>
   ): OllamaServerConfig | null {
     if (availableServers.length === 0) return null;
 
@@ -99,7 +99,7 @@ export class ResponseTimeStrategy implements LoadBalancingStrategy {
   selectServer(
     availableServers: OllamaServerConfig[],
     healthStatus: Map<string, ServerHealth>,
-    metrics?: Map<string, RequestMetrics>
+    _metrics?: Map<string, RequestMetrics>
   ): OllamaServerConfig | null {
     if (availableServers.length === 0) return null;
 
@@ -281,7 +281,15 @@ export class OllamaLoadBalancer extends EventEmitter {
     utilization: number;
     averageResponseTime: number;
   }> {
-    const utilization: Array<any> = [];
+    const utilization: Array<{
+      serverId: string;
+      name: string;
+      isHealthy: boolean;
+      activeRequests: number;
+      maxRequests: number;
+      utilization: number;
+      averageResponseTime: number;
+    }> = [];
 
     for (const [serverId, server] of this.servers) {
       const metrics = this.metrics.get(serverId);
@@ -307,7 +315,8 @@ export class OllamaLoadBalancer extends EventEmitter {
    * Reset metrics for all servers
    */
   public resetMetrics(): void {
-    for (const [serverId, metrics] of this.metrics) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const [_serverId, metrics] of this.metrics) {
       metrics.requestCount = 0;
       metrics.activeRequests = 0;
       metrics.averageResponseTime = 0;

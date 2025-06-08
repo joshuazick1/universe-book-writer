@@ -1,25 +1,24 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  testEnvironment: process.env.TEST_ENV === 'jsdom' 
-    ? 'jsdom'
-    : 'node',
+  testEnvironment: process.env.TEST_ENV === 'jsdom' ? 'jsdom' : 'node',
   globalTeardown: '<rootDir>/jest.teardown.global.mjs',
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: true,
-      tsconfig: 'tsconfig.json',
-      isolatedModules: true
-    }]
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        useESM: true,
+        tsconfig: 'tsconfig.json',
+        isolatedModules: true,
+      },
+    ],
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/packages/$1',
     '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
   },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(@?mongodb.*|bson)/)'
-  ],
+  transformIgnorePatterns: ['/node_modules/(?!(@?mongodb.*|bson)/)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'mjs', 'cjs', 'jsx', 'json', 'node'],
   roots: ['<rootDir>/packages', '<rootDir>/frontend', '<rootDir>/backend', '<rootDir>/ai-server'],
   setupFiles: ['<rootDir>/backend/tests/jest.env.mjs'],
@@ -47,7 +46,7 @@ export default {
       functions: 90,
       lines: 90,
       statements: 90,
-    }
+    },
   },
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
@@ -58,5 +57,5 @@ export default {
     '/test/',
     '/*.config.js',
     '/*.setup.ts',
-  ]
-}
+  ],
+};

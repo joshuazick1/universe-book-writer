@@ -459,9 +459,11 @@ export class PluginDiscoveryService extends EventEmitter {
    */
   private async createDiscoveryEntry(
     pluginPath: string,
-    packageJson: any
+    packageJson: Record<string, unknown>
   ): Promise<PluginDiscoveryEntry> {
-    const stats = await fs.stat(pluginPath);
+    // Get file stats for potential future use (e.g., modification time)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _stats = await fs.stat(pluginPath);
     const metadata = this.extractMetadataFromPackageJson(packageJson);
 
     let isValid = true;
@@ -507,22 +509,24 @@ export class PluginDiscoveryService extends EventEmitter {
   /**
    * Extract metadata from package.json
    */
-  private extractMetadataFromPackageJson(packageJson: any): PluginMetadata {
-    const universeBookWriter = packageJson['universe-book-writer'] || {};
+  private extractMetadataFromPackageJson(packageJson: Record<string, unknown>): PluginMetadata {
+    const universeBookWriter =
+      (packageJson['universe-book-writer'] as Record<string, unknown>) || {};
 
     return {
-      name: packageJson.name,
-      version: packageJson.version,
-      description: packageJson.description || '',
-      author: packageJson.author || '',
-      homepage: packageJson.homepage,
-      repository: packageJson.repository?.url || packageJson.repository,
-      license: packageJson.license,
-      keywords: packageJson.keywords || [],
-      type: universeBookWriter.type || PluginType.CORE,
-      dependencies: packageJson.dependencies || {},
-      peerDependencies: packageJson.peerDependencies,
-      engines: packageJson.engines,
+      name: packageJson.name as string,
+      version: packageJson.version as string,
+      description: (packageJson.description as string) || '',
+      author: (packageJson.author as string) || '',
+      homepage: packageJson.homepage as string | undefined,
+      repository:
+        (packageJson.repository as { url?: string })?.url || (packageJson.repository as string),
+      license: packageJson.license as string | undefined,
+      keywords: (packageJson.keywords as string[]) || [],
+      type: (universeBookWriter.type as PluginType) || PluginType.CORE,
+      dependencies: (packageJson.dependencies as Record<string, string>) || {},
+      peerDependencies: packageJson.peerDependencies as Record<string, string> | undefined,
+      engines: packageJson.engines as { node?: string; npm?: string } | undefined,
     };
   }
 

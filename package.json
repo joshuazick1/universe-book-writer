@@ -3,8 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": {
-    "packages": ["packages/*", "frontend", "backend", "ai-server", "plugins/*", "tools/*"],
-    "nohoist": ["**/vite", "**/tailwindcss", "**/express", "**/react", "**/react-dom"]
+    "packages": [
+      "packages/*",
+      "frontend",
+      "backend",
+      "ai-server",
+      "plugins/*",
+      "tools/*"
+    ],
+    "nohoist": [
+      "**/vite",
+      "**/tailwindcss",
+      "**/express",
+      "**/react",
+      "**/react-dom"
+    ]
   },
   "scripts": {
     "prepare": "husky install",

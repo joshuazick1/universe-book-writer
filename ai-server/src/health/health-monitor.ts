@@ -165,7 +165,7 @@ export class OllamaHealthMonitor extends EventEmitter {
       health.responseTime = responseTime;
 
       if (response.data?.models) {
-        health.models = response.data.models.map((model: any) => model.name);
+        health.models = response.data.models.map((model: { name: string }) => model.name);
       }
 
       // Reset failure count on successful health check

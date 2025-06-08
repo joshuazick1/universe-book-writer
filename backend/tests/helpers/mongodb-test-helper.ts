@@ -66,12 +66,28 @@ export async function setupMongoForTest(databaseName: string): Promise<MongoTest
 export async function globalMongoCleanup(): Promise<void> {
   if (globalMongoClient) {
     try {
-      await globalMongoClient.close();
+      // Close the client properly with force flag to terminate connections immediately
+      await globalMongoClient.close(true); // Force close to terminate connections immediately
       globalMongoClient = null;
       console.log('Global MongoDB connection closed');
     } catch (error) {
       console.warn('Global MongoDB cleanup warning:', error);
     }
+  }
+}
+
+/**
+ * Force close all MongoDB connections - for use in emergency cleanup
+ */
+export async function forceCloseAllConnections(): Promise<void> {
+  try {
+    if (globalMongoClient) {
+      // Force close the client with immediate flag
+      await globalMongoClient.close(true);
+      globalMongoClient = null;
+    }
+  } catch (error) {
+    console.warn('Force close warning:', error);
   }
 }
 

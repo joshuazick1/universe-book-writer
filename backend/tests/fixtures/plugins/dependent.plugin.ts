@@ -57,7 +57,7 @@ export default class DependentPlugin implements Plugin {
     if (!config.settings || typeof config.settings !== 'object') {
       return false;
     }
-    const settings = config.settings as any;
+    const settings = config.settings as Record<string, unknown>;
     if (
       typeof settings.useBaseFunctionality !== 'boolean' ||
       typeof settings.enhancedMode !== 'boolean'

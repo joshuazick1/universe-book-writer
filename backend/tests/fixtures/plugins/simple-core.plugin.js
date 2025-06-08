@@ -105,7 +105,8 @@ export default class SimpleCorePlugin {
       if (!config || typeof config !== 'object') return false;
       if (typeof config.enabled !== 'boolean') return false;
       if (!config.settings || typeof config.settings !== 'object') return false;
-      const { debugMode, timeout } = config.settings;
+      const settings = config.settings;
+      const { debugMode, timeout } = settings;
       if (typeof debugMode !== 'boolean' || typeof timeout !== 'number') return false;
       return true;
     } catch (error) {

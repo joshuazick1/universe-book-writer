@@ -5,7 +5,12 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { type Plugin, type PluginMetadata, PluginType } from '@universe-book-writer/core';
+import {
+  type Plugin,
+  type PluginMetadata,
+  type PluginConfig,
+  PluginType,
+} from '@universe-book-writer/core';
 import { PluginEntity } from '../../core/entities/plugin.entity.js';
 
 /**
@@ -15,6 +20,16 @@ export interface PluginLoader {
   loadFromPath(pluginPath: string): Promise<Plugin>;
   loadFromDirectory(directory: string): Promise<Plugin[]>;
   validatePluginStructure(pluginPath: string): Promise<boolean>;
+}
+
+/**
+ * Plugin module interface
+ */
+interface PluginModule {
+  default?: new (metadata?: PluginMetadata) => Plugin;
+  Plugin?: new (metadata?: PluginMetadata) => Plugin;
+  metadata?: PluginMetadata;
+  [key: string]: unknown;
 }
 
 /**
@@ -40,9 +55,17 @@ export class FileSystemPluginLoader implements PluginLoader {
 
     // Create plugin instance
     const plugin = this.createPluginInstance(metadata, pluginModule);
-    plugin.setLoadPath(pluginPath);
 
-    return plugin;
+    // If the plugin is not already a PluginEntity, wrap it
+    let entityPlugin: PluginEntity;
+    if (plugin instanceof PluginEntity) {
+      entityPlugin = plugin;
+    } else {
+      entityPlugin = new PluginEntityWrapper(plugin);
+    }
+
+    entityPlugin.setLoadPath(pluginPath);
+    return entityPlugin;
   }
 
   /**
@@ -136,7 +159,7 @@ export class FileSystemPluginLoader implements PluginLoader {
 
   /**
    * Load plugin module
-   */ private async loadPluginModule(pluginPath: string): Promise<any> {
+   */ private async loadPluginModule(pluginPath: string): Promise<PluginModule> {
     const stat = await fs.stat(pluginPath);
 
     if (stat.isFile()) {
@@ -160,7 +183,7 @@ export class FileSystemPluginLoader implements PluginLoader {
   /**
    * Create plugin instance from metadata and module
    */
-  private createPluginInstance(metadata: PluginMetadata, module: any): PluginEntity {
+  private createPluginInstance(metadata: PluginMetadata, module: PluginModule): Plugin {
     // Check if module exports a plugin class
     if (module.default && typeof module.default === 'function') {
       // Plugin class constructor
@@ -179,22 +202,24 @@ export class FileSystemPluginLoader implements PluginLoader {
   /**
    * Extract metadata from package.json
    */
-  private extractMetadataFromPackageJson(packageJson: any): PluginMetadata {
-    const universeBookWriter = packageJson['universe-book-writer'] || {};
+  private extractMetadataFromPackageJson(packageJson: Record<string, unknown>): PluginMetadata {
+    const universeBookWriter =
+      (packageJson['universe-book-writer'] as Record<string, unknown>) || {};
 
     return {
-      name: packageJson.name,
-      version: packageJson.version,
-      description: packageJson.description || '',
-      author: packageJson.author || '',
-      homepage: packageJson.homepage,
-      repository: packageJson.repository?.url || packageJson.repository,
-      license: packageJson.license,
-      keywords: packageJson.keywords || [],
-      type: universeBookWriter.type || PluginType.CORE,
-      dependencies: packageJson.dependencies || {},
-      peerDependencies: packageJson.peerDependencies,
-      engines: packageJson.engines,
+      name: packageJson.name as string,
+      version: packageJson.version as string,
+      description: (packageJson.description as string) || '',
+      author: (packageJson.author as string) || '',
+      homepage: packageJson.homepage as string | undefined,
+      repository:
+        (packageJson.repository as { url?: string })?.url || (packageJson.repository as string),
+      license: packageJson.license as string | undefined,
+      keywords: (packageJson.keywords as string[]) || [],
+      type: (universeBookWriter.type as PluginType) || PluginType.CORE,
+      dependencies: (packageJson.dependencies as Record<string, string>) || {},
+      peerDependencies: packageJson.peerDependencies as Record<string, string> | undefined,
+      engines: packageJson.engines as { node?: string; npm?: string } | undefined,
     };
   }
 
@@ -217,7 +242,7 @@ export class FileSystemPluginLoader implements PluginLoader {
 class GenericPluginWrapper extends PluginEntity {
   constructor(
     metadata: PluginMetadata,
-    private module: any
+    private module: PluginModule
   ) {
     super(metadata);
   }
@@ -244,5 +269,46 @@ class GenericPluginWrapper extends PluginEntity {
     if (this.module.destroy && typeof this.module.destroy === 'function') {
       await this.module.destroy();
     }
+  }
+}
+
+/**
+ * Wrapper to convert Plugin interface implementations to PluginEntity
+ */
+class PluginEntityWrapper extends PluginEntity {
+  constructor(private wrappedPlugin: Plugin) {
+    super(wrappedPlugin.metadata, wrappedPlugin.config);
+  }
+
+  protected async onInitialize(): Promise<void> {
+    await this.wrappedPlugin.initialize();
+  }
+
+  protected async onActivate(): Promise<void> {
+    await this.wrappedPlugin.activate();
+  }
+
+  protected async onDeactivate(): Promise<void> {
+    await this.wrappedPlugin.deactivate();
+  }
+
+  protected async onDestroy(): Promise<void> {
+    await this.wrappedPlugin.destroy();
+  }
+
+  async validateConfig(config: PluginConfig): Promise<boolean> {
+    return await this.wrappedPlugin.validateConfig(config);
+  }
+
+  async updateConfig(config: Partial<PluginConfig>): Promise<void> {
+    await this.wrappedPlugin.updateConfig(config);
+  }
+
+  canActivate(): boolean {
+    return this.wrappedPlugin.canActivate();
+  }
+
+  canDeactivate(): boolean {
+    return this.wrappedPlugin.canDeactivate();
   }
 }

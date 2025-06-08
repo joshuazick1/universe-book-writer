@@ -23,6 +23,7 @@ export enum PluginType {
   THEME = 'theme',
   AI = 'ai',
   CORE = 'core',
+  GAMING = 'gaming',
 }
 
 /**
@@ -133,6 +134,25 @@ export interface AIPlugin extends Plugin {
 }
 
 /**
+ * Gaming plugin interface for interactive gaming experiences
+ */
+export interface GamingPlugin extends Plugin {
+  readonly gameTypes: string[];
+  readonly supportedUniverses: string[];
+
+  // Game management
+  createGame(type: string, universeType: string, config: unknown): Promise<unknown>;
+  loadGame(gameId: string): Promise<unknown>;
+  saveGame(game: unknown): Promise<void>;
+  deleteGame(gameId: string): Promise<void>;
+
+  // Universe integration
+  registerUniversePlugin(plugin: UniversePlugin): Promise<void>;
+  unregisterUniversePlugin(universeType: string): Promise<void>;
+  getAvailableUniverses(): Promise<string[]>;
+}
+
+/**
  * Universe validation rules
  */
 export interface UniverseValidation {
@@ -178,7 +198,7 @@ export interface ThemeComponents {
 export interface ComponentType {
   name: string;
   props?: Record<string, unknown>;
-  render?: (props: any) => unknown;
+  render?: (props: Record<string, unknown>) => unknown;
 }
 
 /**

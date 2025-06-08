@@ -1,5 +1,5 @@
 import type { Redis } from 'ioredis';
-import { type MongoClient, MongoServerError } from 'mongodb';
+import { type MongoClient } from 'mongodb';
 import type { MongoMemoryServer } from 'mongodb-memory-server';
 
 declare global {

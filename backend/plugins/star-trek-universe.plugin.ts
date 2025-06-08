@@ -10,7 +10,6 @@ import {
   type UniverseValidation,
   type UniverseUIComponents,
   type UniverseAIPrompts,
-  type ComponentType,
 } from '@universe-book-writer/core';
 
 export const metadata = {
@@ -22,7 +21,7 @@ export const metadata = {
   license: 'MIT',
   keywords: ['star-trek', 'sci-fi', 'universe', 'lcars'],
   type: PluginType.UNIVERSE,
-  dependencies: {},
+  dependencies: {} as Record<string, string>,
   engines: {
     node: '>=18.0.0',
   },
@@ -52,7 +51,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     async validateCharacter(character: unknown): Promise<boolean> {
       // Implementation of character validation
       if (!character || typeof character !== 'object') return false;
-      const char = character as any;
+      const char = character as Record<string, unknown>;
 
       // Validate required fields
       if (!char.species || !char.rank || !char.assignment) return false;
@@ -70,25 +69,25 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
         'Betazoid',
         'Trill',
       ];
-      return validSpecies.includes(char.species);
+      return validSpecies.includes(char.species as string);
     },
 
     async validateLocation(location: unknown): Promise<boolean> {
       // Implementation of location validation
       if (!location || typeof location !== 'object') return false;
-      const loc = location as any;
+      const loc = location as Record<string, unknown>;
 
       // Validate required fields
       if (!loc.sector || !loc.system || !loc.classification) return false;
 
       // Validate sector format (123-456)
-      return /^\d{3}-\d{3}$/.test(loc.sector);
+      return /^\d{3}-\d{3}$/.test(loc.sector as string);
     },
 
     async validateTimeline(timeline: unknown): Promise<boolean> {
       // Implementation of timeline validation
       if (!timeline || typeof timeline !== 'object') return false;
-      const tl = timeline as any;
+      const tl = timeline as Record<string, unknown>;
 
       return !!(tl.events && Array.isArray(tl.events));
     },
@@ -96,7 +95,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
     async validateStory(story: unknown): Promise<boolean> {
       // Implementation of story validation
       if (!story || typeof story !== 'object') return false;
-      const s = story as any;
+      const s = story as Record<string, unknown>;
 
       return !!(s.title && s.content);
     },
@@ -230,7 +229,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
       if (typeof config.enabled !== 'boolean') return false;
       if (!config.settings || typeof config.settings !== 'object') return false;
 
-      const settings = config.settings as any;
+      const settings = config.settings as Record<string, unknown>;
       const requiredFields = [
         'theme',
         'era',
@@ -269,31 +268,34 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   /**
    * Get universe-specific validation for content
    */
-  validateContent(content: any): { valid: boolean; errors: string[]; suggestions: string[] } {
+  validateContent(content: unknown): { valid: boolean; errors: string[]; suggestions: string[] } {
     const errors: string[] = [];
     const suggestions: string[] = [];
 
     // Validate characters
-    if (content.characters) {
-      for (const character of content.characters) {
-        if (!this.isValidSpecies(character.species)) {
-          errors.push(`Invalid species: ${character.species}`);
+    const contentObj = content as Record<string, unknown>;
+    if (contentObj.characters && Array.isArray(contentObj.characters)) {
+      for (const character of contentObj.characters) {
+        const char = character as Record<string, unknown>;
+        if (!this.isValidSpecies(char.species as string)) {
+          errors.push(`Invalid species: ${char.species}`);
           suggestions.push(
             'Use established Star Trek species or create new species with proper background'
           );
         }
 
-        if (character.rank && !this.isValidStarfleetRank(character.rank)) {
-          errors.push(`Invalid Starfleet rank: ${character.rank}`);
+        if (char.rank && !this.isValidStarfleetRank(char.rank as string)) {
+          errors.push(`Invalid Starfleet rank: ${char.rank}`);
           suggestions.push('Use official Starfleet rank structure');
         }
       }
     }
 
     // Validate technology
-    if (content.technology) {
-      for (const tech of content.technology) {
-        if (tech.warpFactor && tech.warpFactor > 9.9) {
+    if (contentObj.technology && Array.isArray(contentObj.technology)) {
+      for (const tech of contentObj.technology) {
+        const techObj = tech as Record<string, unknown>;
+        if (techObj.warpFactor && (techObj.warpFactor as number) > 9.9) {
           errors.push(`Warp factor ${tech.warpFactor} exceeds maximum of 9.9`);
           suggestions.push('Consider using transwarp or other advanced propulsion methods');
         }
@@ -310,7 +312,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   /**
    * Get universe-specific AI prompts
    */
-  getAIPrompts(context: string): string[] {
+  getAIPrompts(_context: string): string[] {
     const prompts: string[] = [];
 
     // Add base Star Trek context
@@ -349,7 +351,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   /**
    * Get theme configuration
    */
-  getThemeConfig(): any {
+  getThemeConfig(): Record<string, unknown> {
     return {
       name: 'LCARS',
       colors: {

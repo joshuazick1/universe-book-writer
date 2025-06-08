@@ -35,9 +35,9 @@ export enum ReloadReason {
 interface PluginStateSnapshot {
   pluginName: string;
   state: PluginState;
-  config: any;
-  metadata: any;
-  customData?: any;
+  config: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  customData?: Record<string, unknown>;
   timestamp: Date;
 }
 
@@ -184,9 +184,14 @@ export class PluginWatcher extends EventEmitter {
     };
 
     // Allow plugins to provide custom state data
-    if (typeof (plugin as any).getStateData === 'function') {
+    if (
+      typeof (plugin as unknown as { getStateData?: () => Promise<unknown> }).getStateData ===
+      'function'
+    ) {
       try {
-        snapshot.customData = await (plugin as any).getStateData();
+        snapshot.customData = await (
+          plugin as unknown as { getStateData: () => Promise<Record<string, unknown>> }
+        ).getStateData();
       } catch (error) {
         console.warn(`Failed to get custom state data for plugin ${plugin.metadata.name}:`, error);
       }
@@ -211,8 +216,14 @@ export class PluginWatcher extends EventEmitter {
       }
 
       // Restore custom state data
-      if (snapshot.customData && typeof (plugin as any).setStateData === 'function') {
-        await (plugin as any).setStateData(snapshot.customData);
+      if (
+        snapshot.customData &&
+        typeof (plugin as unknown as { setStateData?: (data: unknown) => Promise<void> })
+          .setStateData === 'function'
+      ) {
+        await (
+          plugin as unknown as { setStateData: (data: Record<string, unknown>) => Promise<void> }
+        ).setStateData(snapshot.customData);
       }
 
       // Restore plugin state

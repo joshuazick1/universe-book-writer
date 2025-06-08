@@ -80,6 +80,7 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
     }
     // Remove _id field from the returned settings
     const { _id, ...settingsData } = settings;
+    void _id; // Explicitly mark as used
     return settingsData;
   }
 
@@ -92,9 +93,10 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
       ...currentSettings,
       ...settings,
     };
+
     await this.collection.replaceOne(
       { _id: DatabaseAIConfigurationService.SETTINGS_ID },
-      { ...newSettings, _id: DatabaseAIConfigurationService.SETTINGS_ID } as any,
+      newSettings,
       { upsert: true }
     );
 
@@ -108,7 +110,7 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
     const currentSettings = await this.getSettings();
 
     // Check if server already exists
-    if (currentSettings.ollamaServers.some((s: any) => s.id === server.id)) {
+    if (currentSettings.ollamaServers.some((s: OllamaServerSettings) => s.id === server.id)) {
       throw new Error(`Server with ID ${server.id} already exists`);
     }
 
@@ -128,7 +130,9 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
 
     const newSettings = {
       ...currentSettings,
-      ollamaServers: currentSettings.ollamaServers.filter((s: any) => s.id !== serverId),
+      ollamaServers: currentSettings.ollamaServers.filter(
+        (s: OllamaServerSettings) => s.id !== serverId
+      ),
     };
 
     return this.updateSettings(newSettings);
@@ -143,7 +147,9 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
   ): Promise<AISettings> {
     const currentSettings = await this.getSettings();
 
-    const serverIndex = currentSettings.ollamaServers.findIndex((s: any) => s.id === serverId);
+    const serverIndex = currentSettings.ollamaServers.findIndex(
+      (s: OllamaServerSettings) => s.id === serverId
+    );
     if (serverIndex === -1) {
       throw new Error(`Server with ID ${serverId} not found`);
     }
@@ -169,9 +175,9 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
 
     if (!existingSettings) {
       await this.collection.insertOne({
-        ...DefaultAISettings,
         _id: DatabaseAIConfigurationService.SETTINGS_ID,
-      } as any);
+        ...DefaultAISettings,
+      });
     }
   }
 }

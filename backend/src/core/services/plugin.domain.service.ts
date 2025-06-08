@@ -6,6 +6,7 @@ import {
   type Plugin,
   type PluginMetadata,
   type PluginRegistryEntry,
+  type PluginConfig,
   PluginState,
   PluginType,
 } from '@universe-book-writer/core';
@@ -197,14 +198,16 @@ export class PluginDomainService {
   createRegistryEntry(
     metadata: PluginMetadata,
     loadPath: string,
-    config?: any
+    config?: PluginConfig
   ): PluginRegistryEntry {
     const now = new Date();
+
+    const pluginConfig: PluginConfig = config || { enabled: true, settings: {} };
 
     return {
       id: `plugin-${metadata.name}-${Date.now()}`,
       pluginMetadata: metadata,
-      config: config || { enabled: true, settings: {} },
+      config: pluginConfig,
       state: PluginState.UNLOADED,
       loadPath,
       dependents: [],

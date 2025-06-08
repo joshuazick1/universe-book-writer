@@ -137,7 +137,8 @@ export default class DependentPlugin implements Plugin {
       }
 
       // Validate settings structure for this plugin
-      const { useBaseFunctionality, enhancedMode } = config.settings as any;
+      const settings = config.settings as Record<string, unknown>;
+      const { useBaseFunctionality, enhancedMode } = settings;
       if (typeof useBaseFunctionality !== 'boolean' || typeof enhancedMode !== 'boolean') {
         return false;
       }

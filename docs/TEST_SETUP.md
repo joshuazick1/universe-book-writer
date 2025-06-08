@@ -43,7 +43,7 @@ See **[MongoDB Test Setup Documentation](./MONGODB_TEST_SETUP.md)** for complete
 #### Benefits of New Approach
 
 - **No MongoDB downloads** - Uses your existing MongoDB instance
-- **Faster test startup** - No MongoDB Memory Server overhead  
+- **Faster test startup** - No MongoDB Memory Server overhead
 - **Better debugging** - Use standard MongoDB tools to inspect test data
 - **Isolated databases** - Each test creates unique, auto-cleaned databases
 

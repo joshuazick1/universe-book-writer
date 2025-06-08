@@ -18,20 +18,20 @@ export declare const LocationSchema: z.ZodObject<
   'strip',
   z.ZodTypeAny,
   {
-    id: string;
     name: string;
-    description: string;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
+    description: string;
     metadata?: Record<string, unknown> | undefined;
     coordinates?: Record<string, number> | undefined;
   },
   {
-    id: string;
     name: string;
-    description: string;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
+    description: string;
     metadata?: Record<string, unknown> | undefined;
     coordinates?: Record<string, number> | undefined;
   }
@@ -95,27 +95,27 @@ export declare const TimelineSchema: z.ZodObject<
   'strip',
   z.ZodTypeAny,
   {
-    id: string;
     name: string;
-    createdAt: Date;
-    updatedAt: Date;
     events: {
       id: string;
       description: string;
       date: string;
     }[];
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
     metadata?: Record<string, unknown> | undefined;
   },
   {
-    id: string;
     name: string;
-    createdAt: Date;
-    updatedAt: Date;
     events: {
       id: string;
       description: string;
       date: string;
     }[];
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
     metadata?: Record<string, unknown> | undefined;
   }
 >;
@@ -143,20 +143,20 @@ export declare const UniverseSchema: z.ZodObject<
         'strip',
         z.ZodTypeAny,
         {
-          id: string;
           name: string;
-          description: string;
+          id: string;
           createdAt: Date;
           updatedAt: Date;
+          description: string;
           metadata?: Record<string, unknown> | undefined;
           coordinates?: Record<string, number> | undefined;
         },
         {
-          id: string;
           name: string;
-          description: string;
+          id: string;
           createdAt: Date;
           updatedAt: Date;
+          description: string;
           metadata?: Record<string, unknown> | undefined;
           coordinates?: Record<string, number> | undefined;
         }
@@ -198,27 +198,27 @@ export declare const UniverseSchema: z.ZodObject<
         'strip',
         z.ZodTypeAny,
         {
-          id: string;
           name: string;
-          createdAt: Date;
-          updatedAt: Date;
           events: {
             id: string;
             description: string;
             date: string;
           }[];
+          id: string;
+          createdAt: Date;
+          updatedAt: Date;
           metadata?: Record<string, unknown> | undefined;
         },
         {
-          id: string;
           name: string;
-          createdAt: Date;
-          updatedAt: Date;
           events: {
             id: string;
             description: string;
             date: string;
           }[];
+          id: string;
+          createdAt: Date;
+          updatedAt: Date;
           metadata?: Record<string, unknown> | undefined;
         }
       >,
@@ -228,59 +228,59 @@ export declare const UniverseSchema: z.ZodObject<
   'strip',
   z.ZodTypeAny,
   {
-    id: string;
     name: string;
-    description: string;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
+    description: string;
     locations: {
-      id: string;
       name: string;
-      description: string;
+      id: string;
       createdAt: Date;
       updatedAt: Date;
+      description: string;
       metadata?: Record<string, unknown> | undefined;
       coordinates?: Record<string, number> | undefined;
     }[];
     timelines: {
-      id: string;
       name: string;
-      createdAt: Date;
-      updatedAt: Date;
       events: {
         id: string;
         description: string;
         date: string;
       }[];
+      id: string;
+      createdAt: Date;
+      updatedAt: Date;
       metadata?: Record<string, unknown> | undefined;
     }[];
     metadata?: Record<string, unknown> | undefined;
   },
   {
-    id: string;
     name: string;
-    description: string;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
+    description: string;
     locations: {
-      id: string;
       name: string;
-      description: string;
+      id: string;
       createdAt: Date;
       updatedAt: Date;
+      description: string;
       metadata?: Record<string, unknown> | undefined;
       coordinates?: Record<string, number> | undefined;
     }[];
     timelines: {
-      id: string;
       name: string;
-      createdAt: Date;
-      updatedAt: Date;
       events: {
         id: string;
         description: string;
         date: string;
       }[];
+      id: string;
+      createdAt: Date;
+      updatedAt: Date;
       metadata?: Record<string, unknown> | undefined;
     }[];
     metadata?: Record<string, unknown> | undefined;

@@ -5,15 +5,16 @@ export default {
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: true,
-      tsconfig: './tsconfig.json'
-    }]
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        useESM: true,
+        tsconfig: './tsconfig.json',
+      },
+    ],
   },
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1'
+    '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
   },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(@?mongodb.*|bson)/)'
-  ]
+  transformIgnorePatterns: ['/node_modules/(?!(@?mongodb.*|bson)/)'],
 };

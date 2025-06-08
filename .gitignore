@@ -39,6 +39,22 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+# Compiled JavaScript files (generated from TypeScript)
+**/*.js
+**/*.js.map
+**/*.d.ts
+**/*.d.ts.map
+# But keep configuration and setup files
+!*.config.js
+!*.setup.js
+!babel.config.js
+!commitlint.config.js
+!jest.setup.js
+!postcss.config.js
+!tailwind.config.js
+!**/migrations/**/*.js
+!**/fixtures/**/*.js
+!**/helpers/**/*.js
 
 # Frontend specific
 frontend/.env

@@ -258,7 +258,12 @@ export class OllamaServerManager extends EventEmitter {
   public async pullModel(
     modelName: string,
     serverId?: string,
-    onProgress?: (progress: any) => void
+    onProgress?: (progress: {
+      status: string;
+      digest?: string;
+      total?: number;
+      completed?: number;
+    }) => void
   ): Promise<void> {
     let targetServerId = serverId;
 
@@ -297,10 +302,18 @@ export class OllamaServerManager extends EventEmitter {
     url: string;
     isActive: boolean;
     isHealthy: boolean;
-    health: any;
-    utilization: any;
+    health: unknown;
+    utilization: unknown;
   }> {
-    const status: Array<any> = [];
+    const status: Array<{
+      serverId: string;
+      name: string;
+      url: string;
+      isActive: boolean;
+      isHealthy: boolean;
+      health: unknown;
+      utilization: unknown;
+    }> = [];
     const servers = this.loadBalancer.getServers();
     const utilization = this.loadBalancer.getServerUtilization();
 

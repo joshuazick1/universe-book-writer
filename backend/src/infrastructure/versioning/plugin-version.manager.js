@@ -6,547 +6,554 @@
  */
 export var VersionRangeType;
 (function (VersionRangeType) {
-  VersionRangeType['EXACT'] = 'exact';
-  VersionRangeType['CARET'] = 'caret';
-  VersionRangeType['TILDE'] = 'tilde';
-  VersionRangeType['GREATER'] = 'greater';
-  VersionRangeType['GREATER_EQUAL'] = 'gte';
-  VersionRangeType['LESS'] = 'less';
-  VersionRangeType['LESS_EQUAL'] = 'lte';
-  VersionRangeType['RANGE'] = 'range';
-  VersionRangeType['WILDCARD'] = 'wildcard';
+    VersionRangeType["EXACT"] = "exact";
+    VersionRangeType["CARET"] = "caret";
+    VersionRangeType["TILDE"] = "tilde";
+    VersionRangeType["GREATER"] = "greater";
+    VersionRangeType["GREATER_EQUAL"] = "gte";
+    VersionRangeType["LESS"] = "less";
+    VersionRangeType["LESS_EQUAL"] = "lte";
+    VersionRangeType["RANGE"] = "range";
+    VersionRangeType["WILDCARD"] = "wildcard";
 })(VersionRangeType || (VersionRangeType = {}));
 /**
  * Conflict types
  */
 export var ConflictType;
 (function (ConflictType) {
-  ConflictType['VERSION_MISMATCH'] = 'version_mismatch';
-  ConflictType['MISSING_DEPENDENCY'] = 'missing_dependency';
-  ConflictType['CIRCULAR_DEPENDENCY'] = 'circular_dependency';
-  ConflictType['INCOMPATIBLE_VERSION'] = 'incompatible_version';
+    ConflictType["VERSION_MISMATCH"] = "version_mismatch";
+    ConflictType["MISSING_DEPENDENCY"] = "missing_dependency";
+    ConflictType["CIRCULAR_DEPENDENCY"] = "circular_dependency";
+    ConflictType["INCOMPATIBLE_VERSION"] = "incompatible_version";
 })(ConflictType || (ConflictType = {}));
 /**
  * Resolution strategies
  */
 export var ResolutionStrategy;
 (function (ResolutionStrategy) {
-  ResolutionStrategy['STRICT'] = 'strict';
-  ResolutionStrategy['COMPATIBLE'] = 'compatible';
-  ResolutionStrategy['LATEST'] = 'latest';
-  ResolutionStrategy['MANUAL'] = 'manual';
+    ResolutionStrategy["STRICT"] = "strict";
+    ResolutionStrategy["COMPATIBLE"] = "compatible";
+    ResolutionStrategy["LATEST"] = "latest";
+    ResolutionStrategy["MANUAL"] = "manual";
 })(ResolutionStrategy || (ResolutionStrategy = {}));
 /**
  * Plugin version manager
  */
 export class PluginVersionManager {
-  installedPlugins = new Map();
-  versionCache = new Map();
-  /**
-   * Parse semantic version string
-   */
-  parseVersion(versionString) {
-    // Check cache first
-    if (this.versionCache.has(versionString)) {
-      return this.versionCache.get(versionString);
-    }
-    const cleaned = versionString.trim().replace(/^v/, '');
-    // Regex for semantic version with optional prerelease and build
-    const semverRegex =
-      /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
-    const match = cleaned.match(semverRegex);
-    if (!match) {
-      throw new Error(`Invalid semantic version: ${versionString}`);
-    }
-    const version = {
-      major: Number.parseInt(match[1], 10),
-      minor: Number.parseInt(match[2], 10),
-      patch: Number.parseInt(match[3], 10),
-      prerelease: match[4],
-      build: match[5],
-      original: versionString,
-    };
-    // Cache the parsed version
-    this.versionCache.set(versionString, version);
-    return version;
-  }
-  /**
-   * Parse version range specification
-   */
-  parseVersionRange(rangeString) {
-    const trimmed = rangeString.trim();
-    // Exact version
-    if (
-      /^\d+\.\d+\.\d+/.test(trimmed) &&
-      !trimmed.includes(' ') &&
-      !trimmed.startsWith('^') &&
-      !trimmed.startsWith('~')
-    ) {
-      return {
-        type: VersionRangeType.EXACT,
-        version: this.parseVersion(trimmed),
-        original: rangeString,
-      };
-    }
-    // Caret range (^1.2.3)
-    if (trimmed.startsWith('^')) {
-      return {
-        type: VersionRangeType.CARET,
-        version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString,
-      };
-    }
-    // Tilde range (~1.2.3)
-    if (trimmed.startsWith('~')) {
-      return {
-        type: VersionRangeType.TILDE,
-        version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString,
-      };
-    }
-    // Greater than (>1.2.3)
-    if (trimmed.startsWith('>') && !trimmed.startsWith('>=')) {
-      return {
-        type: VersionRangeType.GREATER,
-        version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString,
-      };
-    }
-    // Greater than or equal (>=1.2.3)
-    if (trimmed.startsWith('>=')) {
-      return {
-        type: VersionRangeType.GREATER_EQUAL,
-        version: this.parseVersion(trimmed.slice(2)),
-        original: rangeString,
-      };
-    }
-    // Less than (<1.2.3)
-    if (trimmed.startsWith('<') && !trimmed.startsWith('<=')) {
-      return {
-        type: VersionRangeType.LESS,
-        version: this.parseVersion(trimmed.slice(1)),
-        original: rangeString,
-      };
-    }
-    // Less than or equal (<=1.2.3)
-    if (trimmed.startsWith('<=')) {
-      return {
-        type: VersionRangeType.LESS_EQUAL,
-        version: this.parseVersion(trimmed.slice(2)),
-        original: rangeString,
-      };
-    }
-    // Range (1.2.3 - 2.0.0)
-    if (trimmed.includes(' - ')) {
-      const [lower, upper] = trimmed.split(' - ').map(v => v.trim());
-      return {
-        type: VersionRangeType.RANGE,
-        version: this.parseVersion(lower),
-        upperBound: this.parseVersion(upper),
-        original: rangeString,
-      };
-    }
-    // Wildcard (1.2.x, 1.x, x)
-    if (trimmed.includes('x') || trimmed.includes('X') || trimmed.includes('*')) {
-      const normalized = trimmed.replace(/[xX*]/g, '0');
-      return {
-        type: VersionRangeType.WILDCARD,
-        version: this.parseVersion(normalized),
-        original: rangeString,
-      };
-    }
-    throw new Error(`Unsupported version range format: ${rangeString}`);
-  }
-  /**
-   * Check if a version satisfies a range
-   */
-  satisfiesRange(version, range) {
-    try {
-      const versionObj = this.parseVersion(version);
-      const rangeObj = this.parseVersionRange(range);
-      return this.versionSatisfiesRange(versionObj, rangeObj);
-    } catch {
-      return false;
-    }
-  }
-  /**
-   * Check version compatibility between plugins
-   */
-  checkCompatibility(requiredVersion, availableVersion) {
-    try {
-      const required = this.parseVersionRange(requiredVersion);
-      const available = this.parseVersion(availableVersion);
-      const compatible = this.versionSatisfiesRange(available, required);
-      const result = {
-        compatible,
-        requiredVersion,
-        actualVersion: availableVersion,
-      };
-      if (!compatible) {
-        result.reason = this.getIncompatibilityReason(required, available);
-        result.suggestion = this.getSuggestion(required, available);
-      }
-      return result;
-    } catch (error) {
-      return {
-        compatible: false,
-        requiredVersion,
-        actualVersion: availableVersion,
-        reason: `Invalid version format: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      };
-    }
-  }
-  /**
-   * Resolve dependencies for multiple plugins
-   */
-  resolveDependencies(plugins, strategy = ResolutionStrategy.COMPATIBLE) {
-    const conflicts = [];
-    const dependencyGraph = new Map();
-    const allDependencies = new Map();
-    // Build dependency graph
-    for (const plugin of plugins) {
-      dependencyGraph.set(plugin.name, new Set());
-      if (plugin.dependencies) {
-        for (const [depName, version] of Object.entries(plugin.dependencies)) {
-          dependencyGraph.get(plugin.name).add(depName);
-          if (!allDependencies.has(depName)) {
-            allDependencies.set(depName, []);
-          }
-          allDependencies.get(depName).push(version);
+    installedPlugins = new Map();
+    versionCache = new Map();
+    /**
+     * Parse semantic version string
+     */
+    parseVersion(versionString) {
+        // Check cache first
+        if (this.versionCache.has(versionString)) {
+            return this.versionCache.get(versionString);
         }
-      }
+        const cleaned = versionString.trim().replace(/^v/, '');
+        // Regex for semantic version with optional prerelease and build
+        const semverRegex = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
+        const match = cleaned.match(semverRegex);
+        if (!match) {
+            throw new Error(`Invalid semantic version: ${versionString}`);
+        }
+        const version = {
+            major: Number.parseInt(match[1], 10),
+            minor: Number.parseInt(match[2], 10),
+            patch: Number.parseInt(match[3], 10),
+            prerelease: match[4],
+            build: match[5],
+            original: versionString,
+        };
+        // Cache the parsed version
+        this.versionCache.set(versionString, version);
+        return version;
     }
-    // Check for circular dependencies
-    this.detectCircularDependencies(dependencyGraph, conflicts);
-    // Check for version conflicts
-    this.detectVersionConflicts(allDependencies, conflicts);
-    // Generate suggested versions
-    const suggestedVersions = this.generateSuggestedVersions(allDependencies, strategy);
-    return {
-      resolved: conflicts.length === 0,
-      conflicts,
-      resolutionStrategy: strategy,
-      suggestedVersions,
-    };
-  }
-  /**
-   * Find the best compatible version
-   */
-  findBestVersion(availableVersions, requiredRange) {
-    try {
-      const range = this.parseVersionRange(requiredRange);
-      const compatibleVersions = availableVersions
-        .filter(version => {
-          try {
+    /**
+     * Parse version range specification
+     */
+    parseVersionRange(rangeString) {
+        const trimmed = rangeString.trim();
+        // Exact version
+        if (/^\d+\.\d+\.\d+/.test(trimmed) &&
+            !trimmed.includes(' ') &&
+            !trimmed.startsWith('^') &&
+            !trimmed.startsWith('~')) {
+            return {
+                type: VersionRangeType.EXACT,
+                version: this.parseVersion(trimmed),
+                original: rangeString,
+            };
+        }
+        // Caret range (^1.2.3)
+        if (trimmed.startsWith('^')) {
+            return {
+                type: VersionRangeType.CARET,
+                version: this.parseVersion(trimmed.slice(1)),
+                original: rangeString,
+            };
+        }
+        // Tilde range (~1.2.3)
+        if (trimmed.startsWith('~')) {
+            return {
+                type: VersionRangeType.TILDE,
+                version: this.parseVersion(trimmed.slice(1)),
+                original: rangeString,
+            };
+        }
+        // Greater than (>1.2.3)
+        if (trimmed.startsWith('>') && !trimmed.startsWith('>=')) {
+            return {
+                type: VersionRangeType.GREATER,
+                version: this.parseVersion(trimmed.slice(1)),
+                original: rangeString,
+            };
+        }
+        // Greater than or equal (>=1.2.3)
+        if (trimmed.startsWith('>=')) {
+            return {
+                type: VersionRangeType.GREATER_EQUAL,
+                version: this.parseVersion(trimmed.slice(2)),
+                original: rangeString,
+            };
+        }
+        // Less than (<1.2.3)
+        if (trimmed.startsWith('<') && !trimmed.startsWith('<=')) {
+            return {
+                type: VersionRangeType.LESS,
+                version: this.parseVersion(trimmed.slice(1)),
+                original: rangeString,
+            };
+        }
+        // Less than or equal (<=1.2.3)
+        if (trimmed.startsWith('<=')) {
+            return {
+                type: VersionRangeType.LESS_EQUAL,
+                version: this.parseVersion(trimmed.slice(2)),
+                original: rangeString,
+            };
+        }
+        // Range (1.2.3 - 2.0.0)
+        if (trimmed.includes(' - ')) {
+            const [lower, upper] = trimmed.split(' - ').map(v => v.trim());
+            return {
+                type: VersionRangeType.RANGE,
+                version: this.parseVersion(lower),
+                upperBound: this.parseVersion(upper),
+                original: rangeString,
+            };
+        }
+        // Wildcard (1.2.x, 1.x, x)
+        if (trimmed.includes('x') || trimmed.includes('X') || trimmed.includes('*')) {
+            const normalized = trimmed.replace(/[xX*]/g, '0');
+            return {
+                type: VersionRangeType.WILDCARD,
+                version: this.parseVersion(normalized),
+                original: rangeString,
+            };
+        }
+        throw new Error(`Unsupported version range format: ${rangeString}`);
+    }
+    /**
+     * Check if a version satisfies a range
+     */
+    satisfiesRange(version, range) {
+        try {
             const versionObj = this.parseVersion(version);
-            return this.versionSatisfiesRange(versionObj, range);
-          } catch {
+            const rangeObj = this.parseVersionRange(range);
+            return this.versionSatisfiesRange(versionObj, rangeObj);
+        }
+        catch {
             return false;
-          }
-        })
-        .sort((a, b) => this.compareVersions(a, b));
-      return compatibleVersions.length > 0
-        ? compatibleVersions[compatibleVersions.length - 1]
-        : null;
-    } catch {
-      return null;
+        }
     }
-  }
-  /**
-   * Compare two versions
-   */
-  compareVersions(a, b) {
-    try {
-      const versionA = this.parseVersion(a);
-      const versionB = this.parseVersion(b);
-      if (versionA.major !== versionB.major) {
-        return versionA.major - versionB.major;
-      }
-      if (versionA.minor !== versionB.minor) {
-        return versionA.minor - versionB.minor;
-      }
-      if (versionA.patch !== versionB.patch) {
-        return versionA.patch - versionB.patch;
-      }
-      // Handle prerelease versions
-      if (versionA.prerelease && !versionB.prerelease) return -1;
-      if (!versionA.prerelease && versionB.prerelease) return 1;
-      if (versionA.prerelease && versionB.prerelease) {
-        return versionA.prerelease.localeCompare(versionB.prerelease);
-      }
-      return 0;
-    } catch {
-      return a.localeCompare(b);
+    /**
+     * Check version compatibility between plugins
+     */
+    checkCompatibility(requiredVersion, availableVersion) {
+        try {
+            const required = this.parseVersionRange(requiredVersion);
+            const available = this.parseVersion(availableVersion);
+            const compatible = this.versionSatisfiesRange(available, required);
+            const result = {
+                compatible,
+                requiredVersion,
+                actualVersion: availableVersion,
+            };
+            if (!compatible) {
+                result.reason = this.getIncompatibilityReason(required, available);
+                result.suggestion = this.getSuggestion(required, available);
+            }
+            return result;
+        }
+        catch (error) {
+            return {
+                compatible: false,
+                requiredVersion,
+                actualVersion: availableVersion,
+                reason: `Invalid version format: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            };
+        }
     }
-  }
-  /**
-   * Get the next version based on increment type
-   */
-  incrementVersion(version, type) {
-    const versionObj = this.parseVersion(version);
-    switch (type) {
-      case 'major':
-        return `${versionObj.major + 1}.0.0`;
-      case 'minor':
-        return `${versionObj.major}.${versionObj.minor + 1}.0`;
-      case 'patch':
-        return `${versionObj.major}.${versionObj.minor}.${versionObj.patch + 1}`;
-      default:
-        throw new Error(`Invalid increment type: ${type}`);
+    /**
+     * Resolve dependencies for multiple plugins
+     */
+    resolveDependencies(plugins, strategy = ResolutionStrategy.COMPATIBLE) {
+        const conflicts = [];
+        const dependencyGraph = new Map();
+        const allDependencies = new Map();
+        // Build dependency graph
+        for (const plugin of plugins) {
+            dependencyGraph.set(plugin.name, new Set());
+            if (plugin.dependencies) {
+                for (const [depName, version] of Object.entries(plugin.dependencies)) {
+                    dependencyGraph.get(plugin.name).add(depName);
+                    if (!allDependencies.has(depName)) {
+                        allDependencies.set(depName, []);
+                    }
+                    allDependencies.get(depName).push(version);
+                }
+            }
+        }
+        // Check for circular dependencies
+        this.detectCircularDependencies(dependencyGraph, conflicts);
+        // Check for version conflicts
+        this.detectVersionConflicts(allDependencies, conflicts);
+        // Generate suggested versions
+        const suggestedVersions = this.generateSuggestedVersions(allDependencies, strategy);
+        return {
+            resolved: conflicts.length === 0,
+            conflicts,
+            resolutionStrategy: strategy,
+            suggestedVersions,
+        };
     }
-  }
-  /**
-   * Register installed plugin
-   */
-  registerPlugin(metadata) {
-    this.installedPlugins.set(metadata.name, metadata);
-  }
-  /**
-   * Unregister plugin
-   */
-  unregisterPlugin(pluginName) {
-    this.installedPlugins.delete(pluginName);
-  }
-  /**
-   * Get installed plugin version
-   */
-  getInstalledVersion(pluginName) {
-    return this.installedPlugins.get(pluginName)?.version;
-  }
-  /**
-   * Check if version satisfies range object
-   */
-  versionSatisfiesRange(version, range) {
-    switch (range.type) {
-      case VersionRangeType.EXACT:
-        return this.versionsEqual(version, range.version);
-      case VersionRangeType.CARET:
-        // ^1.2.3 := >=1.2.3 <2.0.0
-        return version.major === range.version.major && this.versionGTE(version, range.version);
-      case VersionRangeType.TILDE:
-        // ~1.2.3 := >=1.2.3 <1.3.0
-        return (
-          version.major === range.version.major &&
-          version.minor === range.version.minor &&
-          this.versionGTE(version, range.version)
-        );
-      case VersionRangeType.GREATER:
-        return this.versionGT(version, range.version);
-      case VersionRangeType.GREATER_EQUAL:
-        return this.versionGTE(version, range.version);
-      case VersionRangeType.LESS:
-        return this.versionLT(version, range.version);
-      case VersionRangeType.LESS_EQUAL:
-        return this.versionLTE(version, range.version);
-      case VersionRangeType.RANGE:
-        return range.upperBound
-          ? this.versionGTE(version, range.version) && this.versionLTE(version, range.upperBound)
-          : false;
-      case VersionRangeType.WILDCARD:
-        return this.versionMatchesWildcard(version, range);
-      default:
+    /**
+     * Find the best compatible version
+     */
+    findBestVersion(availableVersions, requiredRange) {
+        try {
+            const range = this.parseVersionRange(requiredRange);
+            const compatibleVersions = availableVersions
+                .filter(version => {
+                try {
+                    const versionObj = this.parseVersion(version);
+                    return this.versionSatisfiesRange(versionObj, range);
+                }
+                catch {
+                    return false;
+                }
+            })
+                .sort((a, b) => this.compareVersions(a, b));
+            return compatibleVersions.length > 0
+                ? compatibleVersions[compatibleVersions.length - 1]
+                : null;
+        }
+        catch {
+            return null;
+        }
+    }
+    /**
+     * Compare two versions
+     */
+    compareVersions(a, b) {
+        try {
+            const versionA = this.parseVersion(a);
+            const versionB = this.parseVersion(b);
+            if (versionA.major !== versionB.major) {
+                return versionA.major - versionB.major;
+            }
+            if (versionA.minor !== versionB.minor) {
+                return versionA.minor - versionB.minor;
+            }
+            if (versionA.patch !== versionB.patch) {
+                return versionA.patch - versionB.patch;
+            }
+            // Handle prerelease versions
+            if (versionA.prerelease && !versionB.prerelease)
+                return -1;
+            if (!versionA.prerelease && versionB.prerelease)
+                return 1;
+            if (versionA.prerelease && versionB.prerelease) {
+                return versionA.prerelease.localeCompare(versionB.prerelease);
+            }
+            return 0;
+        }
+        catch {
+            return a.localeCompare(b);
+        }
+    }
+    /**
+     * Get the next version based on increment type
+     */
+    incrementVersion(version, type) {
+        const versionObj = this.parseVersion(version);
+        switch (type) {
+            case 'major':
+                return `${versionObj.major + 1}.0.0`;
+            case 'minor':
+                return `${versionObj.major}.${versionObj.minor + 1}.0`;
+            case 'patch':
+                return `${versionObj.major}.${versionObj.minor}.${versionObj.patch + 1}`;
+            default:
+                throw new Error(`Invalid increment type: ${type}`);
+        }
+    }
+    /**
+     * Register installed plugin
+     */
+    registerPlugin(metadata) {
+        this.installedPlugins.set(metadata.name, metadata);
+    }
+    /**
+     * Unregister plugin
+     */
+    unregisterPlugin(pluginName) {
+        this.installedPlugins.delete(pluginName);
+    }
+    /**
+     * Get installed plugin version
+     */
+    getInstalledVersion(pluginName) {
+        return this.installedPlugins.get(pluginName)?.version;
+    }
+    /**
+     * Check if version satisfies range object
+     */
+    versionSatisfiesRange(version, range) {
+        switch (range.type) {
+            case VersionRangeType.EXACT:
+                return this.versionsEqual(version, range.version);
+            case VersionRangeType.CARET:
+                // ^1.2.3 := >=1.2.3 <2.0.0
+                return version.major === range.version.major && this.versionGTE(version, range.version);
+            case VersionRangeType.TILDE:
+                // ~1.2.3 := >=1.2.3 <1.3.0
+                return (version.major === range.version.major &&
+                    version.minor === range.version.minor &&
+                    this.versionGTE(version, range.version));
+            case VersionRangeType.GREATER:
+                return this.versionGT(version, range.version);
+            case VersionRangeType.GREATER_EQUAL:
+                return this.versionGTE(version, range.version);
+            case VersionRangeType.LESS:
+                return this.versionLT(version, range.version);
+            case VersionRangeType.LESS_EQUAL:
+                return this.versionLTE(version, range.version);
+            case VersionRangeType.RANGE:
+                return range.upperBound
+                    ? this.versionGTE(version, range.version) && this.versionLTE(version, range.upperBound)
+                    : false;
+            case VersionRangeType.WILDCARD:
+                return this.versionMatchesWildcard(version, range);
+            default:
+                return false;
+        }
+    }
+    /**
+     * Check if versions are equal
+     */
+    versionsEqual(a, b) {
+        return a.major === b.major && a.minor === b.minor && a.patch === b.patch;
+    }
+    /**
+     * Check if version a is greater than version b
+     */
+    versionGT(a, b) {
+        if (a.major !== b.major)
+            return a.major > b.major;
+        if (a.minor !== b.minor)
+            return a.minor > b.minor;
+        return a.patch > b.patch;
+    }
+    /**
+     * Check if version a is greater than or equal to version b
+     */
+    versionGTE(a, b) {
+        return this.versionGT(a, b) || this.versionsEqual(a, b);
+    }
+    /**
+     * Check if version a is less than version b
+     */
+    versionLT(a, b) {
+        return this.versionGT(b, a);
+    }
+    /**
+     * Check if version a is less than or equal to version b
+     */
+    versionLTE(a, b) {
+        return this.versionLT(a, b) || this.versionsEqual(a, b);
+    }
+    /**
+     * Check if version matches wildcard pattern
+     */
+    versionMatchesWildcard(version, range) {
+        const original = range.original.toLowerCase();
+        if (original === 'x' || original === '*') {
+            return true; // Any version
+        }
+        if (original.startsWith('x.') || original.startsWith('*.')) {
+            return true; // Any major version
+        }
+        const parts = original.split('.');
+        if (parts.length >= 1 && parts[0] !== 'x' && parts[0] !== '*') {
+            if (version.major !== Number.parseInt(parts[0], 10))
+                return false;
+        }
+        if (parts.length >= 2 && parts[1] !== 'x' && parts[1] !== '*') {
+            if (version.minor !== Number.parseInt(parts[1], 10))
+                return false;
+        }
+        return true;
+    }
+    /**
+     * Get incompatibility reason
+     */
+    getIncompatibilityReason(range, version) {
+        switch (range.type) {
+            case VersionRangeType.EXACT:
+                return `Exact version ${range.version.original} required, but ${version.original} is available`;
+            case VersionRangeType.CARET:
+                return `Compatible version ^${range.version.original} required, but ${version.original} is not compatible`;
+            case VersionRangeType.TILDE:
+                return `Patch-level compatible version ~${range.version.original} required, but ${version.original} is not compatible`;
+            case VersionRangeType.GREATER:
+                return `Version greater than ${range.version.original} required, but ${version.original} is not greater`;
+            case VersionRangeType.GREATER_EQUAL:
+                return `Version ${range.version.original} or higher required, but ${version.original} is lower`;
+            case VersionRangeType.LESS:
+                return `Version less than ${range.version.original} required, but ${version.original} is not less`;
+            case VersionRangeType.LESS_EQUAL:
+                return `Version ${range.version.original} or lower required, but ${version.original} is higher`;
+            default:
+                return `Version ${version.original} does not satisfy range ${range.original}`;
+        }
+    }
+    /**
+     * Get suggestion for version resolution
+     */
+    getSuggestion(range, version) {
+        if (this.versionLT(version, range.version)) {
+            return `Consider upgrading to version ${range.version.original} or higher`;
+        }
+        return 'Consider using a more permissive version range or upgrading the requirement';
+    }
+    /**
+     * Detect circular dependencies
+     */
+    detectCircularDependencies(graph, conflicts) {
+        const visited = new Set();
+        const recursionStack = new Set();
+        const dfs = (node, path) => {
+            if (recursionStack.has(node)) {
+                const cycleStart = path.indexOf(node);
+                const cycle = path.slice(cycleStart).concat(node);
+                conflicts.push({
+                    pluginName: node,
+                    dependencyName: cycle[cycle.length - 2],
+                    requiredVersions: [],
+                    conflictType: ConflictType.CIRCULAR_DEPENDENCY,
+                });
+                return;
+            }
+            if (visited.has(node))
+                return;
+            visited.add(node);
+            recursionStack.add(node);
+            const dependencies = graph.get(node) || new Set();
+            for (const dep of dependencies) {
+                dfs(dep, [...path, node]);
+            }
+            recursionStack.delete(node);
+        };
+        for (const node of graph.keys()) {
+            if (!visited.has(node)) {
+                dfs(node, []);
+            }
+        }
+    }
+    /**
+     * Detect version conflicts
+     */
+    detectVersionConflicts(dependencies, conflicts) {
+        for (const [depName, versions] of dependencies) {
+            if (versions.length > 1) {
+                // Check if all versions are compatible
+                const uniqueVersions = [...new Set(versions)];
+                if (uniqueVersions.length > 1) {
+                    // Try to find a version that satisfies all requirements
+                    const hasCompatibleVersion = this.findCompatibleVersion(uniqueVersions);
+                    if (!hasCompatibleVersion) {
+                        conflicts.push({
+                            pluginName: depName,
+                            dependencyName: depName,
+                            requiredVersions: uniqueVersions,
+                            conflictType: ConflictType.VERSION_MISMATCH,
+                        });
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * Find a version compatible with all requirements
+     */
+    findCompatibleVersion(requirements) {
+        // This is a simplified check - in a real implementation,
+        // you'd need to solve the constraint satisfaction problem
+        for (const requirement of requirements) {
+            const compatible = requirements.every(other => other === requirement || this.rangesOverlap(requirement, other));
+            if (compatible)
+                return true;
+        }
         return false;
     }
-  }
-  /**
-   * Check if versions are equal
-   */
-  versionsEqual(a, b) {
-    return a.major === b.major && a.minor === b.minor && a.patch === b.patch;
-  }
-  /**
-   * Check if version a is greater than version b
-   */
-  versionGT(a, b) {
-    if (a.major !== b.major) return a.major > b.major;
-    if (a.minor !== b.minor) return a.minor > b.minor;
-    return a.patch > b.patch;
-  }
-  /**
-   * Check if version a is greater than or equal to version b
-   */
-  versionGTE(a, b) {
-    return this.versionGT(a, b) || this.versionsEqual(a, b);
-  }
-  /**
-   * Check if version a is less than version b
-   */
-  versionLT(a, b) {
-    return this.versionGT(b, a);
-  }
-  /**
-   * Check if version a is less than or equal to version b
-   */
-  versionLTE(a, b) {
-    return this.versionLT(a, b) || this.versionsEqual(a, b);
-  }
-  /**
-   * Check if version matches wildcard pattern
-   */
-  versionMatchesWildcard(version, range) {
-    const original = range.original.toLowerCase();
-    if (original === 'x' || original === '*') {
-      return true; // Any version
-    }
-    if (original.startsWith('x.') || original.startsWith('*.')) {
-      return true; // Any major version
-    }
-    const parts = original.split('.');
-    if (parts.length >= 1 && parts[0] !== 'x' && parts[0] !== '*') {
-      if (version.major !== Number.parseInt(parts[0], 10)) return false;
-    }
-    if (parts.length >= 2 && parts[1] !== 'x' && parts[1] !== '*') {
-      if (version.minor !== Number.parseInt(parts[1], 10)) return false;
-    }
-    return true;
-  }
-  /**
-   * Get incompatibility reason
-   */
-  getIncompatibilityReason(range, version) {
-    switch (range.type) {
-      case VersionRangeType.EXACT:
-        return `Exact version ${range.version.original} required, but ${version.original} is available`;
-      case VersionRangeType.CARET:
-        return `Compatible version ^${range.version.original} required, but ${version.original} is not compatible`;
-      case VersionRangeType.TILDE:
-        return `Patch-level compatible version ~${range.version.original} required, but ${version.original} is not compatible`;
-      case VersionRangeType.GREATER:
-        return `Version greater than ${range.version.original} required, but ${version.original} is not greater`;
-      case VersionRangeType.GREATER_EQUAL:
-        return `Version ${range.version.original} or higher required, but ${version.original} is lower`;
-      case VersionRangeType.LESS:
-        return `Version less than ${range.version.original} required, but ${version.original} is not less`;
-      case VersionRangeType.LESS_EQUAL:
-        return `Version ${range.version.original} or lower required, but ${version.original} is higher`;
-      default:
-        return `Version ${version.original} does not satisfy range ${range.original}`;
-    }
-  }
-  /**
-   * Get suggestion for version resolution
-   */
-  getSuggestion(range, version) {
-    if (this.versionLT(version, range.version)) {
-      return `Consider upgrading to version ${range.version.original} or higher`;
-    }
-    return 'Consider using a more permissive version range or upgrading the requirement';
-  }
-  /**
-   * Detect circular dependencies
-   */
-  detectCircularDependencies(graph, conflicts) {
-    const visited = new Set();
-    const recursionStack = new Set();
-    const dfs = (node, path) => {
-      if (recursionStack.has(node)) {
-        const cycleStart = path.indexOf(node);
-        const cycle = path.slice(cycleStart).concat(node);
-        conflicts.push({
-          pluginName: node,
-          dependencyName: cycle[cycle.length - 2],
-          requiredVersions: [],
-          conflictType: ConflictType.CIRCULAR_DEPENDENCY,
-        });
-        return;
-      }
-      if (visited.has(node)) return;
-      visited.add(node);
-      recursionStack.add(node);
-      const dependencies = graph.get(node) || new Set();
-      for (const dep of dependencies) {
-        dfs(dep, [...path, node]);
-      }
-      recursionStack.delete(node);
-    };
-    for (const node of graph.keys()) {
-      if (!visited.has(node)) {
-        dfs(node, []);
-      }
-    }
-  }
-  /**
-   * Detect version conflicts
-   */
-  detectVersionConflicts(dependencies, conflicts) {
-    for (const [depName, versions] of dependencies) {
-      if (versions.length > 1) {
-        // Check if all versions are compatible
-        const uniqueVersions = [...new Set(versions)];
-        if (uniqueVersions.length > 1) {
-          // Try to find a version that satisfies all requirements
-          const hasCompatibleVersion = this.findCompatibleVersion(uniqueVersions);
-          if (!hasCompatibleVersion) {
-            conflicts.push({
-              pluginName: depName,
-              dependencyName: depName,
-              requiredVersions: uniqueVersions,
-              conflictType: ConflictType.VERSION_MISMATCH,
-            });
-          }
+    /**
+     * Check if two version ranges overlap
+     */
+    rangesOverlap(range1, range2) {
+        try {
+            const r1 = this.parseVersionRange(range1);
+            const r2 = this.parseVersionRange(range2);
+            // Simplified overlap check - would need more sophisticated logic
+            return r1.type === r2.type && this.versionsEqual(r1.version, r2.version);
         }
-      }
-    }
-  }
-  /**
-   * Find a version compatible with all requirements
-   */
-  findCompatibleVersion(requirements) {
-    // This is a simplified check - in a real implementation,
-    // you'd need to solve the constraint satisfaction problem
-    for (const requirement of requirements) {
-      const compatible = requirements.every(
-        other => other === requirement || this.rangesOverlap(requirement, other)
-      );
-      if (compatible) return true;
-    }
-    return false;
-  }
-  /**
-   * Check if two version ranges overlap
-   */
-  rangesOverlap(range1, range2) {
-    try {
-      const r1 = this.parseVersionRange(range1);
-      const r2 = this.parseVersionRange(range2);
-      // Simplified overlap check - would need more sophisticated logic
-      return r1.type === r2.type && this.versionsEqual(r1.version, r2.version);
-    } catch {
-      return false;
-    }
-  }
-  /**
-   * Generate suggested versions based on strategy
-   */
-  generateSuggestedVersions(dependencies, strategy) {
-    const suggestions = {};
-    for (const [depName, versions] of dependencies) {
-      switch (strategy) {
-        case ResolutionStrategy.STRICT:
-          // Use exact versions - take the first one
-          suggestions[depName] = versions[0];
-          break;
-        case ResolutionStrategy.LATEST: {
-          // Find the highest version
-          const sortedVersions = versions.sort((a, b) => this.compareVersions(a, b));
-          suggestions[depName] = sortedVersions[sortedVersions.length - 1];
-          break;
+        catch {
+            return false;
         }
-        default:
-          // Try to find a compatible version range
-          suggestions[depName] = this.findMostCompatibleVersion(versions);
-          break;
-      }
     }
-    return suggestions;
-  }
-  /**
-   * Find the most compatible version from a list of requirements
-   */
-  findMostCompatibleVersion(versions) {
-    // For now, return the first version
-    // In a real implementation, this would analyze ranges and find the most permissive one
-    return versions[0];
-  }
+    /**
+     * Generate suggested versions based on strategy
+     */
+    generateSuggestedVersions(dependencies, strategy) {
+        const suggestions = {};
+        for (const [depName, versions] of dependencies) {
+            switch (strategy) {
+                case ResolutionStrategy.STRICT:
+                    // Use exact versions - take the first one
+                    suggestions[depName] = versions[0];
+                    break;
+                case ResolutionStrategy.LATEST: {
+                    // Find the highest version
+                    const sortedVersions = versions.sort((a, b) => this.compareVersions(a, b));
+                    suggestions[depName] = sortedVersions[sortedVersions.length - 1];
+                    break;
+                }
+                default:
+                    // Try to find a compatible version range
+                    suggestions[depName] = this.findMostCompatibleVersion(versions);
+                    break;
+            }
+        }
+        return suggestions;
+    }
+    /**
+     * Find the most compatible version from a list of requirements
+     */
+    findMostCompatibleVersion(versions) {
+        // For now, return the first version
+        // In a real implementation, this would analyze ranges and find the most permissive one
+        return versions[0];
+    }
 }
 //# sourceMappingURL=plugin-version.manager.js.map

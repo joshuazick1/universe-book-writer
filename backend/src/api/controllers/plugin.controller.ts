@@ -19,11 +19,28 @@ export class PluginController {
     try {
       const { type, state, includeInactive } = req.query;
 
-      let plugins: any[];
+      interface PluginListItem {
+        name: string;
+        version: string;
+        type: PluginType;
+        state: PluginState;
+        description: string;
+        author: string;
+      }
+
+      let plugins: PluginListItem[];
 
       if (includeInactive === 'true') {
         // Get all plugins including inactive ones from registry
-        plugins = await this.pluginUseCase.getAllAvailablePlugins();
+        const registryEntries = await this.pluginUseCase.getAllAvailablePlugins();
+        plugins = registryEntries.map(entry => ({
+          name: entry.pluginMetadata.name,
+          version: entry.pluginMetadata.version,
+          type: entry.pluginMetadata.type,
+          state: entry.state,
+          description: entry.pluginMetadata.description,
+          author: entry.pluginMetadata.author,
+        }));
       } else {
         // Get only loaded plugins
         if (type && Object.values(PluginType).includes(type as PluginType)) {
@@ -49,8 +66,12 @@ export class PluginController {
         }
       }
 
-      // Filter by state if provided
-      if (state && Object.values(PluginState).includes(state as PluginState)) {
+      // Filter by state if provided (only for loaded plugins, not inactive ones)
+      if (
+        state &&
+        Object.values(PluginState).includes(state as PluginState) &&
+        includeInactive !== 'true'
+      ) {
         plugins = plugins.filter(p => p.state === state);
       }
 

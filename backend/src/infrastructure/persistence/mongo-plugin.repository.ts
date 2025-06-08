@@ -2,7 +2,13 @@
  * MongoDB implementation of Plugin Repository
  */
 
-import type { PluginRegistryEntry, PluginState, PluginType } from '@universe-book-writer/core';
+import type {
+  PluginRegistryEntry,
+  PluginState,
+  PluginType,
+  PluginMetadata,
+  PluginConfig,
+} from '@universe-book-writer/core';
 import { type Collection, type Db, type MongoClient, ObjectId } from 'mongodb';
 import type { PluginRepository } from '../../core/interfaces/plugin.repository.interface.js';
 
@@ -157,25 +163,25 @@ export class MongoPluginRepository implements PluginRepository {
   /**
    * Map MongoDB document to domain object
    */
-  private mapFromMongo(doc: any): PluginRegistryEntry {
+  private mapFromMongo(doc: Record<string, unknown>): PluginRegistryEntry {
     return {
-      id: doc.id || doc._id?.toString(),
-      pluginMetadata: doc.pluginMetadata,
-      config: doc.config,
-      state: doc.state,
-      loadPath: doc.loadPath,
-      lastError: doc.lastError,
-      dependents: doc.dependents || [],
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-      metadata: doc.metadata,
+      id: (doc.id as string) || (doc._id as Record<string, unknown>)?.toString(),
+      pluginMetadata: doc.pluginMetadata as PluginMetadata,
+      config: doc.config as PluginConfig,
+      state: doc.state as PluginState,
+      loadPath: doc.loadPath as string,
+      lastError: doc.lastError as string | undefined,
+      dependents: (doc.dependents as string[]) || [],
+      createdAt: doc.createdAt as Date,
+      updatedAt: doc.updatedAt as Date,
+      metadata: doc.metadata as Record<string, unknown> | undefined,
     };
   }
 
   /**
    * Map domain object to MongoDB document
    */
-  private mapToMongo(entry: PluginRegistryEntry): any {
+  private mapToMongo(entry: PluginRegistryEntry): PluginRegistryEntry & { _id: ObjectId } {
     const { id, ...rest } = entry;
     return {
       id,

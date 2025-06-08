@@ -4,10 +4,13 @@ export default {
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
   transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      useESM: true,
-      isolatedModules: true
-    }]
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        useESM: true,
+        isolatedModules: true,
+      },
+    ],
   },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.(m?js|ts)$': '$1',
@@ -19,12 +22,7 @@ export default {
   detectOpenHandles: true,
   forceExit: true,
   maxWorkers: 1,
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!**/*.d.ts',
-    '!**/node_modules/**',
-    '!**/dist/**',
-  ],
+  collectCoverageFrom: ['src/**/*.ts', '!**/*.d.ts', '!**/node_modules/**', '!**/dist/**'],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html']
+  coverageReporters: ['text', 'lcov', 'html'],
 };

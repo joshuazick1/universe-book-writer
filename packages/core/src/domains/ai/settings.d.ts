@@ -1,4 +1,4 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 /**
  * AI Settings schema and types
  */
@@ -17,20 +17,20 @@ export declare const OllamaServerSettingsSchema: z.ZodObject<
   z.ZodTypeAny,
   {
     name: string;
-    id: string;
     url: string;
-    isActive: boolean;
     priority: number;
+    id: string;
+    isActive: boolean;
     maxConcurrentRequests: number;
     models: string[];
     tags?: string[] | undefined;
   },
   {
     name: string;
-    id: string;
     url: string;
-    isActive: boolean;
     priority: number;
+    id: string;
+    isActive: boolean;
     maxConcurrentRequests: number;
     models: string[];
     tags?: string[] | undefined;
@@ -54,20 +54,20 @@ export declare const AISettingsSchema: z.ZodObject<
         z.ZodTypeAny,
         {
           name: string;
-          id: string;
           url: string;
-          isActive: boolean;
           priority: number;
+          id: string;
+          isActive: boolean;
           maxConcurrentRequests: number;
           models: string[];
           tags?: string[] | undefined;
         },
         {
           name: string;
-          id: string;
           url: string;
-          isActive: boolean;
           priority: number;
+          id: string;
+          isActive: boolean;
           maxConcurrentRequests: number;
           models: string[];
           tags?: string[] | undefined;
@@ -85,10 +85,10 @@ export declare const AISettingsSchema: z.ZodObject<
   {
     ollamaServers: {
       name: string;
-      id: string;
       url: string;
-      isActive: boolean;
       priority: number;
+      id: string;
+      isActive: boolean;
       maxConcurrentRequests: number;
       models: string[];
       tags?: string[] | undefined;
@@ -101,10 +101,10 @@ export declare const AISettingsSchema: z.ZodObject<
   {
     ollamaServers: {
       name: string;
-      id: string;
       url: string;
-      isActive: boolean;
       priority: number;
+      id: string;
+      isActive: boolean;
       maxConcurrentRequests: number;
       models: string[];
       tags?: string[] | undefined;

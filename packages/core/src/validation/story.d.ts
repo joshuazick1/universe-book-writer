@@ -18,20 +18,20 @@ export declare const CharacterSchema: z.ZodObject<
   'strip',
   z.ZodTypeAny,
   {
-    id: string;
     name: string;
-    description: string;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
+    description: string;
     attributes: Record<string, unknown>;
     metadata?: Record<string, unknown> | undefined;
   },
   {
-    id: string;
     name: string;
-    description: string;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
+    description: string;
     attributes: Record<string, unknown>;
     metadata?: Record<string, unknown> | undefined;
   }
@@ -53,22 +53,22 @@ export declare const StoryChapterSchema: z.ZodObject<
   'strip',
   z.ZodTypeAny,
   {
-    id: string;
-    metadata: Record<string, unknown>;
-    createdAt: Date;
-    updatedAt: Date;
     characters: string[];
     title: string;
     content: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    metadata: Record<string, unknown>;
   },
   {
-    id: string;
-    metadata: Record<string, unknown>;
-    createdAt: Date;
-    updatedAt: Date;
     characters: string[];
     title: string;
     content: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    metadata: Record<string, unknown>;
   }
 >;
 export declare const StorySchema: z.ZodObject<
@@ -95,22 +95,22 @@ export declare const StorySchema: z.ZodObject<
         'strip',
         z.ZodTypeAny,
         {
-          id: string;
-          metadata: Record<string, unknown>;
-          createdAt: Date;
-          updatedAt: Date;
           characters: string[];
           title: string;
           content: string;
+          id: string;
+          createdAt: Date;
+          updatedAt: Date;
+          metadata: Record<string, unknown>;
         },
         {
-          id: string;
-          metadata: Record<string, unknown>;
-          createdAt: Date;
-          updatedAt: Date;
           characters: string[];
           title: string;
           content: string;
+          id: string;
+          createdAt: Date;
+          updatedAt: Date;
+          metadata: Record<string, unknown>;
         }
       >,
       'many'
@@ -130,20 +130,20 @@ export declare const StorySchema: z.ZodObject<
         'strip',
         z.ZodTypeAny,
         {
-          id: string;
           name: string;
-          description: string;
+          id: string;
           createdAt: Date;
           updatedAt: Date;
+          description: string;
           attributes: Record<string, unknown>;
           metadata?: Record<string, unknown> | undefined;
         },
         {
-          id: string;
           name: string;
-          description: string;
+          id: string;
           createdAt: Date;
           updatedAt: Date;
+          description: string;
           attributes: Record<string, unknown>;
           metadata?: Record<string, unknown> | undefined;
         }
@@ -154,54 +154,54 @@ export declare const StorySchema: z.ZodObject<
   'strip',
   z.ZodTypeAny,
   {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
     characters: {
-      id: string;
       name: string;
-      description: string;
+      id: string;
       createdAt: Date;
       updatedAt: Date;
+      description: string;
       attributes: Record<string, unknown>;
       metadata?: Record<string, unknown> | undefined;
     }[];
     title: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
     summary: string;
     chapters: {
-      id: string;
-      metadata: Record<string, unknown>;
-      createdAt: Date;
-      updatedAt: Date;
       characters: string[];
       title: string;
       content: string;
+      id: string;
+      createdAt: Date;
+      updatedAt: Date;
+      metadata: Record<string, unknown>;
     }[];
     metadata?: Record<string, unknown> | undefined;
   },
   {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
     characters: {
-      id: string;
       name: string;
-      description: string;
+      id: string;
       createdAt: Date;
       updatedAt: Date;
+      description: string;
       attributes: Record<string, unknown>;
       metadata?: Record<string, unknown> | undefined;
     }[];
     title: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
     summary: string;
     chapters: {
-      id: string;
-      metadata: Record<string, unknown>;
-      createdAt: Date;
-      updatedAt: Date;
       characters: string[];
       title: string;
       content: string;
+      id: string;
+      createdAt: Date;
+      updatedAt: Date;
+      metadata: Record<string, unknown>;
     }[];
     metadata?: Record<string, unknown> | undefined;
   }

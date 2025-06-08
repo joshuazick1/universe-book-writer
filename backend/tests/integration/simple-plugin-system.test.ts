@@ -38,6 +38,10 @@ describe('Plugin System Backend Integration', () => {
       if (cleanup) {
         await cleanup();
       }
+
+      // Force close any remaining MongoDB connections to prevent open handles
+      const { globalMongoCleanup } = await import('../helpers/mongodb-test-helper.js');
+      await globalMongoCleanup();
     } catch (error) {
       console.error('Cleanup error:', error);
     }

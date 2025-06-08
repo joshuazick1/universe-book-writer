@@ -8,7 +8,11 @@
 
   - [x] Create initial commit
   - [x] Add README.md
-  - [x] Setup .gitignore for Node.js, React, and IDE files
+  - [x] Setup .gitignore for Node.js- [X] Checkpoint
+  - [x] Check for Typescript errors
+  - [x] Lint with no warnings
+  - [x] Tests still pass
+  - [x] commit changes with validationct, and IDE files
   - [x] Configure .gitattributes for line endings
 
 - [x] Branch Protection
