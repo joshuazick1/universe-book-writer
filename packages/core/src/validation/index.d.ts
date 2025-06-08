@@ -36,8 +36,8 @@ export declare class ValidationError extends Error {
  * Base validator class that can be extended for specific domains
  */
 export declare abstract class BaseValidator<T extends BaseEntity> {
-  protected schema: z.ZodObject<any>;
-  constructor(schema: z.ZodObject<any>);
+  protected schema: z.ZodObject<z.ZodRawShape>;
+  constructor(schema: z.ZodObject<z.ZodRawShape>);
   validate(data: unknown): T;
   validatePartial(data: unknown): Partial<T>;
 }

@@ -17,9 +17,10 @@ export declare const metadata: {
   author: string;
   homepage: string;
   license: string;
-  keywords: string[];    type: PluginType;
-    dependencies: Record<string, never>;
-    engines: {
+  keywords: string[];
+  type: PluginType;
+  dependencies: Record<string, never>;
+  engines: {
     node: string;
   };
 };
@@ -91,7 +92,7 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   /**
    * Get universe-specific validation for content
    */
-  validateContent(content: any): {
+  validateContent(content: unknown): {
     valid: boolean;
     errors: string[];
     suggestions: string[];
@@ -99,11 +100,11 @@ export default class StarTrekUniversePlugin implements UniversePlugin {
   /**
    * Get universe-specific AI prompts
    */
-  getAIPrompts(context: string): string[];
+  getAIPrompts(_context: string): string[];
   /**
    * Get theme configuration
    */
-  getThemeConfig(): any;
+  getThemeConfig(): Record<string, unknown>;
   private loadStarTrekDatabase;
   private initializeLCARSTheme;
   private setupValidationRules;

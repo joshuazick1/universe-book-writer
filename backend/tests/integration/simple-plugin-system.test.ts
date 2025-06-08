@@ -3,12 +3,13 @@
  */
 
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
+import { MongoClient } from 'mongodb';
 import { PluginSystemFactory } from '../../src/plugins/manager/plugin-system.factory.js';
 import { setupMongoForTest } from '../helpers/mongodb-test-helper.js';
 
 describe('Plugin System Backend Integration', () => {
-  let mongoClient: any;
-  let pluginSystem: any;
+  let mongoClient: MongoClient;
+  let pluginSystem: Awaited<ReturnType<typeof PluginSystemFactory.create>>;
   let cleanup: () => Promise<void>;
 
   beforeAll(async () => {

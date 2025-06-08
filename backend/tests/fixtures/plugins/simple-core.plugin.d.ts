@@ -19,9 +19,10 @@ export declare const metadata: {
   description: string;
   author: string;
   license: string;
-  keywords: string[];    type: PluginType;
-    dependencies: Record<string, never>;
-    engines: {
+  keywords: string[];
+  type: PluginType;
+  dependencies: Record<string, never>;
+  engines: {
     node: string;
   };
 };
