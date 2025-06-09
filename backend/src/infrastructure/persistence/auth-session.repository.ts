@@ -1,4 +1,4 @@
-import { Collection, MongoClient, ObjectId, Filter } from 'mongodb';
+import { Collection, MongoClient, ObjectId } from 'mongodb';
 import { AuthSession } from '../../core/entities/auth.entity.js';
 import {
   AuthSessionRepository,
@@ -31,10 +31,10 @@ interface SessionDoc {
 }
 
 export class MongoAuthSessionRepository implements AuthSessionRepository {
-  private collection: Collection;
+  private collection: Collection<SessionDoc>;
 
   constructor(client: MongoClient) {
-    this.collection = client.db().collection('auth_sessions');
+    this.collection = client.db().collection<SessionDoc>('auth_sessions');
   }
 
   async save(session: AuthSession): Promise<AuthSession> {
@@ -71,7 +71,7 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
       .sort({ lastActivityAt: -1 })
       .toArray();
 
-    return docs.map((doc: Record<string, unknown>) => this.mapDocumentToEntity(doc));
+    return docs.map((doc: SessionDoc) => this.mapDocumentToEntity(doc));
   }
 
   async findMany(
@@ -115,7 +115,7 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
     }
 
     const docs = await query.toArray();
-    const sessions = docs.map((doc: Record<string, unknown>) => this.mapDocumentToEntity(doc));
+    const sessions = docs.map((doc: SessionDoc) => this.mapDocumentToEntity(doc));
 
     return {
       sessions,
@@ -181,7 +181,7 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
     userId: string,
     filters?: Partial<SessionSearchFilters>
   ): Promise<AuthSession[]> {
-    const mongoFilter: Filter<SessionDoc> = { userId: new ObjectId(userId) };
+    const mongoFilter: Partial<SessionDoc> = { userId: new ObjectId(userId) };
 
     if (filters?.isActive !== undefined) {
       mongoFilter.isActive = filters.isActive;
@@ -189,7 +189,7 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
 
     const docs = await this.collection.find(mongoFilter).sort({ lastActivityAt: -1 }).toArray();
 
-    return docs.map((doc: Record<string, unknown>) => this.mapDocumentToEntity(doc));
+    return docs.map((doc: SessionDoc) => this.mapDocumentToEntity(doc));
   }
   async findActiveSessions(userId: string): Promise<AuthSession[]> {
     const now = new Date();
@@ -202,7 +202,7 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
       .sort({ lastActivityAt: -1 })
       .toArray();
 
-    return docs.map((doc: Record<string, unknown>) => this.mapDocumentToEntity(doc));
+    return docs.map((doc: SessionDoc) => this.mapDocumentToEntity(doc));
   }
   async search(filters: ExtendedSessionSearchFilters): Promise<AuthSession[]> {
     const mongoFilter: Record<string, unknown> = {};
@@ -245,7 +245,7 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
     }
 
     const docs = await query.toArray();
-    return docs.map((doc: Record<string, unknown>) => this.mapDocumentToEntity(doc));
+    return docs.map((doc: SessionDoc) => this.mapDocumentToEntity(doc));
   }
   async update(id: string, session: AuthSession): Promise<AuthSession> {
     try {
@@ -353,7 +353,7 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
       return await this.collection.countDocuments();
     }
 
-    const mongoFilter: Filter<SessionDoc> = {};
+    const mongoFilter: Partial<SessionDoc> = {};
 
     if (filters.userId) {
       mongoFilter.userId = new ObjectId(filters.userId);
@@ -364,10 +364,10 @@ export class MongoAuthSessionRepository implements AuthSessionRepository {
 
     return await this.collection.countDocuments(mongoFilter);
   }
-  private mapDocumentToEntity(doc: Record<string, unknown>): AuthSession {
+  private mapDocumentToEntity(doc: SessionDoc | Record<string, unknown>): AuthSession {
     return new AuthSession({
-      id: (doc._id as Record<string, unknown>).toString(),
-      userId: (doc.userId as Record<string, unknown>).toString(),
+      id: (doc._id as ObjectId).toString(),
+      userId: (doc.userId as ObjectId).toString(),
       refreshTokenId: doc.refreshTokenId as string,
       deviceInfo: doc.deviceInfo as Record<string, unknown>,
       isActive: doc.isActive as boolean,

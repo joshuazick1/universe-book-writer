@@ -8,6 +8,7 @@
       "frontend",
       "backend",
       "ai-server",
+      "collaboration-server",
       "plugins/*",
       "tools/*"
     ],

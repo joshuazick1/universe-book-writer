@@ -76,3 +76,6 @@ ai-server/models/
 .npm/
 .eslintcache
 .cache/
+
+*storybook.log
+storybook-static

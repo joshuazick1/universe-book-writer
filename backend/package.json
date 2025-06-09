@@ -13,7 +13,9 @@
     "postinstall": "npm run setup-env",
     "migrate:status": "node scripts/migrate.js status",
     "migrate:up": "node scripts/migrate.js up",
-    "migrate:down": "node scripts/migrate.js down"
+    "migrate:down": "node scripts/migrate.js down",
+    "seed:road-to-stars": "node --loader ts-node/esm src/scripts/seed-road-to-stars.ts",
+    "verify:road-to-stars": "node --loader ts-node/esm src/scripts/verify-road-to-stars-seed.ts"
   },
   "dependencies": {
     "@types/cors": "^2.8.19",

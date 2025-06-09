@@ -1,5 +1,9 @@
 # Phase 3: AI Integration Checklist
 
+**Important**: This phase implements comprehensive AI content analysis capabilities including character extraction, location analysis, and content structure recognition. These features will enable **gradual deprecation of detailed seed script data** as AI systems can automatically extract this information from chapter content.
+
+**Seed Script Impact**: See `docs/SEED_SCRIPT_DEPRECATION_STRATEGY.md` for detailed guidance on which seed script elements will become auto-extractable during this phase. Begin planning for transition from manually crafted character/location data to AI-extracted content.
+
 ## Core AI Architecture
 
 ### Task Router Implementation
