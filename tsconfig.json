@@ -49,6 +49,7 @@
     "**/migrate-mongo-config.js",
     "backend/plugins/test-core.plugin.js",
     "backend/tests/jest.env.mjs",
+    "backend/register.js",
     "*.d.ts"
   ]
 }

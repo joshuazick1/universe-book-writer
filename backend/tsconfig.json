@@ -15,5 +15,5 @@
   },
   "references": [{ "path": "../packages/core" }, { "path": "../packages/plugin-sdk" }],
   "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "src/scripts/seed-road-to-stars.ts", "register.js"]
 }

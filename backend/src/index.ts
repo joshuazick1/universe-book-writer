@@ -5,9 +5,16 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import { createPluginRoutes } from './api/routes/plugin.routes.js';
+import { createAuthRoutes } from './api/routes/auth.routes.js';
+import { createUserRoutes } from './api/routes/user.routes.js';
 import { mongoDBConnection } from './config/mongodb.config.js';
 import { PluginSystemFactory } from './plugins/manager/plugin-system.factory.js';
 import { errorHandler } from './api/middleware/error.middleware.js';
+import { createAuthContainer, TOKENS } from './infrastructure/container/container.js';
+import type { AuthController } from './api/controllers/auth.controller.js';
+import type { UserController } from './api/controllers/user.controller.js';
+import { AuthMiddleware } from './api/middleware/auth.middleware.js';
+import { ValidationMiddleware } from './api/middleware/validation.middleware.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -106,8 +113,21 @@ async function initializeApp() {
 
     // Initialize dependency injection container
     console.log('Initializing dependency container...');
-    // TODO: Initialize authentication container once interfaces are aligned
-    console.log('Authentication system temporarily disabled - fixing interface mismatches');
+    const authContainer = createAuthContainer({
+      mongoClient,
+      databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
+    });
+    
+    // Initialize auth repositories
+    await authContainer.initialize();
+    
+    // Resolve auth dependencies
+    const authController = authContainer.resolve<AuthController>(TOKENS.AUTH_CONTROLLER);
+    const userController = authContainer.resolve<UserController>(TOKENS.USER_CONTROLLER);
+    const authMiddleware = authContainer.resolve<AuthMiddleware>(TOKENS.AUTH_MIDDLEWARE);
+    const validationMiddleware = authContainer.resolve<ValidationMiddleware>(TOKENS.VALIDATION_MIDDLEWARE);
+    
+    console.log('Authentication system initialized successfully');
     console.log('Dependency container initialized successfully');
 
     // Initialize plugin system
@@ -150,7 +170,7 @@ async function initializeApp() {
         status: 'ok',
         timestamp: new Date().toISOString(),
         pluginCount: pluginSystem.pluginUseCase.getAllPlugins().length,
-        authentication: 'disabled-pending-interface-fixes',
+        authentication: 'enabled',
         security: securityStatus,
       });
     });
@@ -199,11 +219,11 @@ async function initializeApp() {
       });
     });
 
-    // Authentication routes (temporarily disabled)
-    // app.use('/api/auth', createAuthRoutes(authController, authMiddleware, validationMiddleware));
+    // Authentication routes
+    app.use('/api/auth', createAuthRoutes(authController, authMiddleware, validationMiddleware));
 
-    // User management routes (temporarily disabled)
-    // app.use('/api/users', createUserRoutes(userController, authMiddleware, validationMiddleware));
+    // User management routes
+    app.use('/api/users', createUserRoutes(userController, authMiddleware, validationMiddleware));
 
     // Plugin management routes
     app.use('/api/plugins', createPluginRoutes(pluginSystem.pluginController));
