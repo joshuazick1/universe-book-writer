@@ -278,6 +278,10 @@ export class CryptoSecurityService implements SecurityService {
     };
 
     const config = configs[action] || configs.default;
+    if (!config) {
+      throw new Error(`Invalid rate limit configuration for action: ${action}`);
+    }
+
     const resetTime = new Date(now + config.windowMs);
 
     if (!record || now > record.resetTime) {

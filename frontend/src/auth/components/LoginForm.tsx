@@ -108,7 +108,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
                 }`}
                 placeholder="Enter your email"
               />
-              {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-600">
+                  {String(errors.email.message || 'Invalid email')}
+                </p>
+              )}
             </div>
           </div>
 
@@ -170,7 +174,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
                 )}
               </button>
               {errors.password && (
-                <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
+                <p className="mt-2 text-sm text-red-600">
+                  {String(errors.password.message || 'Invalid password')}
+                </p>
               )}
             </div>
           </div>

@@ -237,6 +237,14 @@ export class UserController {
       const requestedUserId = req.params.id;
       const currentUserId = req.user?.id;
 
+      if (!requestedUserId) {
+        res.status(400).json({
+          success: false,
+          message: 'User ID is required',
+        });
+        return;
+      }
+
       // Users can view their own profile, admins and moderators can view any profile
       if (
         requestedUserId !== currentUserId &&
@@ -293,6 +301,14 @@ export class UserController {
       const currentUserId = req.user?.id;
       const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
       const userAgent = req.get('User-Agent') || 'unknown';
+
+      if (!targetUserId) {
+        res.status(400).json({
+          success: false,
+          message: 'User ID is required',
+        });
+        return;
+      }
 
       // Only admins can change roles
       if (userRole !== UserRole.ADMIN) {
@@ -352,6 +368,14 @@ export class UserController {
       const currentUserId = req.user?.id;
       const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
       const userAgent = req.get('User-Agent') || 'unknown';
+
+      if (!targetUserId) {
+        res.status(400).json({
+          success: false,
+          message: 'User ID is required',
+        });
+        return;
+      }
 
       // Only admins and moderators can suspend users
       if (userRole !== UserRole.ADMIN && userRole !== UserRole.MODERATOR) {

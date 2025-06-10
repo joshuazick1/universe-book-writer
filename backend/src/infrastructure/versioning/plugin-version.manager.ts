@@ -121,9 +121,9 @@ export class PluginVersionManager {
     }
 
     const version: SemanticVersion = {
-      major: Number.parseInt(match[1], 10),
-      minor: Number.parseInt(match[2], 10),
-      patch: Number.parseInt(match[3], 10),
+      major: Number.parseInt(match[1] || '0', 10),
+      minor: Number.parseInt(match[2] || '0', 10),
+      patch: Number.parseInt(match[3] || '0', 10),
       prerelease: match[4],
       build: match[5],
       original: versionString,
@@ -212,6 +212,9 @@ export class PluginVersionManager {
     // Range (1.2.3 - 2.0.0)
     if (trimmed.includes(' - ')) {
       const [lower, upper] = trimmed.split(' - ').map(v => v.trim());
+      if (!lower || !upper) {
+        throw new Error(`Invalid range format: ${rangeString}`);
+      }
       return {
         type: VersionRangeType.RANGE,
         version: this.parseVersion(lower),
@@ -341,7 +344,7 @@ export class PluginVersionManager {
         .sort((a, b) => this.compareVersions(a, b));
 
       return compatibleVersions.length > 0
-        ? compatibleVersions[compatibleVersions.length - 1]
+        ? (compatibleVersions[compatibleVersions.length - 1] ?? null)
         : null;
     } catch {
       return null;
@@ -516,10 +519,10 @@ export class PluginVersionManager {
 
     const parts = original.split('.');
     if (parts.length >= 1 && parts[0] !== 'x' && parts[0] !== '*') {
-      if (version.major !== Number.parseInt(parts[0], 10)) return false;
+      if (version.major !== Number.parseInt(parts[0] || '0', 10)) return false;
     }
     if (parts.length >= 2 && parts[1] !== 'x' && parts[1] !== '*') {
-      if (version.minor !== Number.parseInt(parts[1], 10)) return false;
+      if (version.minor !== Number.parseInt(parts[1] || '0', 10)) return false;
     }
 
     return true;
@@ -576,7 +579,7 @@ export class PluginVersionManager {
 
         conflicts.push({
           pluginName: node,
-          dependencyName: cycle[cycle.length - 2],
+          dependencyName: cycle[cycle.length - 2] || 'unknown',
           requiredVersions: [],
           conflictType: ConflictType.CIRCULAR_DEPENDENCY,
         });
@@ -677,13 +680,18 @@ export class PluginVersionManager {
       switch (strategy) {
         case ResolutionStrategy.STRICT:
           // Use exact versions - take the first one
-          suggestions[depName] = versions[0];
+          if (versions[0]) {
+            suggestions[depName] = versions[0];
+          }
           break;
 
         case ResolutionStrategy.LATEST: {
           // Find the highest version
           const sortedVersions = versions.sort((a, b) => this.compareVersions(a, b));
-          suggestions[depName] = sortedVersions[sortedVersions.length - 1];
+          const latestVersion = sortedVersions[sortedVersions.length - 1];
+          if (latestVersion) {
+            suggestions[depName] = latestVersion;
+          }
           break;
         }
         default:
@@ -702,6 +710,13 @@ export class PluginVersionManager {
   private findMostCompatibleVersion(versions: string[]): string {
     // For now, return the first version
     // In a real implementation, this would analyze ranges and find the most permissive one
-    return versions[0];
+    if (versions.length === 0) {
+      throw new Error('No versions provided for compatibility check');
+    }
+    const firstVersion = versions[0];
+    if (!firstVersion) {
+      throw new Error('Invalid version found in compatibility check');
+    }
+    return firstVersion;
   }
 }

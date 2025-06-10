@@ -247,25 +247,25 @@ class GenericPluginWrapper extends PluginEntity {
     super(metadata);
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected override async onInitialize(): Promise<void> {
     if (this.module.initialize && typeof this.module.initialize === 'function') {
       await this.module.initialize();
     }
   }
 
-  protected async onActivate(): Promise<void> {
+  protected override async onActivate(): Promise<void> {
     if (this.module.activate && typeof this.module.activate === 'function') {
       await this.module.activate();
     }
   }
 
-  protected async onDeactivate(): Promise<void> {
+  protected override async onDeactivate(): Promise<void> {
     if (this.module.deactivate && typeof this.module.deactivate === 'function') {
       await this.module.deactivate();
     }
   }
 
-  protected async onDestroy(): Promise<void> {
+  protected override async onDestroy(): Promise<void> {
     if (this.module.destroy && typeof this.module.destroy === 'function') {
       await this.module.destroy();
     }
@@ -280,35 +280,35 @@ class PluginEntityWrapper extends PluginEntity {
     super(wrappedPlugin.metadata, wrappedPlugin.config);
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected override async onInitialize(): Promise<void> {
     await this.wrappedPlugin.initialize();
   }
 
-  protected async onActivate(): Promise<void> {
+  protected override async onActivate(): Promise<void> {
     await this.wrappedPlugin.activate();
   }
 
-  protected async onDeactivate(): Promise<void> {
+  protected override async onDeactivate(): Promise<void> {
     await this.wrappedPlugin.deactivate();
   }
 
-  protected async onDestroy(): Promise<void> {
+  protected override async onDestroy(): Promise<void> {
     await this.wrappedPlugin.destroy();
   }
 
-  async validateConfig(config: PluginConfig): Promise<boolean> {
+  override async validateConfig(config: PluginConfig): Promise<boolean> {
     return await this.wrappedPlugin.validateConfig(config);
   }
 
-  async updateConfig(config: Partial<PluginConfig>): Promise<void> {
+  override async updateConfig(config: Partial<PluginConfig>): Promise<void> {
     await this.wrappedPlugin.updateConfig(config);
   }
 
-  canActivate(): boolean {
+  override canActivate(): boolean {
     return this.wrappedPlugin.canActivate();
   }
 
-  canDeactivate(): boolean {
+  override canDeactivate(): boolean {
     return this.wrappedPlugin.canDeactivate();
   }
 }

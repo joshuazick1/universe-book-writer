@@ -31,7 +31,8 @@
     { "path": "./packages/plugin-sdk" },
     { "path": "./frontend" },
     { "path": "./backend" },
-    { "path": "./ai-server" }
+    { "path": "./ai-server" },
+    { "path": "./collaboration-server" }
   ],
   "exclude": [
     "**/node_modules",

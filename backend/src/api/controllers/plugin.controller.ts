@@ -95,6 +95,14 @@ export class PluginController {
     try {
       const { name } = req.params;
 
+      if (!name) {
+        res.status(400).json({
+          success: false,
+          error: 'Plugin name is required',
+        });
+        return;
+      }
+
       const status = await this.pluginUseCase.getPluginStatus(name);
 
       if (!status) {
@@ -159,6 +167,14 @@ export class PluginController {
     try {
       const { name } = req.params;
 
+      if (!name) {
+        res.status(400).json({
+          success: false,
+          error: 'Plugin name is required',
+        });
+        return;
+      }
+
       await this.pluginUseCase.activatePlugin(name);
 
       res.json({
@@ -179,6 +195,14 @@ export class PluginController {
   async deactivatePlugin(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.params;
+
+      if (!name) {
+        res.status(400).json({
+          success: false,
+          error: 'Plugin name is required',
+        });
+        return;
+      }
 
       await this.pluginUseCase.deactivatePlugin(name);
 
@@ -201,6 +225,14 @@ export class PluginController {
     try {
       const { name } = req.params;
 
+      if (!name) {
+        res.status(400).json({
+          success: false,
+          error: 'Plugin name is required',
+        });
+        return;
+      }
+
       await this.pluginUseCase.unregister(name);
 
       res.json({
@@ -222,6 +254,14 @@ export class PluginController {
     try {
       const { name } = req.params;
       const config = req.body;
+
+      if (!name) {
+        res.status(400).json({
+          success: false,
+          error: 'Plugin name is required',
+        });
+        return;
+      }
 
       await this.pluginUseCase.updatePluginConfig(name, config);
 
@@ -265,6 +305,14 @@ export class PluginController {
   async validatePlugin(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.params;
+
+      if (!name) {
+        res.status(400).json({
+          success: false,
+          error: 'Plugin name is required',
+        });
+        return;
+      }
 
       const plugin = this.pluginUseCase.getPlugin(name);
       if (!plugin) {

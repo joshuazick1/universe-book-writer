@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export interface QueuedMessage {
   id: string;
@@ -247,6 +247,7 @@ export class ReliabilityManager extends EventEmitter {
 
       // Process messages in priority order
       const message = messages[0];
+      if (!message) continue;
 
       if (message.expiresAt && now > message.expiresAt) {
         messages.shift();
@@ -304,6 +305,7 @@ export class ReliabilityManager extends EventEmitter {
     // Process all queued messages
     while (messages.length > 0) {
       const message = messages[0];
+      if (!message) break;
 
       try {
         const delivered = await callback(message);
@@ -328,7 +330,7 @@ export class ReliabilityManager extends EventEmitter {
     for (const [userId, messages] of this.messageQueue.entries()) {
       for (let i = messages.length - 1; i >= 0; i--) {
         const message = messages[i];
-        if (message.expiresAt && now > message.expiresAt) {
+        if (message && message.expiresAt && now > message.expiresAt) {
           messages.splice(i, 1);
           this.emit('message-expired', message);
           expiredCount++;

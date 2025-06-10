@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { Logger, ChildLogger } from '../utils/logger';
+import { Logger, ChildLogger } from '../utils/logger.js';
 
 describe('Logger', () => {
   let originalConsole: any;

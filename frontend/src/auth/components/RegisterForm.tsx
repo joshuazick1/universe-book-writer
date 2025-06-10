@@ -161,7 +161,11 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 }`}
                 placeholder="Enter your email"
               />
-              {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-600">
+                  {String(errors.email.message || 'Invalid email')}
+                </p>
+              )}
             </div>
           </div>
 
@@ -183,7 +187,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   placeholder="First name"
                 />
                 {errors.firstName && (
-                  <p className="mt-2 text-sm text-red-600">{errors.firstName.message}</p>
+                  <p className="mt-2 text-sm text-red-600">
+                    {String(errors.firstName.message || 'Invalid first name')}
+                  </p>
                 )}
               </div>
             </div>
@@ -204,7 +210,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   placeholder="Last name"
                 />
                 {errors.lastName && (
-                  <p className="mt-2 text-sm text-red-600">{errors.lastName.message}</p>
+                  <p className="mt-2 text-sm text-red-600">
+                    {String(errors.lastName.message || 'Invalid last name')}
+                  </p>
                 )}
               </div>
             </div>
@@ -227,7 +235,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 placeholder="Choose a username"
               />
               {errors.username && (
-                <p className="mt-2 text-sm text-red-600">{errors.username.message}</p>
+                <p className="mt-2 text-sm text-red-600">
+                  {String(errors.username.message || 'Invalid username')}
+                </p>
               )}
             </div>
           </div>
@@ -307,7 +317,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             )}
 
             {errors.password && (
-              <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
+              <p className="mt-2 text-sm text-red-600">
+                {String(errors.password.message || 'Invalid password')}
+              </p>
             )}
           </div>
 
@@ -369,7 +381,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 )}
               </button>
               {errors.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>
+                <p className="mt-2 text-sm text-red-600">
+                  {String(errors.confirmPassword.message || 'Passwords do not match')}
+                </p>
               )}
             </div>
           </div>

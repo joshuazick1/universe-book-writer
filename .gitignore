@@ -79,3 +79,6 @@ ai-server/models/
 
 *storybook.log
 storybook-static
+
+# Personal Notes (contains sensitive information)
+Notes_Vault/

@@ -42,8 +42,10 @@ export const UserMenu: React.FC = () => {
     username?: string;
     email?: string;
   }) => {
-    if (user.firstName && user.lastName) {
-      return (user.firstName[0] + user.lastName[0]).toUpperCase();
+    if (user.firstName && user.lastName && user.firstName.length > 0 && user.lastName.length > 0) {
+      const first = user.firstName.charAt(0);
+      const last = user.lastName.charAt(0);
+      return (first + last).toUpperCase();
     }
     return (user.username || user.email || 'U')
       .split(' ')

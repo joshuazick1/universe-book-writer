@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import { CollaborationServer } from '../index';
-import { CollaborationConfig } from '../config/collaboration.config';
+import { CollaborationServer } from '../index.js';
+import { CollaborationConfig } from '../config/collaboration.config.js';
 
 describe('CollaborationServer Integration', () => {
   let server: CollaborationServer;

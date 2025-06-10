@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "jsx": "react-jsx",
@@ -10,7 +12,15 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": true,
-    "types": ["node"]
+    "types": ["node"],
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../packages/*"]
+    }
   },
   "references": [
     { "path": "../packages/core" },

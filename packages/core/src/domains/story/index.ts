@@ -9,6 +9,16 @@ export interface Character extends BaseEntity {
   attributes: Record<string, unknown>;
 }
 
+export interface Book extends BaseEntity {
+  title: string;
+  author: string;
+  summary: string;
+  chapters: StoryChapter[];
+  characters: Character[];
+  publishedDate?: Date;
+  isbn?: string;
+}
+
 export interface StoryChapter extends BaseEntity {
   title: string;
   content: string;

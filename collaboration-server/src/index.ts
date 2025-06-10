@@ -6,13 +6,13 @@
 import express from 'express';
 import { createServer } from 'node:http';
 import cors from 'cors';
-import { WebSocketServer } from './websocket/websocket-server';
-import { ConnectionManager } from './connection/connection-manager';
-import { EventManager } from './events/event-manager';
-import { AuthenticationManager } from './auth/authentication-manager';
-import { HealthMonitor } from './health/health-monitor';
-import { ReliabilityManager } from './reliability/reliability-manager';
-import { CollaborationConfig, getCollaborationConfig } from './config/collaboration.config';
+import { WebSocketServer } from './websocket/websocket-server.js';
+import { ConnectionManager } from './connection/connection-manager.js';
+import { EventManager } from './events/event-manager.js';
+import { AuthenticationManager } from './auth/authentication-manager.js';
+import { HealthMonitor } from './health/health-monitor.js';
+import { ReliabilityManager } from './reliability/reliability-manager.js';
+import { CollaborationConfig, getCollaborationConfig } from './config/collaboration.config.js';
 
 export interface CollaborationServerOptions {
   config?: CollaborationConfig;

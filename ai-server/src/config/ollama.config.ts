@@ -59,8 +59,11 @@ export function getOllamaConfig(): OllamaConfig {
   const config = { ...DEFAULT_OLLAMA_CONFIG };
 
   // Allow override from environment for development
-  if (process.env.OLLAMA_SERVER_URL) {
-    config.servers[0].url = process.env.OLLAMA_SERVER_URL;
+  if (process.env.OLLAMA_SERVER_URL && config.servers.length > 0) {
+    const firstServer = config.servers[0];
+    if (firstServer) {
+      firstServer.url = process.env.OLLAMA_SERVER_URL;
+    }
   }
 
   if (process.env.OLLAMA_REQUEST_TIMEOUT) {

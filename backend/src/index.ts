@@ -117,16 +117,18 @@ async function initializeApp() {
       mongoClient,
       databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
     });
-    
+
     // Initialize auth repositories
     await authContainer.initialize();
-    
+
     // Resolve auth dependencies
     const authController = authContainer.resolve<AuthController>(TOKENS.AUTH_CONTROLLER);
     const userController = authContainer.resolve<UserController>(TOKENS.USER_CONTROLLER);
     const authMiddleware = authContainer.resolve<AuthMiddleware>(TOKENS.AUTH_MIDDLEWARE);
-    const validationMiddleware = authContainer.resolve<ValidationMiddleware>(TOKENS.VALIDATION_MIDDLEWARE);
-    
+    const validationMiddleware = authContainer.resolve<ValidationMiddleware>(
+      TOKENS.VALIDATION_MIDDLEWARE
+    );
+
     console.log('Authentication system initialized successfully');
     console.log('Dependency container initialized successfully');
 

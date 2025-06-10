@@ -400,7 +400,16 @@ function parseSize(size: string): number {
   }
 
   const [, value, unit] = match;
-  return parseFloat(value) * units[unit];
+  if (!value || !unit) {
+    throw new Error(`Invalid size format: ${size}`);
+  }
+
+  const multiplier = units[unit as keyof typeof units];
+  if (multiplier === undefined) {
+    throw new Error(`Unsupported unit: ${unit}`);
+  }
+
+  return parseFloat(value) * multiplier;
 }
 
 /**

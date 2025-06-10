@@ -40,7 +40,7 @@ export class RoundRobinStrategy implements LoadBalancingStrategy {
 
     const server = availableServers[this.currentIndex % availableServers.length];
     this.currentIndex = (this.currentIndex + 1) % availableServers.length;
-    return server;
+    return server ?? null;
   }
 }
 
@@ -59,7 +59,7 @@ export class PriorityStrategy implements LoadBalancingStrategy {
 
     // Sort by priority (highest first) and select the first one
     const sorted = [...availableServers].sort((a, b) => b.priority - a.priority);
-    return sorted[0];
+    return sorted[0] ?? null;
   }
 }
 
@@ -76,6 +76,8 @@ export class LeastConnectionsStrategy implements LoadBalancingStrategy {
     if (availableServers.length === 0) return null;
 
     let bestServer = availableServers[0];
+    if (!bestServer) return null;
+
     let leastConnections = metrics?.get(bestServer.id)?.activeRequests ?? 0;
 
     for (const server of availableServers.slice(1)) {
@@ -104,6 +106,8 @@ export class ResponseTimeStrategy implements LoadBalancingStrategy {
     if (availableServers.length === 0) return null;
 
     let bestServer = availableServers[0];
+    if (!bestServer) return null;
+
     let bestTime = healthStatus.get(bestServer.id)?.responseTime ?? Number.POSITIVE_INFINITY;
 
     for (const server of availableServers.slice(1)) {

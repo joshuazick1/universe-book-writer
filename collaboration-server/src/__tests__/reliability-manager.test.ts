@@ -1,4 +1,4 @@
-import { ReliabilityManager } from '../reliability/reliability-manager';
+import { ReliabilityManager } from '../reliability/reliability-manager.js';
 
 describe('ReliabilityManager', () => {
   let reliabilityManager: ReliabilityManager;

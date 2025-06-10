@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { HealthMonitor } from '../health/health-monitor';
+import { HealthMonitor } from '../health/health-monitor.js';
 
 describe('HealthMonitor', () => {
   let healthMonitor: HealthMonitor;

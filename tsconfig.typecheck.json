@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./packages/*"],
+      "@universe-book-writer/core": ["./packages/core/src/index.ts"],
+      "@universe-book-writer/core/*": ["./packages/core/src/*"]
+    }
+  },
+  "references": [],
+  "include": [
+    "packages/*/src/**/*",
+    "frontend/src/**/*",
+    "backend/src/**/*",
+    "ai-server/src/**/*",
+    "collaboration-server/src/**/*",
+    "socket.io.d.ts"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.config.js",
+    "**/*.config.ts",
+    "**/*.config.mjs",
+    "jest*.js",
+    "jest*.ts",
+    "jest*.mjs",
+    "frontend/src/stories/**/*",
+    "backend/src/scripts/seed-road-to-stars.ts"
+  ]
+}

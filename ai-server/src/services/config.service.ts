@@ -155,7 +155,8 @@ export class DatabaseAIConfigurationService implements AIConfigurationService {
     }
 
     const updatedServers = [...currentSettings.ollamaServers];
-    updatedServers[serverIndex] = { ...updatedServers[serverIndex], ...serverUpdate };
+    const existingServer = updatedServers[serverIndex];
+    updatedServers[serverIndex] = { ...existingServer, ...serverUpdate } as OllamaServerSettings;
 
     const newSettings = {
       ...currentSettings,
@@ -220,10 +221,11 @@ export class InMemoryAIConfigurationService implements AIConfigurationService {
       throw new Error(`Server with ID ${serverId} not found`);
     }
 
+    const existingServer = this.settings.ollamaServers[serverIndex];
     this.settings.ollamaServers[serverIndex] = {
-      ...this.settings.ollamaServers[serverIndex],
+      ...existingServer,
       ...serverUpdate,
-    };
+    } as OllamaServerSettings;
     return { ...this.settings };
   }
 }
