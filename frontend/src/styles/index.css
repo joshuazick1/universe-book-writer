@@ -41,7 +41,12 @@ body {
 }
 
 /* === TYPOGRAPHY === */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.2;
@@ -73,53 +78,58 @@ p {
 }
 
 /* === UNIVERSE-SPECIFIC COMPONENT OVERRIDES === */
-[data-universe-theme="lcars"] .component-container {
+[data-universe-theme='lcars'] .component-container {
   background: linear-gradient(45deg, #333333, #444444);
   border: 2px solid var(--color-universe-accent);
   border-radius: var(--border-radius-universe);
   box-shadow: inset 0 0 10px rgba(255, 153, 0, 0.3);
 }
 
-[data-universe-theme="lcars"] .component-header {
+[data-universe-theme='lcars'] .component-header {
   border-color: var(--color-universe-primary);
   background: linear-gradient(90deg, var(--color-universe-primary), transparent);
   padding: 0.5rem 1rem;
   margin: -1.5rem -1.5rem 1rem -1.5rem;
 }
 
-[data-universe-theme="imperial"] .component-container {
+[data-universe-theme='imperial'] .component-container {
   background: linear-gradient(135deg, #1f2937, #374151);
   border: 1px solid var(--color-universe-accent);
   box-shadow: 0 0 15px rgba(220, 38, 38, 0.2);
 }
 
-[data-universe-theme="cyberpunk"] .component-container {
+[data-universe-theme='cyberpunk'] .component-container {
   background: linear-gradient(90deg, #0a0a0a, #1a1a1a);
   border: 1px solid var(--color-universe-primary);
-  box-shadow: 
+  box-shadow:
     0 0 10px var(--color-universe-primary),
     inset 0 0 10px rgba(0, 255, 65, 0.1);
   position: relative;
 }
 
-[data-universe-theme="cyberpunk"] .component-container::before {
+[data-universe-theme='cyberpunk'] .component-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, 
-    var(--color-universe-primary), 
-    var(--color-universe-secondary), 
+  background: linear-gradient(
+    90deg,
+    var(--color-universe-primary),
+    var(--color-universe-secondary),
     var(--color-universe-accent)
   );
   animation: scan 2s linear infinite;
 }
 
 @keyframes scan {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* === UTILITY CLASSES === */
@@ -148,12 +158,12 @@ p {
   .desktop-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .desktop-sidebar {
     grid-column: span 1;
     order: 2;
   }
-  
+
   .desktop-main {
     grid-column: span 1;
     order: 1;
@@ -178,12 +188,12 @@ p {
   .no-print {
     display: none !important;
   }
-  
+
   body {
     background: white !important;
     color: black !important;
   }
-  
+
   .component-container {
     box-shadow: none !important;
     border: 1px solid #ccc !important;

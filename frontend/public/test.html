@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <style>
+        body {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .test-container {
+            text-align: center;
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🚀 Universe Book Writer - Test Page</h1>
+        <p>If you can see this, the server is working correctly!</p>
+        <p>Current time: <span id="time"></span></p>
+        <script>
+            document.getElementById('time').textContent = new Date().toLocaleString();
+            console.log('Test page loaded successfully');
+        </script>
+        <br>
+        <a href="/" style="color: #4ecdc4; text-decoration: none; font-weight: bold;">→ Go to Main App</a>
+    </div>
+</body>
+</html>

@@ -120,7 +120,7 @@
 
 /* === UNIVERSE THEME OVERRIDES === */
 /* LCARS Theme (Star Trek) */
-:root[data-universe-theme="lcars"] {
+:root[data-universe-theme='lcars'] {
   --color-universe-primary: #ff9900;
   --color-universe-secondary: #9999ff;
   --color-universe-accent: #ffcc99;
@@ -132,7 +132,7 @@
 }
 
 /* Imperial Theme (Star Wars) */
-:root[data-universe-theme="imperial"] {
+:root[data-universe-theme='imperial'] {
   --color-universe-primary: #dc2626;
   --color-universe-secondary: #1f2937;
   --color-universe-accent: #fbbf24;
@@ -144,7 +144,7 @@
 }
 
 /* Cyberpunk Theme */
-:root[data-universe-theme="cyberpunk"] {
+:root[data-universe-theme='cyberpunk'] {
   --color-universe-primary: #00ff41;
   --color-universe-secondary: #ff0080;
   --color-universe-accent: #00d4ff;

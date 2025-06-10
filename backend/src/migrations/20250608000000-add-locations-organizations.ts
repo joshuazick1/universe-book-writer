@@ -81,7 +81,7 @@ export async function up(db: Db): Promise<void> {
             bsonType: 'string',
             enum: [
               'Government Alliance',
-              'Military/Exploration', 
+              'Military/Exploration',
               'Government',
               'Military',
               'Criminal Organization',
@@ -89,7 +89,7 @@ export async function up(db: Db): Promise<void> {
               'Corporate',
               'Religious',
               'Academic',
-              'Other'
+              'Other',
             ],
           },
           universeId: {
@@ -145,8 +145,5 @@ export async function up(db: Db): Promise<void> {
 
 export async function down(db: Db): Promise<void> {
   // Drop collections in reverse order
-  await Promise.all([
-    db.collection('organizations').drop(),
-    db.collection('locations').drop(),
-  ]);
+  await Promise.all([db.collection('organizations').drop(), db.collection('locations').drop()]);
 }

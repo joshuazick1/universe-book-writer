@@ -1,25 +1,25 @@
 /**
  * 🌟 SEEDING SCRIPT: "The Road to the Stars" - Book 1 of the United Republic of Planets series
- * 
+ *
  * PURPOSE:
  * This script populates the database with comprehensive story data extracted from all 5 chapters
  * of "The Road to the Stars". It serves as foundational content for development and testing.
- * 
+ *
  * SCOPE:
  * - 11 fully-detailed characters with Star Trek plugin validation
  * - 8 key story locations (ships, planets, facilities)
  * - 6 organizations (political, military, academic)
  * - Complete universe lore and timeline events
  * - Full book content with chapter metadata
- * 
+ *
  * ⚠️  FUTURE DEVELOPMENT CONSIDERATIONS:
- * 
+ *
  * 1. DEPRECATION STRATEGY:
  *    - Remove character seeding when Character Creation UI is implemented
  *    - Remove location seeding when World Building tools are ready
  *    - Remove organization seeding when Faction/Org management is built
  *    - Keep universe and book data for reference/testing purposes
- * 
+ *
  * 2. FEATURES REQUIRING SEED UPDATES:
  *    - Character relationship system (update relationship arrays)
  *    - Timeline/chronology features (expand timeline events)
@@ -27,46 +27,46 @@
  *    - Organization membership tracking (expand member arrays)
  *    - Character development arcs (add character progression data)
  *    - Plot thread tracking (add story arc metadata to chapters)
- * 
+ *
  * 3. FEATURES THAT CAN CREATE OWN DATA:
  *    - User authentication (users can register themselves)
  *    - Character creation (writers can create new characters)
  *    - Location creation (world-building tools will handle this)
  *    - Organization creation (faction management will handle this)
  *    - Book writing (authors will write their own content)
- * 
+ *
  * 4. PLUGIN INTEGRATION NOTES:
  *    - All character data complies with Star Trek Universe plugin validation
  *    - Species validation: Human, Vulcan, Andorian, Tellarite, Orion
  *    - Rank validation: Standard Starfleet hierarchy
  *    - When adding new universes, ensure plugin compatibility
- * 
+ *
  * 5. DATA EVOLUTION GUIDELINES:
  *    - Maintain backward compatibility when updating character schemas
  *    - Version seed scripts when making breaking changes
  *    - Document schema changes in migration files
  *    - Keep original ObjectIds stable for relationship integrity
- * 
+ *
  * USAGE:
  * npm run seed:road-to-stars    # Run seeding
  * npm run verify:road-to-stars  # Verify seeded data
  */
 
 import { MongoClient, Db, ObjectId } from 'mongodb';
-import type { 
-  Universe, 
-  Character, 
-  Book, 
-  Location, 
+import type {
+  Universe,
+  Character,
+  Book,
+  Location,
   TimelineEvent,
-  Organization 
+  Organization,
 } from '@universe-book-writer/core';
 
 /**
  * 📝 TYPE DEFINITIONS
- * 
+ *
  * These interfaces extend the core types with MongoDB-specific fields and seed-specific data.
- * 
+ *
  * EVOLUTION NOTES:
  * - When Character schema evolves, update SeedCharacter interface
  * - Add new optional fields to support future features
@@ -85,12 +85,12 @@ interface SeedUser {
 
 /**
  * SeedCharacter: Enhanced character data for seeding
- * 
+ *
  * PLUGIN COMPLIANCE:
  * - 'species' field validates against Star Trek Universe plugin
  * - 'rank' field validates against Starfleet hierarchy
  * - 'assignment' provides current posting information
- * 
+ *
  * FUTURE FEATURES:
  * - Character progression tracking: Add 'developmentArcs' array
  * - Skill system: Add 'skills' and 'abilities' objects
@@ -100,10 +100,11 @@ interface SeedUser {
 interface SeedCharacter extends Omit<Character, 'id' | 'universeId'> {
   _id: ObjectId;
   universeId: ObjectId;
-  species?: string;           // Star Trek plugin validation
-  rank?: string;              // Starfleet hierarchy validation
-  assignment?: string;        // Current posting/duty assignment
-  relationships?: Array<{     // Character interconnections
+  species?: string; // Star Trek plugin validation
+  rank?: string; // Starfleet hierarchy validation
+  assignment?: string; // Current posting/duty assignment
+  relationships?: Array<{
+    // Character interconnections
     characterId: ObjectId;
     type: string;
     description?: string;
@@ -112,17 +113,17 @@ interface SeedCharacter extends Omit<Character, 'id' | 'universeId'> {
 
 /**
  * SeedLocation: Enhanced location data for seeding
- * 
+ *
  * EXTENDS CORE LOCATION:
  * - Based on core Location interface from universe domain
  * - Adds MongoDB-specific _id and universeId fields
  * - Includes Star Trek plugin-compatible fields
- * 
+ *
  * PLUGIN COMPLIANCE:
  * - 'sector' and 'system' fields required by Star Trek Universe plugin
  * - 'classification' enables location type categorization
  * - Coordinates support 3D space mapping for galactic positioning
- * 
+ *
  * FUTURE FEATURES:
  * - Location hierarchy: Add 'parentLocationId' for nested locations (planets in systems, etc.)
  * - Discovery system: Add 'discoveredBy', 'explorationStatus', 'firstContact'
@@ -134,9 +135,9 @@ interface SeedCharacter extends Omit<Character, 'id' | 'universeId'> {
 interface SeedLocation extends Omit<Location, 'id'> {
   _id: ObjectId;
   universeId: ObjectId;
-  sector?: string;            // Galactic sector (Star Trek format: "123-456")
-  system?: string;            // Star system reference
-  classification?: string;    // Location type (starship, planet, station, etc.)
+  sector?: string; // Galactic sector (Star Trek format: "123-456")
+  system?: string; // Star system reference
+  classification?: string; // Location type (starship, planet, station, etc.)
   // coordinates field inherited from Location interface
 }
 
@@ -176,20 +177,22 @@ interface SeedOrganization {
  * Main seeding function
  */
 export async function seedRoadToTheStars(): Promise<void> {
-  const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer');
-  
+  const client = new MongoClient(
+    process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer'
+  );
+
   try {
     await client.connect();
     const db = client.db();
-    
+
     console.log('🌟 Starting seed for "The Road to the Stars"...');
-    
+
     // Clear existing data (optional - uncomment if needed)
     // await clearExistingData(db);
-    
+
     // Create seed data
     const seedData = createSeedData();
-    
+
     // Insert data in correct order (dependencies first)
     await insertUsers(db, seedData.users);
     await insertUniverses(db, seedData.universes);
@@ -197,7 +200,7 @@ export async function seedRoadToTheStars(): Promise<void> {
     await insertLocations(db, seedData.locations);
     await insertOrganizations(db, seedData.organizations);
     await insertBooks(db, seedData.books);
-    
+
     console.log('✅ Seeding completed successfully!');
   } catch (error) {
     console.error('❌ Seeding failed:', error);
@@ -212,7 +215,7 @@ export async function seedRoadToTheStars(): Promise<void> {
  */
 function createSeedData() {
   const now = new Date();
-  
+
   // Create user (author)
   const authorId = new ObjectId();
   const users: SeedUser[] = [
@@ -225,14 +228,15 @@ function createSeedData() {
       updatedAt: now,
     },
   ];
-  
+
   // Create United Republic of Planets universe
   const universeId = new ObjectId();
   const universes: SeedUniverse[] = [
     {
       _id: universeId,
       name: 'United Republic of Planets',
-      description: 'A Star Trek-inspired universe featuring the United Republic of Planets, formed by the alliance of Humans, Vulcans, Andorians, and Tellarites. Set in an era of exploration, diplomacy, and the forging of interstellar unity.',
+      description:
+        'A Star Trek-inspired universe featuring the United Republic of Planets, formed by the alliance of Humans, Vulcans, Andorians, and Tellarites. Set in an era of exploration, diplomacy, and the forging of interstellar unity.',
       creatorId: authorId,
       locations: [],
       timelines: [
@@ -242,22 +246,26 @@ function createSeedData() {
             {
               id: 'urp-formation',
               date: '2155',
-              description: 'Formation of the United Republic of Planets alliance between Human, Vulcan, Andorian, and Tellarite species',
+              description:
+                'Formation of the United Republic of Planets alliance between Human, Vulcan, Andorian, and Tellarite species',
             },
             {
               id: 'vashtel-launch',
               date: '2161',
-              description: 'Launch of the Vash\'Tel, the first Republic starship, marking a new era of cooperative exploration',
+              description:
+                "Launch of the Vash'Tel, the first Republic starship, marking a new era of cooperative exploration",
             },
             {
               id: 'academy-establishment',
               date: '2158',
-              description: 'Establishment of the Galactic Republic Starfleet Academy for training joint-species crews',
+              description:
+                'Establishment of the Galactic Republic Starfleet Academy for training joint-species crews',
             },
             {
               id: 'vulcan-goodwill-tour',
               date: '2161',
-              description: 'The Vash\'Tel\'s goodwill tour to Vulcan, addressing political tensions and resistance movements',
+              description:
+                "The Vash'Tel's goodwill tour to Vulcan, addressing political tensions and resistance movements",
             },
           ],
         },
@@ -272,7 +280,7 @@ function createSeedData() {
       updatedAt: now,
     },
   ];
-  
+
   // Create character IDs
   const characterIds = {
     jamesCalloway: new ObjectId(),
@@ -287,17 +295,18 @@ function createSeedData() {
     ethanBlackwood: new ObjectId(),
     theNarrator: new ObjectId(),
   };
-  
+
   // Create characters based on the story
   const characters: SeedCharacter[] = [
     {
       _id: characterIds.jamesCalloway,
       name: 'James Calloway',
       universeId,
-      description: 'Captain of the Vash\'Tel, the first Republic starship. A seasoned human officer who embodies the diplomatic ideals of the United Republic of Planets. Known for his strategic thinking and ability to unite diverse crews.',
+      description:
+        "Captain of the Vash'Tel, the first Republic starship. A seasoned human officer who embodies the diplomatic ideals of the United Republic of Planets. Known for his strategic thinking and ability to unite diverse crews.",
       species: 'Human',
       rank: 'Captain',
-      assignment: 'USS Vash\'Tel - Commanding Officer',
+      assignment: "USS Vash'Tel - Commanding Officer",
       attributes: {
         personality: 'Diplomatic, strategic, calm under pressure',
         background: 'Starfleet Academy graduate, experienced in interspecies relations',
@@ -317,18 +326,19 @@ function createSeedData() {
     },
     {
       _id: characterIds.tharaZhShiron,
-      name: 'Thara zh\'Shiron',
+      name: "Thara zh'Shiron",
       universeId,
-      description: 'Andorian First Officer of the Vash\'Tel. An experienced officer with deep blue skin and characteristic antennae. Represents the martial heritage of the Andorians while embracing the Republic\'s cooperative ideals.',
+      description:
+        "Andorian First Officer of the Vash'Tel. An experienced officer with deep blue skin and characteristic antennae. Represents the martial heritage of the Andorians while embracing the Republic's cooperative ideals.",
       species: 'Andorian',
       rank: 'Commander',
-      assignment: 'USS Vash\'Tel - First Officer',
+      assignment: "USS Vash'Tel - First Officer",
       attributes: {
         personality: 'Controlled aggression, tactically minded, loyal',
         background: 'Former Andorian Imperial Guard, Republic convert',
         specialSkills: 'Tactical operations, combat strategy, crew coordination',
         gender: 'Zhen',
-        clan: 'zh\'Shiron',
+        clan: "zh'Shiron",
       },
       relationships: [
         {
@@ -344,10 +354,11 @@ function createSeedData() {
       _id: characterIds.jorrekVen,
       name: 'Jorrek Ven',
       universeId,
-      description: 'Chief Engineer of the Vash\'Tel. A skilled Tellarite engineer responsible for maintaining the ship\'s complex systems, including the revolutionary plasma flow technology that combines multiple species\' innovations.',
+      description:
+        "Chief Engineer of the Vash'Tel. A skilled Tellarite engineer responsible for maintaining the ship's complex systems, including the revolutionary plasma flow technology that combines multiple species' innovations.",
       species: 'Tellarite',
       rank: 'Lieutenant Commander',
-      assignment: 'USS Vash\'Tel - Chief Engineer',
+      assignment: "USS Vash'Tel - Chief Engineer",
       attributes: {
         personality: 'Direct, argumentative (in Tellarite tradition), technically brilliant',
         background: 'Tellarite Engineering Corps, plasma flow specialist',
@@ -368,10 +379,11 @@ function createSeedData() {
       _id: characterIds.sovek,
       name: 'Sovek',
       universeId,
-      description: 'Vulcan Chief of Operations aboard the Vash\'Tel. Brings logical analysis and precise coordination to the ship\'s daily operations. Represents the Vulcan contribution to the Republic alliance.',
+      description:
+        "Vulcan Chief of Operations aboard the Vash'Tel. Brings logical analysis and precise coordination to the ship's daily operations. Represents the Vulcan contribution to the Republic alliance.",
       species: 'Vulcan',
       rank: 'Lieutenant Commander',
-      assignment: 'USS Vash\'Tel - Chief of Operations',
+      assignment: "USS Vash'Tel - Chief of Operations",
       attributes: {
         personality: 'Logical, methodical, pragmatic',
         background: 'Vulcan Science Academy, operations specialist',
@@ -392,10 +404,11 @@ function createSeedData() {
       _id: characterIds.drEmonVrix,
       name: 'Dr. Emon Vrix',
       universeId,
-      description: 'Chief Medical Officer of the Vash\'Tel. A dedicated physician responsible for the health and well-being of the diverse, multi-species crew.',
+      description:
+        "Chief Medical Officer of the Vash'Tel. A dedicated physician responsible for the health and well-being of the diverse, multi-species crew.",
       species: 'Denobulan',
       rank: 'Lieutenant Commander',
-      assignment: 'USS Vash\'Tel - Chief Medical Officer',
+      assignment: "USS Vash'Tel - Chief Medical Officer",
       attributes: {
         personality: 'Caring, methodical, cross-species medical expert',
         background: 'Multi-species medical training, Republic medical corps',
@@ -409,10 +422,11 @@ function createSeedData() {
       _id: characterIds.lirianSaar,
       name: 'Lirian Saar',
       universeId,
-      description: 'Science Officer aboard the Vash\'Tel, contributing to the ship\'s exploratory and research missions.',
+      description:
+        "Science Officer aboard the Vash'Tel, contributing to the ship's exploratory and research missions.",
       species: 'Vulcan',
       rank: 'Lieutenant',
-      assignment: 'USS Vash\'Tel - Science Officer',
+      assignment: "USS Vash'Tel - Science Officer",
       attributes: {
         personality: 'Curious, analytical, dedicated to scientific discovery',
         background: 'Vulcan Science Academy, xenobiology specialist',
@@ -425,10 +439,11 @@ function createSeedData() {
       _id: characterIds.ralvek,
       name: 'Ralvek',
       universeId,
-      description: 'Tactical Officer of the Vash\'Tel. A towering Andorian responsible for the ship\'s defensive systems and threat assessment.',
+      description:
+        "Tactical Officer of the Vash'Tel. A towering Andorian responsible for the ship's defensive systems and threat assessment.",
       species: 'Andorian',
       rank: 'Lieutenant',
-      assignment: 'USS Vash\'Tel - Tactical Officer',
+      assignment: "USS Vash'Tel - Tactical Officer",
       attributes: {
         personality: 'Vigilant, protective, strategically minded',
         background: 'Andorian Imperial Guard, tactical specialist',
@@ -447,12 +462,13 @@ function createSeedData() {
     },
     {
       _id: characterIds.tRyn,
-      name: 'T\'Ryn',
+      name: "T'Ryn",
       universeId,
-      description: 'Vulcan officer aboard the Vash\'Tel, responsible for navigation and helm operations. An example of emotional Vulcan adaptation to Republic ideals.',
+      description:
+        "Vulcan officer aboard the Vash'Tel, responsible for navigation and helm operations. An example of emotional Vulcan adaptation to Republic ideals.",
       species: 'Vulcan',
       rank: 'Lieutenant',
-      assignment: 'USS Vash\'Tel - Navigator/Helm Officer',
+      assignment: "USS Vash'Tel - Navigator/Helm Officer",
       attributes: {
         personality: 'More emotional than typical Vulcans, adaptive, skilled pilot',
         background: 'Vulcan navigator training, Republic integration',
@@ -463,7 +479,7 @@ function createSeedData() {
         {
           characterId: characterIds.ralkas,
           type: 'colleague',
-          description: 'Works closely with Ral\'kas in navigation',
+          description: "Works closely with Ral'kas in navigation",
         },
       ],
       createdAt: now,
@@ -471,12 +487,13 @@ function createSeedData() {
     },
     {
       _id: characterIds.ralkas,
-      name: 'Ral\'kas',
+      name: "Ral'kas",
       universeId,
-      description: 'Navigation specialist working alongside T\'Ryn on the Vash\'Tel\'s helm operations.',
+      description:
+        "Navigation specialist working alongside T'Ryn on the Vash'Tel's helm operations.",
       species: 'Vulcan',
       rank: 'Ensign',
-      assignment: 'USS Vash\'Tel - Assistant Navigator',
+      assignment: "USS Vash'Tel - Assistant Navigator",
       attributes: {
         personality: 'Precise, focused, detail-oriented',
         background: 'Recent Starfleet Academy graduate',
@@ -486,7 +503,7 @@ function createSeedData() {
         {
           characterId: characterIds.tRyn,
           type: 'colleague',
-          description: 'Works closely with T\'Ryn in navigation',
+          description: "Works closely with T'Ryn in navigation",
         },
       ],
       createdAt: now,
@@ -496,10 +513,11 @@ function createSeedData() {
       _id: characterIds.ethanBlackwood,
       name: 'Ethan Blackwood',
       universeId,
-      description: 'Maintenance crew member aboard the Vash\'Tel. Often seen cleaning and maintaining the ship\'s systems. Possesses mysterious knowledge of historical events.',
+      description:
+        "Maintenance crew member aboard the Vash'Tel. Often seen cleaning and maintaining the ship's systems. Possesses mysterious knowledge of historical events.",
       species: 'Human',
       rank: 'Crewman',
-      assignment: 'USS Vash\'Tel - Maintenance Crew',
+      assignment: "USS Vash'Tel - Maintenance Crew",
       attributes: {
         personality: 'Quiet, observant, mysteriously knowledgeable',
         background: 'Ship maintenance specialist, unknown prior service',
@@ -513,7 +531,8 @@ function createSeedData() {
       _id: characterIds.theNarrator,
       name: 'The Narrator',
       universeId,
-      description: 'Mysterious omniscient entity that observes and occasionally intervenes in the events aboard the Vash\'Tel. Possesses reality-altering abilities and intimate knowledge of the crew\'s activities.',
+      description:
+        "Mysterious omniscient entity that observes and occasionally intervenes in the events aboard the Vash'Tel. Possesses reality-altering abilities and intimate knowledge of the crew's activities.",
       species: 'Unknown Entity',
       rank: 'Observer',
       assignment: 'Unaffiliated - Cosmic Observer',
@@ -528,7 +547,7 @@ function createSeedData() {
       updatedAt: now,
     },
   ];
-  
+
   // Create location IDs
   const locationIds = {
     vashtel: new ObjectId(),
@@ -540,14 +559,15 @@ function createSeedData() {
     andoria: new ObjectId(),
     tellar: new ObjectId(),
   };
-  
+
   // Create locations based on the story
   const locations: SeedLocation[] = [
     {
       _id: locationIds.vashtel,
-      name: 'USS Vash\'Tel',
+      name: "USS Vash'Tel",
       universeId,
-      description: 'The first Republic starship, representing the unity of Human, Vulcan, Andorian, and Tellarite engineering. Features a saucer-shaped primary hull reminiscent of Earth aircraft carriers, angular secondary hull inspired by Andorian design, and Vulcan ring nacelles.',
+      description:
+        'The first Republic starship, representing the unity of Human, Vulcan, Andorian, and Tellarite engineering. Features a saucer-shaped primary hull reminiscent of Earth aircraft carriers, angular secondary hull inspired by Andorian design, and Vulcan ring nacelles.',
       classification: 'Republic Starship',
       type: 'Starship',
       metadata: {
@@ -569,14 +589,15 @@ function createSeedData() {
       _id: locationIds.starfleetAcademy,
       name: 'Galactic Republic Starfleet Academy',
       universeId,
-      description: 'Training facility for Republic officers, where cadets from multiple species learn to work together in integrated crews.',
+      description:
+        'Training facility for Republic officers, where cadets from multiple species learn to work together in integrated crews.',
       classification: 'Educational Facility',
       type: 'Academy',
       coordinates: { x: 0, y: 0, z: 0 }, // Earth orbit
       metadata: {
         established: '2158',
         purpose: 'Multi-species officer training',
-        graduates: 'James Calloway, Thara zh\'Shiron, and others',
+        graduates: "James Calloway, Thara zh'Shiron, and others",
         curriculum: 'Interspecies cooperation, starship operations',
       },
       createdAt: now,
@@ -586,7 +607,8 @@ function createSeedData() {
       _id: locationIds.vulcan,
       name: 'Vulcan',
       universeId,
-      description: 'Homeworld of the Vulcan species, known for its logical philosophy and scientific advancement. A key member world of the United Republic of Planets.',
+      description:
+        'Homeworld of the Vulcan species, known for its logical philosophy and scientific advancement. A key member world of the United Republic of Planets.',
       classification: 'M-Class Planet',
       type: 'Homeworld',
       system: 'Vulcan System',
@@ -606,7 +628,8 @@ function createSeedData() {
       _id: locationIds.vulcanHighCommand,
       name: 'Vulcan High Command',
       universeId,
-      description: 'Governing body of Vulcan, housed in austere halls designed for purpose rather than ornamentation. Center of Vulcan political and military authority.',
+      description:
+        'Governing body of Vulcan, housed in austere halls designed for purpose rather than ornamentation. Center of Vulcan political and military authority.',
       classification: 'Government Facility',
       type: 'Command Center',
       parentLocation: locationIds.vulcan,
@@ -621,9 +644,10 @@ function createSeedData() {
     },
     {
       _id: locationIds.pjem,
-      name: 'P\'Jem Monastery',
+      name: "P'Jem Monastery",
       universeId,
-      description: 'Ancient Vulcan monastery with rugged landscape surroundings. Has become a refuge for Vulcan traditionalists who oppose the Republic alliance.',
+      description:
+        'Ancient Vulcan monastery with rugged landscape surroundings. Has become a refuge for Vulcan traditionalists who oppose the Republic alliance.',
       classification: 'Religious Site',
       type: 'Monastery',
       parentLocation: locationIds.vulcan,
@@ -640,7 +664,8 @@ function createSeedData() {
       _id: locationIds.earth,
       name: 'Earth',
       universeId,
-      description: 'Homeworld of humanity and founding member of the United Republic of Planets. Center of diplomatic efforts and exploration initiatives.',
+      description:
+        'Homeworld of humanity and founding member of the United Republic of Planets. Center of diplomatic efforts and exploration initiatives.',
       classification: 'M-Class Planet',
       type: 'Homeworld',
       system: 'Sol System',
@@ -659,7 +684,8 @@ function createSeedData() {
       _id: locationIds.andoria,
       name: 'Andoria',
       universeId,
-      description: 'Homeworld of the Andorian people, known for their martial heritage and fierce warrior culture. A founding member of the Republic.',
+      description:
+        'Homeworld of the Andorian people, known for their martial heritage and fierce warrior culture. A founding member of the Republic.',
       classification: 'M-Class Planet',
       type: 'Homeworld',
       system: 'Andorian System',
@@ -677,7 +703,8 @@ function createSeedData() {
       _id: locationIds.tellar,
       name: 'Tellar',
       universeId,
-      description: 'Homeworld of the Tellarites, known for their engineering expertise and argumentative culture. A founding member of the Republic.',
+      description:
+        'Homeworld of the Tellarites, known for their engineering expertise and argumentative culture. A founding member of the Republic.',
       classification: 'M-Class Planet',
       type: 'Homeworld',
       system: 'Tellarite System',
@@ -692,7 +719,7 @@ function createSeedData() {
       updatedAt: now,
     },
   ];
-  
+
   // Create organization IDs
   const organizationIds = {
     unitedRepublic: new ObjectId(),
@@ -702,13 +729,14 @@ function createSeedData() {
     orionSyndicate: new ObjectId(),
     vulcanResistance: new ObjectId(),
   };
-  
+
   // Create organizations
   const organizations: SeedOrganization[] = [
     {
       _id: organizationIds.unitedRepublic,
       name: 'United Republic of Planets',
-      description: 'Alliance of Human, Vulcan, Andorian, and Tellarite species formed for mutual cooperation, exploration, and defense.',
+      description:
+        'Alliance of Human, Vulcan, Andorian, and Tellarite species formed for mutual cooperation, exploration, and defense.',
       type: 'Government Alliance',
       universeId,
       leadership: [characterIds.jamesCalloway], // Symbolic representation
@@ -725,7 +753,8 @@ function createSeedData() {
     {
       _id: organizationIds.starfleet,
       name: 'Republic Starfleet',
-      description: 'Joint military and exploration organization of the United Republic of Planets, operating multi-species crews on exploration and defense missions.',
+      description:
+        'Joint military and exploration organization of the United Republic of Planets, operating multi-species crews on exploration and defense missions.',
       type: 'Military/Exploration',
       universeId,
       leadership: [characterIds.jamesCalloway, characterIds.tharaZhShiron],
@@ -734,7 +763,7 @@ function createSeedData() {
       metadata: {
         mission: 'Exploration, defense, diplomacy',
         structure: 'Multi-species integration',
-        flagship: 'USS Vash\'Tel',
+        flagship: "USS Vash'Tel",
         academy: 'Galactic Republic Starfleet Academy',
       },
       createdAt: now,
@@ -743,7 +772,8 @@ function createSeedData() {
     {
       _id: organizationIds.vulcanHighCommand,
       name: 'Vulcan High Command',
-      description: 'Traditional governing body of Vulcan, with mixed support for the Republic alliance.',
+      description:
+        'Traditional governing body of Vulcan, with mixed support for the Republic alliance.',
       type: 'Government',
       universeId,
       headquarters: locationIds.vulcanHighCommand,
@@ -758,7 +788,8 @@ function createSeedData() {
     {
       _id: organizationIds.andorianGuard,
       name: 'Andorian Imperial Guard',
-      description: 'Traditional military force of Andoria, now integrated with Republic Starfleet while maintaining Andorian martial traditions.',
+      description:
+        'Traditional military force of Andoria, now integrated with Republic Starfleet while maintaining Andorian martial traditions.',
       type: 'Military',
       universeId,
       headquarters: locationIds.andoria,
@@ -774,13 +805,14 @@ function createSeedData() {
     {
       _id: organizationIds.orionSyndicate,
       name: 'Orion Syndicate',
-      description: 'Pirate organization encountered by the Vash\'Tel during its maiden voyage. Represents criminal elements opposed to Republic expansion.',
+      description:
+        "Pirate organization encountered by the Vash'Tel during its maiden voyage. Represents criminal elements opposed to Republic expansion.",
       type: 'Criminal Organization',
       universeId,
       metadata: {
         activities: 'Piracy, smuggling, territorial control',
         threatLevel: 'Moderate - operates in fringe territories',
-        encounter: 'Defeated by Vash\'Tel using tactical deception',
+        encounter: "Defeated by Vash'Tel using tactical deception",
         warning: 'Has sworn revenge against the Republic',
       },
       createdAt: now,
@@ -789,7 +821,8 @@ function createSeedData() {
     {
       _id: organizationIds.vulcanResistance,
       name: 'Vulcan Traditionalist Faction',
-      description: 'Group of Vulcans who oppose the Republic alliance and have taken refuge at P\'Jem monastery, seeking to preserve traditional Vulcan sovereignty.',
+      description:
+        "Group of Vulcans who oppose the Republic alliance and have taken refuge at P'Jem monastery, seeking to preserve traditional Vulcan sovereignty.",
       type: 'Political Faction',
       universeId,
       headquarters: locationIds.pjem,
@@ -803,7 +836,7 @@ function createSeedData() {
       updatedAt: now,
     },
   ];
-  
+
   // Create book
   const bookId = new ObjectId();
   const books: SeedBook[] = [
@@ -812,13 +845,26 @@ function createSeedData() {
       title: 'The Road to the Stars',
       universeId,
       authorId,
-      synopsis: 'The inaugural voyage of the Vash\'Tel, the first Republic starship, as Captain James Calloway and his diverse crew embark on a goodwill tour that will test the unity of the United Republic of Planets. From the launch complications to encounters with pirates and political resistance, this story chronicles the challenges of forging unity among diverse species in the early days of interstellar cooperation.',
+      synopsis:
+        "The inaugural voyage of the Vash'Tel, the first Republic starship, as Captain James Calloway and his diverse crew embark on a goodwill tour that will test the unity of the United Republic of Planets. From the launch complications to encounters with pirates and political resistance, this story chronicles the challenges of forging unity among diverse species in the early days of interstellar cooperation.",
       status: 'published' as const,
       chapters: [
         {
           title: 'Chapter 1: The Academy Days',
           content: `The story begins at the Galactic Republic Starfleet Academy, where cadets from multiple species train together. James Calloway, Thara zh'Shiron, and other future officers learn to work as an integrated crew, setting the foundation for the Republic's multi-species cooperation ideal.`,
-          characters: [characterIds.jamesCalloway, characterIds.tharaZhShiron, characterIds.jorrekVen, characterIds.sovek, characterIds.drEmonVrix, characterIds.lirianSaar, characterIds.ralvek, characterIds.tRyn, characterIds.ralkas, characterIds.ethanBlackwood, characterIds.theNarrator],
+          characters: [
+            characterIds.jamesCalloway,
+            characterIds.tharaZhShiron,
+            characterIds.jorrekVen,
+            characterIds.sovek,
+            characterIds.drEmonVrix,
+            characterIds.lirianSaar,
+            characterIds.ralvek,
+            characterIds.tRyn,
+            characterIds.ralkas,
+            characterIds.ethanBlackwood,
+            characterIds.theNarrator,
+          ],
           locations: [locationIds.starfleetAcademy],
           metadata: {
             themes: ['Unity through diversity', 'Academy training', 'Character introduction'],
@@ -826,30 +872,59 @@ function createSeedData() {
           },
         },
         {
-          title: 'Chapter 2: The Tour of the Vash\'Tel',
+          title: "Chapter 2: The Tour of the Vash'Tel",
           content: `Captain Calloway takes his first tour of the Vash'Tel, marveling at its revolutionary design that combines Human, Andorian, and Vulcan engineering. The ship represents the physical manifestation of Republic unity, with each species contributing their unique strengths to create something greater than the sum of its parts.`,
-          characters: [characterIds.jamesCalloway, characterIds.tharaZhShiron, characterIds.jorrekVen, characterIds.sovek, characterIds.drEmonVrix, characterIds.ralvek, characterIds.tRyn, characterIds.ralkas, characterIds.ethanBlackwood, characterIds.theNarrator],
+          characters: [
+            characterIds.jamesCalloway,
+            characterIds.tharaZhShiron,
+            characterIds.jorrekVen,
+            characterIds.sovek,
+            characterIds.drEmonVrix,
+            characterIds.ralvek,
+            characterIds.tRyn,
+            characterIds.ralkas,
+            characterIds.ethanBlackwood,
+            characterIds.theNarrator,
+          ],
           locations: [locationIds.vashtel],
           metadata: {
-            themes: ['Ship as symbol of unity', 'Multi-species engineering', 'Pre-launch preparations'],
+            themes: [
+              'Ship as symbol of unity',
+              'Multi-species engineering',
+              'Pre-launch preparations',
+            ],
             keyEvents: ['Ship tour', 'Crew assembly', 'Final launch preparations'],
           },
         },
         {
           title: 'Chapter 3: Launch and the Mysterious Anomaly',
           content: `The Vash'Tel's maiden launch encounters a mysterious engine anomaly caused by a hidden Tellarite Shockweaver creature. When conventional diagnostics fail, the mysterious Narrator intervenes with reality-altering abilities, erasing the problem and allowing the mission to proceed. The crew remains unaware of this supernatural assistance.`,
-          characters: [characterIds.jamesCalloway, characterIds.tharaZhShiron, characterIds.tRyn, characterIds.jorrekVen, characterIds.theNarrator],
+          characters: [
+            characterIds.jamesCalloway,
+            characterIds.tharaZhShiron,
+            characterIds.tRyn,
+            characterIds.jorrekVen,
+            characterIds.theNarrator,
+          ],
           locations: [locationIds.vashtel],
           metadata: {
             themes: ['Mysterious intervention', 'Technical problems', 'Hidden dangers'],
             keyEvents: ['Engine malfunction', 'Narrator intervention', 'Successful launch'],
-            mysteries: ['Shockweaver creature', 'Narrator\'s abilities'],
+            mysteries: ['Shockweaver creature', "Narrator's abilities"],
           },
         },
         {
           title: 'Chapter 4: The Pirate Encounter',
           content: `En route to Vulcan, the Vash'Tel encounters Orion pirates. Captain Calloway employs a tactical maneuver reminiscent of the "Picard Maneuver," using a brief warp jump to create the illusion of being in two places at once. The confused pirates fire on each other, allowing the Vash'Tel to escape while delivering a warning about Republic strength.`,
-          characters: [characterIds.jamesCalloway, characterIds.tharaZhShiron, characterIds.tRyn, characterIds.ralvek, characterIds.sovek, characterIds.ralkas, characterIds.ethanBlackwood],
+          characters: [
+            characterIds.jamesCalloway,
+            characterIds.tharaZhShiron,
+            characterIds.tRyn,
+            characterIds.ralvek,
+            characterIds.sovek,
+            characterIds.ralkas,
+            characterIds.ethanBlackwood,
+          ],
           locations: [locationIds.vashtel],
           metadata: {
             themes: ['Tactical deception', 'First contact with hostiles', 'Republic defense'],
@@ -860,11 +935,17 @@ function createSeedData() {
         {
           title: 'Chapter 5: Arrival at Vulcan',
           content: `The Vash'Tel arrives at Vulcan to find protesters opposing the Republic alliance. The crew faces hostility from Vulcan traditionalists who view the Republic as a compromise of Vulcan sovereignty. Administrator Seleth assigns them to deal with a faction that has taken refuge at the P'Jem monastery, testing the Republic's commitment to maintaining peace while respecting diverse viewpoints.`,
-          characters: [characterIds.jamesCalloway, characterIds.tharaZhShiron, characterIds.tRyn, characterIds.ralkas, characterIds.jorrekVen],
+          characters: [
+            characterIds.jamesCalloway,
+            characterIds.tharaZhShiron,
+            characterIds.tRyn,
+            characterIds.ralkas,
+            characterIds.jorrekVen,
+          ],
           locations: [locationIds.vulcan, locationIds.vulcanHighCommand, locationIds.pjem],
           metadata: {
             themes: ['Political resistance', 'Diplomatic challenges', 'Religious sanctuary'],
-            keyEvents: ['Vulcan arrival', 'Protester encounter', 'P\'Jem mission assignment'],
+            keyEvents: ['Vulcan arrival', 'Protester encounter', "P'Jem mission assignment"],
             conflicts: ['Vulcan sovereignty vs Republic unity'],
           },
         },
@@ -873,7 +954,7 @@ function createSeedData() {
       updatedAt: now,
     },
   ];
-  
+
   return {
     users,
     universes,
@@ -948,7 +1029,7 @@ if (require.main === module) {
       console.log('🎉 Seed script completed successfully!');
       process.exit(0);
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('💥 Seed script failed:', error);
       process.exit(1);
     });
