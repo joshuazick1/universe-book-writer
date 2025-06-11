@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import { PasswordService } from '../../core/interfaces/auth.service.js';
 import { User } from '../../core/entities/user.entity.js';
 
@@ -18,7 +18,8 @@ export class BcryptPasswordService implements PasswordService {
   async verifyPassword(password: string, hash: string): Promise<boolean> {
     try {
       return await bcrypt.compare(password, hash);
-    } catch {
+    } catch (error) {
+      // Log error but don't expose details to avoid information leakage
       return false;
     }
   }
@@ -207,3 +208,5 @@ export class BcryptPasswordService implements PasswordService {
     );
   }
 }
+
+export { BcryptPasswordService as PasswordService };

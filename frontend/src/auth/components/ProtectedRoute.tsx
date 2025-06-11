@@ -46,22 +46,28 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Check authentication status on mount
   useEffect(() => {
+    let mounted = true;
+    
     const checkAuth = async () => {
-      if (!hasCheckedAuth && !isAuthenticated && !user) {
+      if (!hasCheckedAuth && (!isAuthenticated && !user)) {
         try {
           await checkAuthStatus();
         } catch {
           // Authentication check failed, but we'll handle this below
-        } finally {
-          setHasCheckedAuth(true);
         }
-      } else {
+      }
+      
+      if (mounted) {
         setHasCheckedAuth(true);
       }
     };
 
     checkAuth();
-  }, [checkAuthStatus, isAuthenticated, user, hasCheckedAuth]);
+    
+    return () => {
+      mounted = false;
+    };
+  }, [isAuthenticated, user]); // Removed checkAuthStatus to prevent infinite loop
 
   // Show loader while checking authentication
   if (!hasCheckedAuth || isLoading) {

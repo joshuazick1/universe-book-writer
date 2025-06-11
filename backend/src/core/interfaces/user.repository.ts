@@ -15,6 +15,7 @@ export interface UserSearchFilters {
   createdBefore?: Date;
   lastLoginAfter?: Date;
   lastLoginBefore?: Date;
+  search?: string;
 }
 
 export interface UserRepository {

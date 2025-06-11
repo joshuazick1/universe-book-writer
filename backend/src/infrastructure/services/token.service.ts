@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import { TokenService } from '../../core/interfaces/auth.service.js';
 import { TokenType, TokenClaims } from '../../core/entities/auth.entity.js';
 import { User } from '../../core/entities/user.entity.js';
@@ -42,7 +42,7 @@ export class JwtTokenService implements TokenService {
       ...claims,
       iat: now,
       exp: now + Math.floor(expiry / 1000), // Convert ms to seconds
-      jti: crypto.randomUUID(),
+      jti: claims.jti || crypto.randomUUID(), // Use provided jti or generate new one
     };
 
     const secret = this.getSecretForType(claims.tokenType);

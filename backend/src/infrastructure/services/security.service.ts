@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import {
   SecurityService,
   SecurityCheck,
@@ -380,7 +380,7 @@ export class CryptoSecurityService implements SecurityService {
 
   clearRateLimit(identifier: string): void {
     // Clear all rate limit records for this identifier
-    for (const key of this.rateLimitStore.keys()) {
+    for (const key of Array.from(this.rateLimitStore.keys())) {
       if (key.startsWith(identifier + ':')) {
         this.rateLimitStore.delete(key);
       }
@@ -431,7 +431,7 @@ export class CryptoSecurityService implements SecurityService {
     const now = Date.now();
 
     // Clean expired rate limit records
-    for (const [key, record] of this.rateLimitStore.entries()) {
+    for (const [key, record] of Array.from(this.rateLimitStore.entries())) {
       if (now > record.resetTime) {
         this.rateLimitStore.delete(key);
       }
@@ -442,3 +442,6 @@ export class CryptoSecurityService implements SecurityService {
     this.auditLogs = this.auditLogs.filter(log => log.timestamp > oneWeekAgo);
   }
 }
+
+// Export the concrete implementation
+export { CryptoSecurityService as SecurityService };

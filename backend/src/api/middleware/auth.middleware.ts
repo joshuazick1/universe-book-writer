@@ -12,7 +12,7 @@ export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
-    roles: string[];
+    role: UserRole;
     permissions: string[];
   };
   session?: {
@@ -100,7 +100,7 @@ export class AuthMiddleware {
       req.user = {
         id: user.id,
         email: user.email,
-        roles: [user.role], // Convert single role to array
+        role: user.role, // Use single role property
         permissions: this.convertPermissionsToArray(user.permissions),
       };
 
@@ -116,8 +116,9 @@ export class AuthMiddleware {
   /**
    * Middleware to check if user has required roles
    */
-  requireRoles = (requiredRoles: UserRole[]) => {
-    return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  requireRoles(requiredRoles: UserRole[]) {
+    const self = this;
+    return function(req: AuthRequest, res: Response, next: NextFunction): void {
       if (!req.user) {
         res.status(401).json({
           success: false,
@@ -126,8 +127,8 @@ export class AuthMiddleware {
         return;
       }
 
-      const userRoles = req.user.roles;
-      const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
+      const userRole = req.user.role;
+      const hasRequiredRole = requiredRoles && requiredRoles.includes(userRole);
 
       if (!hasRequiredRole) {
         res.status(403).json({
@@ -139,12 +140,12 @@ export class AuthMiddleware {
 
       next();
     };
-  };
+  }
 
   /**
    * Middleware to check if user has required permissions
    */
-  requirePermissions = (requiredPermissions: string[]) => {
+  requirePermissions(requiredPermissions: string[]) {
     return (req: AuthRequest, res: Response, next: NextFunction): void => {
       if (!req.user) {
         res.status(401).json({
@@ -169,7 +170,7 @@ export class AuthMiddleware {
 
       next();
     };
-  };
+  }
 
   /**
    * Optional authentication - doesn't fail if no token provided
@@ -202,7 +203,7 @@ export class AuthMiddleware {
           req.user = {
             id: user.id,
             email: user.email,
-            roles: [user.role], // Convert single role to array
+            role: user.role, // Use single role property
             permissions: this.convertPermissionsToArray(user.permissions),
           };
 
@@ -264,12 +265,16 @@ export class AuthMiddleware {
   /**
    * Admin only middleware
    */
-  requireAdmin = this.requireRoles([UserRole.ADMIN]);
+  get requireAdmin() {
+    return this.requireRoles([UserRole.ADMIN]);
+  }
 
   /**
    * Admin or Moderator middleware
    */
-  requireModeratorOrAdmin = this.requireRoles([UserRole.ADMIN, UserRole.MODERATOR]);
+  get requireModeratorOrAdmin() {
+    return this.requireRoles([UserRole.ADMIN, UserRole.MODERATOR]);
+  }
 
   /**
    * Extract token from Authorization header or cookies

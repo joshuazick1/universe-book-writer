@@ -4,17 +4,25 @@
  */
 
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { ThemeProvider, PluginRegistryProvider } from './components/providers';
 import { AnimationShowcase } from './components/animation';
 import { LoginForm, ProtectedRoute } from './auth/components';
-import { useAuth } from './auth/hooks';
+import { useAuth, usePermissions } from './auth/hooks';
+import { AdminAuthWrapper } from './components/admin/AdminAuthWrapper';
+import { AdminLayout } from './components/admin/layout/AdminLayout';
+import { AdminDashboardPage } from './components/admin/pages/AdminDashboardPage';
+import { UserManagementPage } from './components/admin/pages/UserManagementPage';
+import { AdminSettingsPage } from './components/admin/pages/AdminSettingsPage';
+import { SecurityLogsPage } from './components/admin/pages/SecurityLogsPage';
+import { UserProfilePage, UserSettingsPage } from './components/user';
 
 /**
  * Enhanced Dashboard Page Component with Authentication
  */
 const DashboardPage: React.FC = () => {
   const { user, logout, isLoading } = useAuth();
+  const { isAdmin } = usePermissions();
 
   const handleLogout = async () => {
     try {
@@ -62,7 +70,25 @@ const DashboardPage: React.FC = () => {
             </p>
           </header>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className={`grid gap-8 ${isAdmin() ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'}`}>
+            {/* Admin Panel Card - Only show for admin users */}
+            {isAdmin() && (
+              <div className="bg-purple-500/10 backdrop-blur-sm rounded-lg p-6 border border-purple-500/30">
+                <h2 className="text-2xl font-semibold mb-4 text-purple-400">
+                  🛡️ Admin Panel
+                </h2>
+                <p className="text-universe-text-secondary mb-6">
+                  Manage users, system settings, and security configurations.
+                </p>
+                <Link
+                  to="/admin"
+                  className="inline-block bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Open Admin Panel
+                </Link>
+              </div>
+            )}
+
             {/* Authentication Status Card */}
             <div className="bg-green-500/10 backdrop-blur-sm rounded-lg p-6 border border-green-500/30">
               <h2 className="text-2xl font-semibold mb-4 text-green-400">
@@ -195,13 +221,34 @@ const AnimationShowcasePage: React.FC = () => {
 };
 
 /**
+ * Authentication Initializer Component
+ * Handles app startup authentication check
+ */
+const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { checkAuthStatus } = useAuth();
+
+  React.useEffect(() => {
+    // Initialize authentication status on app startup
+    checkAuthStatus();
+  }, []); // Empty dependency array - only run once on mount
+
+  return <>{children}</>;
+};
+
+/**
  * Main Application Component with Routing
  */
 const App: React.FC = () => {
   return (
     <ThemeProvider defaultTheme="default">
       <PluginRegistryProvider>
-        <BrowserRouter>
+        <BrowserRouter 
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
+          <AuthInitializer>
           <Routes>
             {/* Public Routes */}
             <Route path="/auth/login" element={<LoginPage />} />
@@ -216,6 +263,40 @@ const App: React.FC = () => {
               }
             />
 
+            {/* User Profile Routes */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <UserProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <UserSettingsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Panel Routes */}
+            <Route
+              path="/admin"
+              element={
+                <AdminAuthWrapper>
+                  <AdminLayout />
+                </AdminAuthWrapper>
+              }
+            >
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="dashboard" element={<AdminDashboardPage />} />
+              <Route path="users" element={<UserManagementPage />} />
+              <Route path="settings" element={<AdminSettingsPage />} />
+              <Route path="logs" element={<SecurityLogsPage />} />
+            </Route>
+
             {/* Animation Showcase - Public Access */}
             <Route path="/showcase/animations" element={<AnimationShowcasePage />} />
 
@@ -225,6 +306,7 @@ const App: React.FC = () => {
             {/* Catch All */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
+          </AuthInitializer>
         </BrowserRouter>
       </PluginRegistryProvider>
     </ThemeProvider>

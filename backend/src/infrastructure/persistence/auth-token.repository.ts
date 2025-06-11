@@ -64,7 +64,7 @@ export class MongoAuthTokenRepository implements AuthTokenRepository {
     if (filters?.expiresAfter) filter.expiresAt = { $gt: filters.expiresAfter };
     if (filters?.expiresBefore) {
       filter.expiresAt = filter.expiresAt
-        ? { ...filter.expiresAt, $lt: filters.expiresBefore }
+        ? { ...(filter.expiresAt as Record<string, unknown>), $lt: filters.expiresBefore }
         : { $lt: filters.expiresBefore };
     }
 
@@ -102,7 +102,7 @@ export class MongoAuthTokenRepository implements AuthTokenRepository {
     }
     if (filters.expiresBefore) {
       mongoFilter.expiresAt = mongoFilter.expiresAt
-        ? { ...mongoFilter.expiresAt, $lt: filters.expiresBefore }
+        ? { ...(mongoFilter.expiresAt as Record<string, unknown>), $lt: filters.expiresBefore }
         : { $lt: filters.expiresBefore };
     }
 
@@ -116,8 +116,12 @@ export class MongoAuthTokenRepository implements AuthTokenRepository {
         userId: new ObjectId(token.userId),
         token: token.token,
         type: token.type,
+        status: token.status,
         expiresAt: token.expiresAt,
+        usedAt: token.usedAt,
         revokedAt: token.revokedAt,
+        revokedBy: token.revokedBy,
+        deviceInfo: token.deviceInfo,
         metadata: token.metadata,
         updatedAt: new Date(),
       };
@@ -224,7 +228,7 @@ export class MongoAuthTokenRepository implements AuthTokenRepository {
     }
     if (filters?.expiresBefore) {
       mongoFilter.expiresAt = mongoFilter.expiresAt
-        ? { ...mongoFilter.expiresAt, $lt: filters.expiresBefore }
+        ? { ...(mongoFilter.expiresAt as Record<string, unknown>), $lt: filters.expiresBefore }
         : { $lt: filters.expiresBefore };
     }
     if (filters?.createdAfter) {
@@ -232,7 +236,7 @@ export class MongoAuthTokenRepository implements AuthTokenRepository {
     }
     if (filters?.createdBefore) {
       mongoFilter.createdAt = mongoFilter.createdAt
-        ? { ...mongoFilter.createdAt, $lte: filters.createdBefore }
+        ? { ...(mongoFilter.createdAt as Record<string, unknown>), $lte: filters.createdBefore }
         : { $lte: filters.createdBefore };
     }
     if (filters?.deviceIp) {
@@ -306,7 +310,7 @@ export class MongoAuthTokenRepository implements AuthTokenRepository {
     }
     if (filters.expiresBefore) {
       mongoFilter.expiresAt = mongoFilter.expiresAt
-        ? { ...mongoFilter.expiresAt, $lt: filters.expiresBefore }
+        ? { ...(mongoFilter.expiresAt as Record<string, unknown>), $lt: filters.expiresBefore }
         : { $lt: filters.expiresBefore };
     }
     if (filters.createdAfter) {
@@ -314,7 +318,7 @@ export class MongoAuthTokenRepository implements AuthTokenRepository {
     }
     if (filters.createdBefore) {
       mongoFilter.createdAt = mongoFilter.createdAt
-        ? { ...mongoFilter.createdAt, $lte: filters.createdBefore }
+        ? { ...(mongoFilter.createdAt as Record<string, unknown>), $lte: filters.createdBefore }
         : { $lte: filters.createdBefore };
     }
     if (filters.deviceIp) {

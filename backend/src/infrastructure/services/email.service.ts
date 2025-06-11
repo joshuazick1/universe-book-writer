@@ -1,4 +1,5 @@
-import nodemailer, { Transporter } from 'nodemailer';
+import * as nodemailer from 'nodemailer';
+import { Transporter } from 'nodemailer';
 import { EmailService } from '../../core/interfaces/auth.service.js';
 import { User } from '../../core/entities/user.entity.js';
 

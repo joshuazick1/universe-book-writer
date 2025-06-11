@@ -17,21 +17,27 @@ import type {
 } from '../../core/interfaces/auth.service.js';
 import type { UserUseCase } from '../../application/use-cases/user.use-case.js';
 import type { AuthUseCase } from '../../application/use-cases/auth.use-case.js';
+import type { AdminUseCase } from '../../application/use-cases/admin.use-case.js';
 import type { AuthController } from '../../api/controllers/auth.controller.js';
 import type { UserController } from '../../api/controllers/user.controller.js';
+import type { AdminController } from '../../api/controllers/admin.controller.js';
+import type { AdminSettingsRepository } from '../../core/interfaces/repositories/admin-settings.repository.js';
 
 // Import implementations
 import { MongoUserRepository } from '../persistence/user.repository.js';
 import { MongoAuthTokenRepository } from '../persistence/auth-token.repository.js';
 import { MongoAuthSessionRepository } from '../persistence/auth-session.repository.js';
+import { MongoAdminSettingsRepository } from '../repositories/mongo-admin-settings.repository.js';
 import { BcryptPasswordService } from '../services/password.service.js';
 import { JwtTokenService } from '../services/token.service.js';
 import { NodemailerEmailService } from '../services/email.service.js';
 import { CryptoSecurityService } from '../services/security.service.js';
 import { UserUseCase as UserUseCaseImpl } from '../../application/use-cases/user.use-case.js';
 import { AuthUseCase as AuthUseCaseImpl } from '../../application/use-cases/auth.use-case.js';
+import { AdminUseCase as AdminUseCaseImpl } from '../../application/use-cases/admin.use-case.js';
 import { AuthController as AuthControllerImpl } from '../../api/controllers/auth.controller.js';
 import { UserController as UserControllerImpl } from '../../api/controllers/user.controller.js';
+import { AdminController as AdminControllerImpl } from '../../api/controllers/admin.controller.js';
 import { AuthMiddleware } from '../../api/middleware/auth.middleware.js';
 import { ValidationMiddleware } from '../../api/middleware/validation.middleware.js';
 
@@ -39,28 +45,22 @@ import { ValidationMiddleware } from '../../api/middleware/validation.middleware
  * Service token types for dependency resolution
  */
 export const TOKENS = {
-  // Repositories
   USER_REPOSITORY: Symbol('UserRepository'),
   AUTH_TOKEN_REPOSITORY: Symbol('AuthTokenRepository'),
   AUTH_SESSION_REPOSITORY: Symbol('AuthSessionRepository'),
-
-  // Services
+  ADMIN_SETTINGS_REPOSITORY: Symbol('AdminSettingsRepository'),
   PASSWORD_SERVICE: Symbol('PasswordService'),
   TOKEN_SERVICE: Symbol('TokenService'),
   EMAIL_SERVICE: Symbol('EmailService'),
   SECURITY_SERVICE: Symbol('SecurityService'),
-
-  // Use Cases
   USER_USE_CASE: Symbol('UserUseCase'),
   AUTH_USE_CASE: Symbol('AuthUseCase'),
-  // Controllers
+  ADMIN_USE_CASE: Symbol('AdminUseCase'),
   AUTH_CONTROLLER: Symbol('AuthController'),
   USER_CONTROLLER: Symbol('UserController'),
-
-  // Middleware
+  ADMIN_CONTROLLER: Symbol('AdminController'),
   AUTH_MIDDLEWARE: Symbol('AuthMiddleware'),
   VALIDATION_MIDDLEWARE: Symbol('ValidationMiddleware'),
-  // External Dependencies
   MONGO_CLIENT: Symbol('MongoClient'),
   DATABASE_NAME: Symbol('DatabaseName'),
   DATABASE: Symbol('Database'),
@@ -183,6 +183,11 @@ export class Container {
       return new MongoAuthSessionRepository(mongoClient);
     });
 
+    this.register(TOKENS.ADMIN_SETTINGS_REPOSITORY, container => {
+      const db = container.resolve<Db>(TOKENS.DATABASE);
+      return new MongoAdminSettingsRepository(db);
+    });
+
     // Register services
     this.register<PasswordService>(TOKENS.PASSWORD_SERVICE, () => {
       return new BcryptPasswordService();
@@ -256,7 +261,27 @@ export class Container {
         emailService,
         securityService
       );
-    }); // Register controllers
+    });
+
+    this.register<AdminUseCase>(TOKENS.ADMIN_USE_CASE, container => {
+      const userRepository = container.resolve<UserRepository>(TOKENS.USER_REPOSITORY);
+      const adminSettingsRepository = container.resolve<AdminSettingsRepository>(
+        TOKENS.ADMIN_SETTINGS_REPOSITORY
+      );
+      const securityService = container.resolve<SecurityService>(TOKENS.SECURITY_SERVICE);
+      const passwordService = container.resolve<PasswordService>(TOKENS.PASSWORD_SERVICE);
+      const emailService = container.resolve<EmailService>(TOKENS.EMAIL_SERVICE);
+
+      return new AdminUseCaseImpl(
+        userRepository,
+        adminSettingsRepository,
+        securityService,
+        passwordService,
+        emailService
+      );
+    });
+
+    // Register controllers
     this.register<AuthController>(TOKENS.AUTH_CONTROLLER, container => {
       const authUseCase = container.resolve<AuthUseCase>(TOKENS.AUTH_USE_CASE);
       const userUseCase = container.resolve<UserUseCase>(TOKENS.USER_USE_CASE);
@@ -268,6 +293,12 @@ export class Container {
       const userUseCase = container.resolve<UserUseCase>(TOKENS.USER_USE_CASE);
       const securityService = container.resolve<SecurityService>(TOKENS.SECURITY_SERVICE);
       return new UserControllerImpl(userUseCase, securityService);
+    });
+
+    this.register<AdminController>(TOKENS.ADMIN_CONTROLLER, container => {
+      const adminUseCase = container.resolve<AdminUseCase>(TOKENS.ADMIN_USE_CASE);
+      const securityService = container.resolve<SecurityService>(TOKENS.SECURITY_SERVICE);
+      return new AdminControllerImpl(adminUseCase, securityService);
     });
 
     // Register middleware
@@ -305,6 +336,7 @@ export class Container {
       const userRepo = this.resolve<UserRepository>(TOKENS.USER_REPOSITORY);
       const tokenRepo = this.resolve<AuthTokenRepository>(TOKENS.AUTH_TOKEN_REPOSITORY);
       const sessionRepo = this.resolve<AuthSessionRepository>(TOKENS.AUTH_SESSION_REPOSITORY);
+      const adminSettingsRepo = this.resolve<AdminSettingsRepository>(TOKENS.ADMIN_SETTINGS_REPOSITORY);
 
       // Initialize repositories if they have initialize methods
       if ('initialize' in userRepo && typeof userRepo.initialize === 'function') {
@@ -315,6 +347,9 @@ export class Container {
       }
       if ('initialize' in sessionRepo && typeof sessionRepo.initialize === 'function') {
         await sessionRepo.initialize();
+      }
+      if ('initialize' in adminSettingsRepo && typeof adminSettingsRepo.initialize === 'function') {
+        await adminSettingsRepo.initialize();
       }
 
       console.log('Authentication repositories initialized successfully');

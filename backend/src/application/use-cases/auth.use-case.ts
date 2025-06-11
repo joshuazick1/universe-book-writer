@@ -162,30 +162,65 @@ export class AuthUseCase {
       throw new Error('Login blocked for security reasons');
     }
 
-    // Generate token pair
-    const tokenPair = await this.tokenService.generateTokenPair(user, request.deviceInfo);
+    // Create session first to get session ID for JWT jti
+    const sessionId = this.securityService.generateSecureRandom(24);
+    const refreshTokenId = this.securityService.generateSecureRandom(24);
+    
+    const session = new AuthSession({
+      id: sessionId,
+      userId: user.id,
+      refreshTokenId: refreshTokenId,
+      deviceInfo: request.deviceInfo || {},
+      expiresAt: new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.REFRESH)),
+    });
 
-    // Save refresh token
-    const refreshToken = new AuthToken({
+    // Generate tokens with session ID as jti
+    const baseClaims = {
+      sub: user.id,
+      email: user.email,
+      username: user.username || user.email,
+      role: user.role,
+      jti: sessionId, // Use session ID as JWT ID
+    };
+
+    const accessToken = await this.tokenService.generateToken({
+      ...baseClaims,
+      tokenType: TokenType.ACCESS,
+    });
+
+    const refreshToken = await this.tokenService.generateToken({
+      ...baseClaims,
+      tokenType: TokenType.REFRESH,
+    });
+
+    const accessTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.ACCESS));
+    const refreshTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.REFRESH));
+
+    // Save access token
+    const accessTokenRecord = new AuthToken({
       id: this.securityService.generateSecureRandom(24),
       userId: user.id,
-      type: TokenType.REFRESH,
-      token: tokenPair.refreshToken,
-      expiresAt: tokenPair.refreshTokenExpiresAt,
+      type: TokenType.ACCESS,
+      token: accessToken,
+      expiresAt: accessTokenExpiresAt,
       deviceInfo: request.deviceInfo,
     });
 
-    await this.tokenRepository.save(refreshToken);
+    await this.tokenRepository.save(accessTokenRecord);
 
-    // Create session
-    const session = new AuthSession({
-      id: this.securityService.generateSecureRandom(24),
+    // Save refresh token
+    const refreshTokenRecord = new AuthToken({
+      id: refreshTokenId, // Use the pre-generated ID
       userId: user.id,
-      refreshTokenId: refreshToken.id,
-      deviceInfo: request.deviceInfo || {},
-      expiresAt: tokenPair.refreshTokenExpiresAt,
+      type: TokenType.REFRESH,
+      token: refreshToken,
+      expiresAt: refreshTokenExpiresAt,
+      deviceInfo: request.deviceInfo,
     });
 
+    await this.tokenRepository.save(refreshTokenRecord);
+
+    // Save session (no need to update since it already has the correct refresh token ID)
     await this.sessionRepository.save(session);
 
     // Update last login
@@ -209,10 +244,10 @@ export class AuthUseCase {
 
     return {
       user,
-      accessToken: tokenPair.accessToken,
-      refreshToken: tokenPair.refreshToken,
-      accessTokenExpiresAt: tokenPair.accessTokenExpiresAt,
-      refreshTokenExpiresAt: tokenPair.refreshTokenExpiresAt,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      accessTokenExpiresAt: accessTokenExpiresAt,
+      refreshTokenExpiresAt: refreshTokenExpiresAt,
       sessionId: session.id,
     };
   }
@@ -238,45 +273,87 @@ export class AuthUseCase {
       throw new Error('User cannot login');
     }
 
-    // Generate new token pair
-    const tokenPair = await this.tokenService.refreshAccessToken(request.refreshToken);
+    // Find session to get session ID for jti
+    const session = await this.sessionRepository.findByRefreshTokenId(storedToken.id);
+    if (!session) {
+      throw new Error('Session not found');
+    }
 
-    // Update refresh token
+    // Generate new access token ID (using session ID for access token)
+    const newRefreshTokenId = this.securityService.generateSecureRandom(24);
+    
+    // Generate new tokens with different IDs
+    const newAccessToken = await this.tokenService.generateToken({
+      sub: user.id,
+      email: user.email,
+      username: user.username || user.email,
+      role: user.role,
+      jti: session.id, // Use session ID for access token
+      tokenType: TokenType.ACCESS,
+    });
+
+    const newRefreshToken = await this.tokenService.generateToken({
+      sub: user.id,
+      email: user.email,
+      username: user.username || user.email,
+      role: user.role,
+      jti: newRefreshTokenId, // Use new unique ID for refresh token
+      tokenType: TokenType.REFRESH,
+    });
+
+    const accessTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.ACCESS));
+    const refreshTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.REFRESH));
+
+    // Update old refresh token
     const updatedToken = storedToken.markAsUsed();
     await this.tokenRepository.update(storedToken.id, updatedToken);
 
-    // Save new refresh token
-    const newRefreshToken = new AuthToken({
+    // Save new access token
+    const newAccessTokenRecord = new AuthToken({
       id: this.securityService.generateSecureRandom(24),
       userId: user.id,
-      type: TokenType.REFRESH,
-      token: tokenPair.refreshToken,
-      expiresAt: tokenPair.refreshTokenExpiresAt,
+      type: TokenType.ACCESS,
+      token: newAccessToken,
+      expiresAt: accessTokenExpiresAt,
       deviceInfo: request.deviceInfo,
     });
 
-    await this.tokenRepository.save(newRefreshToken);
+    await this.tokenRepository.save(newAccessTokenRecord);
+
+    // Save new refresh token
+    const newRefreshTokenRecord = new AuthToken({
+      id: newRefreshTokenId, // Use the same ID as the JWT jti
+      userId: user.id,
+      type: TokenType.REFRESH,
+      token: newRefreshToken,
+      expiresAt: refreshTokenExpiresAt,
+      deviceInfo: request.deviceInfo,
+    });
+
+    await this.tokenRepository.save(newRefreshTokenRecord);
 
     // Update session with new refresh token
-    const session = await this.sessionRepository.findByRefreshTokenId(storedToken.id);
-    if (session) {
-      const updatedSession = new AuthSession({
-        ...session.toPlainObject(),
-        refreshTokenId: newRefreshToken.id,
-        lastActivityAt: new Date(),
-        updatedAt: new Date(),
-      } as ConstructorParameters<typeof AuthSession>[0]);
-      await this.sessionRepository.update(session.id, updatedSession);
-    }
+    const updatedSession = new AuthSession({
+      ...session.toPlainObject(),
+      refreshTokenId: newRefreshTokenRecord.id,
+      lastActivityAt: new Date(),
+      updatedAt: new Date(),
+    } as ConstructorParameters<typeof AuthSession>[0]);
+    await this.sessionRepository.update(session.id, updatedSession);
 
     // Log token refresh
     await this.securityService.logSecurityEvent(user.id, 'token_refreshed', {
       oldTokenId: storedToken.id,
-      newTokenId: newRefreshToken.id,
+      newTokenId: newRefreshTokenRecord.id,
       deviceInfo: request.deviceInfo,
     });
 
-    return tokenPair;
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      accessTokenExpiresAt: accessTokenExpiresAt,
+      refreshTokenExpiresAt: refreshTokenExpiresAt,
+    };
   }
 
   /**
@@ -303,6 +380,11 @@ export class AuthUseCase {
           await this.tokenRepository.update(refreshToken.id, revokedToken);
         }
       }
+    } else {
+      // If no specific session, revoke all active tokens for the user
+      // This ensures logout always revokes tokens even without session ID
+      await this.tokenRepository.revokeAllForUser(request.userId);
+      await this.sessionRepository.deactivateAllForUser(request.userId);
     }
 
     // Log logout

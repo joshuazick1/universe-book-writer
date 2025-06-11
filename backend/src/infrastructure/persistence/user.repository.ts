@@ -287,6 +287,19 @@ export class MongoUserRepository implements UserRepository {
       query.emailVerified = filters.emailVerified;
     }
 
+    // Text search across email, username, firstName, and lastName
+    if (filters.search) {
+      const searchText = filters.search.trim();
+      if (searchText) {
+        query.$or = [
+          { email: { $regex: searchText, $options: 'i' } },
+          { username: { $regex: searchText, $options: 'i' } },
+          { 'profile.firstName': { $regex: searchText, $options: 'i' } },
+          { 'profile.lastName': { $regex: searchText, $options: 'i' } },
+        ];
+      }
+    }
+
     // Date range filters
     if (filters.createdAfter || filters.createdBefore) {
       query.createdAt = {};
