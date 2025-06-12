@@ -1,6 +1,22 @@
 # GitHub Copilot Custom Instructions
 
-This project is a **Multi-Universe Book Series Writing Assistant**, designed to help writers craft series of books set in various fictional universes. The base application provides a framework for world-building and storytelling, with franchise-specific features implemented through plugins (such as Star Trek, Star Wars, or custom universes). The application provides tools for:
+This project is a **Multi-Universe Book Series Writing Assistant**, designed to help writers craft series of books set in various fictional universes. - **Testing**:
+
+  - Write unit tests for all functions and components.
+  - Achieve and maintain a test coverage of at least 80%.
+  - Utilize testing libraries consistent with the project's tech stack (e.g., Jest for React).
+  - Use the enhanced test runner with prettified console output:
+    - `npm test` - Run all tests with enhanced output
+    - `npm run test:backend` - Backend tests with file logging
+    - `npm run test:frontend` - Frontend tests with file logging
+    - `npm run test:coverage` - Coverage reports with enhanced output
+  - Add issue tracking comments when testing specific bugs or features:
+    - `node scripts/run-tests-with-output.js --comment "Fixing auth bug" backend`
+    - `node scripts/run-tests-with-output.js -c "Testing new feature" frontend`
+  - Test output features:
+    - Console shows prettified ✅ checkmarks, ❌ for failures, ⏭️ for skipped tests
+    - Full Jest output with stack traces saved to timestamped files in `test-results/`
+    - File headers include execution metadata, issue comments, and debugging contextase application provides a framework for world-building and storytelling, with franchise-specific features implemented through plugins (such as Star Trek, Star Wars, or custom universes). The application provides tools for:
 
 - **World-Building**: Comprehensive creation of locations, vessels, factions, lore, etc., adaptable to any fictional universe through plugins.
 - **Character Development**: Tools for developing and managing characters across multiple books.

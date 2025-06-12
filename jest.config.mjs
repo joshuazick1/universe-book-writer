@@ -9,7 +9,6 @@ export default {
       {
         useESM: true,
         tsconfig: 'tsconfig.json',
-        isolatedModules: true,
       },
     ],
   },

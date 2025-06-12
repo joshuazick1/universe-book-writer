@@ -51,6 +51,9 @@
     "backend/plugins/test-core.plugin.js",
     "backend/tests/jest.env.mjs",
     "backend/register.js",
+    "backend/debug-init.mjs",
+    "backend/temp/**/*.js",
+    "tools/**/*.mjs",
     "*.d.ts"
   ]
 }

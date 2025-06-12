@@ -65,6 +65,25 @@ export const useAuth = () => {
 
   const clearAuth = useCallback(() => store.clearAuth(), [store]);
 
+  // Authorization helpers
+  const hasRole = useCallback(
+    (role: string): boolean => {
+      return store.user?.role === role;
+    },
+    [store.user]
+  );
+
+  const hasPermission = useCallback(
+    (permission: string): boolean => {
+      return store.user?.permissions?.[permission] === true;
+    },
+    [store.user]
+  );
+
+  const isAdmin = useCallback((): boolean => {
+    return store.user?.role === 'admin';
+  }, [store.user]);
+
   return {
     // State
     user: store.user,
@@ -89,6 +108,11 @@ export const useAuth = () => {
     setLoading,
     checkAuthStatus,
     clearAuth,
+
+    // Authorization helpers
+    hasRole,
+    hasPermission,
+    isAdmin,
   };
 };
 

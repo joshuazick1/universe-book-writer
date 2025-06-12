@@ -5,18 +5,18 @@
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { act } from '@testing-library/react';
-import { useAuthStore } from '../../auth/stores/auth.store';
-import { authApi } from '../../auth/utils';
+import { useAuthStore } from '../../src/auth/stores/auth.store';
+import { authApi } from '../../src/auth/utils';
 import { 
   mockUser, 
   mockAdminUser, 
   validCredentials, 
   createMockApiResponse, 
   createMockErrorResponse 
-} from '../../test/utils';
+} from '../utils';
 
 // Mock the auth API
-jest.mock('../../auth/utils', () => ({
+jest.mock('../../src/auth/utils', () => ({
   authApi: {
     login: jest.fn(),
     register: jest.fn(),

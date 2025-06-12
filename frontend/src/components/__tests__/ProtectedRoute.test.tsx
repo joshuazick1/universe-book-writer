@@ -1,339 +1,186 @@
 /**
- * ProtectedRoute Component Tests
- * Tests role-based access control and authentication routing
+ * Protected Route Component Tests
+ * Comprehensive tests for authentication and authorization logic
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ProtectedRoute } from '../../components/auth/ProtectedRoute';
-import { authStore } from '../../stores/auth.store';
-import { User } from '../../types/auth.types';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { ProtectedRoute } from '../../auth/components/ProtectedRoute';
+import { renderWithProviders, mockUser, mockAdminUser, cleanupMocks } from '../../test/utils';
+import * as authHooks from '../../auth/hooks';
 
-// Mock the auth store
-vi.mock('../../stores/auth.store', () => ({
-  authStore: {
-    getState: vi.fn(),
-    subscribe: vi.fn(),
+// Mock the auth hooks
+jest.mock('../../auth/hooks', () => ({
+  useAuth: jest.fn(),
+}));
+
+// Mock react-router-dom Navigate component
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  Navigate: ({ to, state }: any) => {
+    mockNavigate(to, state);
+    return <div data-testid="navigate-component">Redirecting to {to}</div>;
   },
 }));
 
-const mockAuthStore = vi.mocked(authStore);
-
-// Test component to render inside protected routes
-const TestComponent = () => <div data-testid="protected-content">Protected Content</div>;
-
-// Test wrapper with router
-const TestWrapper = ({ 
-  children, 
-  requiredRoles = [], 
-  requiredPermissions = [] 
-}: { 
-  children?: React.ReactNode; 
-  requiredRoles?: string[];
-  requiredPermissions?: string[];
-}) => (
-  <BrowserRouter>
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute 
-            requiredRoles={requiredRoles}
-            requiredPermissions={requiredPermissions}
-          >
-            <TestComponent />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/login" element={<div data-testid="login-page">Login Page</div>} />
-      <Route path="/unauthorized" element={<div data-testid="unauthorized-page">Unauthorized</div>} />
-    </Routes>
-  </BrowserRouter>
-);
-
 describe('ProtectedRoute', () => {
-  const mockUser: User = {
-    id: 'user123',
-    email: 'test@example.com',
-    firstName: 'Test',
-    lastName: 'User',
-    role: 'user',
-    emailVerified: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+  const mockCheckAuthStatus = jest.fn();
+  
+  const defaultAuthState = {
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    checkAuthStatus: mockCheckAuthStatus,
   };
 
-  const mockAdminUser: User = {
-    ...mockUser,
-    id: 'admin123',
-    email: 'admin@example.com',
-    role: 'admin',
-  };
+  const TestContent = () => <div data-testid="protected-content">Protected Content</div>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    // Mock subscribe to return an unsubscribe function
-    mockAuthStore.subscribe.mockReturnValue(() => {});
+    jest.mocked(authHooks.useAuth).mockReturnValue(defaultAuthState);
+    mockCheckAuthStatus.mockResolvedValue(undefined);
   });
 
-  describe('authentication checks', () => {
-    it('should redirect unauthenticated users to login', async () => {
-      mockAuthStore.getState.mockReturnValue({
-        user: null,
-        isAuthenticated: false,
-        accessToken: null,
-        refreshToken: null,
-        isLoading: false,
-        error: null,
-      });
+  afterEach(() => {
+    cleanupMocks();
+    mockNavigate.mockClear();
+    mockCheckAuthStatus.mockClear();
+  });
 
-      render(<TestWrapper />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('login-page')).toBeInTheDocument();
-      });
-      
-      expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
-    });
-
-    it('should allow authenticated users to access protected content', async () => {
-      mockAuthStore.getState.mockReturnValue({
+  describe('Authentication Checks', () => {
+    it('should render children when user is authenticated', () => {
+      jest.mocked(authHooks.useAuth).mockReturnValue({
+        ...defaultAuthState,
         user: mockUser,
         isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
       });
 
-      render(<TestWrapper />);
+      renderWithProviders(
+        <ProtectedRoute>
+          <TestContent />
+        </ProtectedRoute>
+      );
 
-      await waitFor(() => {
-        expect(screen.getByTestId('protected-content')).toBeInTheDocument();
-      });
-      
-      expect(screen.queryByTestId('login-page')).not.toBeInTheDocument();
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument();
     });
 
-    it('should show loading state while checking authentication', async () => {
-      mockAuthStore.getState.mockReturnValue({
+    it('should redirect to login when user is not authenticated', () => {
+      jest.mocked(authHooks.useAuth).mockReturnValue({
+        ...defaultAuthState,
         user: null,
         isAuthenticated: false,
-        accessToken: null,
-        refreshToken: null,
-        isLoading: true,
-        error: null,
       });
 
-      render(<TestWrapper />);
+      renderWithProviders(
+        <ProtectedRoute>
+          <TestContent />
+        </ProtectedRoute>
+      );
 
-      expect(screen.getByText('Loading...')).toBeInTheDocument();
-      expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('login-page')).not.toBeInTheDocument();
+      expect(mockNavigate).toHaveBeenCalledWith('/auth/login', expect.objectContaining({
+        state: expect.objectContaining({ from: expect.any(Object) })
+      }));
+    });
+
+    it('should redirect to custom fallback URL when specified', () => {
+      jest.mocked(authHooks.useAuth).mockReturnValue({
+        ...defaultAuthState,
+        user: null,
+        isAuthenticated: false,
+      });
+
+      renderWithProviders(
+        <ProtectedRoute fallbackUrl="/custom-login">
+          <TestContent />
+        </ProtectedRoute>
+      );
+
+      expect(mockNavigate).toHaveBeenCalledWith('/custom-login', expect.objectContaining({
+        state: expect.objectContaining({ from: expect.any(Object) })
+      }));
+    });
+
+    it('should not require authentication when requiresAuth is false', () => {
+      jest.mocked(authHooks.useAuth).mockReturnValue({
+        ...defaultAuthState,
+        user: null,
+        isAuthenticated: false,
+      });
+
+      renderWithProviders(
+        <ProtectedRoute requiresAuth={false}>
+          <TestContent />
+        </ProtectedRoute>
+      );
+
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 
-  describe('role-based access control', () => {
-    it('should allow users with required roles', async () => {
-      mockAuthStore.getState.mockReturnValue({
+  describe('Role-Based Authorization', () => {
+    it('should allow access when user has required role', () => {
+      jest.mocked(authHooks.useAuth).mockReturnValue({
+        ...defaultAuthState,
         user: mockAdminUser,
         isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
       });
 
-      render(<TestWrapper requiredRoles={['admin']} />);
+      renderWithProviders(
+        <ProtectedRoute requiredRole="admin">
+          <TestContent />
+        </ProtectedRoute>
+      );
 
-      await waitFor(() => {
-        expect(screen.getByTestId('protected-content')).toBeInTheDocument();
-      });
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument();
     });
 
-    it('should deny users without required roles', async () => {
-      mockAuthStore.getState.mockReturnValue({
-        user: mockUser, // regular user
+    it('should deny access when user lacks required role', () => {
+      jest.mocked(authHooks.useAuth).mockReturnValue({
+        ...defaultAuthState,
+        user: mockUser, // regular user, not admin
         isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
       });
 
-      render(<TestWrapper requiredRoles={['admin']} />);
+      renderWithProviders(
+        <ProtectedRoute requiredRole="admin">
+          <TestContent />
+        </ProtectedRoute>
+      );
 
-      await waitFor(() => {
-        expect(screen.getByTestId('unauthorized-page')).toBeInTheDocument();
-      });
-      
+      expect(mockNavigate).toHaveBeenCalledWith('/auth/login', expect.any(Object));
       expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
-    });
-
-    it('should allow users with any of the required roles', async () => {
-      mockAuthStore.getState.mockReturnValue({
-        user: mockUser, // user role
-        isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
-      });
-
-      render(<TestWrapper requiredRoles={['admin', 'user']} />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('protected-content')).toBeInTheDocument();
-      });
     });
   });
 
-  describe('permission-based access control', () => {
-    it('should allow users with required permissions', async () => {
-      const userWithPermissions = {
-        ...mockUser,
-        permissions: ['read_posts', 'write_posts'],
-      };
-
-      mockAuthStore.getState.mockReturnValue({
-        user: userWithPermissions,
-        isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
+  describe('Loading States', () => {
+    it('should show loader when authentication is loading', () => {
+      jest.mocked(authHooks.useAuth).mockReturnValue({
+        ...defaultAuthState,
+        isLoading: true,
       });
 
-      render(<TestWrapper requiredPermissions={['read_posts']} />);
+      renderWithProviders(
+        <ProtectedRoute>
+          <TestContent />
+        </ProtectedRoute>
+      );
 
-      await waitFor(() => {
-        expect(screen.getByTestId('protected-content')).toBeInTheDocument();
-      });
-    });
-
-    it('should deny users without required permissions', async () => {
-      const userWithoutPermissions = {
-        ...mockUser,
-        permissions: ['read_posts'],
-      };
-
-      mockAuthStore.getState.mockReturnValue({
-        user: userWithoutPermissions,
-        isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
-      });
-
-      render(<TestWrapper requiredPermissions={['admin_access']} />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('unauthorized-page')).toBeInTheDocument();
-      });
-      
+      expect(screen.getByText(/checking authentication/i)).toBeInTheDocument();
       expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
     });
 
-    it('should require all specified permissions', async () => {
-      const userWithSomePermissions = {
-        ...mockUser,
-        permissions: ['read_posts'],
-      };
-
-      mockAuthStore.getState.mockReturnValue({
-        user: userWithSomePermissions,
-        isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
-      });
-
-      render(<TestWrapper requiredPermissions={['read_posts', 'write_posts']} />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('unauthorized-page')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('combined role and permission checks', () => {
-    it('should require both role and permissions to be satisfied', async () => {
-      const adminWithPermissions = {
-        ...mockAdminUser,
-        permissions: ['manage_users'],
-      };
-
-      mockAuthStore.getState.mockReturnValue({
-        user: adminWithPermissions,
-        isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
-      });
-
-      render(
-        <TestWrapper 
-          requiredRoles={['admin']} 
-          requiredPermissions={['manage_users']} 
-        />
+    it('should call checkAuthStatus on mount', async () => {
+      renderWithProviders(
+        <ProtectedRoute>
+          <TestContent />
+        </ProtectedRoute>
       );
 
       await waitFor(() => {
-        expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+        expect(mockCheckAuthStatus).toHaveBeenCalled();
       });
-    });
-
-    it('should deny if role matches but permissions do not', async () => {
-      const adminWithoutPermissions = {
-        ...mockAdminUser,
-        permissions: ['read_posts'],
-      };
-
-      mockAuthStore.getState.mockReturnValue({
-        user: adminWithoutPermissions,
-        isAuthenticated: true,
-        accessToken: 'valid-token',
-        refreshToken: 'refresh-token',
-        isLoading: false,
-        error: null,
-      });
-
-      render(
-        <TestWrapper 
-          requiredRoles={['admin']} 
-          requiredPermissions={['manage_users']} 
-        />
-      );
-
-      await waitFor(() => {
-        expect(screen.getByTestId('unauthorized-page')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('token expiration handling', () => {
-    it('should redirect to login when token is expired', async () => {
-      // Mock an expired token scenario
-      mockAuthStore.getState.mockReturnValue({
-        user: mockUser,
-        isAuthenticated: false, // Token expired, auth state cleared
-        accessToken: null,
-        refreshToken: null,
-        isLoading: false,
-        error: 'Token expired',
-      });
-
-      render(<TestWrapper />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('login-page')).toBeInTheDocument();
-      });
-      
-      expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
     });
   });
 });

@@ -320,3 +320,64 @@ export class AuthSession implements BaseEntity {
     };
   }
 }
+
+/**
+ * Authentication DTOs and Request/Response types
+ */
+
+export interface DeviceInfo {
+  userAgent?: string;
+  ip?: string;
+  deviceId?: string;
+  platform?: string;
+  browser?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+  deviceInfo: DeviceInfo;
+}
+
+export interface LoginResponse {
+  user: any; // Will be User entity
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresAt: Date;
+  refreshTokenExpiresAt: Date;
+  sessionId: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresAt: Date;
+  refreshTokenExpiresAt: Date;
+}
+
+export interface LogoutRequest {
+  userId: string;
+  sessionId?: string;
+  logoutAll?: boolean;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  username?: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  data?: {
+    user: any; // Will be User entity
+    verificationToken: string;
+  };
+  error?: string;
+}

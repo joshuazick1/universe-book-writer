@@ -15,7 +15,7 @@
     "types": ["node"],
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "emitDeclarationOnly": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {

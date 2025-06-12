@@ -132,16 +132,55 @@ npm run dev:collab     # Collaboration server
 
 ## 🧪 Testing
 
+The project includes an enhanced test runner with prettified console output and detailed file logging:
+
 ```bash
-# Run all tests
+# Run all tests with pretty console output
 npm test
 
-# Run tests with coverage
-npm run test:coverage
+# Run specific test suites
+npm run test:backend    # Backend tests only
+npm run test:frontend   # Frontend tests only
+npm run test:coverage   # Tests with coverage report
 
-# Run E2E tests
+# Run tests with issue tracking comments
+node scripts/run-tests-with-output.js --comment "Fixing auth bug" backend
+node scripts/run-tests-with-output.js -c "Testing new feature" frontend
+
+# Watch mode for development
+npm run test:watch
+
+# E2E tests
 npm run test:e2e
 ```
+
+### Enhanced Test Runner Features
+
+The test runner provides dual output modes:
+- **Console**: Prettified output with ✅ checkmarks, ❌ for failures, and ⏭️ for skipped tests
+- **File**: Complete Jest output with stack traces saved to `test-results/` directory
+
+#### Usage Examples:
+```bash
+# Basic usage
+node scripts/run-tests-with-output.js backend
+
+# With issue tracking
+node scripts/run-tests-with-output.js --comment "Testing user authentication" backend
+
+# Multiple test types
+node scripts/run-tests-with-output.js coverage
+node scripts/run-tests-with-output.js watch  # No file output in watch mode
+```
+
+Output files are automatically timestamped and organized:
+- `test-results-backend-fixing-auth-bug-20250611-14.txt`
+- `test-results-coverage-20250611-15.txt`
+
+Each file includes:
+- Execution metadata (timestamp, command, issue comment)
+- Complete Jest output for debugging
+- Full stack traces and error details
 
 ## 🚀 Deployment
 
