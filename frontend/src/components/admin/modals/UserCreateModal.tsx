@@ -68,7 +68,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({ isOpen, onClos
       setLoading(true);
       setError(null);
 
-      const { confirmPassword: _confirmPassword, ...userData } = formData;
+      const { confirmPassword, ...userData } = formData;
       await onCreate(userData);
 
       // Reset form

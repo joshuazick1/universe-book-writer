@@ -3,11 +3,11 @@ import { type MongoClient } from 'mongodb';
 import type { MongoMemoryServer } from 'mongodb-memory-server';
 
 declare global {
-  var mongoUri: string;
-  var mongoClient: MongoClient;
-  var mongod: MongoMemoryServer;
-  var redisClient: Redis;
-  var testUtils: {
+  let mongoUri: string;
+  let mongoClient: MongoClient;
+  let mongod: MongoMemoryServer;
+  let redisClient: Redis;
+  let testUtils: {
     mockUser: {
       id: string;
       email: string;

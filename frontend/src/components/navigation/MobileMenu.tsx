@@ -3,7 +3,7 @@
  * Provides navigation for mobile devices with a slide-out sidebar
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth, usePermissions } from '../../auth/hooks';
 
