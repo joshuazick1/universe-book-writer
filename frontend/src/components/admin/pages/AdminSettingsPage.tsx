@@ -35,7 +35,7 @@ export const AdminSettingsPage: React.FC = () => {
   };
   const updateNestedField = (section: keyof AdminSettings, field: string, value: any) => {
     if (!formData) return;
-    
+
     setFormData({
       ...formData,
       [section]: {
@@ -69,7 +69,12 @@ export const AdminSettingsPage: React.FC = () => {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex">
-              <svg className="w-5 h-5 text-red-400 mt-0.5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                className="w-5 h-5 text-red-400 mt-0.5 mr-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -87,11 +92,13 @@ export const AdminSettingsPage: React.FC = () => {
 
         {/* Save Message */}
         {saveMessage && (
-          <div className={`border rounded-lg p-4 ${
-            saveMessage.includes('successfully') 
-              ? 'bg-green-50 border-green-200 text-green-800'
-              : 'bg-red-50 border-red-200 text-red-800'
-          }`}>
+          <div
+            className={`border rounded-lg p-4 ${
+              saveMessage.includes('successfully')
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : 'bg-red-50 border-red-200 text-red-800'
+            }`}
+          >
             <p className="text-sm">{saveMessage}</p>
           </div>
         )}
@@ -106,7 +113,9 @@ export const AdminSettingsPage: React.FC = () => {
                   type="checkbox"
                   id="emailVerificationEnabled"
                   checked={formData.emailVerification.enabled}
-                  onChange={(e) => updateNestedField('emailVerification', 'enabled', e.target.checked)}
+                  onChange={e =>
+                    updateNestedField('emailVerification', 'enabled', e.target.checked)
+                  }
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="emailVerificationEnabled" className="ml-2 text-sm text-gray-700">
@@ -119,10 +128,15 @@ export const AdminSettingsPage: React.FC = () => {
                   type="checkbox"
                   id="skipEmailVerificationForNewUsers"
                   checked={formData.emailVerification.skipForNewUsers}
-                  onChange={(e) => updateNestedField('emailVerification', 'skipForNewUsers', e.target.checked)}
+                  onChange={e =>
+                    updateNestedField('emailVerification', 'skipForNewUsers', e.target.checked)
+                  }
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="skipEmailVerificationForNewUsers" className="ml-2 text-sm text-gray-700">
+                <label
+                  htmlFor="skipEmailVerificationForNewUsers"
+                  className="ml-2 text-sm text-gray-700"
+                >
                   Skip email verification for new users
                 </label>
                 <p className="ml-2 text-xs text-gray-500">
@@ -135,11 +149,16 @@ export const AdminSettingsPage: React.FC = () => {
                   type="checkbox"
                   id="requireEmailVerificationForAccess"
                   checked={formData.emailVerification.requireForAccess}
-                  onChange={(e) => updateNestedField('emailVerification', 'requireForAccess', e.target.checked)}
+                  onChange={e =>
+                    updateNestedField('emailVerification', 'requireForAccess', e.target.checked)
+                  }
                   disabled={!formData.emailVerification.enabled}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
                 />
-                <label htmlFor="requireEmailVerificationForAccess" className="ml-2 text-sm text-gray-700">
+                <label
+                  htmlFor="requireEmailVerificationForAccess"
+                  className="ml-2 text-sm text-gray-700"
+                >
                   Require email verification for system access
                 </label>
               </div>
@@ -155,7 +174,7 @@ export const AdminSettingsPage: React.FC = () => {
                   type="checkbox"
                   id="userRegistrationEnabled"
                   checked={formData.userRegistration.enabled}
-                  onChange={(e) => updateNestedField('userRegistration', 'enabled', e.target.checked)}
+                  onChange={e => updateNestedField('userRegistration', 'enabled', e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="userRegistrationEnabled" className="ml-2 text-sm text-gray-700">
@@ -168,7 +187,9 @@ export const AdminSettingsPage: React.FC = () => {
                   type="checkbox"
                   id="requireApproval"
                   checked={formData.userRegistration.requireApproval}
-                  onChange={(e) => updateNestedField('userRegistration', 'requireApproval', e.target.checked)}
+                  onChange={e =>
+                    updateNestedField('userRegistration', 'requireApproval', e.target.checked)
+                  }
                   disabled={!formData.userRegistration.enabled}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
                 />
@@ -178,13 +199,18 @@ export const AdminSettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="defaultRole" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="defaultRole"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Default role for new users
                 </label>
                 <select
                   id="defaultRole"
                   value={formData.userRegistration.defaultRole}
-                  onChange={(e) => updateNestedField('userRegistration', 'defaultRole', e.target.value)}
+                  onChange={e =>
+                    updateNestedField('userRegistration', 'defaultRole', e.target.value)
+                  }
                   disabled={!formData.userRegistration.enabled}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
                 >
@@ -200,7 +226,10 @@ export const AdminSettingsPage: React.FC = () => {
             <h2 className="text-lg font-medium text-gray-900 mb-4">Security</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="sessionTimeout" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="sessionTimeout"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Session timeout (minutes)
                 </label>
                 <input
@@ -209,7 +238,7 @@ export const AdminSettingsPage: React.FC = () => {
                   min="15"
                   max="1440"
                   value={formData.security.sessionTimeout}
-                  onChange={(e) => 
+                  onChange={e =>
                     updateNestedField('security', 'sessionTimeout', parseInt(e.target.value))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -217,7 +246,10 @@ export const AdminSettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="maxLoginAttempts" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="maxLoginAttempts"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Max login attempts
                 </label>
                 <input
@@ -226,7 +258,7 @@ export const AdminSettingsPage: React.FC = () => {
                   min="3"
                   max="10"
                   value={formData.security.maxLoginAttempts}
-                  onChange={(e) => 
+                  onChange={e =>
                     updateNestedField('security', 'maxLoginAttempts', parseInt(e.target.value))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -234,7 +266,10 @@ export const AdminSettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="lockoutDuration" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="lockoutDuration"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Lockout duration (minutes)
                 </label>
                 <input
@@ -243,7 +278,7 @@ export const AdminSettingsPage: React.FC = () => {
                   min="5"
                   max="60"
                   value={formData.security.lockoutDuration}
-                  onChange={(e) => 
+                  onChange={e =>
                     updateNestedField('security', 'lockoutDuration', parseInt(e.target.value))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

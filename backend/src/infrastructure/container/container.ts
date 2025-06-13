@@ -336,7 +336,9 @@ export class Container {
       const userRepo = this.resolve<UserRepository>(TOKENS.USER_REPOSITORY);
       const tokenRepo = this.resolve<AuthTokenRepository>(TOKENS.AUTH_TOKEN_REPOSITORY);
       const sessionRepo = this.resolve<AuthSessionRepository>(TOKENS.AUTH_SESSION_REPOSITORY);
-      const adminSettingsRepo = this.resolve<AdminSettingsRepository>(TOKENS.ADMIN_SETTINGS_REPOSITORY);
+      const adminSettingsRepo = this.resolve<AdminSettingsRepository>(
+        TOKENS.ADMIN_SETTINGS_REPOSITORY
+      );
 
       // Initialize repositories if they have initialize methods
       if ('initialize' in userRepo && typeof userRepo.initialize === 'function') {

@@ -53,14 +53,7 @@
  */
 
 import { MongoClient, Db, ObjectId } from 'mongodb';
-import type {
-  Universe,
-  Character,
-  Book,
-  Location,
-  TimelineEvent,
-  Organization,
-} from '@universe-book-writer/core';
+import type { Universe, Character, Book, Location } from '@universe-book-writer/core';
 
 /**
  * 📝 TYPE DEFINITIONS
@@ -156,6 +149,9 @@ interface SeedBook extends Omit<Book, 'id' | 'universeId' | 'authorId'> {
     characters: ObjectId[];
     locations?: ObjectId[];
     metadata: Record<string, unknown>;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
   }>;
 }
 
@@ -1007,7 +1003,8 @@ async function insertBooks(db: Db, books: SeedBook[]): Promise<void> {
 /**
  * Optional: Clear existing data
  */
-async function clearExistingData(db: Db): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function _clearExistingData(db: Db): Promise<void> {
   console.log('🧹 Clearing existing data...');
   await Promise.all([
     db.collection('books').deleteMany({}),

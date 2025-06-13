@@ -44,7 +44,7 @@ describe('useAuth Hook', () => {
         mock.mockClear();
       }
     });
-    
+
     // Reset store state
     useAuthStore.mockReturnValue({
       ...mockAuthStore,
@@ -236,7 +236,8 @@ describe('useAuth Hook', () => {
     });
   });
 
-  describe('Authorization Helpers', () => {    it('should check if user is admin', () => {
+  describe('Authorization Helpers', () => {
+    it('should check if user is admin', () => {
       useAuthStore.mockReturnValue({
         ...mockAuthStore,
         user: mockAdminUser,
@@ -278,30 +279,30 @@ describe('useAuth Hook', () => {
   describe('Hook Consistency', () => {
     it('should maintain stable references for functions', () => {
       const { result, rerender } = renderHook(() => useAuth());
-      
+
       const firstLogin = result.current.login;
       const firstLogout = result.current.logout;
-      
+
       rerender();
-      
+
       expect(result.current.login).toBe(firstLogin);
       expect(result.current.logout).toBe(firstLogout);
     });
 
     it('should update when store state changes', () => {
       const { result, rerender } = renderHook(() => useAuth());
-      
+
       expect(result.current.isAuthenticated).toBe(false);
-      
+
       // Simulate store state change
       useAuthStore.mockReturnValue({
         ...mockAuthStore,
         user: mockUser,
         isAuthenticated: true,
       });
-      
+
       rerender();
-      
+
       expect(result.current.isAuthenticated).toBe(true);
       expect(result.current.user).toEqual(mockUser);
     });

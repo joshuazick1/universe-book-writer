@@ -117,11 +117,4 @@ export function cleanupMocks() {
 }
 
 // Re-export common testing utilities
-export { 
-  render, 
-  screen, 
-  fireEvent, 
-  waitFor,
-  userEvent,
-  jest 
-};
+export { render, screen, fireEvent, waitFor, userEvent, jest };

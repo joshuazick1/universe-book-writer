@@ -99,7 +99,12 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
             >
               <span className="sr-only">Close</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -120,7 +125,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
                 type="email"
                 id="email"
                 value={formData.email || ''}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                onChange={e => handleInputChange('email', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
                 disabled={loading}
@@ -137,7 +142,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
                   type="text"
                   id="firstName"
                   value={formData.firstName || ''}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  onChange={e => handleInputChange('firstName', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={loading}
                 />
@@ -150,7 +155,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
                   type="text"
                   id="lastName"
                   value={formData.lastName || ''}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  onChange={e => handleInputChange('lastName', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={loading}
                 />
@@ -165,7 +170,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
               <select
                 id="role"
                 value={formData.role || 'user'}
-                onChange={(e) => handleInputChange('role', e.target.value)}
+                onChange={e => handleInputChange('role', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={loading}
               >
@@ -183,7 +188,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
               <select
                 id="status"
                 value={formData.status || 'active'}
-                onChange={(e) => handleInputChange('status', e.target.value)}
+                onChange={e => handleInputChange('status', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={loading}
               >
@@ -227,10 +232,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
                 <div>
                   <span className="text-gray-600">Last Login:</span>
                   <span className="ml-2 text-gray-900">
-                    {user.lastLoginAt 
-                      ? new Date(user.lastLoginAt).toLocaleDateString()
-                      : 'Never'
-                    }
+                    {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}
                   </span>
                 </div>
               </div>

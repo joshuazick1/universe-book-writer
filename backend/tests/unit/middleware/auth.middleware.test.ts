@@ -7,9 +7,9 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { Request, Response, NextFunction } from 'express';
 import { AuthMiddleware, AuthRequest } from '../../../src/api/middleware/auth.middleware.js';
 import { TokenService } from '../../../src/core/interfaces/auth.service.js';
-import { 
-  AuthTokenRepository, 
-  AuthSessionRepository 
+import {
+  AuthTokenRepository,
+  AuthSessionRepository,
 } from '../../../src/core/interfaces/auth.repository.js';
 import { UserRepository } from '../../../src/core/interfaces/user.repository.js';
 import { TokenClaims, TokenType, TokenStatus } from '../../../src/core/entities/auth.entity.js';
@@ -180,7 +180,8 @@ describe('AuthMiddleware', () => {
       headers: {},
       user: undefined,
       session: undefined,
-    };    mockResponse = {
+    };
+    mockResponse = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
     } as unknown as Response;
@@ -191,7 +192,8 @@ describe('AuthMiddleware', () => {
     jest.clearAllMocks();
   });
 
-  describe('authenticate', () => {    it('should validate JWT tokens correctly', async () => {
+  describe('authenticate', () => {
+    it('should validate JWT tokens correctly', async () => {
       // Arrange
       const validToken = 'valid.jwt.token';
       const tokenClaims: TokenClaims = {
@@ -203,7 +205,8 @@ describe('AuthMiddleware', () => {
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 3600,
         tokenType: TokenType.ACCESS,
-      };      const mockUser = createMockUser();
+      };
+      const mockUser = createMockUser();
       const mockTokenRecord = createMockAuthToken({ token: validToken });
       const mockSession = createMockAuthSession();
 
@@ -225,10 +228,11 @@ describe('AuthMiddleware', () => {
       expect(mockAuthTokenRepository.findByToken).toHaveBeenCalledWith(validToken);
       expect(mockAuthSessionRepository.findById).toHaveBeenCalledWith('session123');
       expect(mockAuthSessionRepository.updateActivity).toHaveBeenCalledWith('session123');
-      expect(mockUserRepository.findById).toHaveBeenCalledWith('user123');      expect(mockRequest.user).toEqual({
+      expect(mockUserRepository.findById).toHaveBeenCalledWith('user123');
+      expect(mockRequest.user).toEqual({
         id: 'user123',
         email: 'test@example.com',
-        role: 'user',  // Updated to match actual mock structure
+        role: 'user', // Updated to match actual mock structure
         permissions: expect.any(Array),
       });
       expect(mockRequest.session).toEqual({
@@ -280,7 +284,8 @@ describe('AuthMiddleware', () => {
         message: 'Invalid or expired token',
       });
       expect(mockNext).not.toHaveBeenCalled();
-    });    it('should validate session existence', async () => {
+    });
+    it('should validate session existence', async () => {
       // Arrange
       const validToken = 'valid.jwt.token';
       const tokenClaims: TokenClaims = {
@@ -294,7 +299,8 @@ describe('AuthMiddleware', () => {
         tokenType: TokenType.ACCESS,
       };
 
-      const mockTokenRecord = createMockAuthToken();      mockRequest.headers!.authorization = `Bearer ${validToken}`;
+      const mockTokenRecord = createMockAuthToken();
+      mockRequest.headers!.authorization = `Bearer ${validToken}`;
       mockTokenService.verifyToken.mockResolvedValue(tokenClaims);
       mockAuthTokenRepository.findByToken.mockResolvedValue(mockTokenRecord as any);
       mockAuthSessionRepository.findById.mockResolvedValue(null); // Session not found
@@ -327,7 +333,8 @@ describe('AuthMiddleware', () => {
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 3600,
         tokenType: TokenType.ACCESS,
-      };      const mockUser = createMockUser();
+      };
+      const mockUser = createMockUser();
       const mockTokenRecord = createMockAuthToken();
       const mockSession = createMockAuthSession();
 
@@ -366,7 +373,8 @@ describe('AuthMiddleware', () => {
         message: 'Access token required',
       });
       expect(mockNext).not.toHaveBeenCalled();
-    });    it('should handle invalid session IDs', async () => {
+    });
+    it('should handle invalid session IDs', async () => {
       // Arrange
       const validToken = 'valid.jwt.token';
       const tokenClaims: TokenClaims = {
@@ -380,7 +388,8 @@ describe('AuthMiddleware', () => {
         tokenType: TokenType.ACCESS,
       };
 
-      const mockTokenRecord = createMockAuthToken();      mockRequest.headers!.authorization = `Bearer ${validToken}`;
+      const mockTokenRecord = createMockAuthToken();
+      mockRequest.headers!.authorization = `Bearer ${validToken}`;
       mockTokenService.verifyToken.mockResolvedValue(tokenClaims);
       mockAuthTokenRepository.findByToken.mockResolvedValue(mockTokenRecord as any);
       mockAuthSessionRepository.findById.mockResolvedValue(null);
@@ -412,9 +421,11 @@ describe('AuthMiddleware', () => {
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 3600,
         tokenType: TokenType.ACCESS,
-      };      const mockTokenRecord = createMockAuthToken({ 
-        canBeUsed: jest.fn().mockReturnValue(false) // Token is revoked
-      });      mockRequest.headers!.authorization = `Bearer ${revokedToken}`;
+      };
+      const mockTokenRecord = createMockAuthToken({
+        canBeUsed: jest.fn().mockReturnValue(false), // Token is revoked
+      });
+      mockRequest.headers!.authorization = `Bearer ${revokedToken}`;
       mockTokenService.verifyToken.mockResolvedValue(tokenClaims);
       mockAuthTokenRepository.findByToken.mockResolvedValue(mockTokenRecord as any);
 
@@ -445,12 +456,14 @@ describe('AuthMiddleware', () => {
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 3600,
         tokenType: TokenType.ACCESS,
-      };      const mockUser = createMockUser({
+      };
+      const mockUser = createMockUser({
         status: UserStatus.SUSPENDED, // User is suspended
         permissions: {},
       });
       const mockTokenRecord = createMockAuthToken();
-      const mockSession = createMockAuthSession();      mockRequest.headers!.authorization = `Bearer ${validToken}`;
+      const mockSession = createMockAuthSession();
+      mockRequest.headers!.authorization = `Bearer ${validToken}`;
       mockTokenService.verifyToken.mockResolvedValue(tokenClaims);
       mockAuthTokenRepository.findByToken.mockResolvedValue(mockTokenRecord as any);
       mockAuthSessionRepository.findById.mockResolvedValue(mockSession as any);
@@ -501,8 +514,10 @@ describe('AuthMiddleware', () => {
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 3600,
         tokenType: TokenType.ACCESS,
-      };      const mockUser = createMockUser();
-      const mockTokenRecord = createMockAuthToken();      mockRequest.headers!.authorization = `Bearer ${validToken}`;
+      };
+      const mockUser = createMockUser();
+      const mockTokenRecord = createMockAuthToken();
+      mockRequest.headers!.authorization = `Bearer ${validToken}`;
       mockTokenService.verifyToken.mockResolvedValue(tokenClaims);
       mockAuthTokenRepository.findByToken.mockResolvedValue(mockTokenRecord as any);
       mockUserRepository.findById.mockResolvedValue(mockUser as any);
@@ -539,7 +554,8 @@ describe('AuthMiddleware', () => {
     });
   });
 
-  describe('requireRoles', () => {    it('should allow access for users with required roles', () => {
+  describe('requireRoles', () => {
+    it('should allow access for users with required roles', () => {
       // Arrange
       mockRequest.user = {
         id: 'user123',
@@ -573,15 +589,12 @@ describe('AuthMiddleware', () => {
       };
 
       // Act
-      requireAdminRole(
-        mockRequest as AuthRequest,
-        mockResponse as Response,
-        mockNext
-      );
+      requireAdminRole(mockRequest as AuthRequest, mockResponse as Response, mockNext);
 
       // Assert
       expect(mockNext).toHaveBeenCalled();
-    });    it('should deny access for users without required roles', () => {
+    });
+    it('should deny access for users without required roles', () => {
       // Arrange
       mockRequest.user = {
         id: 'user123',
@@ -590,7 +603,7 @@ describe('AuthMiddleware', () => {
         permissions: [],
       };
 
-      // Create a simple role check middleware directly  
+      // Create a simple role check middleware directly
       const requireAdminRole = (req: AuthRequest, res: Response, next: NextFunction) => {
         if (!req.user) {
           res.status(401).json({
@@ -615,11 +628,7 @@ describe('AuthMiddleware', () => {
       };
 
       // Act
-      requireAdminRole(
-        mockRequest as AuthRequest,
-        mockResponse as Response,
-        mockNext
-      );
+      requireAdminRole(mockRequest as AuthRequest, mockResponse as Response, mockNext);
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(403);
@@ -637,11 +646,7 @@ describe('AuthMiddleware', () => {
       const requireAdminRole = authMiddleware.requireRoles([UserRole.ADMIN]);
 
       // Act
-      requireAdminRole(
-        mockRequest as AuthRequest,
-        mockResponse as Response,
-        mockNext
-      );
+      requireAdminRole(mockRequest as AuthRequest, mockResponse as Response, mockNext);
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(401);
@@ -666,11 +671,7 @@ describe('AuthMiddleware', () => {
       const requireAdminPermissions = authMiddleware.requirePermissions(['canManageUsers']);
 
       // Act
-      requireAdminPermissions(
-        mockRequest as AuthRequest,
-        mockResponse as Response,
-        mockNext
-      );
+      requireAdminPermissions(mockRequest as AuthRequest, mockResponse as Response, mockNext);
 
       // Assert
       expect(mockNext).toHaveBeenCalled();
@@ -688,11 +689,7 @@ describe('AuthMiddleware', () => {
       const requireAdminPermissions = authMiddleware.requirePermissions(['canManageUsers']);
 
       // Act
-      requireAdminPermissions(
-        mockRequest as AuthRequest,
-        mockResponse as Response,
-        mockNext
-      );
+      requireAdminPermissions(mockRequest as AuthRequest, mockResponse as Response, mockNext);
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(403);

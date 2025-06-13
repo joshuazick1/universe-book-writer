@@ -19,7 +19,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-4">You need administrator privileges to access this page.</p>
+          <p className="text-gray-600 mb-4">
+            You need administrator privileges to access this page.
+          </p>
           <Link
             to="/dashboard"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -143,7 +145,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = () => {
 
         <nav className="mt-6">
           <div className="px-3">
-            {navigation.map((item) => (
+            {navigation.map(item => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -156,7 +158,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = () => {
               >
                 <span
                   className={`mr-3 flex-shrink-0 ${
-                    isCurrentPath(item.href) ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
+                    isCurrentPath(item.href)
+                      ? 'text-blue-500'
+                      : 'text-gray-400 group-hover:text-gray-500'
                   }`}
                 >
                   {item.icon}
@@ -211,7 +215,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = () => {
               </span>
             </div>
           </div>
-        </div>        {/* Page content */}
+        </div>{' '}
+        {/* Page content */}
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>

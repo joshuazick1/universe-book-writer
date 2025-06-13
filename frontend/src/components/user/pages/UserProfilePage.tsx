@@ -14,15 +14,41 @@ interface ProfileFormData {
   bio: string;
 }
 
+interface PasswordChangeData {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface NotificationSettings {
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  weeklyDigest: boolean;
+  securityAlerts: boolean;
+}
+
 export const UserProfilePage: React.FC = () => {
   const { user, isLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     email: user?.email || '',
     bio: user?.bio || '',
+  });
+  const [passwordData, setPasswordData] = useState<PasswordChangeData>({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
+    emailNotifications: true,
+    pushNotifications: false,
+    weeklyDigest: true,
+    securityAlerts: true,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,6 +84,40 @@ export const UserProfilePage: React.FC = () => {
     setIsEditing(false);
   };
 
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('New passwords do not match');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      // TODO: Implement API call to change password
+      console.log('Changing password...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      setShowPasswordForm(false);
+      alert('Password changed successfully');
+    } catch (error) {
+      console.error('Failed to change password:', error);
+      alert('Failed to change password');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleNotificationToggle = (key: keyof NotificationSettings) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -72,8 +132,8 @@ export const UserProfilePage: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-            <p className="text-gray-600 mt-2">Manage your personal information and preferences</p>
+            <h1 className="text-3xl font-bold text-gray-900">Profile & Settings</h1>
+            <p className="text-gray-600 mt-2">Manage your personal information, preferences, and account settings</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -113,7 +173,8 @@ export const UserProfilePage: React.FC = () => {
                         </h3>
                         <p className="text-gray-600">{formData.email}</p>
                         <p className="text-sm text-gray-500">
-                          Member since {new Date(user?.createdAt || Date.now()).toLocaleDateString()}
+                          Member since{' '}
+                          {new Date(user?.createdAt || Date.now()).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -269,16 +330,101 @@ export const UserProfilePage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {/* Quick Actions */}
+              {/* Settings & Security */}
               <Card>
                 <CardHeader>
-                  <h3 className="text-lg font-semibold">Quick Actions</h3>
+                  <h3 className="text-lg font-semibold">Security & Settings</h3>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <button className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                  <div className="space-y-4">
+                    <button 
+                      onClick={() => setShowPasswordForm(!showPasswordForm)}
+                      className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex justify-between items-center"
+                    >
                       Change Password
+                      <span className="text-xs text-gray-400">
+                        {showPasswordForm ? '−' : '+'}
+                      </span>
                     </button>
+                    
+                    {showPasswordForm && (
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <form onSubmit={handlePasswordChange} className="space-y-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Current Password
+                            </label>
+                            <input
+                              type="password"
+                              value={passwordData.currentPassword}
+                              onChange={e =>
+                                setPasswordData(prev => ({
+                                  ...prev,
+                                  currentPassword: e.target.value,
+                                }))
+                              }
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              New Password
+                            </label>
+                            <input
+                              type="password"
+                              value={passwordData.newPassword}
+                              onChange={e =>
+                                setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))
+                              }
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Confirm New Password
+                            </label>
+                            <input
+                              type="password"
+                              value={passwordData.confirmPassword}
+                              onChange={e =>
+                                setPasswordData(prev => ({
+                                  ...prev,
+                                  confirmPassword: e.target.value,
+                                }))
+                              }
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              required
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              type="submit"
+                              disabled={isChangingPassword}
+                              className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            >
+                              {isChangingPassword ? 'Changing...' : 'Update'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowPasswordForm(false);
+                                setPasswordData({
+                                  currentPassword: '',
+                                  newPassword: '',
+                                  confirmPassword: '',
+                                });
+                              }}
+                              className="px-3 py-1 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    )}
+                    
                     <button className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                       Privacy Settings
                     </button>
@@ -288,6 +434,43 @@ export const UserProfilePage: React.FC = () => {
                     <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                       Delete Account
                     </button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Notifications */}
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Notifications</h3>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {Object.entries(notificationSettings).map(([key, value]) => (
+                      <div key={key} className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium">
+                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {key === 'emailNotifications' && 'Email updates'}
+                            {key === 'pushNotifications' && 'Browser notifications'}
+                            {key === 'weeklyDigest' && 'Weekly summary'}
+                            {key === 'securityAlerts' && 'Security alerts'}
+                          </p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={value}
+                            onChange={() =>
+                              handleNotificationToggle(key as keyof NotificationSettings)
+                            }
+                            className="sr-only peer"
+                          />
+                          <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>

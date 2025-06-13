@@ -50,7 +50,7 @@ export class MongoAdminSettingsRepository implements AdminSettingsRepository {
    */
   async getSettings(): Promise<AdminSettings | null> {
     const doc = await this.collection.findOne({ _id: this.SETTINGS_ID });
-    
+
     if (!doc) {
       return null;
     }
@@ -64,11 +64,7 @@ export class MongoAdminSettingsRepository implements AdminSettingsRepository {
   async saveSettings(settings: AdminSettings): Promise<AdminSettings> {
     const doc = this.entityToDocument(settings);
 
-    await this.collection.replaceOne(
-      { _id: this.SETTINGS_ID },
-      doc,
-      { upsert: true }
-    );
+    await this.collection.replaceOne({ _id: this.SETTINGS_ID }, doc, { upsert: true });
 
     return settings;
   }

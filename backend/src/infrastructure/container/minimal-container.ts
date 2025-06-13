@@ -2,16 +2,11 @@
  * Temporary minimal container for debugging
  */
 import type { MongoClient, Db } from 'mongodb';
-import type { UserRepository } from '../../core/interfaces/user.repository.js';
-import type { AuthController } from '../../api/controllers/auth.controller.js';
-import type { UserController } from '../../api/controllers/user.controller.js';
 import { AuthMiddleware } from '../../api/middleware/auth.middleware.js';
 import { ValidationMiddleware } from '../../api/middleware/validation.middleware.js';
 
 // Import only essential implementations
 import { MongoUserRepository } from '../persistence/user.repository.js';
-import { AuthController as AuthControllerImpl } from '../../api/controllers/auth.controller.js';
-import { UserController as UserControllerImpl } from '../../api/controllers/user.controller.js';
 
 export const MINIMAL_TOKENS = {
   // Essential tokens only

@@ -52,7 +52,8 @@ export const useAdminUsers = () => {
     limit: 10,
     total: 0,
     totalPages: 0,
-  });  const fetchUsers = useCallback(async (options: UserListOptions) => {
+  });
+  const fetchUsers = useCallback(async (options: UserListOptions) => {
     setLoading(true);
     setError(null);
 
@@ -78,8 +79,9 @@ export const useAdminUsers = () => {
 
       if (options.filters.emailVerified !== undefined) {
         params.append('emailVerified', options.filters.emailVerified.toString());
-      }      const url = `${API_BASE_URL}/admin/users?${params}`;
-      
+      }
+      const url = `${API_BASE_URL}/admin/users?${params}`;
+
       const response = await axios.get<{
         success: boolean;
         data: PaginatedUsers;
@@ -89,21 +91,23 @@ export const useAdminUsers = () => {
 
       console.log('📦 [useAdminUsers] Response received:', {
         status: response.status,
-        success: response.data.success,        dataStructure: {
+        success: response.data.success,
+        dataStructure: {
           hasData: !!response.data.data,
           hasUsers: !!response.data.data?.users, // Changed from 'hasItems' to 'hasUsers'
           usersLength: response.data.data?.users?.length || 0, // Changed from 'itemsLength'
           hasPagination: !!response.data.data?.pagination,
-          totalUsers: response.data.data?.pagination?.total || 0
+          totalUsers: response.data.data?.pagination?.total || 0,
         },
-        fullResponse: response.data
-      });      if (response.data.success) {
+        fullResponse: response.data,
+      });
+      if (response.data.success) {
         const users = response.data.data.users; // Changed from 'items' to 'users'
         const pagination = response.data.data.pagination;
-        
+
         console.log('✅ [useAdminUsers] Setting users:', users);
         console.log('📊 [useAdminUsers] Setting pagination:', pagination);
-        
+
         setUsers(users);
         setPagination(pagination);
       } else {
@@ -115,10 +119,10 @@ export const useAdminUsers = () => {
         message: err instanceof Error ? err.message : 'Unknown error',
         status: (err as any)?.response?.status,
         statusText: (err as any)?.response?.statusText,
-        data: (err as any)?.response?.data
+        data: (err as any)?.response?.data,
       });
       setError(err instanceof Error ? err.message : 'Failed to fetch users');
-        // Fallback to mock data in development
+      // Fallback to mock data in development
       if (import.meta.env.DEV) {
         console.warn('⚠️ [useAdminUsers] Falling back to mock data for development');
         console.log('🏗️ [useAdminUsers] Development environment detected, using fallback');
@@ -173,11 +177,7 @@ export const useAdminUsers = () => {
       );
 
       if (response.data.success) {
-        setUsers(prev =>
-          prev.map(user =>
-            user.id === userId ? { ...user, role } : user
-          )
-        );
+        setUsers(prev => prev.map(user => (user.id === userId ? { ...user, role } : user)));
         return true;
       } else {
         throw new Error('Failed to update user role');
@@ -200,11 +200,7 @@ export const useAdminUsers = () => {
       );
 
       if (response.data.success) {
-        setUsers(prev =>
-          prev.map(user =>
-            user.id === userId ? { ...user, status } : user
-          )
-        );
+        setUsers(prev => prev.map(user => (user.id === userId ? { ...user, status } : user)));
         return true;
       } else {
         throw new Error('Failed to update user status');
@@ -220,10 +216,9 @@ export const useAdminUsers = () => {
     setError(null);
 
     try {
-      const response = await axios.delete(
-        `${API_BASE_URL}/admin/users/${userId}`,
-        { withCredentials: true }
-      );
+      const response = await axios.delete(`${API_BASE_URL}/admin/users/${userId}`, {
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         setUsers(prev => prev.filter(user => user.id !== userId));
@@ -238,36 +233,37 @@ export const useAdminUsers = () => {
     }
   }, []);
 
-  const createUser = useCallback(async (userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-    skipEmailVerification?: boolean;
-  }) => {
-    setError(null);
+  const createUser = useCallback(
+    async (userData: {
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      role: string;
+      skipEmailVerification?: boolean;
+    }) => {
+      setError(null);
 
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/admin/users`,
-        userData,
-        { withCredentials: true }
-      );
+      try {
+        const response = await axios.post(`${API_BASE_URL}/admin/users`, userData, {
+          withCredentials: true,
+        });
 
-      if (response.data.success) {
-        const newUser = response.data.data.user;
-        setUsers(prev => [newUser, ...prev]);
-        return true;
-      } else {
-        throw new Error('Failed to create user');
+        if (response.data.success) {
+          const newUser = response.data.data.user;
+          setUsers(prev => [newUser, ...prev]);
+          return true;
+        } else {
+          throw new Error('Failed to create user');
+        }
+      } catch (err) {
+        console.error('Error creating user:', err);
+        setError(err instanceof Error ? err.message : 'Failed to create user');
+        return false;
       }
-    } catch (err) {
-      console.error('Error creating user:', err);
-      setError(err instanceof Error ? err.message : 'Failed to create user');
-      return false;
-    }
-  }, []);
+    },
+    []
+  );
 
   return {
     users,

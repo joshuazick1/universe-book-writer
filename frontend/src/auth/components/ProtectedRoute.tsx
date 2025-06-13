@@ -52,23 +52,23 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     let mounted = true;
-    
+
     const checkAuth = async () => {
-      if (!hasCheckedAuth && (!isAuthenticated && !user)) {
+      if (!hasCheckedAuth && !isAuthenticated && !user) {
         try {
           await checkAuthStatus();
         } catch {
           // Authentication check failed, but we'll handle this below
         }
       }
-      
+
       if (mounted) {
         setHasCheckedAuth(true);
       }
     };
 
     checkAuth();
-    
+
     return () => {
       mounted = false;
     };

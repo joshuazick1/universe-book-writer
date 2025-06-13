@@ -5,4 +5,9 @@
 
 export { AdminAuthWrapper } from './AdminAuthWrapper';
 export { AdminLayout } from './layout/AdminLayout';
-export { AdminDashboardPage, UserManagementPage, AdminSettingsPage, SecurityLogsPage } from './pages';
+export {
+  AdminDashboardPage,
+  UserManagementPage,
+  AdminSettingsPage,
+  SecurityLogsPage,
+} from './pages';

@@ -16,6 +16,19 @@ export interface User {
   lastLoginAt?: string;
   profile?: UserProfile;
   preferences?: UserPreferences;
+  permissions?: UserPermissions;
+  bio?: string;
+}
+
+export interface UserPermissions {
+  canCreateUniverse?: boolean;
+  canEditOwnContent?: boolean;
+  canEditOtherContent?: boolean;
+  canDeleteContent?: boolean;
+  canManageUsers?: boolean;
+  canManagePlugins?: boolean;
+  canAccessAdminPanel?: boolean;
+  [key: string]: boolean | undefined;
 }
 
 export interface UserProfile {

@@ -23,11 +23,7 @@ interface UserCreateModalProps {
   onCreate: (userData: Omit<CreateUserData, 'confirmPassword'>) => Promise<void>;
 }
 
-export const UserCreateModal: React.FC<UserCreateModalProps> = ({
-  isOpen,
-  onClose,
-  onCreate,
-}) => {
+export const UserCreateModal: React.FC<UserCreateModalProps> = ({ isOpen, onClose, onCreate }) => {
   const [formData, setFormData] = useState<CreateUserData>({
     email: '',
     firstName: '',
@@ -61,7 +57,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -71,10 +67,10 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
     try {
       setLoading(true);
       setError(null);
-      
-      const { confirmPassword, ...userData } = formData;
+
+      const { confirmPassword: _confirmPassword, ...userData } = formData;
       await onCreate(userData);
-      
+
       // Reset form
       setFormData({
         email: '',
@@ -87,7 +83,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
         sendWelcomeEmail: true,
         skipEmailVerification: false,
       });
-      
+
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create user');
@@ -124,7 +120,12 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
             >
               <span className="sr-only">Close</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -145,7 +146,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
                 type="email"
                 id="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                onChange={e => handleInputChange('email', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
                 disabled={loading}
@@ -163,7 +164,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
                   type="text"
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  onChange={e => handleInputChange('firstName', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   disabled={loading}
@@ -178,7 +179,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
                   type="text"
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  onChange={e => handleInputChange('lastName', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   disabled={loading}
@@ -196,7 +197,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
                 <select
                   id="role"
                   value={formData.role}
-                  onChange={(e) => handleInputChange('role', e.target.value)}
+                  onChange={e => handleInputChange('role', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={loading}
                 >
@@ -212,7 +213,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
                 <select
                   id="status"
                   value={formData.status}
-                  onChange={(e) => handleInputChange('status', e.target.value)}
+                  onChange={e => handleInputChange('status', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={loading}
                 >
@@ -234,7 +235,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={e => handleInputChange('password', e.target.value)}
                   className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   disabled={loading}
@@ -263,14 +264,17 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Confirm Password *
               </label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="confirmPassword"
                 value={formData.confirmPassword}
-                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                onChange={e => handleInputChange('confirmPassword', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
                 disabled={loading}
@@ -281,13 +285,13 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
             {/* Options */}
             <div className="space-y-3 p-4 bg-gray-50 rounded-md">
               <h4 className="text-sm font-medium text-gray-900">Options</h4>
-              
+
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="sendWelcomeEmail"
                   checked={formData.sendWelcomeEmail}
-                  onChange={(e) => handleInputChange('sendWelcomeEmail', e.target.checked)}
+                  onChange={e => handleInputChange('sendWelcomeEmail', e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   disabled={loading}
                 />
@@ -301,7 +305,7 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({
                   type="checkbox"
                   id="skipEmailVerification"
                   checked={formData.skipEmailVerification}
-                  onChange={(e) => handleInputChange('skipEmailVerification', e.target.checked)}
+                  onChange={e => handleInputChange('skipEmailVerification', e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   disabled={loading}
                 />

@@ -8,6 +8,40 @@ import { AuthUseCase } from '../../application/use-cases/auth.use-case.js';
 import { UserUseCase } from '../../application/use-cases/user.use-case.js';
 import { SecurityService } from '../../core/interfaces/auth.service.js';
 
+interface LoginResponseData {
+  success: boolean;
+  message: string;
+  data: {
+    user: {
+      id: string;
+      email: string;
+      firstName?: string;
+      lastName?: string;
+      role: string;
+      emailVerified: boolean;
+    };
+    session: {
+      id: string;
+      expiresAt: Date;
+    };
+    accessToken?: string; // Only in test environment
+    refreshToken?: string; // Only in test environment
+    accessTokenExpiresAt?: Date; // Only in test environment
+    refreshTokenExpiresAt?: Date; // Only in test environment
+    sessionId?: string; // Only in test environment
+  };
+}
+
+interface RefreshTokenResponseData {
+  success: boolean;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    accessTokenExpiresAt: Date;
+    refreshTokenExpiresAt: Date;
+  };
+}
+
 export interface AuthRequest extends Request {
   user?: {
     id: string;
@@ -52,7 +86,7 @@ export class AuthController {
       // Input validation
       if (!email || !password || !firstName || !lastName) {
         if (process.env.NODE_ENV === 'test') {
-
+          // Test environment: log validation failure
         }
         res.status(400).json({
           success: false,
@@ -63,7 +97,7 @@ export class AuthController {
 
       if (!this.securityService.validateEmailFormat(email)) {
         if (process.env.NODE_ENV === 'test') {
-
+          // Test environment: log email validation failure
         }
         res.status(400).json({
           success: false,
@@ -75,7 +109,7 @@ export class AuthController {
       const passwordCheck = this.securityService.checkPasswordStrength(password);
       if (!passwordCheck.isSecure) {
         if (process.env.NODE_ENV === 'test') {
-
+          // Test environment: log password strength failure
         }
         res.status(400).json({
           success: false,
@@ -98,7 +132,7 @@ export class AuthController {
 
       if (!result.success) {
         if (process.env.NODE_ENV === 'test') {
-
+          // Test environment: log registration failure
         }
         res.status(400).json({
           success: false,
@@ -200,7 +234,7 @@ export class AuthController {
         });
 
         // Build response data
-        const responseData: any = {
+        const responseData: LoginResponseData = {
           success: true,
           message: 'Login successful',
           data: {
@@ -269,14 +303,14 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
-        maxAge: 0 // Explicitly set maxAge to 0
+        maxAge: 0, // Explicitly set maxAge to 0
       });
       res.clearCookie('refreshToken', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
-        maxAge: 0 // Explicitly set maxAge to 0
+        maxAge: 0, // Explicitly set maxAge to 0
       });
 
       // Log logout event
@@ -318,7 +352,7 @@ export class AuthController {
             ip: ipAddress,
             userAgent,
           },
-        });        // Set new access token cookie
+        }); // Set new access token cookie
         res.cookie('accessToken', result.accessToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
@@ -327,7 +361,7 @@ export class AuthController {
         });
 
         // Build response data
-        const responseData: any = {
+        const responseData: RefreshTokenResponseData = {
           success: true,
           data: {
             accessToken: result.accessToken,

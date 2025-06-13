@@ -1,6 +1,8 @@
 // Jest setup file for collaboration server tests
 
 // Mock console methods to reduce test output noise
+// Jest setup file - console methods are intentionally mocked here
+/* eslint-disable no-console */
 const originalConsole = {
   log: console.log,
   error: console.error,

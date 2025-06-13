@@ -73,7 +73,7 @@ export class AdminUseCase {
     private securityService: SecurityService,
     private passwordService: PasswordService,
     private emailService: EmailService
-  ) {}  /**
+  ) {} /**
    * Get all users with filtering and pagination
    */
   async getAllUsers(options: UserListOptions): Promise<PaginatedResult<User>> {
@@ -99,15 +99,12 @@ export class AdminUseCase {
     }
 
     // Get users with pagination
-    const result = await this.userRepository.findMany(
-      searchFilters,
-      {
-        skip: (page - 1) * limit,
-        limit,
-        sortBy,
-        sortOrder,
-      }
-    );
+    const result = await this.userRepository.findMany(searchFilters, {
+      skip: (page - 1) * limit,
+      limit,
+      sortBy,
+      sortOrder,
+    });
 
     return {
       items: result.users,
@@ -191,7 +188,7 @@ export class AdminUseCase {
    */
   async getAdminSettings(): Promise<AdminSettings> {
     let settings = await this.adminSettingsRepository.getSettings();
-    
+
     if (!settings) {
       // Create default settings if none exist
       settings = AdminSettings.createDefault();
@@ -206,9 +203,9 @@ export class AdminUseCase {
    */
   async updateAdminSettings(updates: Partial<AdminSettings>): Promise<AdminSettings> {
     const currentSettings = await this.getAdminSettings();
-    
+
     const updatedSettings = currentSettings.update(updates);
-    
+
     return await this.adminSettingsRepository.saveSettings(updatedSettings);
   }
   /**
@@ -270,7 +267,7 @@ export class AdminUseCase {
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
       throw new Error('User with this email already exists');
-    }    // Hash password
+    } // Hash password
     const passwordHash = await this.passwordService.hashPassword(password);
 
     // Generate user ID

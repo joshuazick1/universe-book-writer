@@ -51,7 +51,8 @@ describe('ProtectedRoute Component', () => {
   afterEach(() => {
     cleanupMocks();
   });
-  describe('Authentication Required', () => {    it('should render children when user is authenticated', async () => {
+  describe('Authentication Required', () => {
+    it('should render children when user is authenticated', async () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: mockUser,
@@ -65,7 +66,9 @@ describe('ProtectedRoute Component', () => {
         </ProtectedRoute>
       );
 
-      expect(screen.getByTestId('protected-content')).toBeInTheDocument();    });it('should redirect to login when user is not authenticated', async () => {
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+    });
+    it('should redirect to login when user is not authenticated', async () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: null,
@@ -85,7 +88,8 @@ describe('ProtectedRoute Component', () => {
           replace: true,
         });
       });
-    });it('should show loading state while checking authentication', () => {
+    });
+    it('should show loading state while checking authentication', () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         isLoading: true,
@@ -111,7 +115,8 @@ describe('ProtectedRoute Component', () => {
       expect(mockCheckAuthStatus).toHaveBeenCalled();
     });
   });
-  describe('Role-Based Authorization', () => {    it('should render children when user has required role', () => {
+  describe('Role-Based Authorization', () => {
+    it('should render children when user has required role', () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: mockAdminUser,
@@ -126,13 +131,15 @@ describe('ProtectedRoute Component', () => {
       );
 
       expect(screen.getByTestId('admin-content')).toBeInTheDocument();
-    });it('should redirect when user does not have required role', () => {
+    });
+    it('should redirect when user does not have required role', () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: mockUser, // regular user, not admin
         isAuthenticated: true,
         isLoading: false,
-      });      renderWithProviders(
+      });
+      renderWithProviders(
         <ProtectedRoute requiredRole="admin">
           <div data-testid="admin-content">Admin Content</div>
         </ProtectedRoute>
@@ -146,7 +153,8 @@ describe('ProtectedRoute Component', () => {
     });
   });
 
-  describe('Permission-Based Authorization', () => {    it('should render children when user has required permissions', () => {
+  describe('Permission-Based Authorization', () => {
+    it('should render children when user has required permissions', () => {
       // Admin user has all permissions (*)
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
@@ -162,13 +170,15 @@ describe('ProtectedRoute Component', () => {
       );
 
       expect(screen.getByTestId('content-with-permissions')).toBeInTheDocument();
-    });    it('should redirect when user lacks required permissions', () => {
+    });
+    it('should redirect when user lacks required permissions', () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: mockUser, // regular user, limited permissions
         isAuthenticated: true,
         isLoading: false,
-      });      renderWithProviders(
+      });
+      renderWithProviders(
         <ProtectedRoute requiredPermissions={['admin:all']}>
           <div data-testid="admin-content">Admin Content</div>
         </ProtectedRoute>
@@ -179,14 +189,17 @@ describe('ProtectedRoute Component', () => {
         replace: true,
       });
       expect(screen.queryByTestId('admin-content')).not.toBeInTheDocument();
-    });  });
-  describe('Configuration Options', () => {    it('should use custom fallback URL', async () => {
+    });
+  });
+  describe('Configuration Options', () => {
+    it('should use custom fallback URL', async () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: null,
         isAuthenticated: false,
         isLoading: false,
-      });      renderWithProviders(
+      });
+      renderWithProviders(
         <ProtectedRoute fallbackUrl="/custom-login">
           <div data-testid="protected-content">Protected Content</div>
         </ProtectedRoute>
@@ -198,7 +211,8 @@ describe('ProtectedRoute Component', () => {
           replace: true,
         });
       });
-    });    it('should not require auth when requiresAuth is false', () => {
+    });
+    it('should not require auth when requiresAuth is false', () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: null,
@@ -214,7 +228,8 @@ describe('ProtectedRoute Component', () => {
 
       expect(screen.getByTestId('public-content')).toBeInTheDocument();
       expect(mockNavigate).not.toHaveBeenCalled();
-    });it('should not show loader when showLoader is false', () => {
+    });
+    it('should not show loader when showLoader is false', () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         isLoading: true,
@@ -230,14 +245,16 @@ describe('ProtectedRoute Component', () => {
     });
   });
 
-  describe('Edge Cases', () => {    it('should handle multiple required permissions', () => {
+  describe('Edge Cases', () => {
+    it('should handle multiple required permissions', () => {
       // Regular user won't have both permissions needed
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: mockUser, // regular user with limited permissions
         isAuthenticated: true,
         isLoading: false,
-      });      renderWithProviders(
+      });
+      renderWithProviders(
         <ProtectedRoute requiredPermissions={['read:posts', 'write:posts']}>
           <div data-testid="content-with-permissions">Content</div>
         </ProtectedRoute>
@@ -248,7 +265,8 @@ describe('ProtectedRoute Component', () => {
         replace: true,
       });
       expect(screen.queryByTestId('content-with-permissions')).not.toBeInTheDocument();
-    });    it('should handle both role and permission requirements', () => {
+    });
+    it('should handle both role and permission requirements', () => {
       mockUseAuth.mockReturnValue({
         ...defaultAuthState,
         user: mockAdminUser,

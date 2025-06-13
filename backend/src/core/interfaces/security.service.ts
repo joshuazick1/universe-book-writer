@@ -19,11 +19,14 @@ export interface SecurityService {
   /**
    * Check for suspicious activity
    */
-  checkSuspiciousActivity(userId: string, deviceInfo: {
-    userAgent?: string;
-    ip?: string;
-    deviceId?: string;
-  }): Promise<SecurityCheckResult>;
+  checkSuspiciousActivity(
+    userId: string,
+    deviceInfo: {
+      userAgent?: string;
+      ip?: string;
+      deviceId?: string;
+    }
+  ): Promise<SecurityCheckResult>;
 
   /**
    * Log security events

@@ -51,7 +51,7 @@ export const UserManagementPage: React.FC = () => {
     status: '',
     emailVerified: '',
   });
-  
+
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -178,6 +178,7 @@ export const UserManagementPage: React.FC = () => {
 
   const handleVerifyEmail = async (userId: string) => {
     // For now, simulate email verification - this would need a real API endpoint
+    // eslint-disable-next-line no-console
     console.log('Email verification for user:', userId);
     await fetchUsers({
       page,
@@ -213,24 +214,20 @@ export const UserManagementPage: React.FC = () => {
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Search
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
             <input
               type="text"
               placeholder="Search by name or email..."
               value={filters.search}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
+              onChange={e => handleFilterChange('search', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Role
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
             <select
               value={filters.role}
-              onChange={(e) => handleFilterChange('role', e.target.value)}
+              onChange={e => handleFilterChange('role', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Roles</option>
@@ -240,12 +237,10 @@ export const UserManagementPage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <select
               value={filters.status}
-              onChange={(e) => handleFilterChange('status', e.target.value)}
+              onChange={e => handleFilterChange('status', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Statuses</option>
@@ -256,12 +251,10 @@ export const UserManagementPage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Verified
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Verified</label>
             <select
               value={filters.emailVerified}
-              onChange={(e) => handleFilterChange('emailVerified', e.target.value)}
+              onChange={e => handleFilterChange('emailVerified', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All</option>
@@ -293,7 +286,8 @@ export const UserManagementPage: React.FC = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
-                </th>                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                </th>{' '}
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Email Verified
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -318,14 +312,16 @@ export const UserManagementPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                safeUsers.map((user) => (
+                safeUsers.map(user => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                             <span className="text-sm font-medium text-gray-700">
-                              {(user.firstName?.[0] || user.email[0]).toUpperCase()}
+                              {(user.firstName && user.firstName.charAt(0).toUpperCase()) ||
+                                (user.email && user.email.charAt(0).toUpperCase()) ||
+                                '?'}
                             </span>
                           </div>
                         </div>
@@ -421,10 +417,7 @@ export const UserManagementPage: React.FC = () => {
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-700">
-                    Showing{' '}
-                    <span className="font-medium">
-                      {(page - 1) * pagination.limit + 1}
-                    </span>{' '}
+                    Showing <span className="font-medium">{(page - 1) * pagination.limit + 1}</span>{' '}
                     to{' '}
                     <span className="font-medium">
                       {Math.min(page * pagination.limit, pagination.total)}
@@ -443,7 +436,7 @@ export const UserManagementPage: React.FC = () => {
                     </button>
                     {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
                       .filter(
-                        (pageNum) =>
+                        pageNum =>
                           pageNum === 1 ||
                           pageNum === pagination.totalPages ||
                           Math.abs(pageNum - page) <= 2
@@ -470,7 +463,8 @@ export const UserManagementPage: React.FC = () => {
                     <button
                       onClick={() => setPage(Math.min(pagination.totalPages, page + 1))}
                       disabled={page === pagination.totalPages}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"                    >
+                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                    >
                       Next
                     </button>
                   </nav>
@@ -482,7 +476,8 @@ export const UserManagementPage: React.FC = () => {
       </div>
 
       {/* Edit User Modal */}
-      {showEditModal && selectedUser && (        <UserEditModal
+      {showEditModal && selectedUser && (
+        <UserEditModal
           user={selectedUser}
           isOpen={showEditModal}
           onClose={handleCloseEditModal}

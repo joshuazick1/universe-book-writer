@@ -165,7 +165,7 @@ export class AuthUseCase {
     // Create session first to get session ID for JWT jti
     const sessionId = this.securityService.generateSecureRandom(24);
     const refreshTokenId = this.securityService.generateSecureRandom(24);
-    
+
     const session = new AuthSession({
       id: sessionId,
       userId: user.id,
@@ -193,8 +193,12 @@ export class AuthUseCase {
       tokenType: TokenType.REFRESH,
     });
 
-    const accessTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.ACCESS));
-    const refreshTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.REFRESH));
+    const accessTokenExpiresAt = new Date(
+      Date.now() + this.tokenService.getTokenExpiration(TokenType.ACCESS)
+    );
+    const refreshTokenExpiresAt = new Date(
+      Date.now() + this.tokenService.getTokenExpiration(TokenType.REFRESH)
+    );
 
     // Save access token
     const accessTokenRecord = new AuthToken({
@@ -281,7 +285,7 @@ export class AuthUseCase {
 
     // Generate new access token ID (using session ID for access token)
     const newRefreshTokenId = this.securityService.generateSecureRandom(24);
-    
+
     // Generate new tokens with different IDs
     const newAccessToken = await this.tokenService.generateToken({
       sub: user.id,
@@ -301,8 +305,12 @@ export class AuthUseCase {
       tokenType: TokenType.REFRESH,
     });
 
-    const accessTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.ACCESS));
-    const refreshTokenExpiresAt = new Date(Date.now() + this.tokenService.getTokenExpiration(TokenType.REFRESH));
+    const accessTokenExpiresAt = new Date(
+      Date.now() + this.tokenService.getTokenExpiration(TokenType.ACCESS)
+    );
+    const refreshTokenExpiresAt = new Date(
+      Date.now() + this.tokenService.getTokenExpiration(TokenType.REFRESH)
+    );
 
     // Update old refresh token
     const updatedToken = storedToken.markAsUsed();

@@ -117,8 +117,7 @@ export class AuthMiddleware {
    * Middleware to check if user has required roles
    */
   requireRoles(requiredRoles: UserRole[]) {
-    const self = this;
-    return function(req: AuthRequest, res: Response, next: NextFunction): void {
+    return (req: AuthRequest, res: Response, next: NextFunction): void => {
       if (!req.user) {
         res.status(401).json({
           success: false,

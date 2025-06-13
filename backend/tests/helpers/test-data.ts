@@ -17,10 +17,7 @@ export interface TestUserOptions {
   lastName?: string;
 }
 
-export async function createTestUser(
-  db: Db, 
-  options: TestUserOptions = {}
-): Promise<any> {
+export async function createTestUser(db: Db, options: TestUserOptions = {}): Promise<any> {
   const {
     email = 'test@example.com',
     password = 'SecureTestP@ssw0rd!',
@@ -100,7 +97,7 @@ export async function createTestSession(
   } = options;
 
   const sessionId = 'session-' + Date.now();
-  
+
   const sessionData = {
     _id: new ObjectId(),
     id: sessionId,
@@ -132,13 +129,15 @@ export async function createTestToken(
 ): Promise<any> {
   const {
     token = `test-${type.toLowerCase()}-token-${Date.now()}`,
-    expiresAt = new Date(Date.now() + (type === 'ACCESS' ? 15 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000)),
+    expiresAt = new Date(
+      Date.now() + (type === 'ACCESS' ? 15 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000)
+    ),
     isRevoked = false,
     usedAt = null,
   } = options;
 
   const tokenId = 'token-' + Date.now();
-  
+
   const tokenData = {
     _id: new ObjectId(),
     id: tokenId,
@@ -171,11 +170,7 @@ export async function createTestSecurityLog(
     timestamp?: Date;
   } = {}
 ): Promise<any> {
-  const {
-    metadata = {},
-    severity = 'low',
-    timestamp = new Date(),
-  } = options;
+  const { metadata = {}, severity = 'low', timestamp = new Date() } = options;
 
   const logData = {
     _id: new ObjectId(),
@@ -197,13 +192,7 @@ export async function createTestSecurityLog(
 
 export async function cleanTestData(db: Db): Promise<void> {
   // Clean all test collections
-  const collections = [
-    'users',
-    'authSessions',
-    'authTokens',
-    'securityLogs',
-    'adminSettings',
-  ];
+  const collections = ['users', 'authSessions', 'authTokens', 'securityLogs', 'adminSettings'];
 
   for (const collectionName of collections) {
     try {
@@ -264,7 +253,7 @@ export async function createSuspiciousSecurityLogs(
   count: number = 5
 ): Promise<any[]> {
   const logs = [];
-  
+
   for (let i = 0; i < count; i++) {
     const log = await createTestSecurityLog(db, userId, 'login_failed', {
       severity: 'medium',
@@ -289,20 +278,23 @@ export function generateRandomPassword(): string {
   const length = 12;
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
   let password = '';
-  
+
   // Ensure at least one of each required character type
   password += 'A'; // uppercase
   password += 'a'; // lowercase
   password += '1'; // number
   password += '!'; // special
-  
+
   // Fill the rest randomly
   for (let i = 4; i < length; i++) {
     password += charset.charAt(Math.floor(Math.random() * charset.length));
   }
-  
+
   // Shuffle the password
-  return password.split('').sort(() => Math.random() - 0.5).join('');
+  return password
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
 }
 
 export async function waitForDatabaseWrite(ms: number = 100): Promise<void> {

@@ -20,7 +20,7 @@ interface DashboardStats {
 }
 
 export const AdminDashboardPage: React.FC = () => {
-  const { users, fetchUsers, loading, error } = useAdminUsers();
+  const { users, fetchUsers } = useAdminUsers();
   const { settings } = useAdminSettings();
   const { isAuthenticated } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
@@ -33,15 +33,13 @@ export const AdminDashboardPage: React.FC = () => {
   });
 
   // Ensure users is always an array
-  const safeUsers = Array.isArray(users) ? users : [];  // Calculate stats from users data
+  const safeUsers = Array.isArray(users) ? users : []; // Calculate stats from users data
   useEffect(() => {
     if (safeUsers.length > 0) {
       const activeUsers = safeUsers.filter(user => user.status === 'active').length;
       const pendingUsers = safeUsers.filter(user => user.status === 'pending').length;
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      const newUsersThisWeek = safeUsers.filter(
-        user => new Date(user.createdAt) > weekAgo
-      ).length;
+      const newUsersThisWeek = safeUsers.filter(user => new Date(user.createdAt) > weekAgo).length;
 
       const newStats = {
         totalUsers: safeUsers.length,
@@ -129,7 +127,8 @@ export const AdminDashboardPage: React.FC = () => {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
         <p className="text-gray-600 mt-2">Overview of system status and key metrics</p>
-      </div>      {/* Stats Grid */}
+      </div>{' '}
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Combined User Management Button */}
         <Link to="/admin/users" className="block">
@@ -160,7 +159,8 @@ export const AdminDashboardPage: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-        </Link>        {/* Pending Users - Clickable */}
+        </Link>{' '}
+        {/* Pending Users - Clickable */}
         <Link to="/admin/users?status=pending" className="block">
           <Card className="hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-yellow-300">
             <CardContent>
@@ -182,7 +182,6 @@ export const AdminDashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Link>
-
         <Card>
           <CardContent>
             <div className="flex items-center">
@@ -198,7 +197,6 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent>
             <div className="flex items-center">
@@ -214,7 +212,6 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent>
             <div className="flex items-center">
@@ -231,7 +228,6 @@ export const AdminDashboardPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Quick Actions */}
         <Card>
@@ -247,7 +243,9 @@ export const AdminDashboardPage: React.FC = () => {
                   to={action.href}
                   className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-3`}>
+                  <div
+                    className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-3`}
+                  >
                     <span className="text-white text-xl">{action.icon}</span>
                   </div>
                   <h3 className="font-medium text-gray-900 text-center">{action.title}</h3>
@@ -273,8 +271,8 @@ export const AdminDashboardPage: React.FC = () => {
                       activity.severity === 'warning'
                         ? 'bg-yellow-400'
                         : activity.severity === 'error'
-                        ? 'bg-red-400'
-                        : 'bg-blue-400'
+                          ? 'bg-red-400'
+                          : 'bg-blue-400'
                     }`}
                   />
                   <div className="flex-1 min-w-0">
@@ -297,7 +295,6 @@ export const AdminDashboardPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-
       {/* System Status */}
       <Card>
         <CardHeader>
@@ -305,7 +302,9 @@ export const AdminDashboardPage: React.FC = () => {
           <p className="text-gray-600 text-sm mt-1">Current system configuration and health</p>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">            <div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {' '}
+            <div>
               <h3 className="font-medium text-gray-900 mb-2">Email Verification</h3>
               <div className="flex items-center space-x-2">
                 <div
@@ -325,13 +324,15 @@ export const AdminDashboardPage: React.FC = () => {
                   className={`w-3 h-3 rounded-full ${
                     settings?.userRegistration?.enabled ? 'bg-green-400' : 'bg-red-400'
                   }`}
-                />                <span className="text-sm text-gray-600">
+                />{' '}
+                <span className="text-sm text-gray-600">
                   {settings?.userRegistration?.enabled ? 'Open' : 'Closed'}
                 </span>
               </div>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">Security</h3>              <div className="flex items-center space-x-2">
+              <h3 className="font-medium text-gray-900 mb-2">Security</h3>{' '}
+              <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 rounded-full bg-green-400" />
                 <span className="text-sm text-gray-600">
                   {settings?.security?.maxLoginAttempts || 5} max attempts

@@ -22,14 +22,21 @@ export interface EmailService {
   /**
    * Send login notification email
    */
-  sendLoginNotification(email: string, deviceInfo: {
-    userAgent?: string;
-    ip?: string;
-    deviceId?: string;
-  }): Promise<void>;
+  sendLoginNotification(
+    email: string,
+    deviceInfo: {
+      userAgent?: string;
+      ip?: string;
+      deviceId?: string;
+    }
+  ): Promise<void>;
 
   /**
    * Send security alert email
    */
-  sendSecurityAlert(email: string, alertType: string, details: Record<string, unknown>): Promise<void>;
+  sendSecurityAlert(
+    email: string,
+    alertType: string,
+    details: Record<string, unknown>
+  ): Promise<void>;
 }

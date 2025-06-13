@@ -142,7 +142,7 @@ export const animationPatterns = {
   },
 
   // Staggered animations
-  staggeredFadeIn: (index: number, baseDelay: number = 100): string => {
+  staggeredFadeIn: (index: number, _baseDelay: number = 100): string => {
     return `animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out`;
   },
 

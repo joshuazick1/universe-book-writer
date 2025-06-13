@@ -4,7 +4,6 @@ import cors from 'cors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import { createPluginRoutes } from './api/routes/plugin.routes.js';
 import { createAuthRoutes } from './api/routes/auth.routes.js';
@@ -129,7 +128,7 @@ async function initializeApp() {
     // Resolve auth dependencies
     const authController = authContainer.resolve<AuthController>(TOKENS.AUTH_CONTROLLER);
     const userController = authContainer.resolve<UserController>(TOKENS.USER_CONTROLLER);
-    
+
     // Try to resolve admin controller, but handle gracefully if not available
     let adminController: AdminController | null = null;
     try {
@@ -141,9 +140,12 @@ async function initializeApp() {
         console.warn('⚠️ ADMIN_CONTROLLER token not available, admin routes will be disabled');
       }
     } catch (error) {
-      console.warn('⚠️ Failed to resolve AdminController, admin routes will be disabled:', error instanceof Error ? error.message : String(error));
+      console.warn(
+        '⚠️ Failed to resolve AdminController, admin routes will be disabled:',
+        error instanceof Error ? error.message : String(error)
+      );
     }
-    
+
     const authMiddleware = authContainer.resolve<AuthMiddleware>(TOKENS.AUTH_MIDDLEWARE);
     const validationMiddleware = authContainer.resolve<ValidationMiddleware>(
       TOKENS.VALIDATION_MIDDLEWARE

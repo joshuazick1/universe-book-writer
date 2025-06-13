@@ -9,7 +9,15 @@ import { Card, CardHeader, CardContent } from '../../base/Card';
 interface SecurityLog {
   id: string;
   timestamp: string;
-  type: 'login' | 'logout' | 'failed_login' | 'user_created' | 'user_updated' | 'settings_changed' | 'security_alert' | 'system_event';
+  type:
+    | 'login'
+    | 'logout'
+    | 'failed_login'
+    | 'user_created'
+    | 'user_updated'
+    | 'settings_changed'
+    | 'security_alert'
+    | 'system_event';
   severity: 'info' | 'warning' | 'error' | 'critical';
   message: string;
   userId?: string;
@@ -179,8 +187,11 @@ export const SecurityLogsPage: React.FC = () => {
   };
 
   const filteredLogs = logs.filter(log => {
-    if (filters.search && !log.message.toLowerCase().includes(filters.search.toLowerCase()) &&
-        !log.userEmail?.toLowerCase().includes(filters.search.toLowerCase())) {
+    if (
+      filters.search &&
+      !log.message.toLowerCase().includes(filters.search.toLowerCase()) &&
+      !log.userEmail?.toLowerCase().includes(filters.search.toLowerCase())
+    ) {
       return false;
     }
     if (filters.type && log.type !== filters.type) return false;
@@ -213,7 +224,7 @@ export const SecurityLogsPage: React.FC = () => {
                 type="text"
                 id="search"
                 value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
+                onChange={e => handleFilterChange('search', e.target.value)}
                 placeholder="Search logs..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -226,7 +237,7 @@ export const SecurityLogsPage: React.FC = () => {
               <select
                 id="type"
                 value={filters.type}
-                onChange={(e) => handleFilterChange('type', e.target.value)}
+                onChange={e => handleFilterChange('type', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Types</option>
@@ -248,7 +259,7 @@ export const SecurityLogsPage: React.FC = () => {
               <select
                 id="severity"
                 value={filters.severity}
-                onChange={(e) => handleFilterChange('severity', e.target.value)}
+                onChange={e => handleFilterChange('severity', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Severities</option>
@@ -267,7 +278,7 @@ export const SecurityLogsPage: React.FC = () => {
                 type="datetime-local"
                 id="dateFrom"
                 value={filters.dateFrom}
-                onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+                onChange={e => handleFilterChange('dateFrom', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -280,21 +291,23 @@ export const SecurityLogsPage: React.FC = () => {
                 type="datetime-local"
                 id="dateTo"
                 value={filters.dateTo}
-                onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+                onChange={e => handleFilterChange('dateTo', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div className="flex items-end">
               <button
-                onClick={() => setFilters({
-                  search: '',
-                  type: '',
-                  severity: '',
-                  dateFrom: '',
-                  dateTo: '',
-                  userId: '',
-                })}
+                onClick={() =>
+                  setFilters({
+                    search: '',
+                    type: '',
+                    severity: '',
+                    dateFrom: '',
+                    dateTo: '',
+                    userId: '',
+                  })
+                }
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Clear Filters
@@ -348,7 +361,7 @@ export const SecurityLogsPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredLogs.map((log) => (
+                  {filteredLogs.map(log => (
                     <tr key={log.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDate(log.timestamp)}
@@ -407,7 +420,12 @@ export const SecurityLogsPage: React.FC = () => {
                 >
                   <span className="sr-only">Close</span>
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -416,7 +434,9 @@ export const SecurityLogsPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Timestamp</label>
-                    <p className="mt-1 text-sm text-gray-900">{formatDate(selectedLog.timestamp)}</p>
+                    <p className="mt-1 text-sm text-gray-900">
+                      {formatDate(selectedLog.timestamp)}
+                    </p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Event Type</label>
@@ -461,7 +481,9 @@ export const SecurityLogsPage: React.FC = () => {
 
                 {selectedLog.details && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Additional Details</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Additional Details
+                    </label>
                     <pre className="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-md overflow-x-auto">
                       {JSON.stringify(selectedLog.details, null, 2)}
                     </pre>

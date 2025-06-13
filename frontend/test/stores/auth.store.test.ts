@@ -7,12 +7,12 @@ import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals
 import { act } from '@testing-library/react';
 import { useAuthStore } from '../../src/auth/stores/auth.store';
 import { authApi } from '../../src/auth/utils';
-import { 
-  mockUser, 
-  mockAdminUser, 
-  validCredentials, 
-  createMockApiResponse, 
-  createMockErrorResponse 
+import {
+  mockUser,
+  mockAdminUser,
+  validCredentials,
+  createMockApiResponse,
+  createMockErrorResponse,
 } from '../utils';
 
 // Mock the auth API
@@ -54,7 +54,7 @@ describe('AuthStore', () => {
   describe('Initial State', () => {
     it('should have correct initial state', () => {
       const state = useAuthStore.getState();
-      
+
       expect(state.user).toBeNull();
       expect(state.tokens).toBeNull();
       expect(state.isAuthenticated).toBe(false);
@@ -66,9 +66,7 @@ describe('AuthStore', () => {
   describe('Login', () => {
     it('should login successfully with valid credentials', async () => {
       // Mock successful API response
-      mockAuthApi.login.mockResolvedValueOnce(
-        createMockApiResponse({ user: mockUser })
-      );
+      mockAuthApi.login.mockResolvedValueOnce(createMockApiResponse({ user: mockUser }));
 
       const store = useAuthStore.getState();
 
@@ -77,7 +75,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(mockAuthApi.login).toHaveBeenCalledWith(validCredentials);
       expect(state.user).toEqual(mockUser);
       expect(state.isAuthenticated).toBe(true);
@@ -87,9 +85,7 @@ describe('AuthStore', () => {
 
     it('should handle login failure', async () => {
       const errorMessage = 'Invalid credentials';
-      mockAuthApi.login.mockRejectedValueOnce(
-        createMockErrorResponse(errorMessage, 401)
-      );
+      mockAuthApi.login.mockRejectedValueOnce(createMockErrorResponse(errorMessage, 401));
 
       const store = useAuthStore.getState();
 
@@ -102,7 +98,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(mockAuthApi.login).toHaveBeenCalledWith(validCredentials);
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
@@ -130,7 +126,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(state.error).toEqual({
         message: errorMessage,
         field: errorField,
@@ -177,9 +173,7 @@ describe('AuthStore', () => {
         username: 'newuser',
       };
 
-      mockAuthApi.register.mockResolvedValueOnce(
-        createMockApiResponse({ user: mockUser })
-      );
+      mockAuthApi.register.mockResolvedValueOnce(createMockApiResponse({ user: mockUser }));
 
       const store = useAuthStore.getState();
 
@@ -188,7 +182,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(mockAuthApi.register).toHaveBeenCalledWith(registerData);
       expect(state.user).toEqual(mockUser);
       expect(state.isAuthenticated).toBe(true);
@@ -221,7 +215,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
       expect(state.error).toEqual({
@@ -241,9 +235,7 @@ describe('AuthStore', () => {
         });
       });
 
-      mockAuthApi.logout.mockResolvedValueOnce(
-        createMockApiResponse(null)
-      );
+      mockAuthApi.logout.mockResolvedValueOnce(createMockApiResponse(null));
 
       const store = useAuthStore.getState();
 
@@ -252,7 +244,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(mockAuthApi.logout).toHaveBeenCalled();
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
@@ -278,7 +270,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       // Should still clear state even if API call fails
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
@@ -288,9 +280,7 @@ describe('AuthStore', () => {
 
   describe('Profile Management', () => {
     it('should get user profile successfully', async () => {
-      mockAuthApi.getProfile.mockResolvedValueOnce(
-        createMockApiResponse({ user: mockUser })
-      );
+      mockAuthApi.getProfile.mockResolvedValueOnce(createMockApiResponse({ user: mockUser }));
 
       const store = useAuthStore.getState();
 
@@ -299,16 +289,14 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(mockAuthApi.getProfile).toHaveBeenCalled();
       expect(state.user).toEqual(mockUser);
       expect(state.isAuthenticated).toBe(true);
     });
 
     it('should handle profile fetch failure', async () => {
-      mockAuthApi.getProfile.mockRejectedValueOnce(
-        createMockErrorResponse('Unauthorized', 401)
-      );
+      mockAuthApi.getProfile.mockRejectedValueOnce(createMockErrorResponse('Unauthorized', 401));
 
       const store = useAuthStore.getState();
 
@@ -321,7 +309,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(state.isAuthenticated).toBe(false);
       expect(state.error).toBeDefined();
     });
@@ -330,9 +318,7 @@ describe('AuthStore', () => {
       const updatedUser = { ...mockUser, profile: { firstName: 'Updated', lastName: 'Name' } };
       const updateData = { profile: { firstName: 'Updated', lastName: 'Name' } };
 
-      mockAuthApi.updateProfile.mockResolvedValueOnce(
-        createMockApiResponse({ user: updatedUser })
-      );
+      mockAuthApi.updateProfile.mockResolvedValueOnce(createMockApiResponse({ user: updatedUser }));
 
       const store = useAuthStore.getState();
 
@@ -341,7 +327,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(mockAuthApi.updateProfile).toHaveBeenCalledWith(updateData);
       expect(state.user).toEqual(updatedUser);
     });
@@ -355,9 +341,7 @@ describe('AuthStore', () => {
         confirmPassword: 'newPassword123!',
       };
 
-      mockAuthApi.changePassword.mockResolvedValueOnce(
-        createMockApiResponse(null)
-      );
+      mockAuthApi.changePassword.mockResolvedValueOnce(createMockApiResponse(null));
 
       const store = useAuthStore.getState();
 
@@ -372,9 +356,7 @@ describe('AuthStore', () => {
     it('should handle forgot password request', async () => {
       const emailData = { email: 'test@example.com' };
 
-      mockAuthApi.forgotPassword.mockResolvedValueOnce(
-        createMockApiResponse(null)
-      );
+      mockAuthApi.forgotPassword.mockResolvedValueOnce(createMockApiResponse(null));
 
       const store = useAuthStore.getState();
 
@@ -393,9 +375,7 @@ describe('AuthStore', () => {
         confirmPassword: 'newPassword123!',
       };
 
-      mockAuthApi.resetPassword.mockResolvedValueOnce(
-        createMockApiResponse(null)
-      );
+      mockAuthApi.resetPassword.mockResolvedValueOnce(createMockApiResponse(null));
 
       const store = useAuthStore.getState();
 
@@ -412,9 +392,7 @@ describe('AuthStore', () => {
     it('should verify email successfully', async () => {
       const token = 'verification-token';
 
-      mockAuthApi.verifyEmail.mockResolvedValueOnce(
-        createMockApiResponse(null)
-      );
+      mockAuthApi.verifyEmail.mockResolvedValueOnce(createMockApiResponse(null));
 
       mockAuthApi.getProfile.mockResolvedValueOnce(
         createMockApiResponse({ user: { ...mockUser, emailVerified: true } })
@@ -431,9 +409,7 @@ describe('AuthStore', () => {
     });
 
     it('should resend verification email', async () => {
-      mockAuthApi.resendVerification.mockResolvedValueOnce(
-        createMockApiResponse(null)
-      );
+      mockAuthApi.resendVerification.mockResolvedValueOnce(createMockApiResponse(null));
 
       const store = useAuthStore.getState();
 
@@ -478,9 +454,7 @@ describe('AuthStore', () => {
     });
 
     it('should check auth status successfully', async () => {
-      mockAuthApi.getProfile.mockResolvedValueOnce(
-        createMockApiResponse({ user: mockUser })
-      );
+      mockAuthApi.getProfile.mockResolvedValueOnce(createMockApiResponse({ user: mockUser }));
 
       const store = useAuthStore.getState();
 
@@ -489,15 +463,13 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(state.user).toEqual(mockUser);
       expect(state.isAuthenticated).toBe(true);
     });
 
     it('should handle auth status check failure', async () => {
-      mockAuthApi.getProfile.mockRejectedValueOnce(
-        createMockErrorResponse('Unauthorized', 401)
-      );
+      mockAuthApi.getProfile.mockRejectedValueOnce(createMockErrorResponse('Unauthorized', 401));
 
       const store = useAuthStore.getState();
 
@@ -506,7 +478,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
     });
@@ -526,7 +498,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(state.user).toBeNull();
       expect(state.tokens).toBeNull();
       expect(state.isAuthenticated).toBe(false);
@@ -536,9 +508,7 @@ describe('AuthStore', () => {
 
   describe('Admin User Scenarios', () => {
     it('should handle admin login correctly', async () => {
-      mockAuthApi.login.mockResolvedValueOnce(
-        createMockApiResponse({ user: mockAdminUser })
-      );
+      mockAuthApi.login.mockResolvedValueOnce(createMockApiResponse({ user: mockAdminUser }));
 
       const store = useAuthStore.getState();
 
@@ -547,7 +517,7 @@ describe('AuthStore', () => {
       });
 
       const state = useAuthStore.getState();
-      
+
       expect(state.user).toEqual(mockAdminUser);
       expect(state.user?.role).toBe('admin');
       expect(state.user?.permissions?.canAccessAdminPanel).toBe(true);
@@ -558,9 +528,9 @@ describe('AuthStore', () => {
     it('should persist authentication state', () => {
       // This test would verify the Zustand persist middleware
       // For now, we just verify the store structure supports persistence
-      
+
       const state = useAuthStore.getState();
-      
+
       // Check that the store has the expected structure for persistence
       expect(typeof state.user).toBeDefined();
       expect(typeof state.isAuthenticated).toBe('boolean');

@@ -17,7 +17,6 @@ import {
   Notification,
   StatusIndicator,
   ProgressIndicator,
-  animationClasses,
   animationPatterns,
   animationUtils,
 } from './index';
@@ -335,6 +334,7 @@ export const AnimationShowcase: React.FC = () => {
         message="All animation components are now available for use throughout the application."
         action={{
           label: 'Learn More',
+          // eslint-disable-next-line no-console
           onClick: () => console.log('Learn more clicked'),
         }}
         onClose={() => setShowNotification(false)}

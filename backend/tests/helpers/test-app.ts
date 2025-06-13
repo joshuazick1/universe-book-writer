@@ -1,5 +1,17 @@
 /**
- * Test Application Setup
+ import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';  );
+
+  // Create a mock AdminSettingsRepository for testing
+  const adminSettingsRepository = {{ jest } from '@jest/globals';
+import { Db, MongoClient } from 'mongodb';
+import { createAuthRoutes } from '../../src/api/routes/auth.routes.js';
+import { createAdminRoutes } from '../../src/api/routes/admin.routes.js';
+import { AuthController } from '../../src/api/controllers/auth.controller.js';
+import { AdminController } from '../../src/api/controllers/admin.controller.js';
+import { AuthMiddleware } from '../../src/api/middleware/auth.middleware.js';
+import { ValidationMiddleware } from '../../src/api/middleware/validation.middleware.js';cation Setup
  * Creates a test Express app with test database configuration
  */
 
@@ -23,11 +35,15 @@ import { CryptoSecurityService } from '../../src/infrastructure/services/securit
 import { MongoUserRepository } from '../../src/infrastructure/persistence/user.repository.js';
 import { MongoAuthTokenRepository } from '../../src/infrastructure/persistence/auth-token.repository.js';
 import { MongoAuthSessionRepository } from '../../src/infrastructure/persistence/auth-session.repository.js';
+import { AdminSettingsRepository } from '../../src/core/interfaces/repositories/admin-settings.repository.js';
 
-export async function createTestApp(testDb: Db, mongoClient: MongoClient): Promise<express.Express> {
+export async function createTestApp(
+  testDb: Db,
+  mongoClient: MongoClient
+): Promise<express.Express> {
   // Set test environment
   process.env.NODE_ENV = 'test';
-  
+
   const app = express();
 
   // Basic middleware
@@ -36,12 +52,14 @@ export async function createTestApp(testDb: Db, mongoClient: MongoClient): Promi
   app.use(cookieParser());
 
   // CORS for testing
-  app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-  }));
+  app.use(
+    cors({
+      origin: ['http://localhost:5173', 'http://localhost:3000'],
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    })
+  );
 
   // Security headers
   app.use((req, res, next) => {
@@ -61,21 +79,21 @@ export async function createTestApp(testDb: Db, mongoClient: MongoClient): Promi
     refreshTokenExpiry: '7d',
     emailTokenExpiry: '24h',
     passwordResetTokenExpiry: '1h',
-  };  // Initialize services
+  }; // Initialize services
   const tokenService = new JwtTokenService(testConfig);
   const passwordService = new BcryptPasswordService();
   const emailService = new MockEmailService();
-  const securityService = new CryptoSecurityService();  // Initialize repositories with the test database
+  const securityService = new CryptoSecurityService(); // Initialize repositories with the test database
   const userRepository = new MongoUserRepository(testDb);
   // Create repositories that use the specific test database
   const authTokenRepository = new MongoAuthTokenRepository(mongoClient);
   const authSessionRepository = new MongoAuthSessionRepository(mongoClient);
-  
+
   // Override the collection to use our test database
-  // @ts-ignore - Accessing private property for testing
+  // @ts-expect-error - Accessing private property for testing
   authTokenRepository.collection = testDb.collection('auth_tokens');
-  // @ts-ignore - Accessing private property for testing
-  authSessionRepository.collection = testDb.collection('auth_sessions');// Initialize use cases
+  // @ts-expect-error - Accessing private property for testing
+  authSessionRepository.collection = testDb.collection('auth_sessions'); // Initialize use cases
   const authUseCase = new AuthUseCase(
     userRepository,
     authTokenRepository,
@@ -93,6 +111,7 @@ export async function createTestApp(testDb: Db, mongoClient: MongoClient): Promi
     update: jest.fn(),
     delete: jest.fn(),
     getAll: jest.fn(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 
   const adminUseCase = new AdminUseCase(
@@ -110,6 +129,7 @@ export async function createTestApp(testDb: Db, mongoClient: MongoClient): Promi
     async getUserByEmail(email: string) {
       return await userRepository.findByEmail(email);
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async updateUser(id: string, updates: any) {
       return await userRepository.update(id, updates);
     },
@@ -117,8 +137,10 @@ export async function createTestApp(testDb: Db, mongoClient: MongoClient): Promi
       return await userRepository.delete(id);
     },
     async getAllUsers() {
-      return await userRepository.findAll();
-    }
+      const result = await userRepository.findMany();
+      return result.users;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 
   // Initialize middleware
@@ -150,14 +172,16 @@ export async function createTestApp(testDb: Db, mongoClient: MongoClient): Promi
   globalSecurityService = securityService;
 
   // Error handling middleware
-  app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error('Test app error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'test' ? error.message : undefined,
-    });
-  });
+  app.use(
+    (error: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+      console.error('Test app error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'test' ? error.message : undefined,
+      });
+    }
+  );
 
   // 404 handler
   app.use((req, res) => {
@@ -181,6 +205,7 @@ let globalSecurityService: CryptoSecurityService | null = null;
 export function resetRateLimiting() {
   if (globalSecurityService) {
     // Clear all rate limiting records
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (globalSecurityService as any).rateLimitStore.clear();
   }
   // Also add a small delay to avoid timing issues

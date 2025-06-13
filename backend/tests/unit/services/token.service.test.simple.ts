@@ -117,15 +117,26 @@ describe('TokenService - Simplified Tests', () => {
   describe('generateTokenPair', () => {
     it('should generate both access and refresh tokens', async () => {
       // Arrange
-      const tokenClaims: Omit<TokenClaims, 'iat' | 'exp' | 'jti' | 'tokenType'> = {
-        sub: 'user123',
+      const mockUser: User = {
+        id: 'user123',
         email: 'test@example.com',
         username: 'testuser',
         role: UserRole.USER,
+        passwordHash: 'hash',
+        status: 'active',
+        emailVerified: true,
+        profile: {
+          firstName: 'Test',
+          lastName: 'User',
+          displayName: 'Test User',
+          avatarUrl: '',
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       // Act
-      const result = await tokenService.generateTokenPair(tokenClaims);
+      const result = await tokenService.generateTokenPair(mockUser);
 
       // Assert
       expect(result).toBeDefined();
@@ -186,7 +197,9 @@ describe('TokenService - Simplified Tests', () => {
       // Assert
       expect(tokenService.getTokenExpiration(TokenType.ACCESS)).toBe(15 * 60 * 1000); // 15 minutes
       expect(tokenService.getTokenExpiration(TokenType.REFRESH)).toBe(7 * 24 * 60 * 60 * 1000); // 7 days
-      expect(tokenService.getTokenExpiration(TokenType.EMAIL_VERIFICATION)).toBe(24 * 60 * 60 * 1000); // 24 hours
+      expect(tokenService.getTokenExpiration(TokenType.EMAIL_VERIFICATION)).toBe(
+        24 * 60 * 60 * 1000
+      ); // 24 hours
       expect(tokenService.getTokenExpiration(TokenType.PASSWORD_RESET)).toBe(60 * 60 * 1000); // 1 hour
     });
   });

@@ -25,7 +25,7 @@ export const TEST_TOKENS = {
   // Middleware
   AUTH_MIDDLEWARE: Symbol('AuthMiddleware'),
   VALIDATION_MIDDLEWARE: Symbol('ValidationMiddleware'),
-  
+
   // External Dependencies
   MONGO_CLIENT: Symbol('MongoClient'),
   DATABASE_NAME: Symbol('DatabaseName'),

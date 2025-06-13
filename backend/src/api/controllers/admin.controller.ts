@@ -2,7 +2,7 @@
  * Admin controller for administrative functionality
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { AdminUseCase } from '../../application/use-cases/admin.use-case.js';
 import { SecurityService } from '../../core/interfaces/auth.service.js';
 import { AuthRequest } from '../middleware/auth.middleware.js';
@@ -51,7 +51,8 @@ export class AdminController {
         filters: {
           role: role as string,
           status: status as string,
-          emailVerified: emailVerified === 'true' ? true : emailVerified === 'false' ? false : undefined,
+          emailVerified:
+            emailVerified === 'true' ? true : emailVerified === 'false' ? false : undefined,
         },
         sortBy: sortBy as string,
         sortOrder: sortOrder as 'asc' | 'desc',
@@ -60,11 +61,16 @@ export class AdminController {
       const result = await this.adminUseCase.getAllUsers(options);
 
       // Log admin action
-      await this.securityService.logSecurityEvent(currentUserId || 'unknown', 'admin_users_viewed', {
-        ipAddress,
-        userAgent,
-        filters: options.filters,
-      });      res.json({
+      await this.securityService.logSecurityEvent(
+        currentUserId || 'unknown',
+        'admin_users_viewed',
+        {
+          ipAddress,
+          userAgent,
+          filters: options.filters,
+        }
+      );
+      res.json({
         success: true,
         data: {
           users: result.items.map(user => ({
@@ -128,13 +134,17 @@ export class AdminController {
       const updatedUser = await this.adminUseCase.updateUserRole(targetUserId, newRole);
 
       // Log admin action
-      await this.securityService.logSecurityEvent(currentUserId || 'unknown', 'admin_user_role_updated', {
-        targetUserId,
-        oldRole: updatedUser.role,
-        newRole,
-        ipAddress,
-        userAgent,
-      });
+      await this.securityService.logSecurityEvent(
+        currentUserId || 'unknown',
+        'admin_user_role_updated',
+        {
+          targetUserId,
+          oldRole: updatedUser.role,
+          newRole,
+          ipAddress,
+          userAgent,
+        }
+      );
 
       res.json({
         success: true,
@@ -194,12 +204,16 @@ export class AdminController {
       const updatedUser = await this.adminUseCase.updateUserStatus(targetUserId, newStatus);
 
       // Log admin action
-      await this.securityService.logSecurityEvent(currentUserId || 'unknown', 'admin_user_status_updated', {
-        targetUserId,
-        newStatus,
-        ipAddress,
-        userAgent,
-      });
+      await this.securityService.logSecurityEvent(
+        currentUserId || 'unknown',
+        'admin_user_status_updated',
+        {
+          targetUserId,
+          newStatus,
+          ipAddress,
+          userAgent,
+        }
+      );
 
       res.json({
         success: true,
@@ -248,12 +262,16 @@ export class AdminController {
       const updatedUser = await this.adminUseCase.verifyUserEmail(targetUserId);
 
       // Log admin action
-      await this.securityService.logSecurityEvent(currentUserId || 'unknown', 'admin_user_email_verified', {
-        targetUserId,
-        targetEmail: updatedUser.email,
-        ipAddress,
-        userAgent,
-      });
+      await this.securityService.logSecurityEvent(
+        currentUserId || 'unknown',
+        'admin_user_email_verified',
+        {
+          targetUserId,
+          targetEmail: updatedUser.email,
+          ipAddress,
+          userAgent,
+        }
+      );
 
       res.json({
         success: true,
@@ -323,11 +341,15 @@ export class AdminController {
       const updatedSettings = await this.adminUseCase.updateAdminSettings(settingsUpdate);
 
       // Log admin action
-      await this.securityService.logSecurityEvent(currentUserId || 'unknown', 'admin_settings_updated', {
-        changes: settingsUpdate,
-        ipAddress,
-        userAgent,
-      });
+      await this.securityService.logSecurityEvent(
+        currentUserId || 'unknown',
+        'admin_settings_updated',
+        {
+          changes: settingsUpdate,
+          ipAddress,
+          userAgent,
+        }
+      );
 
       res.json({
         success: true,
@@ -357,14 +379,7 @@ export class AdminController {
         return;
       }
 
-      const {
-        page = 1,
-        limit = 50,
-        eventType,
-        userId,
-        startDate,
-        endDate,
-      } = req.query;
+      const { page = 1, limit = 50, eventType, userId, startDate, endDate } = req.query;
 
       const options = {
         page: Number(page),
@@ -377,7 +392,8 @@ export class AdminController {
         },
       };
 
-      const result = await this.adminUseCase.getSecurityLogs(options);      res.json({
+      const result = await this.adminUseCase.getSecurityLogs(options);
+      res.json({
         success: true,
         data: {
           logs: result.items,
@@ -436,14 +452,18 @@ export class AdminController {
       });
 
       // Log admin action
-      await this.securityService.logSecurityEvent(currentUserId || 'unknown', 'admin_user_created', {
-        newUserId: newUser.id,
-        newUserEmail: newUser.email,
-        newUserRole: newUser.role,
-        skipEmailVerification,
-        ipAddress,
-        userAgent,
-      });
+      await this.securityService.logSecurityEvent(
+        currentUserId || 'unknown',
+        'admin_user_created',
+        {
+          newUserId: newUser.id,
+          newUserEmail: newUser.email,
+          newUserRole: newUser.role,
+          skipEmailVerification,
+          ipAddress,
+          userAgent,
+        }
+      );
 
       res.status(201).json({
         success: true,

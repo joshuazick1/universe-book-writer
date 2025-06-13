@@ -186,7 +186,9 @@ describe('TokenService - Simplified Tests', () => {
       // Assert
       expect(tokenService.getTokenExpiration(TokenType.ACCESS)).toBe(15 * 60 * 1000); // 15 minutes
       expect(tokenService.getTokenExpiration(TokenType.REFRESH)).toBe(7 * 24 * 60 * 60 * 1000); // 7 days
-      expect(tokenService.getTokenExpiration(TokenType.EMAIL_VERIFICATION)).toBe(24 * 60 * 60 * 1000); // 24 hours
+      expect(tokenService.getTokenExpiration(TokenType.EMAIL_VERIFICATION)).toBe(
+        24 * 60 * 60 * 1000
+      ); // 24 hours
       expect(tokenService.getTokenExpiration(TokenType.PASSWORD_RESET)).toBe(60 * 60 * 1000); // 1 hour
     });
   });

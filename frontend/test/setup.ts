@@ -58,7 +58,7 @@ beforeAll(() => {
     if (
       typeof args[0] === 'string' &&
       (args[0].includes('Warning: ReactDOM.render is deprecated') ||
-       args[0].includes('Warning: An invalid form control'))
+        args[0].includes('Warning: An invalid form control'))
     ) {
       return;
     }

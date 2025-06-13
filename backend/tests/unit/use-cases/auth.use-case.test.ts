@@ -6,14 +6,19 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { AuthUseCase } from '../../../src/application/use-cases/auth.use-case.js';
 import { UserRepository } from '../../../src/core/interfaces/user.repository.js';
-import { 
-  AuthTokenRepository, 
-  AuthSessionRepository 
+import {
+  AuthTokenRepository,
+  AuthSessionRepository,
 } from '../../../src/core/interfaces/auth.repository.js';
-import { PasswordService, TokenService, EmailService, SecurityService } from '../../../src/core/interfaces/auth.service.js';
-import { 
-  LoginRequest, 
-  LoginResponse, 
+import {
+  PasswordService,
+  TokenService,
+  EmailService,
+  SecurityService,
+} from '../../../src/core/interfaces/auth.service.js';
+import {
+  LoginRequest,
+  LoginResponse,
   RefreshTokenRequest,
   LogoutRequest,
   RegisterRequest,
@@ -132,7 +137,8 @@ describe('AuthUseCase', () => {
         ip: '192.168.1.1',
         deviceId: 'device123',
       },
-    };    const mockUser = {
+    };
+    const mockUser = {
       id: 'user123',
       email: 'test@example.com',
       username: 'testuser',
@@ -179,7 +185,8 @@ describe('AuthUseCase', () => {
         recommendedAction: 'allow' as const,
         riskScore: 0.1,
         reason: '',
-      };      mockUserRepository.findByEmail.mockResolvedValue(mockUser);
+      };
+      mockUserRepository.findByEmail.mockResolvedValue(mockUser);
       mockPasswordService.verifyPassword.mockResolvedValue(true);
       mockSecurityService.checkSuspiciousActivity.mockResolvedValue(mockSecurityCheck);
       mockTokenService.generateToken.mockResolvedValue('access-token');
@@ -261,7 +268,8 @@ describe('AuthUseCase', () => {
       mockSecurityService.generateSecureRandom
         .mockReturnValueOnce(sessionId)
         .mockReturnValueOnce(refreshTokenId)
-        .mockReturnValue('token-id');      mockTokenService.generateToken.mockImplementation(async (claims) => {
+        .mockReturnValue('token-id');
+      mockTokenService.generateToken.mockImplementation(async claims => {
         if (claims.jti === sessionId) {
           return 'access-token-with-session-id';
         }
@@ -299,11 +307,11 @@ describe('AuthUseCase', () => {
         recommendedAction: 'allow' as const,
         riskScore: 0.1,
         reason: '',
-      };      // Setup multiple sessions for the same user
+      }; // Setup multiple sessions for the same user
       const existingSessions = [
-        { 
-          id: 'session1', 
-          userId: 'user123', 
+        {
+          id: 'session1',
+          userId: 'user123',
           isActive: true,
           refreshTokenId: 'token1',
           deviceInfo: {},
@@ -312,9 +320,9 @@ describe('AuthUseCase', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        { 
-          id: 'session2', 
-          userId: 'user123', 
+        {
+          id: 'session2',
+          userId: 'user123',
           isActive: true,
           refreshTokenId: 'token2',
           deviceInfo: {},
@@ -373,10 +381,11 @@ describe('AuthUseCase', () => {
     });
   });
 
-  describe('refreshToken', () => {    const refreshTokenRequest: RefreshTokenRequest = {
+  describe('refreshToken', () => {
+    const refreshTokenRequest: RefreshTokenRequest = {
       refreshToken: 'valid-refresh-token',
     };
-    
+
     const mockStoredToken = {
       id: 'token123',
       userId: 'user123',
@@ -425,8 +434,9 @@ describe('AuthUseCase', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       metadata: {},
-      canLogin: jest.fn().mockReturnValue(true),    };
-    
+      canLogin: jest.fn().mockReturnValue(true),
+    };
+
     const mockSession = {
       id: 'session123',
       userId: 'user123',
@@ -438,7 +448,8 @@ describe('AuthUseCase', () => {
       },
       isActive: true,
       lastActivityAt: new Date(),
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      createdAt: new Date(),
       updatedAt: new Date(),
       toPlainObject: jest.fn().mockReturnValue({
         id: 'session123',
@@ -451,7 +462,8 @@ describe('AuthUseCase', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       }),
-    };    it('should refresh tokens correctly', async () => {
+    };
+    it('should refresh tokens correctly', async () => {
       // Arrange
       mockTokenRepository.findByToken.mockResolvedValue(mockStoredToken as any);
       mockUserRepository.findById.mockResolvedValue(mockRefreshUser as any);
@@ -482,7 +494,8 @@ describe('AuthUseCase', () => {
       await expect(authUseCase.refreshToken(refreshTokenRequest)).rejects.toThrow(
         'Invalid or expired refresh token'
       );
-    });    it('should reject expired refresh tokens', async () => {
+    });
+    it('should reject expired refresh tokens', async () => {
       // Arrange
       const expiredToken = {
         ...mockStoredToken,
@@ -500,7 +513,8 @@ describe('AuthUseCase', () => {
     const logoutRequest: LogoutRequest = {
       userId: 'user123',
       sessionId: 'session123',
-    };    const mockLogoutSession = {
+    };
+    const mockLogoutSession = {
       id: 'session123',
       userId: 'user123',
       refreshTokenId: 'token123',
@@ -534,7 +548,7 @@ describe('AuthUseCase', () => {
       mockSecurityService.logSecurityEvent.mockResolvedValue(undefined);
 
       // Act
-      await authUseCase.logout(logoutRequest);      // Assert
+      await authUseCase.logout(logoutRequest); // Assert
       expect(mockSessionRepository.findById).toHaveBeenCalledWith('session123');
       expect(mockLogoutSession.deactivate).toHaveBeenCalled();
       expect(mockRefreshToken.revoke).toHaveBeenCalledWith('user123');
@@ -578,7 +592,8 @@ describe('AuthUseCase', () => {
       password: 'SecurePass123!',
       firstName: 'Test',
       lastName: 'User',
-    };    it('should register new user successfully', async () => {
+    };
+    it('should register new user successfully', async () => {
       // Arrange
       mockUserRepository.findByEmail.mockResolvedValue(null); // No existing user
       mockPasswordService.validatePassword.mockResolvedValue({
@@ -597,7 +612,7 @@ describe('AuthUseCase', () => {
       mockEmailService.sendEmailVerification.mockResolvedValue(true);
 
       // Act
-      const result = await authUseCase.register(registerRequest);      // Assert
+      const result = await authUseCase.register(registerRequest); // Assert
       expect(result).toEqual({
         success: true,
         data: {
@@ -605,19 +620,28 @@ describe('AuthUseCase', () => {
           verificationToken: 'verification-token',
         },
       });
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('newuser@example.com');      expect(mockPasswordService.hashPassword).toHaveBeenCalledWith('SecurePass123!');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('newuser@example.com');
+      expect(mockPasswordService.hashPassword).toHaveBeenCalledWith('SecurePass123!');
       expect(mockUserRepository.save).toHaveBeenCalled();
       expect(mockEmailService.sendEmailVerification).toHaveBeenCalled();
-    });    it('should reject duplicate email registration', async () => {
+    });
+    it('should reject duplicate email registration', async () => {
       // Arrange
-      const existingUser = { 
-        id: 'existing123', 
+      const existingUser = {
+        id: 'existing123',
         email: 'newuser@example.com',
         username: 'existinguser',
         passwordHash: 'hash',
         role: UserRole.USER,
         status: UserStatus.ACTIVE,
-        profile: { preferences: { theme: 'auto' as const, language: 'en', timezone: 'UTC', notifications: { email: true, push: true, mentions: true } } },
+        profile: {
+          preferences: {
+            theme: 'auto' as const,
+            language: 'en',
+            timezone: 'UTC',
+            notifications: { email: true, push: true, mentions: true },
+          },
+        },
         permissions: {},
         emailVerified: true,
         createdAt: new Date(),
@@ -641,7 +665,8 @@ describe('AuthUseCase', () => {
       const weakPasswordRequest = {
         ...registerRequest,
         password: '123', // Weak password
-      };      mockUserRepository.findByEmail.mockResolvedValue(null);
+      };
+      mockUserRepository.findByEmail.mockResolvedValue(null);
       mockPasswordService.validatePassword.mockResolvedValue({
         isValid: false,
         score: 15,

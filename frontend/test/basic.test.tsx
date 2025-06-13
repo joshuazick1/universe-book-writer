@@ -16,14 +16,14 @@ describe('Basic Frontend Test Infrastructure', () => {
   describe('Test Utilities', () => {
     it('should render a basic component', () => {
       renderWithProviders(<TestComponent />);
-      
+
       expect(screen.getByTestId('test-component')).toBeInTheDocument();
       expect(screen.getByText('Test Component')).toBeInTheDocument();
     });
 
     it('should render with router context', () => {
       renderWithProviders(<TestComponent />);
-      
+
       // Should render without errors (router context is available)
       expect(screen.getByTestId('test-component')).toBeInTheDocument();
     });
@@ -52,12 +52,14 @@ describe('Basic Frontend Test Infrastructure', () => {
     it('should support basic mocking', () => {
       const mockFn = jest.fn();
       mockFn('test');
-      
+
       expect(mockFn).toHaveBeenCalledWith('test');
       expect(mockFn).toHaveBeenCalledTimes(1);
-    });    it('should have mock user data available', () => {
+    });
+    it('should have mock user data available', () => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { mockUser, mockAdminUser, validCredentials } = require('./utils');
-      
+
       expect(mockUser).toBeDefined();
       expect(mockUser.email).toBe('test@example.com');
       expect(mockAdminUser).toBeDefined();

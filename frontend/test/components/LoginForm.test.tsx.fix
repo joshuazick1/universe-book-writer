@@ -1,29 +1,12 @@
 /**
- * Lo// Mock the user-event library since the version might not have setup()
-const mockUserEventSetup = jest.fn().mockReturnValue({
-  type: jest.fn().mockResolvedValue(undefined),
-  click: jest.fn().mockResolvedValue(undefined),
-  clear: jest.fn().mockResolvedValue(undefined),
-});
-
-// Mock userEvent with setup function
-const userEvent = {
-  setup: mockUserEventSetup
-} as any;rm Component Tests
+ * Login Form Component Tests
  * Comprehensive tests for the LoginForm component including validation, submission, and user interactions
  */
 
 import React from 'react';
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { screen, fireEvent, waitFor, act } from '@testing-library/react';
-// Import userEvent with a type declaration that includes setup
 import userEvent from '@testing-library/user-event';
-
-// Add explicit type to enable setup() method
-interface UserEventWithSetup {
-  setup: () => any;
-  [key: string]: any;
-}
 import '@testing-library/jest-dom';
 import { LoginForm } from '../../src/auth/components/LoginForm';
 import { renderWithProviders, mockUser, validCredentials, cleanupMocks } from '../utils';
@@ -35,18 +18,14 @@ const mockNavigate = jest.fn();
 const mockLocation = { state: null };
 
 // Mock react-router-dom
-jest.mock('react-router-dom', () => {
-  const actual = jest.requireActual('react-router-dom');
-  return {
-    // Use an object spread with explicit types to avoid TypeScript errors
-    ...(actual as object),
-    useNavigate: () => mockNavigate,
-    useLocation: () => mockLocation,
-    Link: ({ children, to, ...props }: any) => {
-      return React.createElement('a', { href: to, ...props }, children);
-    },
-  };
-});
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  useLocation: () => mockLocation,
+  Link: ({ children, to, ...props }: any) => {
+    return React.createElement('a', { href: to, ...props }, children);
+  },
+}));
 
 // Mock auth hooks
 jest.mock('../../src/auth/hooks', () => ({
@@ -65,8 +44,7 @@ const { createElement } = jest.requireActual('react') as typeof import('react');
 
 describe('LoginForm Component', () => {
   beforeEach(() => {
-    // Fix for TypeScript compatibility
-    mockLogin.mockResolvedValue({} as any);
+    mockLogin.mockResolvedValue(undefined);
     mockLogin.mockClear();
     mockClearError.mockClear();
     mockNavigate.mockClear();
@@ -103,10 +81,11 @@ describe('LoginForm Component', () => {
       expect(container.firstChild).toHaveClass('custom-class');
     });
   });
+
   describe('Form Validation', () => {
     it('should show validation errors for empty fields', async () => {
       renderWithProviders(<LoginForm />);
-
+      
       await act(async () => {
         fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
       });
@@ -119,18 +98,18 @@ describe('LoginForm Component', () => {
 
     it('should validate email format', async () => {
       renderWithProviders(<LoginForm />);
-
+      
       // Fill in with invalid email
       await act(async () => {
         fireEvent.change(screen.getByLabelText(/email/i), {
-          target: { value: 'invalid-email' },
+          target: { value: 'invalid-email' }
         });
         fireEvent.blur(screen.getByLabelText(/email/i));
       });
 
       // Submit the form to trigger validation
       await act(async () => {
-        fireEvent.submit(screen.getByRole('button', { name: /sign in/i }));
+        fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
       });
 
       // Now check for the validation message
@@ -141,20 +120,21 @@ describe('LoginForm Component', () => {
 
     it('should validate password length', async () => {
       renderWithProviders(<LoginForm />);
-
-      // Enter short password
+      
+      // Fill in with too short password
       await act(async () => {
         fireEvent.change(screen.getByLabelText(/password/i), {
-          target: { value: '123' },
+          target: { value: '123' }
         });
         fireEvent.blur(screen.getByLabelText(/password/i));
       });
 
-      // Submit form to trigger validation
+      // Submit the form to trigger validation
       await act(async () => {
         fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
       });
 
+      // Now check for the validation message
       await waitFor(() => {
         expect(screen.getByText(/password must be at least 6 characters/i)).toBeInTheDocument();
       });

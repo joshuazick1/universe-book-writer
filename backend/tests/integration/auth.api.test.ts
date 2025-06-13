@@ -25,19 +25,25 @@ describe('Authentication API', () => {
     mongoClient = mongoSetup.mongoClient;
     cleanup = mongoSetup.cleanup;
     testDb = mongoClient.db(`test_auth_api_test_${Date.now()}`);
-    
+
     // Create test app with test database
     app = await createTestApp(testDb, mongoClient);
   });
 
   afterAll(async () => {
-    await cleanup();
-    await globalMongoCleanup();
+    try {
+      await cleanup();
+      await globalMongoCleanup();
+      await mongoClient.close();
+    } catch (error) {
+      console.error('Error during cleanup:', error);
+    }
   });
+
   beforeEach(async () => {
     // Clean test data before each test
     await cleanTestData(testDb);
-    
+
     // Reset rate limiting before each test
     await resetRateLimiting();
   });
@@ -47,7 +53,8 @@ describe('Authentication API', () => {
       password: 'SecureTestP@ssw0rd!',
       firstName: 'New',
       lastName: 'User',
-    };    it('should register user and return tokens', async () => {
+    };
+    it('should register user and return tokens', async () => {
       const response = await request(app)
         .post('/api/auth/register')
         .send(validRegistrationData)
@@ -65,7 +72,7 @@ describe('Authentication API', () => {
             emailVerified: false,
           },
         },
-      });      // Verify user was created in database
+      }); // Verify user was created in database
       const users = testDb.collection('users');
       const createdUser = await users.findOne({ email: 'newuser@example.com' });
       expect(createdUser).toBeTruthy();
@@ -77,14 +84,11 @@ describe('Authentication API', () => {
       const invalidData = {
         email: 'invalid-email',
         password: '123', // Too short
-        firstName: '',   // Empty
+        firstName: '', // Empty
         lastName: 'User',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(invalidData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(invalidData).expect(400);
 
       expect(response.body).toEqual({
         success: false,
@@ -101,7 +105,8 @@ describe('Authentication API', () => {
           }),
         ]),
       });
-    });    it('should return 409 for duplicate email', async () => {
+    });
+    it('should return 409 for duplicate email', async () => {
       // Create user first
       await createTestUser(testDb, {
         email: 'newuser@example.com',
@@ -137,7 +142,8 @@ describe('Authentication API', () => {
           }),
         ])
       );
-    });    it.skip('should sanitize user inputs (TODO: implement input sanitization)', async () => {
+    });
+    it.skip('should sanitize user inputs (TODO: implement input sanitization)', async () => {
       const maliciousData = {
         email: 'test@example.com',
         password: 'VeryStr0ng!P@ssw0rd', // Use a more secure password
@@ -150,7 +156,7 @@ describe('Authentication API', () => {
         .send(maliciousData)
         .expect(201);
 
-      expect(response.body.success).toBe(true);      // Verify data was sanitized in database
+      expect(response.body.success).toBe(true); // Verify data was sanitized in database
       const users = testDb.collection('users');
       const createdUser = await users.findOne({ email: 'test@example.com' });
       expect(createdUser).toBeTruthy();
@@ -169,7 +175,8 @@ describe('Authentication API', () => {
         status: UserStatus.ACTIVE,
         emailVerified: true,
       });
-    });    it('should login existing user', async () => {
+    });
+    it('should login existing user', async () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
@@ -200,13 +207,15 @@ describe('Authentication API', () => {
           refreshTokenExpiresAt: expect.any(String),
           sessionId: expect.any(String),
         },
-      });      // Verify HTTP-only cookie is set
+      }); // Verify HTTP-only cookie is set
       const cookies = response.headers['set-cookie'] as string | string[] | undefined;
       expect(cookies).toBeDefined();
       if (Array.isArray(cookies)) {
-        expect(cookies.some((cookie: string) => 
-          cookie.includes('refreshToken') && cookie.includes('HttpOnly')
-        )).toBe(true);
+        expect(
+          cookies.some(
+            (cookie: string) => cookie.includes('refreshToken') && cookie.includes('HttpOnly')
+          )
+        ).toBe(true);
       } else if (cookies) {
         expect(cookies.includes('refreshToken') && cookies.includes('HttpOnly')).toBe(true);
       }
@@ -245,10 +254,7 @@ describe('Authentication API', () => {
     it('should reject suspended users', async () => {
       // Suspend the test user
       const users = testDb.collection('users');
-      await users.updateOne(
-        { _id: testUser._id },
-        { $set: { status: UserStatus.SUSPENDED } }
-      );
+      await users.updateOne({ _id: testUser._id }, { $set: { status: UserStatus.SUSPENDED } });
 
       const response = await request(app)
         .post('/api/auth/login')
@@ -264,10 +270,7 @@ describe('Authentication API', () => {
     it('should reject unverified email addresses', async () => {
       // Set email as unverified
       const users = testDb.collection('users');
-      await users.updateOne(
-        { _id: testUser._id },
-        { $set: { emailVerified: false } }
-      );
+      await users.updateOne({ _id: testUser._id }, { $set: { emailVerified: false } });
 
       const response = await request(app)
         .post('/api/auth/login')
@@ -289,55 +292,57 @@ describe('Authentication API', () => {
         })
         .expect(200);
 
-      const sessionId = response.body.data.sessionId;      // Verify session was created
+      const sessionId = response.body.data.sessionId; // Verify session was created
       const sessions = testDb.collection('auth_sessions');
       const session = await sessions.findOne({ userId: new ObjectId(testUser.id) });
       expect(session).toBeTruthy();
       expect(session!.userId.toString()).toBe(testUser.id);
-      expect(session!.isActive).toBe(true);// Verify tokens were created
+      expect(session!.isActive).toBe(true); // Verify tokens were created
       const tokens = testDb.collection('auth_tokens');
-      const accessToken = await tokens.findOne({ 
-        userId: new ObjectId(testUser.id), 
-        type: 'access' 
+      const accessToken = await tokens.findOne({
+        userId: new ObjectId(testUser.id),
+        type: 'access',
       });
-      const refreshToken = await tokens.findOne({ 
-        userId: new ObjectId(testUser.id), 
-        type: 'refresh' 
-      });      expect(accessToken).toBeTruthy();
+      const refreshToken = await tokens.findOne({
+        userId: new ObjectId(testUser.id),
+        type: 'refresh',
+      });
+      expect(accessToken).toBeTruthy();
       expect(refreshToken).toBeTruthy();
       expect(refreshToken!.status).toBe('active');
     });
 
     it('should enforce rate limiting', async () => {
       // Make multiple rapid login attempts
-      const promises = Array(10).fill(null).map(() =>
-        request(app)
-          .post('/api/auth/login')
-          .send({
+      const promises = Array(10)
+        .fill(null)
+        .map(() =>
+          request(app).post('/api/auth/login').send({
             email: 'test@example.com',
             password: 'WrongPassword',
           })
-      );
+        );
 
       const responses = await Promise.all(promises);
 
       // At least some should be rate limited
       const rateLimitedResponses = responses.filter(r => r.status === 429);
       expect(rateLimitedResponses.length).toBeGreaterThan(0);
-    });    it('should log security events', async () => {
+    });
+    it('should log security events', async () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
           email: 'test@example.com',
           password: 'SecureTestP@ssw0rd!',
         })
-        .expect(200);      // Verify security event was logged (Note: SecurityService stores in memory currently)
+        .expect(200); // Verify security event was logged (Note: SecurityService stores in memory currently)
       // const securityLogs = testDb.collection('security_logs');
       // const loginEvent = await securityLogs.findOne({
       //   userId: testUser.id,
       //   eventType: 'login_success',
       // });
-      
+
       // For now, just verify login was successful since SecurityService is in-memory
       // expect(loginEvent).toBeTruthy();
       // expect(loginEvent.timestamp).toBeTruthy();
@@ -346,18 +351,19 @@ describe('Authentication API', () => {
       //     sessionId: expect.any(String),
       //   })
       // );
-      
+
       // Just verify the login response includes session info
       expect(response.body.data.sessionId).toBeTruthy();
     });
-  });  describe('POST /api/auth/logout', () => {
+  });
+  describe('POST /api/auth/logout', () => {
     let testUser: any;
     let authCookies: string[] | undefined;
 
     beforeEach(async () => {
       // Clear rate limiting before creating user and logging in
       await resetRateLimiting();
-      
+
       testUser = await createTestUser(testDb, {
         email: 'test@example.com',
         password: 'SecureTestP@ssw0rd!',
@@ -377,53 +383,58 @@ describe('Authentication API', () => {
 
       authCookies = loginResponse.headers['set-cookie'] as unknown as string[] | undefined;
       expect(authCookies).toBeDefined();
-    });    it('should logout user and clear session', async () => {
+    });
+    it('should logout user and clear session', async () => {
       if (!authCookies) {
         throw new Error('authCookies not defined from login');
       }
-      
+
       const response = await request(app)
         .post('/api/auth/logout')
         .set('Cookie', authCookies)
-        .expect(200);      expect(response.body).toEqual({
+        .expect(200);
+      expect(response.body).toEqual({
         success: true,
         message: 'Logout successful',
-      });      // Verify session was deactivated
+      }); // Verify session was deactivated
       const sessions = testDb.collection('auth_sessions');
       const session = await sessions.findOne({ userId: new ObjectId(testUser.id) });
       expect(session).toBeTruthy();
-      expect(session!.isActive).toBe(false);      // Verify refresh token was revoked
+      expect(session!.isActive).toBe(false); // Verify refresh token was revoked
       const tokens = testDb.collection('auth_tokens');
-      const refreshToken = await tokens.findOne({ 
-        userId: new ObjectId(testUser.id), 
-        type: 'refresh' 
+      const refreshToken = await tokens.findOne({
+        userId: new ObjectId(testUser.id),
+        type: 'refresh',
       });
       expect(refreshToken).toBeTruthy();
       expect(refreshToken!.status).toBe('revoked');
-    });    it('should clear HTTP-only cookies', async () => {
+    });
+    it('should clear HTTP-only cookies', async () => {
       if (!authCookies) {
         throw new Error('authCookies not defined from login');
       }
-      
+
       const response = await request(app)
         .post('/api/auth/logout')
         .set('Cookie', authCookies)
-        .expect(200);      // Verify cookies are cleared
+        .expect(200); // Verify cookies are cleared
       const clearCookies = response.headers['set-cookie'] as string | string[] | undefined;
       expect(clearCookies).toBeDefined();
       if (Array.isArray(clearCookies)) {
-        expect(clearCookies.some((cookie: string) => 
-          cookie.includes('refreshToken') && cookie.includes('Max-Age=0')
-        )).toBe(true);
+        expect(
+          clearCookies.some(
+            (cookie: string) => cookie.includes('refreshToken') && cookie.includes('Max-Age=0')
+          )
+        ).toBe(true);
       } else if (clearCookies) {
-        expect(clearCookies.includes('refreshToken') && clearCookies.includes('Max-Age=0')).toBe(true);
+        expect(clearCookies.includes('refreshToken') && clearCookies.includes('Max-Age=0')).toBe(
+          true
+        );
       }
     });
 
     it('should return 401 without authentication', async () => {
-      const response = await request(app)
-        .post('/api/auth/logout')
-        .expect(401);
+      const response = await request(app).post('/api/auth/logout').expect(401);
 
       expect(response.body).toEqual({
         success: false,
@@ -434,10 +445,11 @@ describe('Authentication API', () => {
 
   describe('POST /api/auth/refresh', () => {
     let testUser: any;
-    let refreshToken: string;    beforeEach(async () => {
+    let refreshToken: string;
+    beforeEach(async () => {
       // Clear rate limiting for this section
       await resetRateLimiting();
-      
+
       testUser = await createTestUser(testDb, {
         email: 'test@example.com',
         password: 'SecureTestP@ssw0rd!',
@@ -457,7 +469,8 @@ describe('Authentication API', () => {
 
       refreshToken = loginResponse.body.data.refreshToken;
       expect(refreshToken).toBeDefined();
-    });    it('should refresh access token with valid refresh token', async () => {
+    });
+    it('should refresh access token with valid refresh token', async () => {
       const response = await request(app)
         .post('/api/auth/refresh-token')
         .send({ refreshToken })
@@ -476,7 +489,8 @@ describe('Authentication API', () => {
       // Verify new tokens are different
       expect(response.body.data.accessToken).not.toBe(refreshToken);
       expect(response.body.data.refreshToken).not.toBe(refreshToken);
-    });    it('should return 401 for invalid refresh token', async () => {
+    });
+    it('should return 401 for invalid refresh token', async () => {
       const response = await request(app)
         .post('/api/auth/refresh-token')
         .send({ refreshToken: 'invalid-token' })
@@ -486,7 +500,9 @@ describe('Authentication API', () => {
         success: false,
         message: 'Invalid or expired refresh token',
       });
-    });    it('should return 401 for expired refresh token', async () => {      // Manually expire the refresh token
+    });
+    it('should return 401 for expired refresh token', async () => {
+      // Manually expire the refresh token
       const tokens = testDb.collection('auth_tokens');
       await tokens.updateOne(
         { userId: new ObjectId(testUser.id), type: 'refresh' },
@@ -504,10 +520,11 @@ describe('Authentication API', () => {
 
   describe('Protected Routes', () => {
     let testUser: any;
-    let accessToken: string;    beforeEach(async () => {
+    let accessToken: string;
+    beforeEach(async () => {
       // Clear rate limiting for this section
       await resetRateLimiting();
-      
+
       testUser = await createTestUser(testDb, {
         email: 'test@example.com',
         password: 'SecureTestP@ssw0rd!',
@@ -540,9 +557,7 @@ describe('Authentication API', () => {
     });
 
     it('should reject requests without token', async () => {
-      const response = await request(app)
-        .get('/api/auth/profile')
-        .expect(401);
+      const response = await request(app).get('/api/auth/profile').expect(401);
 
       expect(response.body).toEqual({
         success: false,
@@ -560,7 +575,9 @@ describe('Authentication API', () => {
         success: false,
         message: 'Invalid or expired token',
       });
-    });    it('should reject requests with expired token', async () => {      // Manually expire the access token
+    });
+    it('should reject requests with expired token', async () => {
+      // Manually expire the access token
       const tokens = testDb.collection('auth_tokens');
       await tokens.updateOne(
         { userId: new ObjectId(testUser.id), type: 'access' },
@@ -573,7 +590,9 @@ describe('Authentication API', () => {
         .expect(401);
 
       expect(response.body.message).toContain('expired');
-    });    it('should update session activity on authenticated requests', async () => {      const sessionsBefore = testDb.collection('auth_sessions');
+    });
+    it('should update session activity on authenticated requests', async () => {
+      const sessionsBefore = testDb.collection('auth_sessions');
       const sessionBefore = await sessionsBefore.findOne({ userId: new ObjectId(testUser.id) });
       expect(sessionBefore).toBeTruthy();
       const lastActivityBefore = sessionBefore!.lastActivityAt;
@@ -584,7 +603,7 @@ describe('Authentication API', () => {
       await request(app)
         .get('/api/auth/profile')
         .set('Authorization', `Bearer ${accessToken}`)
-        .expect(200);      // Verify session activity was updated
+        .expect(200); // Verify session activity was updated
       const sessionAfter = await sessionsBefore.findOne({ userId: new ObjectId(testUser.id) });
       expect(sessionAfter).toBeTruthy();
       expect(new Date(sessionAfter!.lastActivityAt)).toBeInstanceOf(Date);
@@ -601,7 +620,7 @@ describe('Authentication API', () => {
     beforeEach(async () => {
       // Clear rate limiting for this section
       await resetRateLimiting();
-      
+
       adminUser = await createTestUser(testDb, {
         email: 'admin@example.com',
         password: 'SecureAdm1n!P@ssw0rd',
@@ -637,7 +656,9 @@ describe('Authentication API', () => {
         })
         .expect(200);
       userToken = userLoginResponse.body.data.accessToken;
-    });    it('should allow admin access to admin routes', async () => {      const response = await request(app)
+    });
+    it('should allow admin access to admin routes', async () => {
+      const response = await request(app)
         .get('/api/admin/users')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
@@ -658,9 +679,7 @@ describe('Authentication API', () => {
     });
 
     it('should deny unauthenticated access to admin routes', async () => {
-      const response = await request(app)
-        .get('/api/admin/users')
-        .expect(401);
+      const response = await request(app).get('/api/admin/users').expect(401);
 
       expect(response.body).toEqual({
         success: false,
@@ -671,9 +690,7 @@ describe('Authentication API', () => {
 
   describe('CORS and Security Headers', () => {
     it('should include security headers', async () => {
-      const response = await request(app)
-        .get('/api/health')
-        .expect(200);
+      const response = await request(app).get('/api/health').expect(200);
 
       expect(response.headers).toEqual(
         expect.objectContaining({

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { animationClasses, animationUtils } from '../../utils/animations';
+import { animationClasses } from '../../utils/animations';
 
 export interface FeedbackProps {
   children: React.ReactNode;

@@ -86,46 +86,45 @@ export const useAdminSettings = () => {
     }
   }, []);
 
-  const updateSettings = useCallback(async (newSettings: Partial<AdminSettings>) => {
-    setSaving(true);
-    setError(null);
+  const updateSettings = useCallback(
+    async (newSettings: Partial<AdminSettings>) => {
+      setSaving(true);
+      setError(null);
 
-    try {
-      const response = await axios.put<{
-        success: boolean;
-        data: AdminSettings;
-      }>(
-        `${API_BASE_URL}/admin/settings`,
-        newSettings,
-        { withCredentials: true }
-      );
+      try {
+        const response = await axios.put<{
+          success: boolean;
+          data: AdminSettings;
+        }>(`${API_BASE_URL}/admin/settings`, newSettings, { withCredentials: true });
 
-      if (response.data.success) {
-        setSettings(response.data.data);
-        return true;
-      } else {
-        throw new Error('Failed to update settings');
+        if (response.data.success) {
+          setSettings(response.data.data);
+          return true;
+        } else {
+          throw new Error('Failed to update settings');
+        }
+      } catch (err) {
+        console.error('Error updating admin settings:', err);
+        setError(err instanceof Error ? err.message : 'Failed to update settings');
+
+        // In development, simulate success
+        if (import.meta.env.DEV && settings) {
+          console.warn('Simulating settings update for development');
+          setSettings({
+            ...settings,
+            ...newSettings,
+            updatedAt: new Date().toISOString(),
+          });
+          return true;
+        }
+
+        return false;
+      } finally {
+        setSaving(false);
       }
-    } catch (err) {
-      console.error('Error updating admin settings:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update settings');
-      
-      // In development, simulate success
-      if (import.meta.env.DEV && settings) {
-        console.warn('Simulating settings update for development');
-        setSettings({
-          ...settings,
-          ...newSettings,
-          updatedAt: new Date().toISOString(),
-        });
-        return true;
-      }
-      
-      return false;
-    } finally {
-      setSaving(false);
-    }
-  }, [settings]);
+    },
+    [settings]
+  );
 
   const resetToDefaults = useCallback(async () => {
     setSaving(true);
@@ -135,11 +134,7 @@ export const useAdminSettings = () => {
       const response = await axios.post<{
         success: boolean;
         data: AdminSettings;
-      }>(
-        `${API_BASE_URL}/admin/settings/reset`,
-        {},
-        { withCredentials: true }
-      );
+      }>(`${API_BASE_URL}/admin/settings/reset`, {}, { withCredentials: true });
 
       if (response.data.success) {
         setSettings(response.data.data);
