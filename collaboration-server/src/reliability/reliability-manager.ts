@@ -1,10 +1,25 @@
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/logger.js';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface Message {
+  id: string;
+  userId: string;
+  event: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any;
+  timestamp: number;
+  priority: number;
+  retryCount: number;
+  maxRetries: number;
+  expiresAt?: number;
+}
+
 export interface QueuedMessage {
   id: string;
   userId: string;
   event: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   timestamp: number;
   priority: number;
@@ -118,6 +133,7 @@ export class ReliabilityManager extends EventEmitter {
   public queueMessage(
     userId: string,
     event: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any,
     priority: number = 1,
     maxRetries?: number,

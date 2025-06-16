@@ -6,6 +6,9 @@
 import { EventEmitter } from 'node:events';
 import { v4 as uuidv4 } from 'uuid';
 import type { EventConfig } from '../config/collaboration.config.js';
+import { Logger } from '../utils/logger.js';
+
+const logger = Logger.getInstance();
 
 export interface CollaborationEvent {
   /** Unique event identifier */
@@ -207,7 +210,11 @@ export class EventManager extends EventEmitter {
 
       this.metrics.queuedEvents = this.eventQueue.length;
     } catch (error) {
-      console.error('Error processing events:', error);
+      logger.error(
+        'Error processing events:',
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       this.emit('processingError', error);
     } finally {
       this.isProcessing = false;
@@ -245,7 +252,11 @@ export class EventManager extends EventEmitter {
       this.emit('eventProcessed', event.type, targetConnections.length);
     } catch (error) {
       this.metrics.failedEvents++;
-      console.error(`Failed to process event ${event.id}:`, error);
+      logger.error(
+        `Failed to process event ${event.id}:`,
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       this.emit(
         'eventError',
         event.type,
@@ -307,7 +318,11 @@ export class EventManager extends EventEmitter {
       this.emit('batchProcessed', batch.id, batch.events.length);
     } catch (error) {
       this.metrics.failedEvents += batch.events.length;
-      console.error(`Failed to process batch ${batch.id}:`, error);
+      logger.error(
+        `Failed to process batch ${batch.id}:`,
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       this.emit('batchError', batch.id, error instanceof Error ? error : new Error(String(error)));
     }
   }
@@ -381,13 +396,13 @@ export class EventManager extends EventEmitter {
    * Get target connections for a batch
    */
   private getBatchTargetConnections(batch: EventBatch): string[] {
-    const connections: string[] = [];
-
-    // Aggregate all target connections from the batch
+    const connections: string[] = []; // Aggregate all target connections from the batch
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const _room of batch.targetRooms) {
       // connections.push(...this.connectionManager.getConnectionsInRoom(room));
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const _userId of batch.targetUsers) {
       // connections.push(...this.connectionManager.getUserConnections(userId));
     }

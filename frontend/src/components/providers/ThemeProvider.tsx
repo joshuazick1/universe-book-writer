@@ -4,6 +4,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { logger } from '../../utils/logger';
 
 /* === TYPES === */
 
@@ -97,7 +98,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       setCurrentTheme(themeName);
       localStorage.setItem('universe-theme', themeName);
     } else {
-      console.warn(`Theme "${themeName}" is not registered`);
+      logger.warn(`Theme "${themeName}" is not registered`);
     }
   };
 
@@ -112,7 +113,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   const unregisterTheme = (themeName: string) => {
     if (pluginThemes.has(themeName)) {
       setRegisteredThemes(prev => {
-        const { [themeName]: removed, ...rest } = prev;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [themeName]: _removed, ...rest } = prev;
         return rest;
       });
       setPluginThemes(prev => {

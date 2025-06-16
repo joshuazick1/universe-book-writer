@@ -6,9 +6,13 @@
 export default async function globalTeardown() {
   console.log('Running global teardown...');
   try {
-    // Import the MongoDB helper for proper cleanup
-    const { globalMongoCleanup } = await import('./backend/tests/helpers/mongodb-test-helper.js');
-    await globalMongoCleanup();
+    // Try to import the MongoDB helper for proper cleanup
+    try {
+      const { globalMongoCleanup } = await import('./backend/tests/helpers/mongodb-test-helper.js');
+      await globalMongoCleanup();
+    } catch (importError) {
+      console.log('Could not import mongodb-test-helper, skipping specific cleanup');
+    }
 
     // Close any global MongoDB connections if they exist
     if (global.__MONGO_CLIENT__) {

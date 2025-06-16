@@ -40,9 +40,7 @@ export const DashboardPage: React.FC = () => {
 
           {/* Authentication Status Card */}
           <div className="bg-green-500/10 backdrop-blur-sm rounded-lg p-6 border border-green-500/30">
-            <h2 className="text-2xl font-semibold mb-4 text-green-400">
-              🔐 Authentication System
-            </h2>
+            <h2 className="text-2xl font-semibold mb-4 text-green-400">🔐 Authentication System</h2>
             <div className="space-y-2 text-universe-text-secondary">
               <p>✅ User registration and login</p>
               <p>✅ JWT token authentication</p>
@@ -110,20 +108,13 @@ export const DashboardPage: React.FC = () => {
               🎉 Phase A.1 Complete!
             </h3>
             <p className="text-universe-text-secondary mb-4">
-              The authentication system is now fully functional and ready for Phase 1.5
-              development.
+              The authentication system is now fully functional and ready for Phase 1.5 development.
             </p>
             <div className="flex justify-center space-x-4 text-sm">
-              <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded">
-                Frontend ✅
-              </span>
+              <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded">Frontend ✅</span>
               <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded">Backend ✅</span>
-              <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded">
-                Database ✅
-              </span>
-              <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded">
-                Security ✅
-              </span>
+              <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded">Database ✅</span>
+              <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded">Security ✅</span>
             </div>
           </div>
         </div>

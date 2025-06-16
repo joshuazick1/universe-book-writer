@@ -160,7 +160,14 @@ export const UserManagementPage: React.FC = () => {
     });
   };
 
-  const handleCreateUser = async (userData: any) => {
+  const handleCreateUser = async (userData: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    skipEmailVerification?: boolean;
+  }) => {
     await createUser(userData);
     await fetchUsers({
       page: 1,

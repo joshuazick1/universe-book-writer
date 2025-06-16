@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-06-15T23:00:14.772Z",
+  "target": "frontend",
+  "pattern": "auth.store",
+  "comment": null,
+  "coverage": false,
+  "watch": false,
+  "nodeVersion": "v22.15.1",
+  "platform": "win32",
+  "cwd": "C:\\Users\\jzick\\Universe_Book_Writer\\frontend"
+}

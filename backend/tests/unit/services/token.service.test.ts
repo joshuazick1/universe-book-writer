@@ -10,6 +10,7 @@ import { User, UserRole } from '../../../src/core/entities/user.entity.js';
 
 describe('TokenService - Simplified Tests', () => {
   let tokenService: JwtTokenService;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockConfig: any;
 
   beforeEach(() => {

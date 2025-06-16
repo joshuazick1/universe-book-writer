@@ -63,10 +63,10 @@ export const useAuthStore = create<AuthStore>()(
       (set, get) => ({
         // Initial state
         user: null,
-        tokens: null, // Not used with HTTP-only cookies
         isAuthenticated: false,
         isLoading: false,
         error: null,
+        isEmailVerified: false,
 
         // Authentication actions
         login: async (credentials: LoginCredentials) => {
@@ -142,7 +142,6 @@ export const useAuthStore = create<AuthStore>()(
             // Clear local state
             set({
               user: null,
-              tokens: null,
               isAuthenticated: false,
               isLoading: false,
               error: null,
@@ -314,18 +313,35 @@ export const useAuthStore = create<AuthStore>()(
 
         // State management
         setError: (error: AuthError | null) => {
-          set({ error });
+          const currentError = get().error;
+          // Only update if the error actually changed
+          if (JSON.stringify(currentError) !== JSON.stringify(error)) {
+            set({ error });
+          }
         },
 
         clearError: () => {
-          set({ error: null });
+          const currentError = get().error;
+          // Only clear if there is an error
+          if (currentError) {
+            set({ error: null });
+          }
         },
 
         setLoading: (loading: boolean) => {
-          set({ isLoading: loading });
+          const currentLoading = get().isLoading;
+          // Only update if the loading state changed
+          if (currentLoading !== loading) {
+            set({ isLoading: loading });
+          }
         },
 
         checkAuthStatus: async () => {
+          // Skip if we're already loading
+          if (get().isLoading) {
+            return;
+          }
+
           try {
             set({ isLoading: true, error: null });
 
@@ -336,22 +352,21 @@ export const useAuthStore = create<AuthStore>()(
             set({
               user: data.user,
               isAuthenticated: true,
-              isLoading: false,
             });
           } catch (error) {
             // If profile fetch fails, user is not authenticated
             set({
               user: null,
               isAuthenticated: false,
-              isLoading: false,
             });
+          } finally {
+            set({ isLoading: false });
           }
         },
 
         clearAuth: () => {
           set({
             user: null,
-            tokens: null,
             isAuthenticated: false,
             error: null,
           });

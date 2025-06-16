@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from '../../base/Card';
+import { logger } from '../../../utils/logger';
 
 // AI Settings Interfaces
 interface OllamaServerSettings {
@@ -158,7 +159,7 @@ export const UserSettingsPage: React.FC = () => {
     setIsSaving(true);
     try {
       // TODO: Implement API calls to save settings
-      console.log('Saving settings...', {
+      logger.info('Saving settings...', {
         ai: aiSettings,
         editor: editorSettings,
         plugins: pluginSettings,
@@ -169,7 +170,7 @@ export const UserSettingsPage: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       alert('Settings saved successfully!');
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      logger.error('Failed to save settings:', error);
       alert('Failed to save settings');
     } finally {
       setIsSaving(false);
@@ -544,7 +545,9 @@ export const UserSettingsPage: React.FC = () => {
                               }
                               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             />
-                            <label className="ml-2 text-sm text-gray-700">Enable grammar check</label>
+                            <label className="ml-2 text-sm text-gray-700">
+                              Enable grammar check
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -577,7 +580,9 @@ export const UserSettingsPage: React.FC = () => {
                             }
                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                           />
-                          <label className="ml-2 text-sm text-gray-700">Enable AI writing assistance</label>
+                          <label className="ml-2 text-sm text-gray-700">
+                            Enable AI writing assistance
+                          </label>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -741,7 +746,8 @@ export const UserSettingsPage: React.FC = () => {
                             onChange={e =>
                               setPluginSettings(prev => ({
                                 ...prev,
-                                pluginSecurityLevel: e.target.value as PluginSettings['pluginSecurityLevel'],
+                                pluginSecurityLevel: e.target
+                                  .value as PluginSettings['pluginSecurityLevel'],
                               }))
                             }
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -774,7 +780,9 @@ export const UserSettingsPage: React.FC = () => {
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="inline-block w-3 h-3 rounded-full bg-green-500" />
-                            <button className="text-blue-600 hover:text-blue-800 text-sm">Configure</button>
+                            <button className="text-blue-600 hover:text-blue-800 text-sm">
+                              Configure
+                            </button>
                           </div>
                         </div>
                         <div className="p-4 border border-gray-200 rounded-lg flex items-center justify-between">
@@ -787,7 +795,9 @@ export const UserSettingsPage: React.FC = () => {
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="inline-block w-3 h-3 rounded-full bg-green-500" />
-                            <button className="text-blue-600 hover:text-blue-800 text-sm">Configure</button>
+                            <button className="text-blue-600 hover:text-blue-800 text-sm">
+                              Configure
+                            </button>
                           </div>
                         </div>
                         <button className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700">
@@ -856,7 +866,9 @@ export const UserSettingsPage: React.FC = () => {
                               }
                               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             />
-                            <label className="ml-2 text-sm text-gray-700">Enable comments and annotations</label>
+                            <label className="ml-2 text-sm text-gray-700">
+                              Enable comments and annotations
+                            </label>
                           </div>
                           <div className="flex items-center">
                             <input
@@ -870,7 +882,9 @@ export const UserSettingsPage: React.FC = () => {
                               }
                               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             />
-                            <label className="ml-2 text-sm text-gray-700">Enable suggestion mode</label>
+                            <label className="ml-2 text-sm text-gray-700">
+                              Enable suggestion mode
+                            </label>
                           </div>
                           <div className="flex items-center">
                             <input
@@ -900,7 +914,8 @@ export const UserSettingsPage: React.FC = () => {
                               onChange={e =>
                                 setCollaborationSettings(prev => ({
                                   ...prev,
-                                  defaultPermissionLevel: e.target.value as CollaborationSettings['defaultPermissionLevel'],
+                                  defaultPermissionLevel: e.target
+                                    .value as CollaborationSettings['defaultPermissionLevel'],
                                 }))
                               }
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -919,7 +934,8 @@ export const UserSettingsPage: React.FC = () => {
                               onChange={e =>
                                 setCollaborationSettings(prev => ({
                                   ...prev,
-                                  conflictResolution: e.target.value as CollaborationSettings['conflictResolution'],
+                                  conflictResolution: e.target
+                                    .value as CollaborationSettings['conflictResolution'],
                                 }))
                               }
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -961,7 +977,9 @@ export const UserSettingsPage: React.FC = () => {
                               }
                               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             />
-                            <label className="ml-2 text-sm text-gray-700">Enable automatic backups</label>
+                            <label className="ml-2 text-sm text-gray-700">
+                              Enable automatic backups
+                            </label>
                           </div>
                           <div className="flex items-center">
                             <input
@@ -1051,7 +1069,8 @@ export const UserSettingsPage: React.FC = () => {
                               onChange={e =>
                                 setDataSettings(prev => ({
                                   ...prev,
-                                  compressionLevel: e.target.value as DataSettings['compressionLevel'],
+                                  compressionLevel: e.target
+                                    .value as DataSettings['compressionLevel'],
                                 }))
                               }
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

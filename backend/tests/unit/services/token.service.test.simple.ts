@@ -6,10 +6,11 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { JwtTokenService } from '../../../src/infrastructure/services/token.service.js';
 import { TokenClaims, TokenType } from '../../../src/core/entities/auth.entity.js';
-import { User, UserRole } from '../../../src/core/entities/user.entity.js';
+import { User, UserRole, UserStatus } from '../../../src/core/entities/user.entity.js';
 
 describe('TokenService - Simplified Tests', () => {
   let tokenService: JwtTokenService;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockConfig: any;
 
   beforeEach(() => {
@@ -117,26 +118,37 @@ describe('TokenService - Simplified Tests', () => {
   describe('generateTokenPair', () => {
     it('should generate both access and refresh tokens', async () => {
       // Arrange
-      const mockUser: User = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mockUser = {
         id: 'user123',
         email: 'test@example.com',
         username: 'testuser',
         role: UserRole.USER,
         passwordHash: 'hash',
-        status: 'active',
+        status: UserStatus.ACTIVE,
         emailVerified: true,
         profile: {
           firstName: 'Test',
           lastName: 'User',
-          displayName: 'Test User',
-          avatarUrl: '',
+          avatar: '',
+          preferences: {
+            theme: 'light' as const,
+            language: 'en',
+            timezone: 'UTC',
+            notifications: {
+              email: true,
+              push: true,
+              mentions: true,
+            },
+          },
         },
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
       // Act
-      const result = await tokenService.generateTokenPair(mockUser);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await tokenService.generateTokenPair(mockUser as any);
 
       // Assert
       expect(result).toBeDefined();

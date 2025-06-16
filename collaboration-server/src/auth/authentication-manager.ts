@@ -7,6 +7,9 @@ import { EventEmitter } from 'node:events';
 import jwt from 'jsonwebtoken';
 import type { Socket } from 'socket.io';
 import type { AuthConfig } from '../config/collaboration.config.js';
+import { Logger } from '../utils/logger.js';
+
+const logger = Logger.getInstance();
 
 export interface UserSession {
   /** User identifier */
@@ -334,7 +337,11 @@ export class AuthenticationManager extends EventEmitter {
 
       return payload;
     } catch (error) {
-      console.error('Token verification failed:', error);
+      logger.error(
+        'Token verification failed:',
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       return null;
     }
   }
@@ -381,7 +388,7 @@ export class AuthenticationManager extends EventEmitter {
       }
 
       if (expiredSessions.length > 0) {
-        console.log(`Cleaned up ${expiredSessions.length} expired sessions`);
+        logger.info(`Cleaned up ${expiredSessions.length} expired sessions`);
       }
     }, 60000); // Check every minute
   }

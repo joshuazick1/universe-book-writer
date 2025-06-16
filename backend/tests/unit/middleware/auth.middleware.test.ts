@@ -3,7 +3,10 @@
  * Tests JWT token validation, session management, and error handling
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Request, Response, NextFunction } from 'express';
 import { AuthMiddleware, AuthRequest } from '../../../src/api/middleware/auth.middleware.js';
 import { TokenService } from '../../../src/core/interfaces/auth.service.js';

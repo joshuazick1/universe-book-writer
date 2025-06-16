@@ -24,7 +24,7 @@ interface SecurityLog {
   userEmail?: string;
   ipAddress?: string;
   userAgent?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 interface SecurityLogsFilters {

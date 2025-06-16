@@ -7,6 +7,9 @@ import { EventEmitter } from 'node:events';
 import { v4 as uuidv4 } from 'uuid';
 import type { Socket } from 'socket.io';
 import type { ConnectionConfig } from '../config/collaboration.config.js';
+import { Logger } from '../utils/logger.js';
+
+const logger = Logger.getInstance();
 
 export interface ConnectionInfo {
   /** Unique connection identifier */
@@ -179,6 +182,7 @@ export class ConnectionManager extends EventEmitter {
     if (this.config.enablePooling && this.connectionPool.length < this.config.poolSize) {
       // Clean connection for reuse
       const cleanConnection = { ...connection };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cleanConnection.socket = null as any; // Clear socket reference
       cleanConnection.subscriptions.clear();
       this.connectionPool.push(cleanConnection);
@@ -276,12 +280,12 @@ export class ConnectionManager extends EventEmitter {
     const { socket } = connection;
 
     socket.on('disconnect', reason => {
-      console.log(`Socket disconnected: ${connection.id}, reason: ${reason}`);
+      logger.info(`Socket disconnected: ${connection.id}, reason: ${reason}`);
       this.removeConnection(connection.id);
     });
 
     socket.on('error', error => {
-      console.error(`Socket error for ${connection.id}:`, error);
+      logger.error(`Socket error for ${connection.id}:`, { error: error.message });
       this.metrics.connectionErrors++;
       this.emit('connectionError', connection.id, error);
     });
@@ -293,7 +297,7 @@ export class ConnectionManager extends EventEmitter {
     // Setup connection timeout
     const timeout = setTimeout(() => {
       if (connection.state === 'connecting') {
-        console.log(`Connection timeout for ${connection.id}`);
+        logger.info(`Connection timeout for ${connection.id}`);
         socket.disconnect(true);
         this.removeConnection(connection.id);
       }
@@ -319,7 +323,7 @@ export class ConnectionManager extends EventEmitter {
         // Check for idle connections
         const idleTime = now - connection.lastActivity.getTime();
         if (idleTime > this.config.maxIdleTime) {
-          console.log(`Disconnecting idle connection: ${connection.id}`);
+          logger.info(`Disconnecting idle connection: ${connection.id}`);
           connection.socket.disconnect(true);
         }
       }
@@ -334,7 +338,7 @@ export class ConnectionManager extends EventEmitter {
       // Clean up disconnected connections that might have been missed
       for (const [connectionId, connection] of this.connections.entries()) {
         if (!connection.socket.connected) {
-          console.log(`Cleaning up disconnected connection: ${connectionId}`);
+          logger.info(`Cleaning up disconnected connection: ${connectionId}`);
           this.removeConnection(connectionId);
         }
       }

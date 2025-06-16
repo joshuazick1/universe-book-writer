@@ -11,6 +11,9 @@ import type { ConnectionManager } from '../connection/connection-manager.js';
 import type { EventManager } from '../events/event-manager.js';
 import type { AuthenticationManager } from '../auth/authentication-manager.js';
 import type { WebSocketConfig } from '../config/collaboration.config.js';
+import { Logger } from '../utils/logger.js';
+
+const logger = Logger.getInstance();
 
 export interface WebSocketMetrics {
   /** Total connections established */
@@ -86,6 +89,7 @@ export class WebSocketServer extends EventEmitter {
       // Create Socket.IO server
       this.io = new SocketIOServer(this.httpServer, {
         cors: this.config.socketIO.cors,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         transports: this.config.socketIO.transports as any,
         pingTimeout: this.config.socketIO.pingTimeout,
         pingInterval: this.config.socketIO.pingInterval,
@@ -102,7 +106,7 @@ export class WebSocketServer extends EventEmitter {
 
       this.isStarted = true;
       this.emit('serverStarted', this.httpServer.address());
-      console.log('WebSocket server started successfully');
+      logger.info('WebSocket server started successfully');
     } catch (error) {
       this.emit('serverError', error instanceof Error ? error : new Error(String(error)));
       throw error;
@@ -120,7 +124,7 @@ export class WebSocketServer extends EventEmitter {
     try {
       await new Promise<void>(resolve => {
         this.io!.close(() => {
-          console.log('WebSocket server stopped');
+          logger.info('WebSocket server stopped');
           resolve();
         });
       });
@@ -218,7 +222,7 @@ export class WebSocketServer extends EventEmitter {
       this.metrics.totalConnections++;
       this.metrics.activeConnections++;
 
-      console.log(`WebSocket connection established: ${connection.id} (User: ${userId})`);
+      logger.info(`WebSocket connection established: ${connection.id} (User: ${userId})`);
 
       // Setup socket event handlers
       this.setupSocketHandlers(socket, connection.id);
@@ -230,7 +234,11 @@ export class WebSocketServer extends EventEmitter {
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Failed to handle connection:', error);
+      logger.error(
+        'Failed to handle connection:',
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       this.metrics.connectionErrors++;
       socket.disconnect(true);
     }
@@ -243,13 +251,17 @@ export class WebSocketServer extends EventEmitter {
     // Handle disconnection
     socket.on('disconnect', reason => {
       this.metrics.activeConnections = Math.max(0, this.metrics.activeConnections - 1);
-      console.log(`Socket disconnected: ${connectionId}, reason: ${reason}`);
+      logger.info(`Socket disconnected: ${connectionId}, reason: ${reason}`);
     });
 
     // Handle errors
     socket.on('error', error => {
       this.metrics.connectionErrors++;
-      console.error(`Socket error for ${connectionId}:`, error);
+      logger.error(
+        `Socket error for ${connectionId}:`,
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
     });
 
     // Handle generic messages
@@ -310,7 +322,11 @@ export class WebSocketServer extends EventEmitter {
       this.updateAverageProcessingTime(processingTime);
     } catch (error) {
       this.metrics.messageErrors++;
-      console.error(`Error handling message from ${connectionId}:`, error);
+      logger.error(
+        `Error handling message from ${connectionId}:`,
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       socket.emit('error', {
         message: 'Failed to process message',
         timestamp: new Date().toISOString(),
@@ -331,9 +347,13 @@ export class WebSocketServer extends EventEmitter {
       this.connectionManager.subscribe(connectionId, data.room);
       socket.emit('subscribed', { room: data.room, timestamp: new Date().toISOString() });
 
-      console.log(`Connection ${connectionId} subscribed to room: ${data.room}`);
+      logger.info(`Connection ${connectionId} subscribed to room: ${data.room}`);
     } catch (error) {
-      console.error(`Subscription error for ${connectionId}:`, error);
+      logger.error(
+        `Subscription error for ${connectionId}:`,
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       socket.emit('error', { message: 'Failed to subscribe to room' });
     }
   }
@@ -351,9 +371,13 @@ export class WebSocketServer extends EventEmitter {
       this.connectionManager.unsubscribe(connectionId, data.room);
       socket.emit('unsubscribed', { room: data.room, timestamp: new Date().toISOString() });
 
-      console.log(`Connection ${connectionId} unsubscribed from room: ${data.room}`);
+      logger.info(`Connection ${connectionId} unsubscribed from room: ${data.room}`);
     } catch (error) {
-      console.error(`Unsubscription error for ${connectionId}:`, error);
+      logger.error(
+        `Unsubscription error for ${connectionId}:`,
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       socket.emit('error', { message: 'Failed to unsubscribe from room' });
     }
   }
@@ -448,7 +472,11 @@ export class WebSocketServer extends EventEmitter {
           connection.socket.emit(eventType, message);
           sentCount++;
         } catch (error) {
-          console.error(`Failed to send message to ${connectionId}:`, error);
+          logger.error(
+            `Failed to send message to ${connectionId}:`,
+            {},
+            error instanceof Error ? error : new Error(String(error))
+          );
           this.metrics.messageErrors++;
         }
       }
@@ -489,7 +517,11 @@ export class WebSocketServer extends EventEmitter {
           });
           this.metrics.messagesSent++;
         } catch (error) {
-          console.error(`Failed to send message to user ${userId}:`, error);
+          logger.error(
+            `Failed to send message to user ${userId}:`,
+            {},
+            error instanceof Error ? error : new Error(String(error))
+          );
           this.metrics.messageErrors++;
         }
       }

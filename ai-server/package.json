@@ -7,7 +7,12 @@
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest",
+    "test": "npx tsx ../scripts/run-tests-with-output.ts ai-server",
+    "test:watch": "npx tsx ../scripts/run-tests-with-output.ts ai-server --watch",
+    "test:coverage": "npx tsx ../scripts/run-tests-with-output.ts ai-server --coverage",
+    "test:pattern": "npx tsx ../scripts/run-tests-with-output.ts ai-server --pattern",
+    "test:verbose": "npx tsx ../scripts/run-tests-with-output.ts ai-server --verbose",
+    "test:direct": "jest",
     "lint": "eslint src --ext .ts"
   },
   "devDependencies": {

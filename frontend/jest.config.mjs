@@ -19,15 +19,19 @@ export default {
     '^@/(.*)$': '<rootDir>/src/$1',
     // Handle imports of .ts files without extension
     '^(\\.\\.?/.*)\\.js$': '$1',
+    // Handle CSS and image imports
+    '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+    '\\.(jpg|jpeg|png|gif|svg)$': 'jest-transform-stub',
   },
   
-  // Transform configuration for TypeScript and JSX
+  // Transform configuration for TypeScript and JSX using ts-jest
   transform: {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
         tsconfig: '<rootDir>/tsconfig.json',
-        useESM: true
+        useESM: true,
+        jsx: 'react-jsx',
       }
     ],
   },
@@ -48,9 +52,6 @@ export default {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'clover'],
   
-  globals: {
-    'ts-jest': {
-      isolatedModules: true
-    }
-  }
+  // ESM support
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 };

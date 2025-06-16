@@ -126,4 +126,5 @@ const testUtils = {
 };
 
 // Assign to global for access in tests
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global as any).testUtils = testUtils;

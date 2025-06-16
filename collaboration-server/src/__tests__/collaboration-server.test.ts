@@ -84,8 +84,13 @@ describe('CollaborationServer Integration', () => {
   });
 
   afterEach(async () => {
+    // Stop the main server
     if (server) {
-      await server.stop();
+      try {
+        await server.stop();
+      } catch (error) {
+        console.warn('Error stopping main server:', error);
+      }
     }
 
     // Clean up any additional servers created in tests
@@ -93,10 +98,13 @@ describe('CollaborationServer Integration', () => {
       try {
         await additionalServer.stop();
       } catch (error) {
-        // Ignore errors during cleanup
+        console.warn('Error stopping additional server:', error);
       }
     }
     additionalServers = [];
+
+    // Wait a bit to allow cleanup to complete
+    await new Promise(resolve => setTimeout(resolve, 100));
   });
 
   describe('server lifecycle', () => {
@@ -133,8 +141,10 @@ describe('CollaborationServer Integration', () => {
       expect(config).toEqual(testConfig);
     });
 
-    it('should use default configuration when none provided', () => {
+    it('should use default configuration when none provided', async () => {
       const defaultServer = new CollaborationServer();
+      additionalServers.push(defaultServer);
+
       const config = defaultServer.getConfiguration();
 
       expect(config).toBeDefined();
@@ -182,6 +192,7 @@ describe('CollaborationServer Integration', () => {
       // Test error handling by trying to use an invalid port
       const errorConfig = { ...testConfig, port: -1 };
       const errorServer = new CollaborationServer({ config: errorConfig });
+      additionalServers.push(errorServer);
 
       await expect(errorServer.start()).rejects.toThrow();
     });
@@ -195,6 +206,7 @@ describe('CollaborationServer Integration', () => {
       const originalListeners = process.listeners('SIGINT');
       process.removeAllListeners('SIGINT');
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let _shutdownCalled = false;
       const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
         _shutdownCalled = true;
@@ -233,6 +245,7 @@ describe('CollaborationServer Integration', () => {
     it('should handle startup errors', async () => {
       // Force a startup error by using an invalid configuration
       const invalidConfig = { ...testConfig };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (invalidConfig as any).websocket = null;
 
       const invalidServer = new CollaborationServer({ config: invalidConfig });

@@ -3,9 +3,9 @@
  * Simple test to verify the test infrastructure is working
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, jest } from '@jest/globals';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from './utils';
+import { renderWithProviders, mockUser, mockAdminUser, validCredentials } from './utils.js';
 
 // Simple test component
 function TestComponent() {
@@ -57,9 +57,6 @@ describe('Basic Frontend Test Infrastructure', () => {
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
     it('should have mock user data available', () => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { mockUser, mockAdminUser, validCredentials } = require('./utils');
-
       expect(mockUser).toBeDefined();
       expect(mockUser.email).toBe('test@example.com');
       expect(mockAdminUser).toBeDefined();

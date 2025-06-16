@@ -4,6 +4,7 @@
  */
 
 import { BaseEntity } from '@universe-book-writer/core';
+import { User } from './user.entity.js';
 
 export enum TokenType {
   ACCESS = 'access',
@@ -340,7 +341,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  user: any; // Will be User entity
+  user: User; // User entity
   accessToken: string;
   refreshToken: string;
   accessTokenExpiresAt: Date;
@@ -376,7 +377,7 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   success: boolean;
   data?: {
-    user: any; // Will be User entity
+    user: User; // User entity
     verificationToken: string;
   };
   error?: string;

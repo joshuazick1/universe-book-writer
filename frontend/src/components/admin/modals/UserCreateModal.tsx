@@ -68,7 +68,8 @@ export const UserCreateModal: React.FC<UserCreateModalProps> = ({ isOpen, onClos
       setLoading(true);
       setError(null);
 
-      const { confirmPassword, ...userData } = formData;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { confirmPassword: _confirmPassword, ...userData } = formData;
       await onCreate(userData);
 
       // Reset form

@@ -45,10 +45,20 @@ export const invalidCredentials = {
   password: 'wrongpassword',
 };
 
-// Simple render function with router
+// Enhanced render function with router and auth context
 export function renderWithProviders(ui: React.ReactElement): RenderResult {
   function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(BrowserRouter, null, children);
+    // Enable v7 flags to prevent warnings
+    return React.createElement(
+      BrowserRouter,
+      {
+        future: {
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        },
+      },
+      children
+    );
   }
 
   return render(ui, { wrapper: Wrapper });
@@ -78,6 +88,7 @@ export const createMockAuthStore = (overrides = {}) => ({
 });
 
 // Mock API responses
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createMockApiResponse = (data: any, success = true) => ({
   data: {
     success,

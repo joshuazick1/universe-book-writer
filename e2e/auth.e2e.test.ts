@@ -193,6 +193,7 @@ test.describe('Authentication E2E', () => {
 
     test('should refresh tokens automatically', async ({ page }) => {
       // Setup request interception to monitor token refresh
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let _refreshRequests = 0;
 
       page.route(`${API_URL}/api/auth/refresh`, route => {

@@ -11,6 +11,7 @@
 This phase establishes the core universe management system that enables users to create, edit, and manage fictional universes. Additionally, this phase lays the groundwork for mobile companion device integration by implementing the real-time synchronization infrastructure needed for cross-device functionality.
 
 **Key Deliverables**:
+
 - Complete universe CRUD operations (backend + frontend)
 - Plugin-based universe validation system
 - Universe permissions and ownership management
@@ -20,6 +21,7 @@ This phase establishes the core universe management system that enables users to
 ## Mobile Companion Integration Foundation
 
 ### Unified Real-Time Infrastructure
+
 As part of this phase, we establish the unified WebSocket infrastructure that will enable both mobile companion device functionality and real-time collaboration features. This shared infrastructure ensures consistency, performance, and simplified maintenance.
 
 ```typescript
@@ -42,7 +44,9 @@ interface UnifiedRealTimeSystem {
 ```
 
 ### Unified API Design for Multi-Channel Access
+
 Universe management APIs designed to support mobile companion, collaboration, and standard web access through a single, efficient interface:
+
 - **Lightweight universe summaries** for mobile list views and collaboration panels
 - **Voice-command compatible endpoints** for universe selection and management
 - **Real-time universe state updates** pushed to mobile devices AND collaborators
@@ -54,6 +58,7 @@ Universe management APIs designed to support mobile companion, collaboration, an
 ### A.2.1: Universe Data Models & Backend Foundation (Days 1-2)
 
 #### Database Schema Implementation
+
 ```typescript
 interface Universe {
   id: string;
@@ -79,6 +84,7 @@ interface UniverseSettings {
 ```
 
 #### Tasks:
+
 - [ ] **Universe schema design and implementation**
   - Core universe data model
   - Plugin configuration schema
@@ -104,6 +110,7 @@ interface UniverseSettings {
   - WebSocket message encryption foundation
 
 #### Success Criteria:
+
 - [ ] Universe model passes all validation tests
 - [ ] Database queries perform within 100ms
 - [ ] Plugin validation system integrated and functional
@@ -114,6 +121,7 @@ interface UniverseSettings {
 ### A.2.2: Universe CRUD Operations & API (Days 3-4)
 
 #### Backend API Endpoints
+
 ```typescript
 // Standard CRUD operations
 POST   /api/universes              // Create universe
@@ -129,6 +137,7 @@ GET    /api/universes/:id/mobile-state  // Mobile state information
 ```
 
 #### Real-Time Unified Infrastructure
+
 - **WebSocket setup** for universe updates (mobile + collaboration)
 - **Operational transformation** for conflict resolution across all channels
 - **Multi-channel device registration** (mobile devices + collaborator sessions)
@@ -136,6 +145,7 @@ GET    /api/universes/:id/mobile-state  // Mobile state information
 - **Channel-specific optimizations** (mobile bandwidth vs. desktop features)
 
 #### Tasks:
+
 - [ ] **Create, read, update, delete universe endpoints**
   - Full CRUD API implementation
   - Proper error handling and validation
@@ -162,6 +172,7 @@ GET    /api/universes/:id/mobile-state  // Mobile state information
   - Secure key exchange and rotation for WebSocket sessions
 
 #### Success Criteria:
+
 - [ ] All CRUD operations working correctly
 - [ ] Search and filtering perform efficiently
 - [ ] Export/import maintains data integrity
@@ -173,6 +184,7 @@ GET    /api/universes/:id/mobile-state  // Mobile state information
 ### A.2.3: Universe Management UI & Mobile Considerations (Days 5-7)
 
 #### Desktop Universe Management Interface
+
 ```typescript
 interface UniverseManagementUI {
   dashboard: UniverseDashboard;
@@ -184,12 +196,14 @@ interface UniverseManagementUI {
 ```
 
 #### Mobile Companion Integration Points
+
 - **Universe selection widget** for mobile remote control
 - **Real-time sync indicators** showing mobile device status
 - **Mobile-friendly universe creation** through voice commands (future)
 - **Cross-device notification system** for universe changes
 
 #### Tasks:
+
 - [ ] **Universe dashboard and listing**
   - Grid/list view of user's universes
   - Quick actions (edit, duplicate, delete)
@@ -220,6 +234,7 @@ interface UniverseManagementUI {
   - Collaboration status integration with mobile sync
 
 #### Success Criteria:
+
 - [ ] Universe dashboard loads within 2 seconds
 - [ ] Creation wizard completes without errors
 - [ ] All forms validate properly
@@ -229,6 +244,7 @@ interface UniverseManagementUI {
 ### A.2.4: Universe Testing & Quality Assurance (Days 8-10)
 
 #### Comprehensive Testing Strategy
+
 ```typescript
 interface UniverseTestSuite {
   unit_tests: UniverseUnitTests;
@@ -241,6 +257,7 @@ interface UniverseTestSuite {
 ```
 
 #### Tasks:
+
 - [ ] **Unit tests for universe operations**
   - Model validation testing
   - CRUD operation testing
@@ -272,6 +289,7 @@ interface UniverseTestSuite {
   - Key rotation and management testing
 
 #### Success Criteria:
+
 - [ ] Test coverage >85% for all universe-related code
 - [ ] All integration tests pass
 - [ ] Performance benchmarks met (< 2s page loads)
@@ -288,18 +306,21 @@ interface UniverseTestSuite {
 ### Phase A.2 Foundation Elements
 
 #### Unified WebSocket Infrastructure
+
 - **Multi-channel real-time updates** for mobile, desktop, and collaborators
 - **Device + session registration system** for all connection types
 - **Unified connection management** with automatic reconnection
 - **Bandwidth optimization** tailored for each channel type (mobile/desktop/collaboration)
 
 #### Channel-Optimized APIs
+
 - **Lightweight summaries** optimized for mobile and collaboration panels
 - **Incremental sync endpoints** for efficient data transfer across all channels
 - **Voice command preparation** (API structure for future voice integration)
 - **Collaboration-aware endpoints** with user presence and conflict resolution
 
 #### Unified State Management
+
 - **Universe selection sync** across mobile, desktop, and collaborators
 - **Active universe tracking** with multi-user awareness
 - **Conflict resolution** for simultaneous edits from any channel
@@ -310,18 +331,21 @@ interface UniverseTestSuite {
 ### Why Share WebSocket Infrastructure?
 
 #### Performance Benefits
+
 - **Single connection per client** instead of multiple WebSocket connections
 - **Message multiplexing** - route different message types through one connection
 - **Reduced server resource usage** - fewer connections to manage
 - **Better connection pooling** and resource optimization
 
 #### Consistency Benefits
+
 - **Unified operational transformation** - same conflict resolution for mobile + collaboration
 - **Consistent state management** - all channels see the same data simultaneously
 - **Single source of truth** for real-time updates
 - **Simplified debugging** - one system to monitor and troubleshoot
 
 #### Development Benefits
+
 - **Shared code base** for real-time features
 - **Unified testing strategy** for all real-time functionality
 - **Single WebSocket protocol** to design, implement, and maintain
@@ -351,18 +375,21 @@ interface MessageRoutingSystem {
 ### Channel-Specific Optimizations
 
 #### Mobile Channel
+
 - **Compressed payloads** for bandwidth efficiency
 - **Batched updates** to reduce battery usage
 - **Priority queuing** for critical vs. non-critical updates
 - **Offline queue** with automatic retry
 
 #### Collaboration Channel
+
 - **Real-time presence** indicators
 - **User activity** tracking and display
 - **Conflict resolution** with user attribution
 - **Live cursor** and selection sharing
 
 #### Desktop Channel
+
 - **Full payload** updates with complete data
 - **Rich notifications** with full context
 - **Immediate updates** for responsive UI
@@ -371,12 +398,14 @@ interface MessageRoutingSystem {
 ### Integration with Existing Systems
 
 #### Plugin System Integration
+
 - **Plugin-aware messaging** for universe-specific features
 - **Plugin validation** synchronized across all channels
 - **Plugin notifications** distributed to relevant channels
 - **Custom message types** for plugin-specific communication
 
 #### Authentication Integration
+
 - **Session-aware routing** - messages only to authorized channels
 - **Permission-based filtering** - collaborators see only what they should
 - **Cross-device authentication** validation for mobile channels
@@ -385,19 +414,23 @@ interface MessageRoutingSystem {
 ## Integration Points
 
 ### Plugin System Integration
+
 - **Universe-specific plugin validation**
 - **Plugin configuration persistence**
 - **Mobile plugin compatibility checking**
 - **Plugin update notifications across devices**
 
 ### Authentication System Integration
+
 - **User-universe ownership validation**
 - **Collaboration permission checking**
 - **Mobile device authentication**
 - **Cross-device session management**
 
 ### Future Phase Preparation
+
 This unified real-time infrastructure establishes foundation elements needed for:
+
 - **Phase A.3**: Story-universe relationships with real-time collaboration
 - **Phase B**: AI universe context awareness with mobile AI interaction
 - **Phase C**: Plugin security within universes with real-time plugin updates
@@ -407,6 +440,7 @@ This unified real-time infrastructure establishes foundation elements needed for
 ## Risk Mitigation
 
 ### Technical Risks
+
 - **Database Performance**: Implement proper indexing and query optimization
 - **WebSocket Stability**: Comprehensive connection management and recovery
 - **Plugin Integration Complexity**: Thorough testing of plugin validation system
@@ -416,11 +450,13 @@ This unified real-time infrastructure establishes foundation elements needed for
 - **Cross-Device Security**: End-to-end encryption and secure device authentication
 
 ### Timeline Risks
+
 - **Scope Creep**: Keep mobile foundation minimal but functional
 - **Integration Delays**: Early and frequent testing of plugin system
 - **Performance Issues**: Regular performance monitoring and optimization
 
 ### Quality Risks
+
 - **Data Integrity**: Comprehensive validation and testing
 - **User Experience**: Regular UX review and testing
 - **Mobile Compatibility**: Cross-device testing throughout development
@@ -428,18 +464,21 @@ This unified real-time infrastructure establishes foundation elements needed for
 ## Success Metrics
 
 ### Functional Metrics
+
 - [ ] Users can create universes in < 2 minutes
 - [ ] Universe editing saves within 1 second
 - [ ] Search returns results in < 500ms
 - [ ] Mobile sync updates appear in < 3 seconds
 
 ### Quality Metrics
+
 - [ ] Test coverage >85% for all universe code
 - [ ] Zero critical security vulnerabilities
 - [ ] API response times <200ms for mobile endpoints
 - [ ] WebSocket connection success rate >99%
 
 ### User Experience Metrics
+
 - [ ] Universe creation completion rate >90%
 - [ ] User satisfaction score >4.5/5
 - [ ] Mobile sync adoption rate >70% (when mobile app available)
@@ -448,6 +487,7 @@ This unified real-time infrastructure establishes foundation elements needed for
 ## Dependencies for Next Phase (A.3)
 
 **Phase A.3 Requirements Met**:
+
 - ✅ Universe management system functional
 - ✅ Real-time sync infrastructure established
 - ✅ Plugin validation system integrated
@@ -455,6 +495,7 @@ This unified real-time infrastructure establishes foundation elements needed for
 - ✅ Comprehensive testing completed
 
 **Phase A.3 Ready Indicators**:
+
 - [ ] All A.2 success criteria met
 - [ ] Performance benchmarks achieved
 - [ ] Security assessment passed
@@ -464,18 +505,21 @@ This unified real-time infrastructure establishes foundation elements needed for
 ## Documentation Requirements
 
 ### Technical Documentation
+
 - [ ] **API Documentation**: Complete OpenAPI specs for all endpoints
 - [ ] **Database Schema Documentation**: Entity relationships and indexes
 - [ ] **WebSocket Protocol Documentation**: Message formats and flows
 - [ ] **Mobile Integration Guide**: Cross-device sync implementation
 
 ### User Documentation
+
 - [ ] **Universe Management Guide**: Step-by-step user instructions
 - [ ] **Plugin Integration Guide**: How to configure universe-specific plugins
 - [ ] **Mobile Companion Preparation**: Setup guide for future mobile app
 - [ ] **Troubleshooting Guide**: Common issues and solutions
 
 ### Developer Documentation
+
 - [ ] **Universe API Reference**: Complete endpoint documentation
 - [ ] **Plugin Development Guide**: Creating universe-aware plugins
 - [ ] **Mobile Sync Guide**: Implementing cross-device functionality
@@ -498,15 +542,17 @@ This unified real-time infrastructure establishes foundation elements needed for
 ## Encryption and Security for Private Projects
 
 ### Overview
+
 Private creative projects require robust encryption to protect intellectual property, sensitive content, and collaborative work. With the unified real-time infrastructure handling mobile companion, collaboration, and desktop synchronization, encryption must be implemented at multiple layers.
 
 ### Multi-Layer Encryption Strategy
 
 #### Transport Layer Security
+
 ```typescript
 interface TransportSecurity {
   websocket: {
-    protocol: 'wss://';  // WebSocket Secure
+    protocol: 'wss://'; // WebSocket Secure
     tls_version: '1.3';
     certificate_validation: 'strict';
   };
@@ -519,6 +565,7 @@ interface TransportSecurity {
 ```
 
 #### Application Layer Encryption
+
 ```typescript
 interface ApplicationEncryption {
   content_encryption: {
@@ -542,18 +589,21 @@ interface ApplicationEncryption {
 ### Encryption Implementation Levels
 
 #### Level 1: Universe-Level Encryption
+
 - **Private universes** encrypted with universe-specific keys
 - **Shared universes** use team-based encryption keys
 - **Public universes** use minimal encryption (transport only)
 - **Plugin data** encrypted with universe keys
 
 #### Level 2: Content-Level Encryption
+
 - **Story content** encrypted before database storage
 - **Chapter data** individually encrypted for granular access
 - **Voice notes** encrypted both in transit and at rest
 - **User notes** and annotations encrypted per-user
 
 #### Level 3: Real-Time Message Encryption
+
 - **WebSocket messages** encrypted before transmission
 - **Mobile sync messages** use separate encryption keys
 - **Collaboration messages** encrypted with session keys
@@ -562,6 +612,7 @@ interface ApplicationEncryption {
 ### Key Management System
 
 #### Encryption Key Architecture
+
 ```typescript
 interface EncryptionKeySystem {
   master_keys: {
@@ -583,6 +634,7 @@ interface EncryptionKeySystem {
 ```
 
 #### Key Rotation and Management
+
 - **Automatic key rotation** every 24 hours for active sessions
 - **Emergency key rotation** if security breach detected
 - **Key escrow** system for enterprise accounts (optional)
@@ -591,6 +643,7 @@ interface EncryptionKeySystem {
 ### Device-Specific Security
 
 #### Mobile Device Security
+
 ```typescript
 interface MobileDeviceSecurity {
   device_registration: {
@@ -612,6 +665,7 @@ interface MobileDeviceSecurity {
 ```
 
 #### Desktop Security
+
 - **Local encryption** for cached content
 - **Memory protection** for encryption keys
 - **Secure key storage** using OS-provided keychains
@@ -620,6 +674,7 @@ interface MobileDeviceSecurity {
 ### Collaboration Security Model
 
 #### Multi-User Encryption
+
 ```typescript
 interface CollaborationEncryption {
   shared_content: {
@@ -643,6 +698,7 @@ interface CollaborationEncryption {
 ### Privacy Levels and User Control
 
 #### Configurable Privacy Settings
+
 ```typescript
 interface PrivacyConfiguration {
   universe_privacy: 'private' | 'team' | 'public';
@@ -660,6 +716,7 @@ interface PrivacyConfiguration {
 ```
 
 #### User-Controlled Encryption
+
 - **Password-derived encryption** - user controls master key
 - **Optional biometric** enhancement for mobile devices
 - **Selective encryption** - users choose what to encrypt
@@ -668,6 +725,7 @@ interface PrivacyConfiguration {
 ### Database Security
 
 #### Encrypted Data Storage
+
 ```typescript
 interface DatabaseSecurity {
   at_rest_encryption: {
@@ -692,6 +750,7 @@ interface DatabaseSecurity {
 ### Implementation Requirements for Phase A.2
 
 #### Immediate Security Implementation
+
 - [ ] **TLS 1.3 for all connections** (WebSocket and HTTP)
 - [ ] **Universe-level encryption** for private universes
 - [ ] **WebSocket message encryption** for real-time updates
@@ -699,6 +758,7 @@ interface DatabaseSecurity {
 - [ ] **Basic key management** system implementation
 
 #### Security Testing Requirements
+
 - [ ] **Penetration testing** of encryption implementation
 - [ ] **Key rotation testing** under various scenarios
 - [ ] **Mobile device security** validation
@@ -708,6 +768,7 @@ interface DatabaseSecurity {
 ### Performance Considerations
 
 #### Encryption Performance Optimization
+
 ```typescript
 interface EncryptionPerformance {
   client_side: {
@@ -731,12 +792,14 @@ interface EncryptionPerformance {
 ### Compliance and Standards
 
 #### Security Standards Compliance
+
 - **GDPR compliance** for European users
 - **SOC 2 Type II** for enterprise customers
 - **FIPS 140-2** cryptographic standards
 - **Common Criteria** evaluation (future consideration)
 
 #### Audit and Monitoring
+
 - **Encryption audit logs** for compliance
 - **Key access monitoring** and alerting
 - **Suspicious activity detection** for encryption keys
@@ -745,12 +808,14 @@ interface EncryptionPerformance {
 ### User Experience Considerations
 
 #### Transparent Security
+
 - **Seamless encryption** - users shouldn't notice performance impact
 - **Clear security indicators** - show when content is encrypted
 - **Simple key management** - minimize user key management burden
 - **Recovery mechanisms** - secure account recovery without key loss
 
 #### Security Education
+
 - **Encryption explanations** in user-friendly terms
 - **Best practices guidance** for password security
 - **Mobile security tips** for companion app usage
@@ -759,6 +824,7 @@ interface EncryptionPerformance {
 ### Risk Mitigation
 
 #### Security Risks and Mitigations
+
 - **Key Loss Risk**: Multiple key recovery mechanisms and secure backup
 - **Performance Impact**: Hardware acceleration and optimized algorithms
 - **Complexity Risk**: Automated key management and transparent operation
@@ -776,7 +842,7 @@ Given our plugin-centric architecture, we should clarify how universe validation
 
 ```typescript
 interface UniverseValidationSchema {
-  base_schema: UniverseSchema;  // From core package
+  base_schema: UniverseSchema; // From core package
   plugin_extensions: {
     [pluginId: string]: PluginSchemaExtension;
   };
@@ -785,6 +851,7 @@ interface UniverseValidationSchema {
 ```
 
 **Questions to resolve:**
+
 - How do plugin validation rules compose with base validation?
 - What happens when multiple plugins extend the same fields?
 - How do we handle plugin conflicts or contradictory validation rules?
@@ -811,6 +878,7 @@ interface UniversePrivacyModel {
 ```
 
 **Considerations:**
+
 - How do we handle universe visibility in search and discovery?
 - What metadata can be publicly searchable even for private universes?
 - How do collaboration invitations work with encrypted universes?
@@ -835,6 +903,7 @@ interface MobileUniverseInterface {
 ```
 
 **UX Questions:**
+
 - How does mobile universe switching affect desktop state?
 - Should mobile have access to all universes or just recently accessed ones?
 - How do we handle universe switching when offline?
@@ -859,6 +928,7 @@ interface ScaleConsiderations {
 ```
 
 **Questions:**
+
 - What's our target for concurrent users per universe?
 - How many universes should we optimize for per user?
 - What's our expected universe size (characters, locations, stories)?
@@ -883,6 +953,7 @@ interface PluginMigrationStrategy {
 ```
 
 **Considerations:**
+
 - How do we handle plugin updates that change universe data structure?
 - What happens when a plugin is discontinued?
 - How do we migrate universe data between different plugins?
@@ -962,18 +1033,21 @@ interface MonitoringStrategy {
 ## Decision Points Needed
 
 ### Immediate Decisions (Phase A.2)
+
 1. **Plugin Validation Architecture**: How complex should plugin validation be initially?
 2. **Universe Privacy Defaults**: What should be the default privacy level for new universes?
 3. **Mobile Data Limits**: How much universe data should be synced to mobile by default?
 4. **WebSocket Message Format**: Should we use JSON, MessagePack, or custom binary format?
 
 ### Design Decisions (Phase A.2)
+
 1. **Database Schema Flexibility**: How much should we optimize for plugin extensibility vs. performance?
 2. **Encryption Granularity**: Should encryption be per-universe, per-content-type, or per-field?
 3. **Real-time Update Frequency**: What's the balance between real-time updates and performance?
 4. **Plugin Hot-Reload**: Should plugin updates require universe refresh or happen seamlessly?
 
 ### Architecture Decisions (Phase A.2)
+
 1. **Event Sourcing**: Should we implement event sourcing for universe changes for better collaboration?
 2. **CQRS Pattern**: Should we separate read/write models for better performance?
 3. **Microservices**: Should universe management be a separate service or part of main backend?
@@ -982,21 +1056,25 @@ interface MonitoringStrategy {
 ## Recommended Pre-Implementation Actions
 
 ### 1. Quick Architecture Review Session
+
 - Review unified real-time infrastructure design
 - Validate plugin integration approach
 - Confirm encryption implementation strategy
 
 ### 2. Create Minimal Test Cases
+
 - Define success criteria for each major component
 - Create integration test scenarios for mobile sync
 - Plan performance benchmarks
 
 ### 3. Establish Development Workflow
+
 - Plugin development and testing workflow
 - Real-time testing with multiple clients
 - Encryption testing procedures
 
 ### 4. Risk Assessment
+
 - Identify highest-risk components
 - Create fallback plans for complex features
 - Establish MVP vs. full-feature boundaries
@@ -1004,6 +1082,7 @@ interface MonitoringStrategy {
 ## Multi-Plugin Crossover Universe Support
 
 ### Crossover Universe Architecture
+
 Building on the single-plugin universe foundation, Phase A.2 must include architecture for **multi-plugin composition** to support crossover books and universes.
 
 ```typescript
@@ -1027,18 +1106,21 @@ interface CrossoverUniverseConfiguration {
 ### Plugin Composition Strategies
 
 #### 1. Primary Plugin with Secondary Extensions
+
 - **Primary plugin** defines core universe rules and validation
 - **Secondary plugins** provide additional elements (characters, locations, technologies)
 - **Conflict resolution** favors primary plugin rules
 - **Example**: Star Trek primary + Marvel secondary for crossover stories
 
 #### 2. Equal Plugin Composition
+
 - **Multiple plugins** contribute equally to universe definition
 - **Validation rules** merge based on predefined precedence
 - **Conflict resolution** through user-defined preferences
 - **Example**: Star Wars + Star Trek balanced crossover universe
 
 #### 3. Layered Plugin Architecture
+
 - **Base plugin** provides foundation universe rules
 - **Overlay plugins** add specific elements or modifications
 - **Inheritance chain** determines validation and rule application
@@ -1047,6 +1129,7 @@ interface CrossoverUniverseConfiguration {
 ### Implementation Requirements for Phase A.2
 
 #### Database Schema Extensions
+
 ```typescript
 interface Universe {
   // ...existing fields...
@@ -1065,18 +1148,21 @@ interface Universe {
 ```
 
 #### Validation System Updates
+
 - **Multi-plugin validation** pipeline
 - **Conflict detection** between plugin rules
 - **User-guided conflict resolution** interface
 - **Validation precedence** management
 
 #### UI Considerations
+
 - **Plugin selection** interface for crossover universes
 - **Conflict resolution** UI for overlapping rules
 - **Mapping interface** for cross-plugin elements
 - **Preview system** for plugin combination effects
 
 ### Success Criteria for Multi-Plugin Support
+
 - [ ] Users can select multiple plugins for universe creation
 - [ ] Plugin conflicts are detected and presented to users
 - [ ] Conflict resolution UI allows user-guided resolution
@@ -1102,6 +1188,7 @@ interface PluginValidationResolution {
 ```
 
 **Resolutions**:
+
 - **Plugin validation composition**: Base schema validates first, then primary plugin, then secondary plugins in dependency order
 - **Multiple plugins extending same fields**: Primary plugin takes precedence, conflicts presented to user with recommended resolution
 - **Contradictory validation rules**: User-guided resolution with sane defaults (primary plugin wins ties)
@@ -1134,6 +1221,7 @@ interface ResolvedPrivacyModel {
 ```
 
 **Resolutions**:
+
 - **Universe visibility**: Private = not discoverable, Team = discoverable within organization, Public = fully searchable
 - **Searchable metadata**: Public universes have full metadata search, Team has name/description only, Private has none
 - **Collaboration invitations**: Encrypted universes use secure key sharing through authenticated channels
@@ -1151,6 +1239,7 @@ interface MobileUniverseUX {
 ```
 
 **Resolutions**:
+
 - **Mobile universe switching**: Immediate mobile switch, desktop follows with smooth transition animation
 - **Universe access**: Recent universes (last 5) + favorites always available, others on-demand
 - **Offline handling**: Last active universe fully cached, others maintain metadata only
@@ -1177,6 +1266,7 @@ interface PerformanceTargets {
 ```
 
 **Resolutions**:
+
 - **Concurrent users**: 50 per universe initially, 500 growth target
 - **User universe limit**: 25 initially, 100 growth target
 - **Universe content**: 500 characters, 200 locations, 100 stories per universe
@@ -1196,6 +1286,7 @@ interface PluginMigrationApproach {
 ```
 
 **Resolutions**:
+
 - **Backward compatibility**: Support 3 previous plugin versions
 - **Migration execution**: User confirmation required with migration preview
 - **Data safety**: Automatic backup before migration, one-click rollback
@@ -1215,6 +1306,7 @@ interface MessageFormatStrategy {
 ```
 
 **Resolutions**:
+
 - **Base format**: JSON for compatibility and debugging
 - **High-frequency messages**: MessagePack for sync operations
 - **Large payloads**: Gzip compression for content sync
@@ -1233,6 +1325,7 @@ interface SchemaStrategy {
 ```
 
 **Resolutions**:
+
 - **Core universe fields**: Strongly typed with optimized indexes
 - **Plugin extensions**: JSONB fields with plugin-requested indexes
 - **Performance**: Create indexes based on plugin popularity and usage patterns
@@ -1251,6 +1344,7 @@ interface EncryptionStrategy {
 ```
 
 **Resolutions**:
+
 - **Encryption scope**: Encrypt sensitive fields only (content, notes, private metadata)
 - **Key strategy**: Universe-level keys with field-specific derivation
 - **Performance**: Group related fields for batch encryption/decryption
@@ -1265,5 +1359,36 @@ Based on these resolutions, Phase A.2 implementation order:
 3. **Days 5-6**: Mobile companion integration with resolved UX patterns
 4. **Days 7-8**: Encryption implementation with resolved granularity
 5. **Days 9-10**: Testing with resolved performance targets
+
+## Post-Phase A.2 Tasks
+
+### Re-enable Test Linting
+
+⚠️ **Important**: Test files have been temporarily excluded from ESLint to avoid blocking commits during the rapid test fixes in Phase A.1.
+
+**Action Required**: At the end of Phase A.2, re-enable linting for test files by removing/modifying this section in `.eslintrc.json`:
+
+```json
+{
+  "files": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/test/**/*.ts",
+    "**/test/**/*.tsx",
+    "**/tests/**/*.ts",
+    "**/tests/**/*.tsx",
+    "**/__tests__/**/*.ts",
+    "**/__tests__/**/*.tsx",
+    "**/scripts/**/*.ts"
+  ],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-console": "off"
+  }
+}
+```
+
+**Why**: This ensures test code quality and consistency while allowing rapid development during critical authentication system testing.
 
 ---

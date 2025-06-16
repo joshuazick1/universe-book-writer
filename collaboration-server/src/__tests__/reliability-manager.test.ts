@@ -84,6 +84,7 @@ describe('ReliabilityManager', () => {
 
   describe('message delivery', () => {
     it('should deliver messages when callback is registered', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const deliveredMessages: any[] = [];
 
       reliabilityManager.registerDeliveryCallback('user123', async message => {
@@ -103,6 +104,7 @@ describe('ReliabilityManager', () => {
 
     it('should retry failed deliveries', async () => {
       let attemptCount = 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const deliveredMessages: any[] = [];
 
       reliabilityManager.registerDeliveryCallback('user123', async message => {
@@ -195,6 +197,7 @@ describe('ReliabilityManager', () => {
       expect(reliabilityManager.getQueuedMessageCount('user123')).toBe(0);
     });
     it('should clean up expired messages', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const expiredEvents: any[] = [];
 
       reliabilityManager.on('message-expired', message => {

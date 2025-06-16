@@ -5,6 +5,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { logger } from '../utils/logger';
 
 export interface AdminSettings {
   id: string;
@@ -53,12 +54,12 @@ export const useAdminSettings = () => {
         throw new Error('Failed to fetch settings');
       }
     } catch (err) {
-      console.error('Error fetching admin settings:', err);
+      logger.error('Error fetching admin settings:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch settings');
 
       // Fallback to mock data in development
       if (import.meta.env.DEV) {
-        console.warn('Falling back to mock settings data for development');
+        logger.warn('Falling back to mock settings data for development');
         const mockSettings: AdminSettings = {
           id: 'default',
           emailVerification: {
@@ -104,12 +105,12 @@ export const useAdminSettings = () => {
           throw new Error('Failed to update settings');
         }
       } catch (err) {
-        console.error('Error updating admin settings:', err);
+        logger.error('Error updating admin settings:', err);
         setError(err instanceof Error ? err.message : 'Failed to update settings');
 
         // In development, simulate success
         if (import.meta.env.DEV && settings) {
-          console.warn('Simulating settings update for development');
+          logger.warn('Simulating settings update for development');
           setSettings({
             ...settings,
             ...newSettings,
@@ -143,7 +144,7 @@ export const useAdminSettings = () => {
         throw new Error('Failed to reset settings');
       }
     } catch (err) {
-      console.error('Error resetting admin settings:', err);
+      logger.error('Error resetting admin settings:', err);
       setError(err instanceof Error ? err.message : 'Failed to reset settings');
       return false;
     } finally {

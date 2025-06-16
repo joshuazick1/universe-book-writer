@@ -5,6 +5,7 @@
 
 import { Db, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { User, UserRole, UserStatus } from '../../src/core/entities/user.entity.js';
 
 export interface TestUserOptions {
@@ -17,6 +18,7 @@ export interface TestUserOptions {
   lastName?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createTestUser(db: Db, options: TestUserOptions = {}): Promise<any> {
   const {
     email = 'test@example.com',
@@ -80,10 +82,12 @@ export async function createTestSession(
   userId: string,
   options: {
     refreshTokenId?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     deviceInfo?: any;
     expiresAt?: Date;
     isActive?: boolean;
   } = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const {
     refreshTokenId = 'refresh-token-' + Date.now(),
@@ -126,6 +130,7 @@ export async function createTestToken(
     isRevoked?: boolean;
     usedAt?: Date | null;
   } = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const {
     token = `test-${type.toLowerCase()}-token-${Date.now()}`,
@@ -165,10 +170,12 @@ export async function createTestSecurityLog(
   userId: string,
   eventType: string,
   options: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     metadata?: any;
     severity?: 'low' | 'medium' | 'high' | 'critical';
     timestamp?: Date;
   } = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const { metadata = {}, severity = 'low', timestamp = new Date() } = options;
 
@@ -203,6 +210,7 @@ export async function cleanTestData(db: Db): Promise<void> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createTestAdminUser(db: Db): Promise<any> {
   return createTestUser(db, {
     email: 'admin@test.com',
@@ -215,6 +223,7 @@ export async function createTestAdminUser(db: Db): Promise<any> {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createTestRegularUser(db: Db): Promise<any> {
   return createTestUser(db, {
     email: 'user@test.com',
@@ -231,6 +240,7 @@ export async function createExpiredToken(
   db: Db,
   userId: string,
   type: 'ACCESS' | 'REFRESH'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   return createTestToken(db, userId, type, {
     expiresAt: new Date(Date.now() - 1000), // Expired 1 second ago
@@ -241,6 +251,7 @@ export async function createRevokedToken(
   db: Db,
   userId: string,
   type: 'ACCESS' | 'REFRESH'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   return createTestToken(db, userId, type, {
     isRevoked: true,
@@ -251,6 +262,7 @@ export async function createSuspiciousSecurityLogs(
   db: Db,
   userId: string,
   count: number = 5
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> {
   const logs = [];
 

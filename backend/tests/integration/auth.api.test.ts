@@ -6,8 +6,10 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import request from 'supertest';
 import { Express } from 'express';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient, Db, ObjectId } from 'mongodb';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { createTestApp, resetRateLimiting, clearRateLimitFor } from '../helpers/test-app.js';
 import { createTestUser, cleanTestData } from '../helpers/test-data.js';
 import { UserRole, UserStatus } from '../../src/core/entities/user.entity.js';
@@ -165,6 +167,7 @@ describe('Authentication API', () => {
     });
   });
   describe('POST /api/auth/login', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let testUser: any;
 
     beforeEach(async () => {
@@ -292,6 +295,7 @@ describe('Authentication API', () => {
         })
         .expect(200);
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const sessionId = response.body.data.sessionId; // Verify session was created
       const sessions = testDb.collection('auth_sessions');
       const session = await sessions.findOne({ userId: new ObjectId(testUser.id) });
@@ -357,6 +361,7 @@ describe('Authentication API', () => {
     });
   });
   describe('POST /api/auth/logout', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let testUser: any;
     let authCookies: string[] | undefined;
 
@@ -444,6 +449,7 @@ describe('Authentication API', () => {
   });
 
   describe('POST /api/auth/refresh', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let testUser: any;
     let refreshToken: string;
     beforeEach(async () => {
@@ -519,6 +525,7 @@ describe('Authentication API', () => {
   });
 
   describe('Protected Routes', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let testUser: any;
     let accessToken: string;
     beforeEach(async () => {
@@ -612,7 +619,9 @@ describe('Authentication API', () => {
   });
 
   describe('Admin Routes Protection', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     let adminUser: any;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     let regularUser: any;
     let adminToken: string;
     let userToken: string;

@@ -5,12 +5,13 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks';
-import type { User } from '../types';
+import type { User, UserRole } from '../types';
+import { ROLE_HIERARCHY } from '../types';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiresAuth?: boolean;
-  requiredRole?: string;
+  requiredRole?: UserRole;
   requiredPermissions?: string[];
   fallbackUrl?: string;
   showLoader?: boolean;
@@ -101,7 +102,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 /**
  * Check if user has required role
  */
-const hasRole = (user: User, requiredRole: string): boolean => {
+const hasRole = (user: User, requiredRole: UserRole): boolean => {
+  if (!user.role) return false;
   return user.role === requiredRole || isHigherRole(user.role, requiredRole);
 };
 
@@ -111,6 +113,7 @@ const hasRole = (user: User, requiredRole: string): boolean => {
 const hasPermissions = (user: User, requiredPermissions: string[]): boolean => {
   // For now, we'll use role-based permissions
   // This can be extended to use a proper permission system
+  if (!user.role) return false;
   const userPermissions = getRolePermissions(user.role);
 
   return requiredPermissions.every(
@@ -119,52 +122,26 @@ const hasPermissions = (user: User, requiredPermissions: string[]): boolean => {
 };
 
 /**
- * Check if current role is higher than required role
+ * Check if one role is higher than another in the hierarchy
  */
-const isHigherRole = (currentRole: string, requiredRole: string): boolean => {
-  const roleHierarchy = {
-    guest: 0,
-    user: 1,
-    moderator: 2,
-    admin: 3,
-  };
-
-  const currentLevel = roleHierarchy[currentRole as keyof typeof roleHierarchy] ?? 0;
-  const requiredLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] ?? 0;
-
-  return currentLevel >= requiredLevel;
+const isHigherRole = (userRole: UserRole, requiredRole: UserRole): boolean => {
+  return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole];
 };
 
 /**
  * Get permissions for a role
  */
-const getRolePermissions = (role: string): string[] => {
-  const rolePermissions = {
-    guest: [],
-    user: [
-      'universe:read:own',
-      'story:read:own',
-      'story:write:own',
-      'character:read:own',
-      'character:write:own',
-    ],
-    moderator: [
-      'universe:read:own',
-      'universe:read:shared',
-      'story:read:own',
-      'story:read:shared',
-      'story:write:own',
-      'story:write:shared',
-      'character:read:own',
-      'character:read:shared',
-      'character:write:own',
-      'character:write:shared',
-      'user:read',
-    ],
-    admin: ['*'], // All permissions
-  };
-
-  return rolePermissions[role as keyof typeof rolePermissions] ?? [];
+const getRolePermissions = (role: UserRole): string[] => {
+  switch (role) {
+    case 'admin':
+      return ['*']; // Admin has all permissions
+    case 'moderator':
+      return ['read', 'write', 'moderate'];
+    case 'user':
+      return ['read', 'write'];
+    default:
+      return [];
+  }
 };
 
 export default ProtectedRoute;

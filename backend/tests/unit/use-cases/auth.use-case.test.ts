@@ -3,6 +3,8 @@
  * Tests login, logout, session management, and token operations
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { AuthUseCase } from '../../../src/application/use-cases/auth.use-case.js';
 import { UserRepository } from '../../../src/core/interfaces/user.repository.js';
@@ -18,12 +20,15 @@ import {
 } from '../../../src/core/interfaces/auth.service.js';
 import {
   LoginRequest,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   LoginResponse,
   RefreshTokenRequest,
   LogoutRequest,
   RegisterRequest,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   RegisterResponse,
 } from '../../../src/core/entities/auth.entity.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { User, UserRole, UserStatus } from '../../../src/core/entities/user.entity.js';
 
 // Mock repositories and services

@@ -3,6 +3,8 @@
  * Jest setup configuration for React Testing Library and frontend tests
  */
 
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, afterAll } from '@jest/globals';
@@ -19,6 +21,12 @@ beforeAll(() => {
     observe() {}
     disconnect() {}
     unobserve() {}
+    root: Element | null = null;
+    rootMargin: string = '0px';
+    thresholds: number[] = [0];
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
   };
 
   // Mock ResizeObserver

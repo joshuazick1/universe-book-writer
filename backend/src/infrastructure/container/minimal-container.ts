@@ -87,6 +87,7 @@ export class MinimalContainer {
     // Register middleware
     this.register(MINIMAL_TOKENS.AUTH_MIDDLEWARE, () => {
       // Return a dummy auth middleware for now
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return new AuthMiddleware({} as any, {} as any, {} as any, {} as any);
     });
 

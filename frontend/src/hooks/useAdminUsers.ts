@@ -5,6 +5,7 @@
 
 import { useState, useCallback } from 'react';
 import axios from 'axios';
+import { logger } from '../utils/logger';
 
 export interface AdminUser {
   id: string;
@@ -89,7 +90,7 @@ export const useAdminUsers = () => {
         withCredentials: true,
       });
 
-      console.log('📦 [useAdminUsers] Response received:', {
+      logger.info('📦 [useAdminUsers] Response received:', {
         status: response.status,
         success: response.data.success,
         dataStructure: {
@@ -105,8 +106,8 @@ export const useAdminUsers = () => {
         const users = response.data.data.users; // Changed from 'items' to 'users'
         const pagination = response.data.data.pagination;
 
-        console.log('✅ [useAdminUsers] Setting users:', users);
-        console.log('📊 [useAdminUsers] Setting pagination:', pagination);
+        logger.info('✅ [useAdminUsers] Setting users:', users);
+        logger.info('📊 [useAdminUsers] Setting pagination:', pagination);
 
         setUsers(users);
         setPagination(pagination);
@@ -114,18 +115,18 @@ export const useAdminUsers = () => {
         throw new Error('Failed to fetch users');
       }
     } catch (err) {
-      console.error('❌ [useAdminUsers] Error fetching users:', err);
-      console.error('📍 [useAdminUsers] Error details:', {
+      logger.error('❌ [useAdminUsers] Error fetching users:', err);
+      logger.error('📍 [useAdminUsers] Error details:', {
         message: err instanceof Error ? err.message : 'Unknown error',
-        status: (err as any)?.response?.status,
-        statusText: (err as any)?.response?.statusText,
-        data: (err as any)?.response?.data,
+        status: (err as { response?: { status?: number } })?.response?.status,
+        statusText: (err as { response?: { statusText?: string } })?.response?.statusText,
+        data: (err as { response?: { data?: unknown } })?.response?.data,
       });
       setError(err instanceof Error ? err.message : 'Failed to fetch users');
       // Fallback to mock data in development
       if (import.meta.env.DEV) {
-        console.warn('⚠️ [useAdminUsers] Falling back to mock data for development');
-        console.log('🏗️ [useAdminUsers] Development environment detected, using fallback');
+        logger.warn('⚠️ [useAdminUsers] Falling back to mock data for development');
+        logger.info('🏗️ [useAdminUsers] Development environment detected, using fallback');
         const mockUsers: AdminUser[] = [
           {
             id: '1',
@@ -150,7 +151,7 @@ export const useAdminUsers = () => {
             createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
           },
         ];
-        console.log('🎭 [useAdminUsers] Setting mock users:', mockUsers);
+        logger.info('🎭 [useAdminUsers] Setting mock users:', mockUsers);
         setUsers(mockUsers);
         setPagination({
           page: 1,
@@ -159,7 +160,7 @@ export const useAdminUsers = () => {
           totalPages: 1,
         });
       } else {
-        console.log('🚫 [useAdminUsers] Not in development mode, not using fallback');
+        logger.info('🚫 [useAdminUsers] Not in development mode, not using fallback');
       }
     } finally {
       setLoading(false);
@@ -183,7 +184,7 @@ export const useAdminUsers = () => {
         throw new Error('Failed to update user role');
       }
     } catch (err) {
-      console.error('Error updating user role:', err);
+      logger.error('Error updating user role:', err);
       setError(err instanceof Error ? err.message : 'Failed to update user role');
       return false;
     }
@@ -206,7 +207,7 @@ export const useAdminUsers = () => {
         throw new Error('Failed to update user status');
       }
     } catch (err) {
-      console.error('Error updating user status:', err);
+      logger.error('Error updating user status:', err);
       setError(err instanceof Error ? err.message : 'Failed to update user status');
       return false;
     }
@@ -227,7 +228,7 @@ export const useAdminUsers = () => {
         throw new Error('Failed to delete user');
       }
     } catch (err) {
-      console.error('Error deleting user:', err);
+      logger.error('Error deleting user:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete user');
       return false;
     }
@@ -257,7 +258,7 @@ export const useAdminUsers = () => {
           throw new Error('Failed to create user');
         }
       } catch (err) {
-        console.error('Error creating user:', err);
+        logger.error('Error creating user:', err);
         setError(err instanceof Error ? err.message : 'Failed to create user');
         return false;
       }

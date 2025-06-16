@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../auth/hooks';
 import { Card, CardHeader, CardContent } from '../../base/Card';
+import { logger } from '../../../utils/logger';
 
 interface ProfileFormData {
   firstName: string;
@@ -63,12 +64,12 @@ export const UserProfilePage: React.FC = () => {
     setIsSaving(true);
     try {
       // TODO: Implement API call to update profile
-      console.log('Saving profile:', formData);
+      logger.info('Saving profile:', formData);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      logger.error('Failed to update profile:', error);
     } finally {
       setIsSaving(false);
     }
@@ -94,7 +95,7 @@ export const UserProfilePage: React.FC = () => {
     setIsChangingPassword(true);
     try {
       // TODO: Implement API call to change password
-      console.log('Changing password...');
+      logger.info('Changing password...');
       await new Promise(resolve => setTimeout(resolve, 1000));
       setPasswordData({
         currentPassword: '',
@@ -104,7 +105,7 @@ export const UserProfilePage: React.FC = () => {
       setShowPasswordForm(false);
       alert('Password changed successfully');
     } catch (error) {
-      console.error('Failed to change password:', error);
+      logger.error('Failed to change password:', error);
       alert('Failed to change password');
     } finally {
       setIsChangingPassword(false);
@@ -133,7 +134,9 @@ export const UserProfilePage: React.FC = () => {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Profile & Settings</h1>
-            <p className="text-gray-600 mt-2">Manage your personal information, preferences, and account settings</p>
+            <p className="text-gray-600 mt-2">
+              Manage your personal information, preferences, and account settings
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -337,16 +340,14 @@ export const UserProfilePage: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <button 
+                    <button
                       onClick={() => setShowPasswordForm(!showPasswordForm)}
                       className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex justify-between items-center"
                     >
                       Change Password
-                      <span className="text-xs text-gray-400">
-                        {showPasswordForm ? '−' : '+'}
-                      </span>
+                      <span className="text-xs text-gray-400">{showPasswordForm ? '−' : '+'}</span>
                     </button>
-                    
+
                     {showPasswordForm && (
                       <div className="p-4 bg-gray-50 rounded-lg">
                         <form onSubmit={handlePasswordChange} className="space-y-3">
@@ -424,7 +425,7 @@ export const UserProfilePage: React.FC = () => {
                         </form>
                       </div>
                     )}
-                    
+
                     <button className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                       Privacy Settings
                     </button>

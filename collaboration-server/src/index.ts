@@ -13,6 +13,9 @@ import { AuthenticationManager } from './auth/authentication-manager.js';
 import { HealthMonitor } from './health/health-monitor.js';
 import { ReliabilityManager } from './reliability/reliability-manager.js';
 import { CollaborationConfig, getCollaborationConfig } from './config/collaboration.config.js';
+import { Logger } from './utils/logger.js';
+
+const logger = Logger.getInstance();
 
 export interface CollaborationServerOptions {
   config?: CollaborationConfig;
@@ -115,7 +118,7 @@ export class CollaborationServer {
   private setupEventHandlers(): void {
     // Connection events
     this.connectionManager.on('connectionEstablished', connection => {
-      console.log(`Connection established: ${connection.id} (User: ${connection.userId})`);
+      logger.info(`Connection established: ${connection.id} (User: ${connection.userId})`);
       this.healthMonitor.incrementEventCount();
       this.healthMonitor.updateConnectionCount(
         this.connectionManager.getActiveConnections().length,
@@ -124,7 +127,7 @@ export class CollaborationServer {
     });
 
     this.connectionManager.on('connectionClosed', (connectionId, userId) => {
-      console.log(`Connection closed: ${connectionId} (User: ${userId})`);
+      logger.info(`Connection closed: ${connectionId} (User: ${userId})`);
       this.healthMonitor.updateConnectionCount(
         this.connectionManager.getActiveConnections().length,
         this.connectionManager.getMetrics().totalConnections
@@ -132,7 +135,7 @@ export class CollaborationServer {
     });
 
     this.connectionManager.on('connectionError', (connectionId, error) => {
-      console.error(`Connection error for ${connectionId}:`, error.message);
+      logger.error(`Connection error for ${connectionId}:`, error.message);
       this.healthMonitor.incrementErrorCount(error.message);
     });
 
@@ -142,37 +145,37 @@ export class CollaborationServer {
     });
 
     this.eventManager.on('eventError', (eventType, error) => {
-      console.error(`Event processing error for ${eventType}:`, error.message);
+      logger.error(`Event processing error for ${eventType}:`, error.message);
       this.healthMonitor.incrementErrorCount(error.message);
     });
 
     // WebSocket server events
     this.webSocketServer.on('serverStarted', port => {
-      console.log(`WebSocket server started on port ${port}`);
+      logger.info(`WebSocket server started on port ${port}`);
     });
 
     this.webSocketServer.on('serverError', error => {
-      console.error('WebSocket server error:', error.message);
+      logger.error('WebSocket server error:', error.message);
       this.healthMonitor.incrementErrorCount(error.message);
     });
 
     // Health monitoring events
     this.healthMonitor.on('status-change', (oldStatus, newStatus, metrics) => {
-      console.warn(`Health status changed from ${oldStatus} to ${newStatus}`, metrics);
+      logger.warn(`Health status changed from ${oldStatus} to ${newStatus}`, metrics);
     });
 
     this.healthMonitor.on('threshold-exceeded', (threshold, value, limit) => {
-      console.warn(`Health threshold exceeded: ${threshold} = ${value} (limit: ${limit})`);
+      logger.warn(`Health threshold exceeded: ${threshold} = ${value} (limit: ${limit})`);
     });
 
     // Reliability manager events
     this.reliabilityManager.on('message-failed', (message, error) => {
-      console.error(`Message delivery failed for user ${message.userId}:`, error.message);
+      logger.error(`Message delivery failed for user ${message.userId}:`, error.message);
       this.healthMonitor.incrementErrorCount(`Message delivery failed: ${error.message}`);
     });
 
     this.reliabilityManager.on('queue-full', (userId, queueSize) => {
-      console.warn(`Message queue full for user ${userId}, size: ${queueSize}`);
+      logger.warn(`Message queue full for user ${userId}, size: ${queueSize}`);
     });
   }
 
@@ -194,7 +197,7 @@ export class CollaborationServer {
       // Start the HTTP server
       await new Promise<void>((resolve, reject) => {
         this.httpServer.listen(serverPort, () => {
-          console.log(`Collaboration server started on port ${serverPort}`);
+          logger.info(`Collaboration server started on port ${serverPort}`);
           this.isRunning = true;
           resolve();
         });
@@ -205,9 +208,13 @@ export class CollaborationServer {
       // Start WebSocket server
       await this.webSocketServer.start();
 
-      console.log('Collaboration server fully initialized');
+      logger.info('Collaboration server fully initialized');
     } catch (error) {
-      console.error('Failed to start collaboration server:', error);
+      logger.error(
+        'Failed to start collaboration server:',
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -220,7 +227,7 @@ export class CollaborationServer {
       return;
     }
 
-    console.log('Stopping collaboration server...');
+    logger.info('Stopping collaboration server...');
     try {
       // Stop WebSocket server
       await this.webSocketServer.stop();
@@ -231,18 +238,27 @@ export class CollaborationServer {
       // Stop health monitoring
       this.healthMonitor.stop();
 
+      // Destroy managers (cleanup intervals and resources)
+      await this.authManager.destroy();
+      await this.connectionManager.destroy();
+      await this.eventManager.destroy();
+
       // Close HTTP server
       await new Promise<void>(resolve => {
         this.httpServer.close(() => {
-          console.log('HTTP server closed');
+          logger.info('HTTP server closed');
           resolve();
         });
       });
 
       this.isRunning = false;
-      console.log('Collaboration server stopped');
+      logger.info('Collaboration server stopped');
     } catch (error) {
-      console.error('Error stopping collaboration server:', error);
+      logger.error(
+        'Error stopping collaboration server:',
+        {},
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -277,19 +293,19 @@ if (process.env.NODE_ENV !== 'test' && process.argv[1] && process.argv[1].endsWi
   const server = new CollaborationServer();
 
   process.on('SIGINT', async () => {
-    console.log('\nReceived SIGINT. Gracefully shutting down...');
+    logger.info('\nReceived SIGINT. Gracefully shutting down...');
     await server.stop();
     process.exit(0);
   });
 
   process.on('SIGTERM', async () => {
-    console.log('\nReceived SIGTERM. Gracefully shutting down...');
+    logger.info('\nReceived SIGTERM. Gracefully shutting down...');
     await server.stop();
     process.exit(0);
   });
 
   server.start().catch(error => {
-    console.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error);
     process.exit(1);
   });
 }

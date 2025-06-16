@@ -4,7 +4,7 @@ export interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
-  context?: any;
+  context?: Record<string, unknown>;
   error?: Error;
 }
 
@@ -51,23 +51,24 @@ export class Logger {
     Logger.instance = new Logger(options);
   }
 
-  public error(message: string, context?: any, error?: Error): void {
+  public error(message: string, context?: Record<string, unknown>, error?: Error): void {
     this.log('error', message, context, error);
   }
 
-  public warn(message: string, context?: any): void {
+  public warn(message: string, context?: Record<string, unknown>): void {
     this.log('warn', message, context);
   }
 
-  public info(message: string, context?: any): void {
+  public info(message: string, context?: Record<string, unknown>): void {
     this.log('info', message, context);
   }
 
-  public debug(message: string, context?: any): void {
+  public debug(message: string, context?: Record<string, unknown>): void {
     this.log('debug', message, context);
   }
 
   public setLevel(level: LogLevel): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this.options as any).level = level;
   }
 
@@ -75,7 +76,12 @@ export class Logger {
     return this.options.level;
   }
 
-  private log(level: LogLevel, message: string, context?: any, error?: Error): void {
+  private log(
+    level: LogLevel,
+    message: string,
+    context?: Record<string, unknown>,
+    error?: Error
+  ): void {
     if (this.logLevels[level] > this.logLevels[this.options.level]) {
       return;
     }
@@ -112,15 +118,19 @@ export class Logger {
 
     switch (level) {
       case 'error':
+        // eslint-disable-next-line no-console
         console.error(output);
         break;
       case 'warn':
+        // eslint-disable-next-line no-console
         console.warn(output);
         break;
       case 'info':
+        // eslint-disable-next-line no-console
         console.info(output);
         break;
       case 'debug':
+        // eslint-disable-next-line no-console
         console.debug(output);
         break;
     }
@@ -133,6 +143,7 @@ export class Logger {
     // like winston or pino with file rotation
 
     if (this.options.format === 'json') {
+      // eslint-disable-next-line no-console
       console.log(JSON.stringify(entry));
     } else {
       this.logToConsole(entry);
@@ -150,19 +161,19 @@ export class ChildLogger {
     private readonly prefix: string
   ) {}
 
-  public error(message: string, context?: any, error?: Error): void {
+  public error(message: string, context?: Record<string, unknown>, error?: Error): void {
     this.parent.error(`[${this.prefix}] ${message}`, context, error);
   }
 
-  public warn(message: string, context?: any): void {
+  public warn(message: string, context?: Record<string, unknown>): void {
     this.parent.warn(`[${this.prefix}] ${message}`, context);
   }
 
-  public info(message: string, context?: any): void {
+  public info(message: string, context?: Record<string, unknown>): void {
     this.parent.info(`[${this.prefix}] ${message}`, context);
   }
 
-  public debug(message: string, context?: any): void {
+  public debug(message: string, context?: Record<string, unknown>): void {
     this.parent.debug(`[${this.prefix}] ${message}`, context);
   }
 }

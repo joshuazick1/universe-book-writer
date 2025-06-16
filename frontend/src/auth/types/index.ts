@@ -100,70 +100,66 @@ export interface ResetPasswordData {
   confirmPassword: string;
 }
 
-// Authentication state
-export interface AuthState {
-  user: User | null;
-  tokens: AuthTokens | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: AuthError | null;
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: Date;
-}
-
-export interface AuthError {
-  message: string;
-  field?: string;
-  code?: string;
-  details?: Record<string, unknown>;
-}
-
-// API response types
+// API Response types
 export interface ApiResponse<T = unknown> {
   success: boolean;
-  message: string;
+  message?: string;
   data: T;
 }
 
 export interface LoginResponse {
   user: User;
-  session: {
-    id: string;
-    expiresAt: Date;
+  tokens?: {
+    accessToken: string;
+    refreshToken: string;
   };
 }
 
 export interface RegisterResponse {
   user: User;
-  verificationRequired?: boolean;
+  message: string;
 }
 
-// Session management
-export interface UserSession {
-  id: string;
-  userId: string;
-  deviceInfo?: DeviceInfo;
-  createdAt: Date;
-  lastActivity: Date;
-  expiresAt: Date;
-  isActive: boolean;
-}
-
-export interface DeviceInfo {
-  userAgent?: string;
-  platform?: string;
-  browser?: string;
-  ip?: string;
-  deviceId?: string;
-}
-
-// Verification
+// Verification types
 export interface EmailVerificationData {
   token: string;
+}
+
+export interface AuthError {
+  message: string;
+  field?: string;
+}
+
+// Auth state interface
+export interface AuthState {
+  user: User | null;
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  } | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: AuthError | null;
+}
+
+// Constants
+export const AUTH_STORAGE_KEY = 'auth-store';
+export const TOKEN_REFRESH_THRESHOLD = 5 * 60 * 1000; // 5 minutes before expiry
+
+// User roles
+export enum UserRole {
+  ADMIN = 'admin',
+  MODERATOR = 'moderator',
+  USER = 'user',
+  GUEST = 'guest',
+}
+
+// User status
+export enum UserStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
+  PENDING = 'pending',
 }
 
 // Type guards
@@ -186,23 +182,3 @@ export const isAuthError = (obj: unknown): obj is AuthError => {
     typeof (obj as AuthError).message === 'string'
   );
 };
-
-// Constants
-export const AUTH_STORAGE_KEY = 'auth-store';
-export const TOKEN_REFRESH_THRESHOLD = 5 * 60 * 1000; // 5 minutes before expiry
-
-// User roles
-export enum UserRole {
-  ADMIN = 'admin',
-  MODERATOR = 'moderator',
-  USER = 'user',
-  GUEST = 'guest',
-}
-
-// User status
-export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
-  PENDING = 'pending',
-}

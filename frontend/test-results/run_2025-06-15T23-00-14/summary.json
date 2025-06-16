@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-06-15T23:00:14.959Z",
+  "target": "frontend",
+  "pattern": "auth.store",
+  "comment": null,
+  "duration": 194,
+  "exitCode": 1,
+  "results": {
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "total": 0
+  },
+  "files": ["complete-output.log"]
+}

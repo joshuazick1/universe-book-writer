@@ -1,22 +1,36 @@
 # GitHub Copilot Custom Instructions
 
-This project is a **Multi-Universe Book Series Writing Assistant**, designed to help writers craft series of books set in various fictional universes. - **Testing**:
+This project is a **Multi-Universe Book Series Writing Assistant**, designed to help writers craft series of books set in various fictional universes.
 
-  - Write unit tests for all functions and components.
-  - Achieve and maintain a test coverage of at least 80%.
-  - Utilize testing libraries consistent with the project's tech stack (e.g., Jest for React).
-  - Use the enhanced test runner with prettified console output:
-    - `npm test` - Run all tests with enhanced output
-    - `npm run test:backend` - Backend tests with file logging
-    - `npm run test:frontend` - Frontend tests with file logging
-    - `npm run test:coverage` - Coverage reports with enhanced output
-  - Add issue tracking comments when testing specific bugs or features:
-    - `node scripts/run-tests-with-output.js --comment "Fixing auth bug" backend`
-    - `node scripts/run-tests-with-output.js -c "Testing new feature" frontend`
-  - Test output features:
-    - Console shows prettified ✅ checkmarks, ❌ for failures, ⏭️ for skipped tests
-    - Full Jest output with stack traces saved to timestamped files in `test-results/`
-    - File headers include execution metadata, issue comments, and debugging contextase application provides a framework for world-building and storytelling, with franchise-specific features implemented through plugins (such as Star Trek, Star Wars, or custom universes). The application provides tools for:
+T- **Testing**:
+
+- Write unit tests for all functions and components.
+- Achieve and maintain a test coverage of at least 80%.
+- Utilize testing libraries consistent with the project's tech stack (e.g., Jest for React).
+- Use the enhanced TypeScript test runner with organized output management:
+  - `npm test` - Run all tests with enhanced output
+  - `npm run test:backend` - Backend tests with file logging
+  - `npm run test:frontend` - Frontend tests with file logging
+  - `npm run test:coverage` - Coverage reports with enhanced output
+  - `npm run test:ai-server` - AI server tests with file logging
+  - `npm run test:collaboration-server` - Collaboration server tests with file logging
+  - `npm run test:packages` - Package tests with file logging
+- Add issue tracking comments when testing specific bugs or features:
+  - `npx tsx scripts/run-tests-with-output.ts --comment "Fixing auth bug" backend`
+  - `npx tsx scripts/run-tests-with-output.ts -c "Testing new feature" frontend`
+- Use pattern matching to run specific test categories:
+  - `npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth system"`
+  - `npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" -c "UI component tests"`
+- Enhanced test runner features:
+
+  - Console shows real-time ✅ checkmarks, ❌ for failures, ⏭️ for skipped tests
+  - Each test suite gets its own dedicated log file in timestamped directories under `test-results/`
+  - ANSI codes stripped from saved output for clean, readable logs
+  - Automatic log rotation (keeps last 10 test runs) to prevent disk space accumulation
+  - Accurate test result counting with Jest summary parsing
+  - File headers include execution metadata, issue comments, and debugging context
+  - Complete Jest output preserved alongside suite-specific files
+  - TypeScript-powered with full type safety and ES module compatibilityplication provides a framework for world-building and storytelling, with franchise-specific features implemented through plugins (such as Star Trek, Star Wars, or custom universes). The application provides tools for:
 
 - **World-Building**: Comprehensive creation of locations, vessels, factions, lore, etc., adaptable to any fictional universe through plugins.
 - **Character Development**: Tools for developing and managing characters across multiple books.
@@ -144,6 +158,55 @@ The project adopts a **monorepo structure** comprising:
     - Document new file paths and their purposes.
     - Detail how they integrate into the existing architecture.
     - Specify dependencies and interfaces.
+
+### Enhanced Test Runner Guidelines
+
+- **TypeScript Test Runner**:
+
+  - Located at `scripts/run-tests-with-output.ts` - a fully TypeScript-powered test execution system
+  - Uses `tsx` for direct TypeScript execution without compilation step
+  - Provides organized output management with separate files per test suite
+  - Implements automatic log rotation to prevent disk space accumulation
+
+- **Output Management Features**:
+
+  - **Separate files per test suite**: Each Jest test file gets its own `.log` file
+  - **Timestamped directories**: Test runs organized in `test-results/run_YYYY-MM-DDTHH-MM-SS/`
+  - **ANSI stripping**: Clean, readable log files without terminal escape codes
+  - **Log rotation**: Automatically keeps only the 10 most recent test runs
+  - **Descriptive filenames**: Path-based naming makes finding specific test outputs easy
+
+- **Real-time Feedback**:
+
+  - Live progress indicators: ✅ for passed, ❌ for failed, ⏭️ for skipped tests
+  - Accurate test result counting with Jest summary parsing
+  - Console displays important test suite results immediately
+  - Final summary shows precise counts matching Jest output
+
+- **Flexible Test Execution**:
+
+  - Target specific projects: `backend`, `frontend`, `ai-server`, `collaboration-server`, `packages`, `e2e`
+  - Pattern matching: `--pattern "auth"` runs only tests matching the pattern
+  - Issue tracking: `--comment "Bug fix description"` adds context to test runs
+  - Coverage reports: `--coverage` generates and organizes coverage data
+  - Watch mode: `--watch` for continuous testing during development
+
+- **Usage Examples**:
+
+  ```bash
+  # Run all tests with enhanced output
+  npm test
+
+  # Run specific project tests
+  npm run test:backend
+  npm run test:frontend
+
+  # Run pattern-matched tests with comments
+  npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth system"
+
+  # Run specific project with pattern and coverage
+  npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" --coverage --comment "UI testing"
+  ```
 
 ### Environment Notes
 

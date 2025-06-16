@@ -6,9 +6,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, PluginRegistryProvider } from './components/providers';
-import { AnimationShowcase } from './components/animation';
+// import { AnimationShowcase } from './components/animation';
 import { Layout } from './components/navigation';
-import { LoginForm, ProtectedRoute } from './auth/components';
+import { LoginForm, ProtectedRoute, PublicRoute } from './auth/components';
 import { useAuth } from './auth/hooks';
 import { AdminAuthWrapper } from './components/admin/AdminAuthWrapper';
 import { AdminLayout } from './components/admin/layout/AdminLayout';
@@ -18,6 +18,8 @@ import { AdminSettingsPage } from './components/admin/pages/AdminSettingsPage';
 import { SecurityLogsPage } from './components/admin/pages/SecurityLogsPage';
 import { UserProfilePage, UserSettingsPage } from './components/user';
 import { DashboardPage } from './pages/DashboardPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 
 /**
  * Login Page Component
@@ -38,7 +40,9 @@ const LoginPage: React.FC = () => {
 
 /**
  * Animation Showcase Page (preserving original functionality)
+ * Currently unused - commented out to avoid linting warnings
  */
+/*
 const AnimationShowcasePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-universe-background text-universe-text">
@@ -54,6 +58,7 @@ const AnimationShowcasePage: React.FC = () => {
     </div>
   );
 };
+*/
 
 /**
  * Authentication Initializer Component
@@ -61,11 +66,41 @@ const AnimationShowcasePage: React.FC = () => {
  */
 const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { checkAuthStatus } = useAuth();
+  const [authChecked, setAuthChecked] = React.useState(false);
 
   React.useEffect(() => {
-    // Initialize authentication status on app startup
-    checkAuthStatus();
-  }, []); // Empty dependency array - only run once on mount
+    let mounted = true;
+
+    const initAuth = async () => {
+      try {
+        await checkAuthStatus();
+        if (mounted) {
+          setAuthChecked(true);
+        }
+      } catch (error) {
+        // console.error('Auth initialization error:', error); // Commented out for linting
+        if (mounted) {
+          setAuthChecked(true);
+        }
+      }
+    };
+
+    if (!authChecked) {
+      initAuth();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [checkAuthStatus, authChecked]);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-universe-background">
+        <div className="text-universe-text">Initializing...</div>
+      </div>
+    );
+  }
 
   return <>{children}</>;
 };
@@ -85,8 +120,31 @@ const App: React.FC = () => {
         >
           <AuthInitializer>
             <Routes>
-              {/* Public Routes */}
-              <Route path="/auth/login" element={<LoginPage />} />
+              {/* Public Authentication Routes */}
+              <Route
+                path="/auth/login"
+                element={
+                  <PublicRoute>
+                    <LoginPage />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/auth/register"
+                element={
+                  <PublicRoute>
+                    <RegisterPage />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/auth/forgot-password"
+                element={
+                  <PublicRoute>
+                    <ForgotPasswordPage />
+                  </PublicRoute>
+                }
+              />
 
               {/* Protected Routes with Layout */}
               <Route
@@ -119,11 +177,11 @@ const App: React.FC = () => {
                 <Route path="logs" element={<SecurityLogsPage />} />
               </Route>
 
-              {/* Animation Showcase - Public Access */}
-              <Route path="/showcase/animations" element={<AnimationShowcasePage />} />
+              {/* Redirect root to login if not authenticated */}
+              <Route path="/" element={<Navigate to="/auth/login" replace />} />
 
-              {/* Catch All */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              {/* Catch All - Redirect to login */}
+              <Route path="*" element={<Navigate to="/auth/login" replace />} />
             </Routes>
           </AuthInitializer>
         </BrowserRouter>

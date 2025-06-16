@@ -33,13 +33,17 @@ export const AdminSettingsPage: React.FC = () => {
       setSaveMessage(err instanceof Error ? err.message : 'Failed to update settings');
     }
   };
-  const updateNestedField = (section: keyof AdminSettings, field: string, value: any) => {
+  const updateNestedField = (
+    section: keyof AdminSettings,
+    field: string,
+    value: boolean | number | string
+  ) => {
     if (!formData) return;
 
     setFormData({
       ...formData,
       [section]: {
-        ...(formData[section] as any),
+        ...(formData[section] as Record<string, unknown>),
         [field]: value,
       },
     });

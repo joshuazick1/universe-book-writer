@@ -35,6 +35,7 @@ import { CryptoSecurityService } from '../../src/infrastructure/services/securit
 import { MongoUserRepository } from '../../src/infrastructure/persistence/user.repository.js';
 import { MongoAuthTokenRepository } from '../../src/infrastructure/persistence/auth-token.repository.js';
 import { MongoAuthSessionRepository } from '../../src/infrastructure/persistence/auth-session.repository.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { AdminSettingsRepository } from '../../src/core/interfaces/repositories/admin-settings.repository.js';
 
 export async function createTestApp(
@@ -173,6 +174,7 @@ export async function createTestApp(
 
   // Error handling middleware
   app.use(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (error: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
       console.error('Test app error:', error);
       res.status(500).json({

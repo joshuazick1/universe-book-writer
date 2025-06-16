@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Test plugin system imports
 import 'dotenv/config';
 

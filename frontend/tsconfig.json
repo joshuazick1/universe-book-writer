@@ -13,7 +13,7 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": true,
     "types": ["node"],
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "emitDeclarationOnly": true,
     "resolveJsonModule": true,

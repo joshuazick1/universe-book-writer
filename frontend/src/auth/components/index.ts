@@ -3,10 +3,12 @@
  * Exports all authentication-related components
  */
 
-export { LoginForm } from './LoginForm';
-export { RegisterForm } from './RegisterForm';
-export { UserMenu } from './UserMenu';
-export { ProtectedRoute } from './ProtectedRoute';
+export * from './LoginForm';
+export * from './RegisterForm';
+export * from './ProtectedRoute';
+export * from './PublicRoute';
+export * from './UserMenu';
+export * from './ForgotPasswordForm';
 
 // Re-export default exports
 export { default as ProtectedRouteDefault } from './ProtectedRoute';

@@ -19,7 +19,7 @@ import type {
 
 // Configure axios instance for auth API
 const authApiClient = axios.create({
-  baseURL: 'http://localhost:5000/api', // Will be replaced by Vite at build time
+  baseURL: '/api', // Using relative URL for proxy
   timeout: 10000,
   withCredentials: true, // Important for HTTP-only cookies
   headers: {

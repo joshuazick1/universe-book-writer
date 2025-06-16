@@ -5,6 +5,7 @@
 
 import { useState, useCallback } from 'react';
 import axios from 'axios';
+import { logger } from '../utils/logger';
 
 export interface AdminUser {
   id: string;
@@ -96,12 +97,12 @@ export const useAdminUsers = () => {
         throw new Error('Failed to fetch users');
       }
     } catch (err) {
-      console.error('Error fetching users:', err);
+      logger.error('Error fetching users:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch users');
 
       // Fallback to mock data in development
       if (import.meta.env.DEV) {
-        console.warn('Falling back to mock data for development');
+        logger.warn('Falling back to mock data for development');
         const mockUsers: AdminUser[] = [
           {
             id: '1',
@@ -156,7 +157,7 @@ export const useAdminUsers = () => {
         throw new Error('Failed to update user role');
       }
     } catch (err) {
-      console.error('Error updating user role:', err);
+      logger.error('Error updating user role:', err);
       setError(err instanceof Error ? err.message : 'Failed to update user role');
       return false;
     }
@@ -179,7 +180,7 @@ export const useAdminUsers = () => {
         throw new Error('Failed to update user status');
       }
     } catch (err) {
-      console.error('Error updating user status:', err);
+      logger.error('Error updating user status:', err);
       setError(err instanceof Error ? err.message : 'Failed to update user status');
       return false;
     }
@@ -200,7 +201,7 @@ export const useAdminUsers = () => {
         throw new Error('Failed to delete user');
       }
     } catch (err) {
-      console.error('Error deleting user:', err);
+      logger.error('Error deleting user:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete user');
       return false;
     }
@@ -230,7 +231,7 @@ export const useAdminUsers = () => {
           throw new Error('Failed to create user');
         }
       } catch (err) {
-        console.error('Error creating user:', err);
+        logger.error('Error creating user:', err);
         setError(err instanceof Error ? err.message : 'Failed to create user');
         return false;
       }

@@ -59,6 +59,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 }) => {
   const navigate = useNavigate();
   const { register: registerUser, isLoading, error, clearError } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -66,13 +67,33 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-    setError: setFormError,
+    setError,
     watch,
+    clearErrors,
   } = useForm<RegisterCredentials>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange',
   });
 
   const password = watch('password');
+
+  // Watch form values for changes
+  const watchedValues = watch();
+
+  // Store previous form values for comparison
+  const prevFormValues = React.useRef(watchedValues);
+
+  // Clear error when user starts typing
+  React.useEffect(() => {
+    if (
+      (error && error.field) ||
+      (errors.root && JSON.stringify(prevFormValues.current) !== JSON.stringify(watchedValues))
+    ) {
+      clearError();
+      clearErrors('root'); // Clear form level errors
+      prevFormValues.current = watchedValues;
+    }
+  }, [watchedValues, error, clearError, errors.root, clearErrors]);
 
   const onSubmit = async (data: RegisterCredentials) => {
     try {
@@ -88,36 +109,77 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       navigate(redirectTo, { replace: true });
     } catch (err: unknown) {
       // Handle field-specific errors
-      if (error?.field) {
-        setFormError(error.field as keyof RegisterCredentials, {
+      if (err && typeof err === 'object' && 'field' in err) {
+        const fieldError = err as { field: string; message: string };
+        setError(fieldError.field as keyof RegisterCredentials, {
           type: 'server',
-          message: error.message,
+          message: fieldError.message,
+        });
+      } else {
+        // Handle network errors or general errors
+        const errorMessage = err instanceof Error ? err.message : 'Network error occurred';
+        setError('root', {
+          type: 'network',
+          message: errorMessage,
         });
       }
     }
   };
-  const getPasswordStrength = (password: string) => {
-    if (!password) return { strength: 0, label: '', color: '' };
+  const calculatePasswordStrength = (
+    password: string
+  ): { strength: number; label: string; color: string } => {
+    if (!password) {
+      return { strength: 0, label: 'None', color: 'gray' };
+    }
 
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[a-z]/.test(password)) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/\d/.test(password)) strength++;
-    if (/[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(password)) strength++;
-
-    const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
-
-    return {
-      strength,
-      label: labels[strength - 1] || '',
-      color: colors[strength - 1] || '',
+    // Calculate base strength criteria
+    let score = 0;
+    const criteria = {
+      length: password.length >= 8,
+      hasLower: /[a-z]/.test(password),
+      hasUpper: /[A-Z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecial: /[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(password),
     };
+
+    score = Object.values(criteria).filter(Boolean).length;
+
+    // Check for common patterns that reduce strength
+    const patterns = [
+      /abc/i, // Sequential letters like "abc"
+      /123/, // Sequential numbers like "123"
+      /qwerty/i, // Keyboard patterns
+      /password/i, // Common words
+      /admin/i, // Common words
+      /(.)\1{2,}/, // Repeated characters like "aaa"
+    ];
+
+    const hasCommonPatterns = patterns.some(pattern => {
+      const match = pattern.test(password);
+      return match;
+    });
+
+    let result;
+    if (password.length < 8) {
+      // Short passwords are always weak regardless of score
+      result = { strength: 1, label: 'Weak', color: 'red' };
+    } else if (score < 4) {
+      // Missing basic requirements = weak
+      result = { strength: 1, label: 'Weak', color: 'red' };
+    } else if (hasCommonPatterns || password.length <= 10) {
+      // Has common patterns OR is relatively short = medium
+      result = { strength: 2, label: 'Medium', color: 'orange' };
+    } else {
+      // Long password with all criteria and no obvious common patterns = strong
+      result = { strength: 3, label: 'Strong', color: 'green' };
+    }
+
+    return result;
   };
 
-  const passwordStrength = getPasswordStrength(password || '');
+  const passwordStrength = calculatePasswordStrength(password || '');
 
+  // Render form
   return (
     <div className={`w-full max-w-md mx-auto ${className}`}>
       <div className="bg-white shadow-lg rounded-lg p-8">
@@ -125,26 +187,43 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
           <p className="text-gray-600 mt-2">Join Universe Book Writer today</p>
         </div>
-        {/* General error message */}
-        {error && !error.field && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-800">{error.message}</p>
+
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit(onSubmit)}
+          aria-label="Registration Form"
+          role="form"
+          data-testid="register-form"
+          noValidate
+        >
+          {/* Error Messages */}
+          {(error?.message || errors.root) && (
+            <div
+              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md"
+              role="alert"
+              aria-live="polite"
+              data-testid="error-message"
+            >
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-800" data-testid="error-message-text">
+                    {error?.message || errors.root?.message}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        )}{' '}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          )}
+
+          {/* Field components with error handling */}
           {/* Email Field */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -155,14 +234,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 {...register('email')}
                 type="email"
                 id="email"
+                data-testid="email-input"
                 autoComplete="email"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
                 className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your email"
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-red-600">
+                <p
+                  className="mt-2 text-sm text-red-600"
+                  role="alert"
+                  aria-live="assertive"
+                  id="email-error"
+                >
                   {String(errors.email.message || 'Invalid email')}
                 </p>
               )}
@@ -252,6 +339,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 id="password"
+                data-testid="password-input"
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? 'password-error' : undefined}
                 autoComplete="new-password"
                 className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
@@ -260,6 +350,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               />
               <button
                 type="button"
+                data-testid="password-toggle"
+                aria-label="Toggle password visibility"
+                aria-controls="password"
+                aria-pressed={showPassword}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 onClick={() => setShowPassword(!showPassword)}
               >
@@ -288,13 +382,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                     />
                   </svg>
                 )}
@@ -302,28 +390,47 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             </div>
 
             {/* Password Strength Indicator */}
-            {password && (
-              <div className="mt-2">
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-300 ${passwordStrength.color}`}
-                      style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-xs text-gray-600">{passwordStrength.label}</span>
+            <div
+              className="mt-2"
+              role="status"
+              aria-live="polite"
+              aria-label="Password strength"
+              data-testid="password-strength-indicator"
+            >
+              <div className="flex items-center">
+                <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      passwordStrength.color === 'red'
+                        ? 'bg-red-500'
+                        : passwordStrength.color === 'orange'
+                          ? 'bg-yellow-500'
+                          : passwordStrength.color === 'green'
+                            ? 'bg-green-500'
+                            : 'bg-gray-300'
+                    }`}
+                    style={{ width: `${(passwordStrength.strength / 3) * 100}%` }}
+                  />
                 </div>
+                <span className="ml-2 text-sm text-gray-600" data-testid="strength-label">
+                  {passwordStrength.label}
+                </span>
               </div>
-            )}
+            </div>
 
             {errors.password && (
-              <p className="mt-2 text-sm text-red-600">
+              <p
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+                aria-live="assertive"
+                id="password-error"
+              >
                 {String(errors.password.message || 'Invalid password')}
               </p>
             )}
           </div>
 
-          {/* Confirm Password Field */}
+          {/* Confirm Password field */}
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
               Confirm Password
@@ -333,14 +440,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 {...register('confirmPassword')}
                 type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmPassword"
+                data-testid="confirm-password-input"
+                aria-label="Confirm Password"
+                aria-invalid={!!errors.confirmPassword}
+                aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
                 autoComplete="new-password"
+                placeholder="Confirm your password"
                 className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 ${
                   errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                 }`}
-                placeholder="Confirm your password"
               />
               <button
                 type="button"
+                data-testid="confirm-password-toggle"
+                aria-label="Toggle confirm password visibility"
+                aria-controls="confirmPassword"
+                aria-pressed={showConfirmPassword}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
@@ -369,23 +484,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                     />
                   </svg>
                 )}
               </button>
-              {errors.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600">
-                  {String(errors.confirmPassword.message || 'Passwords do not match')}
-                </p>
-              )}
             </div>
+            {errors.confirmPassword && (
+              <p
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+                aria-live="assertive"
+                id="confirm-password-error"
+              >
+                {String(errors.confirmPassword.message || 'Passwords do not match')}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
@@ -393,35 +507,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              data-testid="submit-button"
+              aria-busy={isLoading}
+              className={`w-full py-3 px-4 rounded-md font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                isLoading
+                  ? 'bg-blue-400 cursor-not-allowed opacity-50'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              }`}
             >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Creating account...
-                </div>
-              ) : (
-                'Create Account'
-              )}
+              {isLoading ? 'Creating Account...' : 'Create Account'}
             </button>
           </div>
 

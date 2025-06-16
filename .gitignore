@@ -5,7 +5,15 @@ node_modules/
 
 # Testing
 coverage/
+# Enhanced test runner output directories (timestamped runs)
+test-results/run_*/
+# Keep documentation and configuration files in test-results
+!test-results/README.md
+!test-results/.gitkeep
+!test-results/.last-run.json
+# Legacy test output patterns (if any remain)
 test-results/*.txt
+test-results/*.log
 
 # Production
 build/

@@ -1,8 +1,15 @@
+/* eslint-disable no-console */
 import { jest } from '@jest/globals';
 import { Logger, ChildLogger } from '../utils/logger.js';
 
 describe('Logger', () => {
-  let originalConsole: any;
+  let originalConsole: {
+    error: typeof console.error;
+    warn: typeof console.warn;
+    info: typeof console.info;
+    debug: typeof console.debug;
+    log: typeof console.log;
+  };
 
   beforeEach(() => {
     // Mock console methods
@@ -30,6 +37,7 @@ describe('Logger', () => {
     console.log = originalConsole.log;
 
     // Reset singleton instance
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (Logger as any).instance = undefined;
   });
 

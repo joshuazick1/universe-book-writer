@@ -10,10 +10,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks';
 import type { LoginCredentials } from '../types';
 
-// Validation schema
+// Update validation schema messages
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().min(1, 'Please enter your email').email('Please enter a valid email'),
+  password: z
+    .string()
+    .min(1, 'Please enter your password')
+    .min(6, 'Password must be at least 6 characters'),
 });
 
 interface LoginFormProps {
@@ -36,15 +39,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
   } = useForm<LoginCredentials>({
     resolver: zodResolver(loginSchema),
   });
+
   const onSubmit = async (data: LoginCredentials) => {
     try {
-      clearError();
+      clearError(); // Clear any previous errors
       await login(data);
 
-      // Success callback
-      if (onSuccess) {
-        onSuccess();
-      }
+      // Call success callback if provided
+      onSuccess?.();
 
       // Navigate to intended destination or default
       const from =
@@ -53,13 +55,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
         '/dashboard';
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      // Handle field-specific errors
+      // If we have a field-specific error, set it on the form
       if (error?.field) {
         setFormError(error.field as keyof LoginCredentials, {
           type: 'server',
           message: error.message,
         });
       }
+      // Error is handled by useAuth hook and displayed in UI
     }
   };
 
@@ -71,27 +74,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
           <p className="text-gray-600 mt-2">Sign in to your account</p>
         </div>
 
-        {/* General error message */}
-        {error && !error.field && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-800">{error.message}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6"
+          aria-label="Login form"
+        >
           {/* Email Field */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -107,10 +95,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
                   errors.email ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your email"
+                onChange={e => {
+                  register('email').onChange(e);
+                  clearError();
+                }}
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-red-600">
-                  {String(errors.email.message || 'Invalid email')}
+                <p className="mt-2 text-sm text-red-600" role="alert" aria-live="polite">
+                  {errors.email.message}
                 </p>
               )}
             </div>
@@ -131,11 +123,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
                   errors.password ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your password"
+                onChange={e => {
+                  register('password').onChange(e);
+                  clearError();
+                }}
               />
               <button
                 type="button"
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
                   <svg
@@ -174,18 +171,25 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
                 )}
               </button>
               {errors.password && (
-                <p className="mt-2 text-sm text-red-600">
-                  {String(errors.password.message || 'Invalid password')}
+                <p className="mt-2 text-sm text-red-600" role="alert" aria-live="polite">
+                  {errors.password.message}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Forgot Password Link */}
-          <div className="flex items-center justify-end">
-            <Link to="/auth/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
-              Forgot your password?
-            </Link>
+          {/* Additional Links */}
+          <div className="flex items-center justify-between mt-4">
+            <div className="text-sm">
+              <Link to="/auth/forgot-password" className="text-blue-600 hover:text-blue-500">
+                Forgot your password?
+              </Link>
+            </div>
+            <div className="text-sm">
+              <Link to="/auth/register" className="text-blue-600 hover:text-blue-500">
+                Create an account
+              </Link>
+            </div>
           </div>
 
           {/* Submit Button */}
@@ -193,15 +197,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
             <button
               type="submit"
               disabled={isLoading}
+              aria-busy={isLoading}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center">
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    className="animate-spin h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
+                    role="progressbar"
                   >
                     <circle
                       className="opacity-25"
@@ -210,14 +216,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
+                    />
                   </svg>
-                  Signing in...
+                  <span className="ml-2">Loading</span>
                 </div>
               ) : (
                 'Sign In'
@@ -225,15 +231,29 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectTo, cla
             </button>
           </div>
 
-          {/* Register Link */}
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/auth/register" className="font-medium text-blue-600 hover:text-blue-500">
-                Sign up here
-              </Link>
-            </p>
-          </div>
+          {/* Error Message */}
+          {error && !error.field && (
+            <div
+              role="alert"
+              aria-live="polite"
+              className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md"
+            >
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-800">{error.message}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </form>
       </div>
     </div>

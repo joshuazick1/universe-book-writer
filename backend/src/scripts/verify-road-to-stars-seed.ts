@@ -85,6 +85,7 @@ export async function verifyRoadToStarsSeeding(): Promise<void> {
  * Verify collection count
  */
 async function verifyCollection(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db: any,
   collectionName: string,
   expectedCount: number,
@@ -104,6 +105,7 @@ async function verifyCollection(
 /**
  * Verify universe data
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function verifyUniverse(db: any): Promise<VerificationResult> {
   const universe = await db.collection('universes').findOne({ name: 'United Republic of Planets' });
   const details: string[] = [];
@@ -122,6 +124,7 @@ async function verifyUniverse(db: any): Promise<VerificationResult> {
       details.push('Universe missing timeline data');
       passed = false;
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mainTimeline = universe.timelines.find((t: any) => t.name === 'Main Timeline');
       if (!mainTimeline || mainTimeline.events.length < 4) {
         details.push('Main timeline missing or incomplete');
@@ -142,6 +145,7 @@ async function verifyUniverse(db: any): Promise<VerificationResult> {
 /**
  * Verify character data
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function verifyCharacters(db: any): Promise<VerificationResult> {
   const characters = await db.collection('characters').find({}).toArray();
   const details: string[] = [];
@@ -157,6 +161,7 @@ async function verifyCharacters(db: any): Promise<VerificationResult> {
   ];
 
   for (const name of keyCharacters) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const char = characters.find((c: any) => c.name === name);
     if (!char) {
       details.push(`Missing character: ${name}`);
@@ -175,6 +180,7 @@ async function verifyCharacters(db: any): Promise<VerificationResult> {
   }
 
   // Verify species distribution
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const speciesCounts = characters.reduce((acc: any, char: any) => {
     const species = char.species || 'Unknown';
     acc[species] = (acc[species] || 0) + 1;
@@ -201,6 +207,7 @@ async function verifyCharacters(db: any): Promise<VerificationResult> {
 /**
  * Verify location data
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function verifyLocations(db: any): Promise<VerificationResult> {
   const locations = await db.collection('locations').find({}).toArray();
   const details: string[] = [];
@@ -215,6 +222,7 @@ async function verifyLocations(db: any): Promise<VerificationResult> {
   ];
 
   for (const name of keyLocations) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const loc = locations.find((l: any) => l.name === name);
     if (!loc) {
       details.push(`Missing location: ${name}`);
@@ -223,6 +231,7 @@ async function verifyLocations(db: any): Promise<VerificationResult> {
   }
 
   // Verify ship details
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const vashtel = locations.find((l: any) => l.name === "USS Vash'Tel");
   if (vashtel) {
     if (!vashtel.metadata || !vashtel.metadata.design) {
@@ -243,6 +252,7 @@ async function verifyLocations(db: any): Promise<VerificationResult> {
 /**
  * Verify book data
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function verifyBook(db: any): Promise<VerificationResult> {
   const book = await db.collection('books').findOne({ title: 'The Road to the Stars' });
   const details: string[] = [];
@@ -290,14 +300,17 @@ async function verifyBook(db: any): Promise<VerificationResult> {
 /**
  * Verify relationship data
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function verifyRelationships(db: any): Promise<VerificationResult> {
   const characters = await db.collection('characters').find({}).toArray();
   const details: string[] = [];
   let passed = true;
 
   // Check that James Calloway has relationship with Thara zh'Shiron
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const calloway = characters.find((c: any) => c.name === 'James Calloway');
   if (calloway && calloway.relationships) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const hasFirstOfficer = calloway.relationships.some((r: any) => r.type === 'first_officer');
     if (!hasFirstOfficer) {
       details.push('James Calloway missing first officer relationship');
@@ -310,7 +323,9 @@ async function verifyRelationships(db: any): Promise<VerificationResult> {
 
   // Check for some relationship types
   const relationshipTypes = characters
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .flatMap((c: any) => c.relationships || [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((r: any) => r.type);
 
   if (!relationshipTypes.includes('commanding_officer')) {

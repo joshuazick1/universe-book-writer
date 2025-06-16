@@ -25,6 +25,19 @@ const port = process.env.PORT || 5000;
 // Security Middleware - Applied before other middleware
 console.log('🔒 Configuring security middleware...');
 
+// CORS configuration
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? process.env.FRONTEND_URL
+        : ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
 // 1. Security headers using Helmet
 app.use(
   helmet({

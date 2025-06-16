@@ -71,9 +71,13 @@ declare global {
       mongod: MongoMemoryServer;
       redisClient: Redis;
       testUtils: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mockUser: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         createMockRequest: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         createMockResponse: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         cleanup: any;
       };
     }

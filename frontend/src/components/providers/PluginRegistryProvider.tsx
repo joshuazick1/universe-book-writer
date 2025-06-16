@@ -1,17 +1,9 @@
 /**
- * Plugin Component Registry - Universe Book Writer
- * Manages registration and loading of universe-specific components
- */
-
-import React, { ComponentType, createContext, useContext, useState, ReactNode } from 'react';
-import { useTheme } from './ThemeProvider';
-
-/* === TYPES === */
-
-export interface PluginComponent {
+ * Plugexport interface PluginComponent {
   name: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: ComponentType<any>;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
   universe: string;
   version: string;
 }
@@ -19,8 +11,33 @@ export interface PluginComponent {
 export interface ComponentRegistration {
   originalName: string;
   pluginName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: ComponentType<any>;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
+  universe: string;
+}gistry - Universe Book Writer
+ * Manages registration and loading of universe-specific components
+ */
+
+import React, { ComponentType, createContext, useContext, useState, ReactNode } from 'react';
+import { useTheme } from './ThemeProvider';
+import { logger } from '../../utils/logger';
+
+/* === TYPES === */
+
+export interface PluginComponent {
+  name: string;
+  component: ComponentType<Record<string, unknown>>;
+  props?: Record<string, unknown>;
+  universe: string;
+  version: string;
+}
+
+export interface ComponentRegistration {
+  originalName: string;
+  pluginName: string;
+  component: ComponentType<Record<string, unknown>>;
+  props?: Record<string, unknown>;
   universe: string;
 }
 
@@ -29,13 +46,15 @@ export interface PluginRegistryContextValue {
   registerComponent: (
     originalName: string,
     pluginName: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component: ComponentType<any>,
     universe: string,
-    props?: Record<string, any>
+    props?: Record<string, unknown>
   ) => void;
   unregisterComponent: (originalName: string, universe: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getComponent: (name: string, universe?: string) => ComponentType<any> | null;
-  getComponentProps: (name: string, universe?: string) => Record<string, any> | null;
+  getComponentProps: (name: string, universe?: string) => Record<string, unknown> | null;
   isPluginComponent: (name: string) => boolean;
   getAvailableComponents: (universe?: string) => string[];
 }
@@ -61,9 +80,10 @@ export const PluginRegistryProvider: React.FC<PluginRegistryProviderProps> = ({ 
   const registerComponent = (
     originalName: string,
     pluginName: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component: ComponentType<any>,
     universe: string,
-    props: Record<string, any> = {}
+    props: Record<string, unknown> = {}
   ) => {
     const key = `${originalName}:${universe}`;
 
@@ -78,21 +98,26 @@ export const PluginRegistryProvider: React.FC<PluginRegistryProviderProps> = ({ 
       },
     }));
 
-    console.log(`Registered plugin component: ${pluginName} for ${originalName} (${universe})`);
+    logger.info(`Registered plugin component: ${pluginName} for ${originalName} (${universe})`);
   };
 
   const unregisterComponent = (originalName: string, universe: string) => {
     const key = `${originalName}:${universe}`;
 
     setRegisteredComponents(prev => {
-      const { [key]: removed, ...rest } = prev;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [key]: _removed, ...rest } = prev;
       return rest;
     });
 
-    console.log(`Unregistered plugin component for ${originalName} (${universe})`);
+    logger.info(`Unregistered plugin component for ${originalName} (${universe})`);
   };
 
-  const getComponent = (name: string, universe?: string): ComponentType<any> | null => {
+  const getComponent = (
+    name: string,
+    universe?: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): ComponentType<any> | null => {
     // Try to find universe-specific component first
     if (universe) {
       const key = `${name}:${universe}`;
@@ -113,7 +138,7 @@ export const PluginRegistryProvider: React.FC<PluginRegistryProviderProps> = ({ 
     return null;
   };
 
-  const getComponentProps = (name: string, universe?: string): Record<string, any> | null => {
+  const getComponentProps = (name: string, universe?: string): Record<string, unknown> | null => {
     if (universe) {
       const key = `${name}:${universe}`;
       const registration = registeredComponents[key];
@@ -171,11 +196,13 @@ export const usePluginRegistry = (): PluginRegistryContextValue => {
 
 export interface WithPluginComponentProps {
   universe?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fallbackComponent?: ComponentType<any>;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
-export const withPluginComponent = <P extends Record<string, any>>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const withPluginComponent = <P = any,>(
   baseComponentName: string,
   defaultComponent: ComponentType<P>
 ) => {
@@ -193,6 +220,7 @@ export const withPluginComponent = <P extends Record<string, any>>(
 
     // Use fallback or default component
     const FallbackComponent = fallbackComponent || defaultComponent;
-    return <FallbackComponent {...(restProps as P)} />;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return <FallbackComponent {...(restProps as any)} />;
   };
 };

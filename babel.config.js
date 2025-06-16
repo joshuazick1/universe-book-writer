@@ -11,10 +11,18 @@ export default {
       },
     ],
     [
+      '@babel/preset-react',
+      {
+        runtime: 'automatic',
+      },
+    ],
+    [
       '@babel/preset-typescript',
       {
         allowDeclareFields: true,
         optimizeConstEnums: true,
+        isTSX: true,
+        allExtensions: true,
       },
     ],
   ],
@@ -26,6 +34,21 @@ export default {
           {
             targets: { node: 'current' },
             modules: 'auto', // Use CommonJS for Jest
+          },
+        ],
+        [
+          '@babel/preset-react',
+          {
+            runtime: 'automatic',
+          },
+        ],
+        [
+          '@babel/preset-typescript',
+          {
+            allowDeclareFields: true,
+            optimizeConstEnums: true,
+            isTSX: true,
+            allExtensions: true,
           },
         ],
       ],
