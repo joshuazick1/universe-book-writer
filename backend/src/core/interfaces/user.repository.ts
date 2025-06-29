@@ -72,6 +72,11 @@ export interface UserRepository {
   update(id: string, user: User): Promise<User>;
 
   /**
+   * Update user metadata only
+   */
+  updateMetadata(id: string, metadata: Record<string, unknown>): Promise<void>;
+
+  /**
    * Delete user by ID
    */
   delete(id: string): Promise<boolean>;

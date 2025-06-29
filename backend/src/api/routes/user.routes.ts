@@ -57,5 +57,11 @@ export function createUserRoutes(
     userController.suspendUser.bind(userController)
   );
 
+  // User search for collaboration
+  router.get(
+    '/search',
+    userController.searchUsersForCollaboration.bind(userController)
+  );
+
   return router;
 }

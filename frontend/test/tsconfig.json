@@ -1,7 +1,12 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "types": ["jest", "node", "@testing-library/jest-dom", "@testing-library/user-event"],
+    "types": [
+      "jest",
+      "node",
+      "@testing-library/jest-dom",
+      "@testing-library/user-event"
+    ],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -9,10 +14,13 @@
     "jsx": "react",
     "noEmit": true,
     "paths": {
-      "@/*": ["../src/*"]
+      "@/*": [
+        "../src/*"
+      ]
     }
   },
   "include": [
+    "../src/**/*",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",

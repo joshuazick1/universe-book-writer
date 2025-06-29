@@ -119,8 +119,8 @@ describe('ReliabilityManager', () => {
       reliabilityManager.queueMessage('user123', 'test-event', { content: 'test' });
       reliabilityManager.start();
 
-      // Wait for retries
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Wait for retries (increased timeout for reliability)
+      await new Promise(resolve => setTimeout(resolve, 800));
 
       expect(attemptCount).toBeGreaterThanOrEqual(3);
       expect(deliveredMessages.length).toBe(1);

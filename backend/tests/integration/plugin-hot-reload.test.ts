@@ -113,6 +113,12 @@ describe('Plugin Hot Reload Integration Tests', () => {
       const pluginPath = path.join(testPluginDir, 'simple-test-plugin.mjs');
       await fs.writeFile(pluginPath, pluginCode);
 
+      // Ensure file is written and accessible
+      await fs.access(pluginPath);
+
+      // Small delay to ensure file system operations are complete  
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Load and activate plugin
       const plugin = await pluginUseCase.loadPlugin(pluginPath);
       expect(plugin).toBeDefined();
@@ -142,6 +148,12 @@ describe('Plugin Hot Reload Integration Tests', () => {
 
       const pluginPath = path.join(testPluginDir, 'invalid-plugin.mjs');
       await fs.writeFile(pluginPath, invalidPluginCode);
+
+      // Ensure file is written and accessible
+      await fs.access(pluginPath);
+
+      // Small delay to ensure file system operations are complete
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Attempt to load invalid plugin
       await expect(pluginUseCase.loadPlugin(pluginPath)).rejects.toThrow();
@@ -207,6 +219,13 @@ describe('Plugin Hot Reload Integration Tests', () => {
 
       await fs.writeFile(plugin1Path, plugin1Code);
       await fs.writeFile(plugin2Path, plugin2Code);
+
+      // Ensure files are written and accessible
+      await fs.access(plugin1Path);
+      await fs.access(plugin2Path);
+
+      // Small delay to ensure file system operations are complete
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Load both plugins
       const plugin1 = await pluginUseCase.loadPlugin(plugin1Path);
@@ -275,7 +294,15 @@ describe('Plugin Hot Reload Integration Tests', () => {
       `;
 
       const pluginPath = path.join(testPluginDir, 'config-test-plugin.mjs');
-      await fs.writeFile(pluginPath, pluginCode); // Load and activate plugin
+      await fs.writeFile(pluginPath, pluginCode);
+
+      // Ensure file is written and accessible
+      await fs.access(pluginPath);
+
+      // Small delay to ensure file system operations are complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Load and activate plugin
       const plugin = await pluginUseCase.loadPlugin(pluginPath);
       await pluginUseCase.activatePlugin('config-test-plugin');
 

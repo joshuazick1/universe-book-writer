@@ -2,7 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "composite": true,
     "declarationMap": true,
     "incremental": true,
@@ -12,7 +11,16 @@
     "moduleResolution": "NodeNext",
     "isolatedModules": true
   },
-  "references": [{ "path": "../packages/core" }],
-  "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  "references": [
+    {
+      "path": "../packages/core"
+    }
+  ],
+  "include": [
+    "src/**/*",
+    "tests/**/*",
+    "tests/unit/**/*.ts",
+    "tests/unit/**/*.test.ts",
+    "tests/unit/**/*.js"
+  ]
 }

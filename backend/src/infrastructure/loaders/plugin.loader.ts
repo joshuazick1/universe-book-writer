@@ -36,7 +36,7 @@ interface PluginModule {
  * File system plugin loader implementation
  */
 export class FileSystemPluginLoader implements PluginLoader {
-  private readonly supportedExtensions = ['.js', '.mjs'];
+  private readonly supportedExtensions = ['.js', '.mjs', '.ts'];
 
   /**
    * Load a plugin from a file path
@@ -75,24 +75,32 @@ export class FileSystemPluginLoader implements PluginLoader {
     const plugins: Plugin[] = [];
 
     try {
+      console.log(`🔍 Looking for plugins in directory: ${directory}`);
       const entries = await fs.readdir(directory, { withFileTypes: true });
+      console.log(`📁 Found ${entries.length} entries in plugin directory`);
 
       for (const entry of entries) {
         if (entry.isDirectory()) {
           const pluginPath = path.join(directory, entry.name);
+          console.log(`🔌 Attempting to load plugin from: ${pluginPath}`);
 
           try {
             const plugin = await this.loadFromPath(pluginPath);
             plugins.push(plugin);
+            console.log(`✅ Successfully loaded plugin: ${plugin.metadata.name}`);
           } catch (error) {
-            console.warn(`Failed to load plugin from ${pluginPath}:`, error);
+            console.warn(`❌ Failed to load plugin from ${pluginPath}:`, error);
           }
+        } else {
+          console.log(`⏭️ Skipping non-directory entry: ${entry.name}`);
         }
       }
     } catch (error) {
+      console.error(`❌ Failed to read plugin directory ${directory}:`, error);
       throw new Error(`Failed to read plugin directory ${directory}: ${error}`);
     }
 
+    console.log(`🎉 Loaded ${plugins.length} plugins successfully`);
     return plugins;
   }
 
@@ -101,19 +109,25 @@ export class FileSystemPluginLoader implements PluginLoader {
    */
   async validatePluginStructure(pluginPath: string): Promise<boolean> {
     try {
+      console.log(`🔍 Validating plugin structure for: ${pluginPath}`);
       const stat = await fs.stat(pluginPath);
 
       if (stat.isFile()) {
         // Single file plugin
-        return this.supportedExtensions.includes(path.extname(pluginPath));
+        const extension = path.extname(pluginPath);
+        const isSupported = this.supportedExtensions.includes(extension);
+        console.log(`📄 Single file plugin with extension ${extension}, supported: ${isSupported}`);
+        return isSupported;
       }
 
       if (stat.isDirectory()) {
         // Directory plugin - check for package.json and main file
         const packageJsonPath = path.join(pluginPath, 'package.json');
         const packageJsonExists = await this.fileExists(packageJsonPath);
+        console.log(`📦 Package.json exists: ${packageJsonExists}`);
 
         if (!packageJsonExists) {
+          console.log(`❌ No package.json found at ${packageJsonPath}`);
           return false;
         }
 
@@ -121,12 +135,18 @@ export class FileSystemPluginLoader implements PluginLoader {
         const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
         const mainFile = packageJson.main || 'index.js';
         const mainFilePath = path.join(pluginPath, mainFile);
+        const mainFileExists = await this.fileExists(mainFilePath);
 
-        return await this.fileExists(mainFilePath);
+        console.log(`📄 Main file: ${mainFile}, exists: ${mainFileExists}`);
+        console.log(`📍 Full main file path: ${mainFilePath}`);
+
+        return mainFileExists;
       }
 
+      console.log(`❌ Plugin path is neither file nor directory`);
       return false;
     } catch (error) {
+      console.error(`❌ Error validating plugin structure:`, error);
       return false;
     }
   }
@@ -174,7 +194,9 @@ export class FileSystemPluginLoader implements PluginLoader {
       const mainFile = packageJson.main || 'index.js';
       const mainFilePath = path.join(pluginPath, mainFile);
 
-      return await import(mainFilePath);
+      // Convert absolute path to file URL for ES modules
+      const fileUrl = pathToFileURL(path.resolve(mainFilePath)).href;
+      return await import(fileUrl);
     }
 
     throw new Error('Invalid plugin path');
@@ -310,5 +332,36 @@ class PluginEntityWrapper extends PluginEntity {
 
   override canDeactivate(): boolean {
     return this.wrappedPlugin.canDeactivate();
+  }
+
+  /**
+   * Get the wrapped plugin instance for accessing custom methods
+   */
+  getWrappedPlugin(): Plugin {
+    return this.wrappedPlugin;
+  }
+
+  /**
+   * Proxy method calls to the wrapped plugin for universe-specific functionality
+   */
+  getSubUniverses?(): any {
+    if (typeof (this.wrappedPlugin as any).getSubUniverses === 'function') {
+      return (this.wrappedPlugin as any).getSubUniverses();
+    }
+    return undefined;
+  }
+
+  validateSubUniverse?(subUniverseId: string): boolean {
+    if (typeof (this.wrappedPlugin as any).validateSubUniverse === 'function') {
+      return (this.wrappedPlugin as any).validateSubUniverse(subUniverseId);
+    }
+    return false;
+  }
+
+  getSubUniverseConfig?(subUniverseId: string): Record<string, unknown> | null {
+    if (typeof (this.wrappedPlugin as any).getSubUniverseConfig === 'function') {
+      return (this.wrappedPlugin as any).getSubUniverseConfig(subUniverseId);
+    }
+    return null;
   }
 }

@@ -374,14 +374,10 @@ export const useAuthStore = create<AuthStore>()(
       }),
       {
         name: 'auth-store',
-        partialize: state => ({
-          user: state.user,
-          isAuthenticated: state.isAuthenticated,
-        }),
+        // Don't persist authentication state for HTTP-only cookies
+        // The server will validate the cookie on each request  
+        partialize: () => ({}),
       }
-    ),
-    {
-      name: 'auth-store',
-    }
+    )
   )
 );

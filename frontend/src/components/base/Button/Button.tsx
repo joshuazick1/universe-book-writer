@@ -22,19 +22,45 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const getVariantClasses = (variant: ButtonProps['variant']) => {
   const variants = {
-    primary:
-      'bg-primary-500 hover:bg-primary-600 text-white border-primary-500 hover:border-primary-600',
-    secondary:
-      'bg-secondary-500 hover:bg-secondary-600 text-white border-secondary-500 hover:border-secondary-600',
-    accent:
-      'bg-accent-500 hover:bg-accent-600 text-white border-accent-500 hover:border-accent-600',
-    ghost:
-      'bg-transparent hover:bg-neutral-100 text-neutral-700 border-neutral-300 hover:border-neutral-400 dark:hover:bg-neutral-800 dark:text-neutral-300',
-    universe:
-      'bg-universe-primary hover:brightness-110 text-universe-text border-universe-primary universe-glow',
+    primary: 'border',
+    secondary: 'border',
+    accent: 'border',
+    ghost: 'bg-transparent border',
+    universe: 'bg-universe-primary hover:brightness-110 text-universe-text border-universe-primary universe-glow',
   };
 
   return variants[variant || 'primary'];
+};
+
+const getVariantStyles = (variant: ButtonProps['variant']) => {
+  if (variant === 'universe') {
+    return {}; // Universe variant uses CSS custom properties
+  }
+
+  const styles = {
+    primary: {
+      backgroundColor: 'var(--color-universe-primary)',
+      color: 'var(--color-universe-background)',
+      borderColor: 'var(--color-universe-primary)',
+    },
+    secondary: {
+      backgroundColor: 'var(--color-universe-surface)',
+      color: 'var(--color-universe-text)',
+      borderColor: 'var(--color-universe-primary)',
+    },
+    accent: {
+      backgroundColor: 'var(--color-universe-accent)',
+      color: 'var(--color-universe-background)',
+      borderColor: 'var(--color-universe-accent)',
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+      color: 'var(--color-universe-text)',
+      borderColor: 'var(--color-universe-primary)',
+    },
+  };
+
+  return styles[variant || 'primary'];
 };
 
 const getSizeClasses = (size: ButtonProps['size']) => {
@@ -62,26 +88,29 @@ const BaseButton = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       disabled,
       className = '',
+      style,
       ...props
     },
     ref
   ) => {
     const variantClasses = getVariantClasses(variant);
+    const variantStyles = getVariantStyles(variant);
     const sizeClasses = getSizeClasses(size);
 
     const baseClasses = [
       'inline-flex items-center justify-center',
-      'font-medium rounded-lg border',
+      'font-medium rounded-lg',
       'transition-all duration-200',
       'focus:outline-none focus:ring-2 focus:ring-offset-2',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       'select-none',
+      'hover:opacity-80',
     ].join(' ');
 
     const widthClasses = fullWidth ? 'w-full' : '';
 
     const focusClasses =
-      variant === 'universe' ? 'focus:ring-universe-primary' : `focus:ring-${variant}-500`;
+      variant === 'universe' ? 'focus:ring-universe-primary' : 'focus:ring-2';
 
     const allClasses = [
       baseClasses,
@@ -94,8 +123,13 @@ const BaseButton = forwardRef<HTMLButtonElement, ButtonProps>(
       .filter(Boolean)
       .join(' ');
 
+    const combinedStyles = {
+      ...variantStyles,
+      ...style
+    };
+
     return (
-      <button ref={ref} disabled={disabled || loading} className={allClasses} {...props}>
+      <button ref={ref} disabled={disabled || loading} className={allClasses} style={combinedStyles} {...props}>
         {/* Loading Spinner */}
         {loading && (
           <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">

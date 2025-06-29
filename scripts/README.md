@@ -302,3 +302,17 @@ node scripts/run-tests-with-output.js backend --verbose --pattern "auth.*should 
 - ✅ Real-time progress indicators
 - ✅ Comprehensive test summaries
 - ✅ Issue tracking with comments
+
+### 🛠️ **MCP Server Management**
+
+- **Automated MCP setup** - Install and configure Model Context Protocol servers
+- **VS Code integration** - Enhanced GitHub Copilot capabilities
+- **PowerShell scripts** - Windows-optimized automation
+- **Configuration management** - Centralized MCP server settings
+
+## Scripts Overview
+
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `run-tests-with-output.ts` | Enhanced test runner with organized logging | `npm test` or direct execution |
+| `setup-mcp-servers.ps1` | Install and configure MCP servers for Copilot | `.\scripts\setup-mcp-servers.ps1` |

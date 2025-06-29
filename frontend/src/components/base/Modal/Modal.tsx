@@ -40,11 +40,23 @@ const getSizeClasses = (size: ModalProps['size']) => {
 
 const getVariantClasses = (variant: ModalProps['variant']) => {
   const variants = {
-    default: 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700',
+    default: 'border',
     universe: 'universe-surface universe-border',
   };
 
   return variants[variant || 'default'];
+};
+
+const getVariantStyles = (variant: ModalProps['variant']) => {
+  if (variant === 'universe') {
+    return {}; // Universe variant uses CSS custom properties
+  }
+
+  return {
+    backgroundColor: 'var(--color-universe-surface)',
+    borderColor: 'var(--color-universe-primary)',
+    color: 'var(--color-universe-text)'
+  };
 };
 
 /* === BASE COMPONENT === */
@@ -140,6 +152,7 @@ const BaseModal: React.FC<ModalProps> = ({
 
   const sizeClasses = getSizeClasses(size);
   const variantClasses = getVariantClasses(variant);
+  const variantStyles = getVariantStyles(variant);
 
   const overlayClasses = [
     'fixed inset-0 z-modal',
@@ -178,14 +191,19 @@ const BaseModal: React.FC<ModalProps> = ({
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
     >
-      <div ref={modalRef} className={modalClasses} tabIndex={-1}>
+      <div ref={modalRef} className={modalClasses} style={variantStyles} tabIndex={-1}>
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
+          <div
+            className={`flex items-center justify-between p-6 border-b ${variant === 'universe' ? 'border-universe-accent' : ''
+              }`}
+            style={variant !== 'universe' ? { borderColor: 'var(--color-universe-primary)' } : {}}
+          >
             {title && (
               <h2
                 id="modal-title"
-                className="text-xl font-semibold text-neutral-900 dark:text-neutral-100"
+                className="text-xl font-semibold"
+                style={{ color: 'var(--color-universe-text)' }}
               >
                 {title}
               </h2>
@@ -209,7 +227,11 @@ const BaseModal: React.FC<ModalProps> = ({
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 p-6 border-t border-neutral-200 dark:border-neutral-700">
+          <div
+            className={`flex items-center justify-end gap-3 p-6 border-t ${variant === 'universe' ? 'border-universe-accent' : ''
+              }`}
+            style={variant !== 'universe' ? { borderColor: 'var(--color-universe-primary)' } : {}}
+          >
             {footer}
           </div>
         )}

@@ -39,4 +39,38 @@ export interface EmailService {
     alertType: string,
     details: Record<string, unknown>
   ): Promise<void>;
+
+  /**
+   * Send collaboration invitation email
+   */
+  sendCollaborationInvitation(
+    email: string,
+    inviterName: string,
+    universeName: string,
+    role: string,
+    invitationToken: string,
+    message?: string,
+    expiresAt?: Date
+  ): Promise<void>;
+
+  /**
+   * Send collaboration notification email (when directly added)
+   */
+  sendCollaborationNotification(
+    email: string,
+    inviterName: string,
+    universeName: string,
+    role: string,
+    universeUrl: string,
+    message?: string
+  ): Promise<void>;
+
+  /**
+   * Send collaboration removal notification email
+   */
+  sendCollaborationRemovalNotification(
+    email: string,
+    removerName: string,
+    universeName: string
+  ): Promise<void>;
 }

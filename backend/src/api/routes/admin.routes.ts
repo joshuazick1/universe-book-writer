@@ -22,6 +22,7 @@ export function createAdminRoutes(
   router.put('/users/:id/status', adminController.updateUserStatus.bind(adminController));
   router.post('/users/:id/verify-email', adminController.verifyUserEmail.bind(adminController));
   router.post('/users', adminController.createUser.bind(adminController));
+  router.delete('/users/:id', adminController.deleteUser.bind(adminController));
 
   // Settings routes
   router.get('/settings', adminController.getAdminSettings.bind(adminController));

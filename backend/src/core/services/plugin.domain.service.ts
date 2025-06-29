@@ -16,7 +16,7 @@ import type { PluginRepository } from '../interfaces/plugin.repository.interface
  * Domain service for plugin business logic
  */
 export class PluginDomainService {
-  constructor(private pluginRepository: PluginRepository) {}
+  constructor(private pluginRepository: PluginRepository) { }
 
   /**
    * Validate plugin dependencies
@@ -177,19 +177,74 @@ export class PluginDomainService {
   async checkConflicts(metadata: PluginMetadata): Promise<{
     hasConflicts: boolean;
     conflicts: string[];
+    canReplace: boolean;
+    existingPlugin?: any;
   }> {
     const conflicts: string[] = [];
+    let canReplace = false;
+    let existingPlugin: any = undefined;
 
     // Check if plugin with same name already exists
-    const existingPlugin = await this.pluginRepository.findByName(metadata.name);
-    if (existingPlugin) {
-      conflicts.push(`Plugin with name '${metadata.name}' already exists`);
+    const existing = await this.pluginRepository.findByName(metadata.name);
+    if (existing) {
+      existingPlugin = existing;
+
+      // Compare versions to determine if this is an update
+      const existingVersion = String(existing.metadata?.version || '0.0.0');
+      const newVersion = String(metadata.version || '0.0.0');
+
+      // If it's the same version, allow replacement (reload scenario)
+      if (existingVersion === newVersion) {
+        canReplace = true;
+        console.log(`🔄 Plugin '${metadata.name}' v${newVersion} already exists - will be replaced`);
+      }
+      // If it's a newer version, allow upgrade
+      else if (this.compareVersions(newVersion, existingVersion) > 0) {
+        canReplace = true;
+        console.log(`⬆️ Plugin '${metadata.name}' upgrading from v${existingVersion} to v${newVersion}`);
+      }
+      // If it's an older version, warn but allow replacement in development
+      else if (this.compareVersions(newVersion, existingVersion) < 0) {
+        canReplace = process.env.NODE_ENV === 'development';
+        if (canReplace) {
+          console.warn(`⬇️ Plugin '${metadata.name}' downgrading from v${existingVersion} to v${newVersion} (development mode)`);
+        } else {
+          conflicts.push(`Plugin '${metadata.name}' v${existingVersion} already exists (newer than v${newVersion})`);
+        }
+      }
+
+      // If we can't replace, it's a conflict
+      if (!canReplace) {
+        conflicts.push(`Plugin with name '${metadata.name}' already exists (v${existingVersion})`);
+      }
     }
 
     return {
       hasConflicts: conflicts.length > 0,
       conflicts,
+      canReplace,
+      existingPlugin,
     };
+  }
+
+  /**
+   * Compare semantic versions (simple implementation)
+   */
+  private compareVersions(version1: string, version2: string): number {
+    const v1Parts = version1.split('.').map(n => parseInt(n) || 0);
+    const v2Parts = version2.split('.').map(n => parseInt(n) || 0);
+
+    // Pad arrays to same length
+    const maxLength = Math.max(v1Parts.length, v2Parts.length);
+    while (v1Parts.length < maxLength) v1Parts.push(0);
+    while (v2Parts.length < maxLength) v2Parts.push(0);
+
+    for (let i = 0; i < maxLength; i++) {
+      if (v1Parts[i] > v2Parts[i]) return 1;
+      if (v1Parts[i] < v2Parts[i]) return -1;
+    }
+
+    return 0; // Equal
   }
 
   /**

@@ -12,7 +12,7 @@ export class AdminController {
   constructor(
     private adminUseCase: AdminUseCase,
     private securityService: SecurityService
-  ) {}
+  ) { }
 
   /**
    * Get all users with filtering and pagination
@@ -478,6 +478,67 @@ export class AdminController {
             status: newUser.status,
             emailVerified: newUser.emailVerified,
           },
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Delete user (admin only)
+   */
+  async deleteUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const currentUserId = req.user?.id;
+      const userRole = req.user?.role;
+      const targetUserId = req.params.id;
+      const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
+      const userAgent = req.get('User-Agent') || 'unknown';
+
+      // Check admin permission
+      if (userRole !== UserRole.ADMIN) {
+        res.status(403).json({
+          success: false,
+          message: 'Admin access required',
+        });
+        return;
+      }
+
+      if (!targetUserId) {
+        res.status(400).json({
+          success: false,
+          message: 'User ID is required',
+        });
+        return;
+      }
+
+      if (!currentUserId) {
+        res.status(401).json({
+          success: false,
+          message: 'Authentication required',
+        });
+        return;
+      }
+
+      const deleted = await this.adminUseCase.deleteUser(targetUserId, currentUserId);
+
+      // Log admin action
+      await this.securityService.logSecurityEvent(
+        currentUserId,
+        'admin_user_deleted',
+        {
+          targetUserId,
+          ipAddress,
+          userAgent,
+        }
+      );
+
+      res.json({
+        success: true,
+        message: 'User deleted successfully',
+        data: {
+          deleted: true,
         },
       });
     } catch (error) {

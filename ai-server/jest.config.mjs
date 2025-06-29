@@ -1,27 +1,92 @@
+/**
+ * AI Server Jest Configuration
+ * Standalone configuration for running AI server tests independently
+ */
+
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
   preset: 'ts-jest/presets/default-esm',
+  displayName: 'ai-server',
   testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts'],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+
   transform: {
-    '^.+\\.ts$': [
+    '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
         useESM: true,
+        tsconfig: './tsconfig.json',
       },
     ],
   },
+
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.(m?js|ts)$': '$1',
+    // Handle JS imports without extensions
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    // Handle TypeScript imports
+    '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
+    // Path aliases
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
-  moduleFileExtensions: ['ts', 'js', 'mjs', 'cjs', 'json', 'node'],
-  testMatch: ['**/__tests__/**/*.+(ts|js)', '**/?(*.)+(spec|test).+(ts|js)'],
+
+  testMatch: ['<rootDir>/tests/**/*.(spec|test).ts'],
+
+  roots: ['<rootDir>/src', '<rootDir>/tests'],
+  testPathIgnorePatterns: [
+    '<rootDir>/../frontend/',
+    '<rootDir>/../backend/',
+    '<rootDir>/../collaboration-server/',
+    '<rootDir>/../packages/',
+    '<rootDir>/../e2e/',
+    '<rootDir>/../tests/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/dist/',
+  ],
+  coveragePathIgnorePatterns: [
+    '<rootDir>/../frontend/',
+    '<rootDir>/../backend/',
+    '<rootDir>/../collaboration-server/',
+    '<rootDir>/../packages/',
+    '<rootDir>/../e2e/',
+    '<rootDir>/../tests/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/dist/',
+  ],
+
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
+
+  // Test execution configuration
   passWithNoTests: true,
   verbose: true,
   detectOpenHandles: true,
   forceExit: true,
   maxWorkers: 1,
-  collectCoverageFrom: ['src/**/*.ts', '!**/*.d.ts', '!**/node_modules/**', '!**/dist/**'],
-  coverageDirectory: 'coverage',
+  testTimeout: 15000,
+
+  // Coverage configuration
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/**/*.d.ts',
+    '!<rootDir>/src/**/*.test.ts',
+    '!<rootDir>/src/**/*.spec.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
+    '!<rootDir>/../frontend/**',
+    '!<rootDir>/../backend/**',
+    '!<rootDir>/../collaboration-server/**',
+    '!<rootDir>/../packages/**',
+    '!<rootDir>/../e2e/**',
+    '!<rootDir>/../tests/**',
+  ],
+  coverageDirectory: '<rootDir>/coverage',
   coverageReporters: ['text', 'lcov', 'html'],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
 };

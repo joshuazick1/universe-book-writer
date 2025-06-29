@@ -32,6 +32,9 @@ export function createPluginRoutes(pluginController: PluginController): Router {
   // Update plugin configuration
   router.put('/:name/config', (req, res) => pluginController.updatePluginConfig(req, res));
 
+  // Get plugin sub-universes
+  router.get('/:name/sub-universes', (req, res) => pluginController.getPluginSubUniverses(req, res));
+
   // Get dependency graph
   router.get('/system/dependencies', (req, res) => pluginController.getDependencyGraph(req, res));
 
@@ -40,6 +43,15 @@ export function createPluginRoutes(pluginController: PluginController): Router {
 
   // Reload all plugins
   router.post('/system/reload', (req, res) => pluginController.reloadAllPlugins(req, res));
+
+  // Get system info
+  router.get('/system/info', (req, res) => pluginController.getSystemInfo(req, res));
+
+  // Get plugin status
+  router.get('/:name/status', (req, res) => pluginController.getPluginStatus(req, res));
+
+  // Development endpoints (only available in development mode)
+  router.delete('/dev/clear', (req, res) => pluginController.clearAllPlugins(req, res));
 
   return router;
 }

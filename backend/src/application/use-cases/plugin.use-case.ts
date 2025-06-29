@@ -24,7 +24,7 @@ export class PluginUseCase implements PluginManager {
     private readonly pluginRepository: PluginRepository,
     private readonly pluginDomainService: PluginDomainService,
     private readonly pluginLoader: PluginLoader
-  ) {}
+  ) { }
 
   /**
    * Register a plugin instance
@@ -40,6 +40,16 @@ export class PluginUseCase implements PluginManager {
     const conflicts = await this.pluginDomainService.checkConflicts(plugin.metadata);
     if (conflicts.hasConflicts) {
       throw new Error(`Plugin conflicts: ${conflicts.conflicts.join(', ')}`);
+    }
+
+    // If there's an existing plugin that can be replaced, unregister it first
+    if (conflicts.canReplace && conflicts.existingPlugin) {
+      console.log(`🔄 Replacing existing plugin: ${conflicts.existingPlugin.metadata.name}`);
+      try {
+        await this.unregister(conflicts.existingPlugin.metadata.name);
+      } catch (error) {
+        console.warn(`⚠️ Failed to unregister existing plugin, continuing anyway:`, error);
+      }
     }
 
     // Validate dependencies
@@ -297,5 +307,68 @@ export class PluginUseCase implements PluginManager {
         }
       }
     }
+  }
+
+  /**
+   * Get sub-universes for a specific plugin (if supported)
+   */
+  async getPluginSubUniverses(pluginName: string): Promise<Array<{
+    id: string;
+    name: string;
+    description: string;
+    canonLevel: string;
+    supportedEras: string[];
+    defaultEra: string;
+  }> | null> {
+    const plugin = this.loadedPlugins.get(pluginName);
+    if (!plugin) {
+      console.log(`Plugin '${pluginName}' not found in loaded plugins`);
+      return null;
+    }
+
+    console.log(`Plugin '${pluginName}' found, checking for getSubUniverses method...`);
+    console.log(`Plugin type: ${typeof plugin}`);
+    console.log(`Plugin constructor: ${plugin.constructor.name}`);
+    console.log(`Has getSubUniverses: ${typeof (plugin as any).getSubUniverses}`);
+
+    // Check if plugin supports sub-universes (has getSubUniverses method)
+    if (typeof (plugin as any).getSubUniverses === 'function') {
+      try {
+        console.log(`Calling getSubUniverses() method...`);
+        const result = await (plugin as any).getSubUniverses();
+        console.log(`getSubUniverses() returned:`, result);
+        return result;
+      } catch (error) {
+        console.error(`Error getting sub-universes for plugin '${pluginName}':`, error);
+        return [];
+      }
+    }
+
+    // Plugin doesn't support sub-universes
+    console.log(`Plugin '${pluginName}' doesn't support sub-universes`);
+    return [];
+  }
+
+  /**
+   * Clear all plugins (development utility)
+   */
+  async clearAllPlugins(): Promise<void> {
+    if (process.env.NODE_ENV !== 'development') {
+      throw new Error('clearAllPlugins is only available in development mode');
+    }
+
+    console.log('🧹 Clearing all plugins (development mode)...');
+
+    const allPlugins = this.getAllPlugins();
+    for (const plugin of allPlugins) {
+      try {
+        await this.unregister(plugin.metadata.name);
+        console.log(`🗑️ Removed plugin: ${plugin.metadata.name}`);
+      } catch (error) {
+        console.warn(`⚠️ Failed to remove plugin ${plugin.metadata.name}:`, error);
+      }
+    }
+
+    console.log('✅ All plugins cleared');
   }
 }

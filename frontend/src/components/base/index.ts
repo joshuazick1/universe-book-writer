@@ -13,3 +13,7 @@ export type { CardProps, CardHeaderProps, CardContentProps, CardFooterProps } fr
 
 export { Modal, useModal } from './Modal';
 export type { ModalProps } from './Modal';
+
+export { LoadingSpinner } from './LoadingSpinner';
+
+export { ErrorMessage } from './ErrorMessage';

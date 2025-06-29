@@ -179,13 +179,30 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
   const passwordStrength = calculatePasswordStrength(password || '');
 
+  // Helper function for consistent input styling
+  const getInputStyles = (hasError: boolean) => ({
+    backgroundColor: 'var(--color-universe-surface)',
+    borderColor: hasError ? 'rgba(239, 68, 68, 0.5)' : 'var(--color-universe-primary)',
+    color: 'var(--color-universe-text)',
+    '--placeholder-color': 'rgba(var(--color-universe-text-rgb), 0.5)'
+  } as React.CSSProperties);
+
+  const getLabelStyles = () => ({
+    color: 'var(--color-universe-text)',
+    opacity: 0.8
+  });
+
+  const getErrorStyles = () => ({
+    color: 'rgba(239, 68, 68, 0.9)'
+  });
+
   // Render form
   return (
     <div className={`w-full max-w-md mx-auto ${className}`}>
       <div className="bg-white shadow-lg rounded-lg p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-          <p className="text-gray-600 mt-2">Join Universe Book Writer today</p>
+          <h2 className="text-3xl font-bold" style={{ color: 'var(--color-universe-text)' }}>Create Account</h2>
+          <p className="mt-2" style={{ color: 'var(--color-universe-text)', opacity: 0.7 }}>Join Universe Book Writer today</p>
         </div>
 
         <form
@@ -199,14 +216,19 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           {/* Error Messages */}
           {(error?.message || errors.root) && (
             <div
-              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md"
+              className="mb-6 p-4 rounded-md border"
+              style={{
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderColor: 'rgba(239, 68, 68, 0.3)',
+                color: 'var(--color-universe-text)'
+              }}
               role="alert"
               aria-live="polite"
               data-testid="error-message"
             >
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5" style={{ color: 'rgba(239, 68, 68, 0.8)' }} viewBox="0 0 20 20" fill="currentColor">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -215,7 +237,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-800" data-testid="error-message-text">
+                  <p className="text-sm" style={{ color: 'rgba(239, 68, 68, 0.9)' }} data-testid="error-message-text">
                     {error?.message || errors.root?.message}
                   </p>
                 </div>
@@ -238,10 +260,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 autoComplete="email"
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? 'email-error' : undefined}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.email ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="Enter your email"
+                style={getInputStyles(!!errors.email)}
               />
               {errors.email && (
                 <p
@@ -268,10 +290,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   type="text"
                   id="firstName"
                   autoComplete="given-name"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.firstName ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.firstName ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="First name"
+                  style={getInputStyles(!!errors.firstName)}
                 />
                 {errors.firstName && (
                   <p className="mt-2 text-sm text-red-600">
@@ -291,10 +313,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   type="text"
                   id="lastName"
                   autoComplete="family-name"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.lastName ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.lastName ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="Last name"
+                  style={getInputStyles(!!errors.lastName)}
                 />
                 {errors.lastName && (
                   <p className="mt-2 text-sm text-red-600">
@@ -316,10 +338,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 type="text"
                 id="username"
                 autoComplete="username"
-                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.username ? 'border-red-300' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.username ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="Choose a username"
+                style={getInputStyles(!!errors.username)}
               />
               {errors.username && (
                 <p className="mt-2 text-sm text-red-600">
@@ -343,10 +365,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 aria-invalid={!!errors.password}
                 aria-describedby={errors.password ? 'password-error' : undefined}
                 autoComplete="new-password"
-                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 ${errors.password ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="Create a password"
+                style={getInputStyles(!!errors.password)}
               />
               <button
                 type="button"
@@ -400,15 +422,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               <div className="flex items-center">
                 <div className="flex-1 h-2 bg-gray-200 rounded-full">
                   <div
-                    className={`h-full rounded-full transition-all ${
-                      passwordStrength.color === 'red'
+                    className={`h-full rounded-full transition-all ${passwordStrength.color === 'red'
                         ? 'bg-red-500'
                         : passwordStrength.color === 'orange'
                           ? 'bg-yellow-500'
                           : passwordStrength.color === 'green'
                             ? 'bg-green-500'
                             : 'bg-gray-300'
-                    }`}
+                      }`}
                     style={{ width: `${(passwordStrength.strength / 3) * 100}%` }}
                   />
                 </div>
@@ -446,9 +467,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
                 autoComplete="new-password"
                 placeholder="Confirm your password"
-                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 ${
-                  errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 ${errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                style={getInputStyles(!!errors.confirmPassword)}
               />
               <button
                 type="button"
@@ -509,11 +530,25 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               disabled={isLoading}
               data-testid="submit-button"
               aria-busy={isLoading}
-              className={`w-full py-3 px-4 rounded-md font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                isLoading
-                  ? 'bg-blue-400 cursor-not-allowed opacity-50'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+              className="w-full py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2"
+              style={{
+                backgroundColor: isLoading
+                  ? 'rgba(var(--color-universe-primary-rgb), 0.4)'
+                  : 'var(--color-universe-primary)',
+                color: 'var(--color-universe-background)',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                opacity: isLoading ? 0.5 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = 'rgba(var(--color-universe-primary-rgb), 0.8)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = 'var(--color-universe-primary)';
+                }
+              }}
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </button>

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { animationClasses } from '../../utils/animations';
 
 export interface TransitionProps {
   show: boolean;
@@ -20,10 +19,10 @@ export interface TransitionProps {
 
 export const Transition: React.FC<TransitionProps> = ({
   show,
-  enter = animationClasses.enterFade,
+  enter = '',
   enterFrom = 'opacity-0',
   enterTo = 'opacity-100',
-  leave = animationClasses.exitFade,
+  leave = '',
   leaveFrom = 'opacity-100',
   leaveTo = 'opacity-0',
   duration = 250,
@@ -34,42 +33,27 @@ export const Transition: React.FC<TransitionProps> = ({
   onLeave,
   onLeft,
 }) => {
+  const [shouldRender, setShouldRender] = useState(show);
   const [isVisible, setIsVisible] = useState(show);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const nodeRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (show && !isVisible) {
-      // Entering
-      setIsVisible(true);
-      setIsAnimating(true);
+    if (show) {
+      // Show element first
+      setShouldRender(true);
       onEnter?.();
-
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      // Set end state after animation
-      timeoutRef.current = setTimeout(() => {
-        setIsAnimating(false);
-        onEntered?.();
-      }, duration);
-    } else if (!show && isVisible) {
-      // Leaving
-      setIsAnimating(true);
+      // Then trigger transition on next frame
+      requestAnimationFrame(() => {
+        setIsVisible(true);
+        setTimeout(() => onEntered?.(), duration);
+      });
+    } else {
+      // Start exit animation
       onLeave?.();
-
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      // Hide after animation
+      setIsVisible(false);
+      // Remove from DOM after animation completes
       timeoutRef.current = setTimeout(() => {
-        setIsVisible(false);
-        setIsAnimating(false);
+        setShouldRender(false);
         onLeft?.();
       }, duration);
     }
@@ -79,32 +63,22 @@ export const Transition: React.FC<TransitionProps> = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [show, isVisible, duration, onEnter, onEntered, onLeave, onLeft]);
+  }, [show, duration, onEnter, onEntered, onLeave, onLeft]);
 
-  if (!isVisible) {
+  if (!shouldRender) {
     return null;
   }
 
-  const getClasses = () => {
-    const baseClasses = `transition-all duration-${duration}`;
-
-    if (show && isAnimating) {
-      // Entering animation
-      return `${baseClasses} ${enter} ${enterFrom} ${className}`;
-    } else if (show && !isAnimating) {
-      // Entered state
-      return `${baseClasses} ${enterTo} ${className}`;
-    } else if (!show && isAnimating) {
-      // Leaving animation
-      return `${baseClasses} ${leave} ${leaveFrom} ${className}`;
-    } else {
-      // Left state
-      return `${baseClasses} ${leaveTo} ${className}`;
-    }
-  };
+  // Build classes based on state
+  const transitionClasses = `transition-all ease-in-out`;
+  const stateClasses = isVisible ? enterTo : enterFrom;
+  const finalClasses = `${transitionClasses} ${stateClasses} ${className}`.trim();
 
   return (
-    <div ref={nodeRef} className={getClasses()}>
+    <div
+      className={finalClasses}
+      style={{ transitionDuration: `${duration}ms` }}
+    >
       {children}
     </div>
   );
@@ -112,39 +86,63 @@ export const Transition: React.FC<TransitionProps> = ({
 
 // Fade transition component
 export const FadeTransition: React.FC<Omit<TransitionProps, 'enter' | 'leave'>> = props => (
-  <Transition enter={animationClasses.enterFade} leave={animationClasses.exitFade} {...props} />
+  <Transition
+    enterFrom="opacity-0"
+    enterTo="opacity-100"
+    leaveFrom="opacity-100"
+    leaveTo="opacity-0"
+    {...props}
+  />
 );
 
 // Scale transition component
 export const ScaleTransition: React.FC<Omit<TransitionProps, 'enter' | 'leave'>> = props => (
-  <Transition enter={animationClasses.enterScale} leave={animationClasses.exitScale} {...props} />
+  <Transition
+    enterFrom="opacity-0 scale-90"
+    enterTo="opacity-100 scale-100"
+    leaveFrom="opacity-100 scale-100"
+    leaveTo="opacity-0 scale-90"
+    {...props}
+  />
 );
 
 // Slide transitions
 export const SlideDownTransition: React.FC<Omit<TransitionProps, 'enter' | 'leave'>> = props => (
-  <Transition enter={animationClasses.enterFromTop} leave={animationClasses.exitToTop} {...props} />
+  <Transition
+    enterFrom="opacity-0 -translate-y-2"
+    enterTo="opacity-100 translate-y-0"
+    leaveFrom="opacity-100 translate-y-0"
+    leaveTo="opacity-0 -translate-y-2"
+    {...props}
+  />
 );
 
 export const SlideUpTransition: React.FC<Omit<TransitionProps, 'enter' | 'leave'>> = props => (
   <Transition
-    enter={animationClasses.enterFromBottom}
-    leave={animationClasses.exitToBottom}
+    enterFrom="opacity-0 translate-y-2"
+    enterTo="opacity-100 translate-y-0"
+    leaveFrom="opacity-100 translate-y-0"
+    leaveTo="opacity-0 translate-y-2"
     {...props}
   />
 );
 
 export const SlideRightTransition: React.FC<Omit<TransitionProps, 'enter' | 'leave'>> = props => (
   <Transition
-    enter={animationClasses.enterFromLeft}
-    leave={animationClasses.exitToLeft}
+    enterFrom="opacity-0 -translate-x-2"
+    enterTo="opacity-100 translate-x-0"
+    leaveFrom="opacity-100 translate-x-0"
+    leaveTo="opacity-0 -translate-x-2"
     {...props}
   />
 );
 
 export const SlideLeftTransition: React.FC<Omit<TransitionProps, 'enter' | 'leave'>> = props => (
   <Transition
-    enter={animationClasses.enterFromRight}
-    leave={animationClasses.exitToRight}
+    enterFrom="opacity-0 translate-x-2"
+    enterTo="opacity-100 translate-x-0"
+    leaveFrom="opacity-100 translate-x-0"
+    leaveTo="opacity-0 translate-x-2"
     {...props}
   />
 );

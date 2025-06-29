@@ -5,6 +5,28 @@
 
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from '../../base/Card';
+import { AnimationShowcase } from '../../animation/AnimationShowcase';
+import { TransitionTester } from '../../animation/TransitionTester';
+import { PluginTestingTool } from '../../developer/PluginTestingTool';
+import { useTheme } from '../../providers/ThemeProvider';
+
+// Simple SVG icon component to replace Heroicons
+const SwatchIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 21h10a2 2 0 002-2v-4a2 2 0 00-2-2H7M7 21V9a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2H9a2 2 0 01-2 2z"
+    />
+  </svg>
+);
 import { logger } from '../../../utils/logger';
 
 // AI Settings Interfaces
@@ -27,7 +49,6 @@ interface AISettings {
 
 // Editor & Writing Settings
 interface EditorSettings {
-  theme: 'light' | 'dark' | 'auto' | 'universe-specific';
   fontSize: number;
   fontFamily: string;
   lineNumbers: boolean;
@@ -82,8 +103,11 @@ interface DataSettings {
 
 export const UserSettingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
-    'application' | 'editor' | 'ai' | 'plugins' | 'collaboration' | 'data'
+    'application' | 'editor' | 'ai' | 'plugins' | 'collaboration' | 'data' | 'developers'
   >('application');
+
+  // Get theme context
+  const { currentTheme, availableThemes, setTheme, isPluginTheme } = useTheme();
 
   // Settings state
   const [aiSettings, setAISettings] = useState<AISettings>({
@@ -104,7 +128,6 @@ export const UserSettingsPage: React.FC = () => {
   });
 
   const [editorSettings, setEditorSettings] = useState<EditorSettings>({
-    theme: 'auto',
     fontSize: 14,
     fontFamily: 'Inter, system-ui, sans-serif',
     lineNumbers: true,
@@ -181,19 +204,20 @@ export const UserSettingsPage: React.FC = () => {
     { id: 'application' as const, label: 'Application', icon: '⚙️' },
     { id: 'editor' as const, label: 'Editor', icon: '📝' },
     { id: 'ai' as const, label: 'AI Assistant', icon: '🤖' },
-    { id: 'plugins' as const, label: 'Plugins', icon: '�' },
-    { id: 'collaboration' as const, label: 'Collaboration', icon: '�' },
+    { id: 'plugins' as const, label: 'Plugins', icon: '🔌' },
+    { id: 'collaboration' as const, label: 'Collaboration', icon: '👥' },
     { id: 'data' as const, label: 'Data & Backup', icon: '💾' },
+    { id: 'developers' as const, label: 'For Developers', icon: '🛠️' },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-universe-background)' }}>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold" style={{ color: 'var(--color-universe-text)' }}>Settings</h1>
+            <p className="mt-2" style={{ color: 'var(--color-universe-text)', opacity: 0.7 }}>
               Configure your application preferences and system settings
             </p>
           </div>
@@ -206,11 +230,21 @@ export const UserSettingsPage: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
-                      activeTab === tab.id
-                        ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                    className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${activeTab === tab.id
+                      ? 'border'
+                      : 'hover:opacity-75'
+                      }`}
+                    style={{
+                      backgroundColor: activeTab === tab.id
+                        ? 'var(--color-universe-primary)'
+                        : 'var(--color-universe-surface)',
+                      color: activeTab === tab.id
+                        ? 'white'
+                        : 'var(--color-universe-text)',
+                      borderColor: activeTab === tab.id
+                        ? 'var(--color-universe-primary)'
+                        : 'transparent'
+                    }}
                   >
                     <span className="mr-3 text-lg">{tab.icon}</span>
                     {tab.label}
@@ -275,6 +309,115 @@ export const UserSettingsPage: React.FC = () => {
                               <option value="de">German</option>
                               <option value="ja">Japanese</option>
                             </select>
+                          </div>
+                        </div>
+
+                        {/* Theme Selection */}
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-2">
+                            <SwatchIcon className="w-5 h-5 text-gray-600" />
+                            <h3 className="text-lg font-medium text-gray-900">Theme Selection</h3>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            Choose your application theme. Plugin themes are available globally regardless of which universe you're working in.
+                          </p>
+
+                          <div className="space-y-4">
+                            {/* System Themes */}
+                            <div>
+                              <div className="text-sm font-medium text-gray-700 mb-3">System Themes</div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {availableThemes.filter(theme => !isPluginTheme(theme)).map(theme => (
+                                  <button
+                                    key={theme}
+                                    onClick={() => setTheme(theme)}
+                                    className={`flex items-center space-x-3 p-3 border rounded-lg transition-all duration-200 ${currentTheme === theme
+                                      ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-opacity-20'
+                                      : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                  >
+                                    <div
+                                      className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                                      style={{
+                                        backgroundColor: theme === 'default' ? '#0ea5e9' :
+                                          theme === 'dark' ? '#0ea5e9' : '#0ea5e9'
+                                      }}
+                                    />
+                                    <div className="text-left">
+                                      <div className="font-medium text-gray-900">
+                                        {theme === 'default' ? 'Default' :
+                                          theme === 'dark' ? 'Dark' :
+                                            theme.charAt(0).toUpperCase() + theme.slice(1)}
+                                      </div>
+                                      {currentTheme === theme && (
+                                        <div className="text-xs text-blue-600">Current theme</div>
+                                      )}
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Plugin Themes */}
+                            {availableThemes.filter(theme => isPluginTheme(theme)).length > 0 && (
+                              <div>
+                                <div className="text-sm font-medium text-gray-700 mb-3">Plugin Themes</div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                  {availableThemes.filter(theme => isPluginTheme(theme)).map(theme => {
+                                    const getThemeColor = (themeName: string) => {
+                                      const themeColors: Record<string, string> = {
+                                        lcars: '#ff9900',
+                                        imperial: '#cc0000',
+                                        rebel: '#ff6600',
+                                        gryffindor: '#740001',
+                                        hufflepuff: '#ffdb00',
+                                        ravenclaw: '#0e1a40',
+                                        slytherin: '#1a472a',
+                                      };
+                                      return themeColors[themeName] || '#0ea5e9';
+                                    };
+
+                                    const getThemeDisplayName = (themeName: string) => {
+                                      const displayNames: Record<string, string> = {
+                                        lcars: 'LCARS (Star Trek)',
+                                        imperial: 'Imperial (Star Wars)',
+                                        rebel: 'Rebel Alliance (Star Wars)',
+                                        gryffindor: 'Gryffindor (Harry Potter)',
+                                        hufflepuff: 'Hufflepuff (Harry Potter)',
+                                        ravenclaw: 'Ravenclaw (Harry Potter)',
+                                        slytherin: 'Slytherin (Harry Potter)',
+                                      };
+                                      return displayNames[themeName] || themeName.charAt(0).toUpperCase() + themeName.slice(1);
+                                    };
+
+                                    return (
+                                      <button
+                                        key={theme}
+                                        onClick={() => setTheme(theme)}
+                                        className={`flex items-center space-x-3 p-3 border rounded-lg transition-all duration-200 ${currentTheme === theme
+                                          ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-opacity-20'
+                                          : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                                          } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                      >
+                                        <div
+                                          className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                                          style={{ backgroundColor: getThemeColor(theme) }}
+                                        />
+                                        <div className="text-left">
+                                          <div className="font-medium text-gray-900">
+                                            {getThemeDisplayName(theme)}
+                                          </div>
+                                          <div className="text-xs text-gray-500">Plugin theme</div>
+                                          {currentTheme === theme && (
+                                            <div className="text-xs text-blue-600">Current theme</div>
+                                          )}
+                                        </div>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -373,26 +516,6 @@ export const UserSettingsPage: React.FC = () => {
                     <CardContent>
                       <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Theme
-                            </label>
-                            <select
-                              value={editorSettings.theme}
-                              onChange={e =>
-                                setEditorSettings(prev => ({
-                                  ...prev,
-                                  theme: e.target.value as EditorSettings['theme'],
-                                }))
-                              }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                              <option value="light">Light</option>
-                              <option value="dark">Dark</option>
-                              <option value="auto">Auto (System)</option>
-                              <option value="universe-specific">Universe Theme</option>
-                            </select>
-                          </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               Font Size
@@ -671,9 +794,8 @@ export const UserSettingsPage: React.FC = () => {
                             </div>
                             <div className="flex items-center space-x-2">
                               <span
-                                className={`inline-block w-3 h-3 rounded-full ${
-                                  server.enabled ? 'bg-green-500' : 'bg-gray-300'
-                                }`}
+                                className={`inline-block w-3 h-3 rounded-full ${server.enabled ? 'bg-green-500' : 'bg-gray-300'
+                                  }`}
                               />
                               <button className="text-blue-600 hover:text-blue-800 text-sm">
                                 Edit
@@ -1109,6 +1231,13 @@ export const UserSettingsPage: React.FC = () => {
                       </div>
                     </CardContent>
                   </Card>
+                </div>
+              )}
+
+              {/* For Developers Tab */}
+              {activeTab === 'developers' && (
+                <div className="space-y-6">
+                  <PluginTestingTool />
                 </div>
               )}
 

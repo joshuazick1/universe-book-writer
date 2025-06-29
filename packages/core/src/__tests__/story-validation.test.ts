@@ -1,5 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
-import { CharacterSchema, StoryChapterSchema, StorySchema } from '../validation/story.js';
+import {
+  CharacterSchema,
+  StoryChapterSchema,
+  StorySchema,
+  StoryValidator,
+  CharacterValidator,
+  ChapterValidator
+} from '../validation/story.js';
 
 describe('Story Validation', () => {
   describe('Character Schema', () => {
@@ -79,6 +86,23 @@ describe('Story Validation', () => {
 
       const result = StorySchema.safeParse(invalidStory);
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('Validator Classes', () => {
+    it('should create StoryValidator instance', () => {
+      const validator = new StoryValidator();
+      expect(validator).toBeInstanceOf(StoryValidator);
+    });
+
+    it('should create CharacterValidator instance', () => {
+      const validator = new CharacterValidator();
+      expect(validator).toBeInstanceOf(CharacterValidator);
+    });
+
+    it('should create ChapterValidator instance', () => {
+      const validator = new ChapterValidator();
+      expect(validator).toBeInstanceOf(ChapterValidator);
     });
   });
 });

@@ -33,16 +33,21 @@ const __dirname = dirname(__filename);
 interface TestRunOptions {
   target: string;
   pattern: string | null;
+  testPathPattern: string | null;
   comment: string | null;
   coverage: boolean;
   watch: boolean;
   verbose: boolean;
+  passthroughArgs: string[];
+  ci: boolean;
+  json: boolean;
 }
 
 interface TestRunMetadata {
   timestamp: string;
   target: string;
   pattern: string | null;
+  testPathPattern: string | null;
   comment: string | null;
   coverage: boolean;
   watch: boolean;
@@ -55,6 +60,7 @@ interface TestSummary {
   timestamp: string;
   target: string;
   pattern: string | null;
+  testPathPattern: string | null;
   comment: string | null;
   duration: number;
   exitCode: number;
@@ -65,12 +71,49 @@ interface TestSummary {
     total: number;
   };
   files: string[];
+  coverageFile?: string;
 }
 
 interface LogEntry {
   name: string;
   path: string;
   mtime: Date;
+}
+
+interface LcovRecord {
+  file: string;
+  functions: {
+    found: number;
+    hit: number;
+    details: Array<{ name: string; line: number; hits: number }>;
+  };
+  lines: {
+    found: number;
+    hit: number;
+    details: Array<{ line: number; hits: number }>;
+  };
+  branches: {
+    found: number;
+    hit: number;
+    details: Array<{ line: number; block: number; branch: number; hits: number }>;
+  };
+}
+
+interface CoverageRow {
+  file: string;
+  stmtPercent: number;
+  branchPercent: number;
+  funcPercent: number;
+  linePercent: number;
+  stmtHit: number;
+  stmtTotal: number;
+  branchHit: number;
+  branchTotal: number;
+  funcHit: number;
+  funcTotal: number;
+  lineHit: number;
+  lineTotal: number;
+  uncoveredLines: string;
 }
 
 class TestRunner {
@@ -84,6 +127,11 @@ class TestRunner {
   private failedTests: number;
   private skippedTests: number;
   private projectRoot: string;
+  private startedSuites: Set<string> = new Set();
+  private completedSuites: Set<string> = new Set();
+  private suiteLogPaths: Map<string, string> = new Map();
+  private suiteStartTimes: Map<string, number> = new Map();
+  private suiteFailedTests: Map<string, string[]> = new Map();
 
   constructor() {
     // Find and change to project root directory
@@ -139,23 +187,38 @@ class TestRunner {
   }
 
   /**
-   * Parse command line arguments
+   * Parse command line arguments, including npm passthrough (after --)
    */
-  parseArgs(): TestRunOptions {
-    const args = process.argv.slice(2);
-    const options: TestRunOptions = {
+  parseArgs(): TestRunOptions & { ci: boolean; json: boolean } {
+    // Support npm passthrough: npm run test -- frontend --pattern "Button" --runInBand
+    let args = process.argv.slice(2);
+    const doubleDashIdx = args.indexOf('--');
+    let passthroughArgs: string[] = [];
+    if (doubleDashIdx !== -1) {
+      passthroughArgs = args.slice(doubleDashIdx + 1);
+      args = args.slice(0, doubleDashIdx);
+    }
+    const options: TestRunOptions & { ci: boolean; json: boolean } = {
       target: 'all',
       pattern: null,
+      testPathPattern: null,
       comment: null,
       coverage: false,
       watch: false,
       verbose: false,
+      passthroughArgs,
+      ci: false,
+      json: false,
     };
-
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
-
       switch (arg) {
+        case '--ci':
+          options.ci = true;
+          break;
+        case '--json':
+          options.json = true;
+          break;
         case '--comment':
         case '-c':
           options.comment = args[++i];
@@ -163,6 +226,11 @@ class TestRunner {
         case '--pattern':
         case '-p':
           options.pattern = args[++i];
+          break;
+        case '--test-path-pattern':
+        case '--file':
+        case '-f':
+          options.testPathPattern = args[++i];
           break;
         case '--coverage':
           options.coverage = true;
@@ -196,13 +264,20 @@ class TestRunner {
             ].includes(arg)
           ) {
             options.target = arg;
-          } else if (!arg.startsWith('--') && !options.pattern) {
+          } else if (!arg.startsWith('--') && !options.pattern && !options.testPathPattern) {
+            // If no flags are set, treat as a pattern first
             options.pattern = arg;
+          } else if (arg.startsWith('--')) {
+            // Forward unknown flags to Jest
+            options.passthroughArgs.push(arg);
+            // If next arg is not a flag, treat as value
+            if (args[i + 1] && !args[i + 1].startsWith('--')) {
+              options.passthroughArgs.push(args[++i]);
+            }
           }
           break;
       }
     }
-
     return options;
   }
 
@@ -225,17 +300,27 @@ Targets:
   e2e                   Run end-to-end tests only
 
 Options:
-  -c, --comment <text>   Add a comment to the test run
-  -p, --pattern <text>   Run tests matching pattern
-  --coverage            Generate coverage report
-  -w, --watch           Run tests in watch mode
-  -v, --verbose         Verbose output
-  -h, --help            Show this help
+  -c, --comment <text>      Add a comment to the test run
+  -p, --pattern <text>      Run tests matching test name pattern (within test files)
+  -f, --file <text>         Run tests matching file path pattern (test file paths)
+  --test-path-pattern <text> Same as --file (Jest option)
+  --coverage               Generate coverage report
+  -w, --watch              Run tests in watch mode
+  -v, --verbose            Verbose output
+  -h, --help               Show this help
+  --ci                     CI-friendly output (prints summary.json to stdout)
+  --json                   Print summary as JSON to stdout
 
+Pattern Matching:
+  --pattern: Matches test names/descriptions within test files (e.g., "should validate user")
+  --file: Matches test file paths (e.g., "auth" matches auth.test.ts, user-auth.test.ts)
+  
 Examples:
   npx tsx scripts/run-tests-with-output.ts --all
   npx tsx scripts/run-tests-with-output.ts backend
   npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button"
+  npx tsx scripts/run-tests-with-output.ts frontend --file "auth"
+  npx tsx scripts/run-tests-with-output.ts backend --pattern "should validate" --file "user"
   npx tsx scripts/run-tests-with-output.ts -c "Fixing auth bug" backend
   npx tsx scripts/run-tests-with-output.ts --coverage
 `);
@@ -312,6 +397,7 @@ Examples:
       timestamp: new Date().toISOString(),
       target: options.target,
       pattern: options.pattern,
+      testPathPattern: options.testPathPattern,
       comment: options.comment,
       coverage: options.coverage,
       watch: options.watch,
@@ -324,7 +410,7 @@ Examples:
     fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
   }
   /**
-   * Save test suite output to file
+   * Save test suite output to file and print clickable link, duration, and failed tests
    */
   saveTestSuiteOutput(suiteName: string, output: string): void {
     if (!this.currentRunDir) return;
@@ -346,14 +432,31 @@ Examples:
       `=== Test Suite: ${suiteName} ===\n` + `=== Generated: ${new Date().toISOString()} ===\n\n`;
 
     fs.writeFileSync(outputPath, header + cleanOutput);
-    console.log(`💾 Saved output for: ${suiteName}`);
+    this.suiteLogPaths.set(suiteName, outputPath);
+    this.completedSuites.add(suiteName);
+    // Print clickable link (relative path)
+    const relPath = path.relative(process.cwd(), outputPath);
+    // VS Code and many terminals support file:// links
+    // Calculate and print duration
+    let durationMsg = '';
+    if (this.suiteStartTimes.has(suiteName)) {
+      const start = this.suiteStartTimes.get(suiteName)!;
+      const duration = Math.round((Date.now() - start) / 1000);
+      durationMsg = ` (Duration: ${duration}s)`;
+    }
+    console.log(`💾 Saved output for: ${suiteName}${durationMsg}\n    ↳ file://${outputPath.replace(/\\/g, '/')}`);
+    // Print failed test names if any
+    const failed = this.suiteFailedTests.get(suiteName);
+    if (failed && failed.length > 0) {
+      console.log('   ❌ Failed tests:');
+      failed.forEach(name => console.log(`     - ${name}`));
+    }
   }
   /**
-   * Process test output line by line
+   * Process test output line by line, track started/completed suites, failed tests, and suite times
    */
   processTestOutput(data: Buffer): void {
     const lines = data.toString().split('\n');
-
     for (const line of lines) {
       if (!line.trim()) continue;
 
@@ -367,18 +470,29 @@ Examples:
             this.testSuiteOutputs.get(this.currentTestSuite)!
           );
         }
-
         // Use the actual test file path as the suite name
         this.currentTestSuite = suiteMatch[1];
         this.testSuiteOutputs.set(this.currentTestSuite, '');
+        this.startedSuites.add(this.currentTestSuite);
+        this.suiteStartTimes.set(this.currentTestSuite, Date.now());
+        this.suiteFailedTests.set(this.currentTestSuite, []);
         console.log(`\n📋 Starting test suite: ${this.currentTestSuite}`);
       }
-
       // Add line to current test suite output
       if (this.currentTestSuite) {
         const currentOutput = this.testSuiteOutputs.get(this.currentTestSuite) || '';
         this.testSuiteOutputs.set(this.currentTestSuite, currentOutput + line + '\n');
-      } // Parse test results for summary - look for individual test results
+        // Parse failed test names (Jest: lines with '×' or 'FAIL' and test name)
+        // Example: '  × should fail on bad input (12 ms)'
+        const failTestMatch = line.match(/^\s*[×xX]\s+(.+?)(\s+\(|$)/);
+        if (failTestMatch) {
+          const name = failTestMatch[1].trim();
+          const arr = this.suiteFailedTests.get(this.currentTestSuite) || [];
+          if (!arr.includes(name)) arr.push(name);
+          this.suiteFailedTests.set(this.currentTestSuite, arr);
+        }
+      }
+      // Parse test results for summary - look for individual test results
       if (line.includes('√')) {
         this.passedTests++;
         process.stdout.write('✅');
@@ -416,72 +530,172 @@ Examples:
       }
     }
   }
-
   /**
-   * Build Jest command based on options
+   * At the end, show test suites that failed to run altogether
    */
-  buildJestCommand(options: TestRunOptions): { command: string; args: string[] } {
-    let command = 'npx';
-    let args = ['jest'];
-
-    // Add Node.js flags for ES modules
-    const nodeOptions = ['--experimental-vm-modules', '--no-warnings'];
-
-    // For ES modules, we need to use node directly with jest
-    command = 'node';
-    args = [...nodeOptions, 'node_modules/jest/bin/jest.js'];
-
-    // Add coverage if requested
+  showUnrunSuitesSummary(): void {
+    const unrun = Array.from(this.startedSuites).filter(suite => !this.completedSuites.has(suite));
+    if (unrun.length > 0) {
+      console.log(`\n❗ Test Suites Not Run: ${unrun.length}`);
+      unrun.forEach(suite => {
+        const rel = path.relative(process.cwd(), suite);
+        console.log(`   - ${suite} (expected log: ${rel.replace(/\\/g, '/')}.log)`);
+      });
+    }
+  }
+  /**
+   * Build Jest command based on options with improved pattern handling and passthrough
+   */
+  buildJestCommand(options: TestRunOptions): { command: string; args: string[]; cwd?: string } {
+    let command = 'node';
+    let args = [
+      '--experimental-vm-modules',
+      '--no-warnings',
+    ];
+    let cwd: string | undefined;
+    if (options.target !== 'all') {
+      cwd = path.join(this.projectRoot, options.target);
+      args.push(path.join('..', 'node_modules', 'jest', 'bin', 'jest.js'));
+      args.push('--config', `jest.config.mjs`);
+    } else {
+      args.push('node_modules/jest/bin/jest.js');
+    }
+    args.push('--detectOpenHandles', '--forceExit');
+    args.push('--runInBand');
+    if (options.pattern) {
+      args.push('--testNamePattern', options.pattern);
+    }
+    if (options.target !== 'all') {
+      const projectPattern = options.testPathPattern
+        ? `.*${options.testPathPattern}.*`
+        : `.*\\.test\\.[jt]s`;
+      args.push('--testPathPattern', projectPattern);
+    } else if (options.testPathPattern) {
+      args.push('--testPathPattern', options.testPathPattern);
+    } else {
+      args.push('--testPathPattern', '.*\\.test\\.[jt]s');
+    }
     if (options.coverage) {
       args.push('--coverage');
+      const coveragePatterns = this.getCoveragePatterns(options.target);
+      if (coveragePatterns.length > 0) {
+        args.push('--collectCoverageFrom', ...coveragePatterns);
+      }
     }
-
-    // Add watch mode if requested
     if (options.watch) {
       args.push('--watch');
     }
-
-    // Add verbose if requested
     if (options.verbose) {
       args.push('--verbose');
     }
-
-    // Add pattern if specified
-    if (options.pattern) {
-      args.push('--testNamePattern', options.pattern);
-    } // Add Jest options for better output
-    args.push('--detectOpenHandles', '--forceExit');
-
-    // Add runInBand for frontend tests to prevent module mock conflicts
-    if (options.target === 'frontend') {
-      args.push('--runInBand');
+    // Forward any passthrough args (from npm or unknown flags)
+    if (options.passthroughArgs && options.passthroughArgs.length > 0) {
+      args.push(...options.passthroughArgs);
     }
+    return { command, args, cwd };
+  }
 
-    // Target specific project
-    if (options.target !== 'all') {
-      switch (options.target) {
-        case 'backend':
-          args.push('--testPathPattern', 'backend');
-          break;
+  /**
+   * Get coverage patterns for specific target
+   */
+  private getCoveragePatterns(target: string): string[] {
+    const patterns: Record<string, string[]> = {
+      'frontend': [
+        'frontend/src/**/*.{ts,tsx}',
+        '!frontend/src/**/*.d.ts',
+        '!frontend/src/**/__tests__/**',
+        '!frontend/src/**/*.test.{ts,tsx}',
+        '!frontend/src/**/*.stories.{ts,tsx}'
+      ],
+      'backend': [
+        'backend/src/**/*.ts',
+        '!backend/src/**/*.d.ts',
+        '!backend/src/**/__tests__/**',
+        '!backend/src/**/*.test.ts'
+      ],
+      'ai-server': [
+        'ai-server/src/**/*.ts',
+        '!ai-server/src/**/*.d.ts',
+        '!ai-server/src/**/__tests__/**',
+        '!ai-server/src/**/*.test.ts'
+      ],
+      'collaboration-server': [
+        'collaboration-server/src/**/*.ts',
+        '!collaboration-server/src/**/*.d.ts',
+        '!collaboration-server/src/**/__tests__/**',
+        '!collaboration-server/src/**/*.test.ts'
+      ],
+      'packages': [
+        'packages/**/*.{ts,tsx}',
+        '!packages/**/*.d.ts',
+        '!packages/**/__tests__/**',
+        '!packages/**/*.test.{ts,tsx}'
+      ],
+      'e2e': [], // E2E tests don't need coverage typically
+      'all': [
+        '**/src/**/*.{ts,tsx}',  // This pattern covers all src directories in any module
+        'packages/**/*.{ts,tsx}', // Packages may have a different structure
+        '!**/*.d.ts',
+        '!**/__tests__/**',
+        '!**/*.test.{ts,tsx}',
+        '!**/*.stories.{ts,tsx}',
+        '!**/node_modules/**',
+        '!**/dist/**',
+        '!**/build/**',
+        '!**/coverage/**'
+      ]
+    };
+
+    return patterns[target] || patterns['all'];
+  }
+
+  /**
+   * Get project-specific test patterns
+   */
+  private getProjectTestPattern(target: string): string {
+    const patterns: Record<string, string> = {
+      'backend': 'backend/.*\\.test\\.(ts|js)$',
+      'frontend': 'frontend/.*\\.test\\.(ts|tsx)$',
+      'ai-server': 'ai-server/.*\\.test\\.(ts|js)$',
+      'collaboration-server': 'collaboration-server/.*\\.test\\.(ts|js)$',
+      'packages': 'packages/.*\\.test\\.(ts|tsx)$',
+      'e2e': 'e2e/.*\\.test\\.(ts|js)$'
+    };
+
+    return patterns[target] || `${target}/.*\\.test\\.(ts|tsx?)$`;
+  }
+
+  /**
+   * Get coverage ignore patterns for specific target (to exclude other targets)
+   */
+  private getCoverageIgnorePatterns(target: string): string[] {
+    const allTargets = ['frontend', 'backend', 'ai-server', 'collaboration-server', 'packages'];
+    const otherTargets = allTargets.filter(t => t !== target);
+
+    const ignorePatterns: string[] = [];
+
+    // Add ignore patterns for other targets
+    otherTargets.forEach(otherTarget => {
+      switch (otherTarget) {
         case 'frontend':
-          args.push('--testPathPattern', 'frontend');
+          ignorePatterns.push('frontend/');
+          break;
+        case 'backend':
+          ignorePatterns.push('backend/');
           break;
         case 'ai-server':
-          args.push('--testPathPattern', 'ai-server');
+          ignorePatterns.push('ai-server/');
           break;
         case 'collaboration-server':
-          args.push('--testPathPattern', 'collaboration-server');
+          ignorePatterns.push('collaboration-server/');
           break;
         case 'packages':
-          args.push('--testPathPattern', 'packages');
-          break;
-        case 'e2e':
-          args.push('--testPathPattern', 'e2e');
+          ignorePatterns.push('packages/');
           break;
       }
-    }
+    });
 
-    return { command, args };
+    return ignorePatterns;
   }
 
   /**
@@ -496,6 +710,7 @@ Examples:
       timestamp: new Date().toISOString(),
       target: options.target,
       pattern: options.pattern,
+      testPathPattern: options.testPathPattern,
       comment: options.comment,
       duration,
       exitCode,
@@ -515,7 +730,330 @@ Examples:
   }
 
   /**
-   * Run tests with enhanced output management
+   * Process and extract coverage output from test output with LCOV parsing
+   */
+  private processCoverageOutput(allOutput: string, options: TestRunOptions): string | null {
+    if (!options.coverage || !this.currentRunDir) {
+      return null;
+    }
+
+    // Create coverage-specific filename parts
+    const targetSuffix = options.target === 'all' ? '' : `-${options.target}`;
+    const patternSuffix = options.pattern ? `-${options.pattern.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
+    const pathPatternSuffix = options.testPathPattern ? `-${options.testPathPattern.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
+
+    const coverageDir = path.join(this.currentRunDir, `coverage${targetSuffix}${patternSuffix}${pathPatternSuffix}`);
+
+    try {
+      // Create coverage directory
+      if (!fs.existsSync(coverageDir)) {
+        fs.mkdirSync(coverageDir, { recursive: true });
+      }
+
+      // Copy and process Jest coverage files if they exist
+      const jestCoverageDir = options.target === 'all' ? 'coverage' : `coverage/${options.target}`;
+      const jestCoveragePath = path.join(this.projectRoot, jestCoverageDir);
+
+      if (fs.existsSync(jestCoveragePath)) {
+        // Copy LCOV file and parse it
+        const lcovSource = path.join(jestCoveragePath, 'lcov.info');
+        const lcovDest = path.join(coverageDir, 'lcov.info');
+        if (fs.existsSync(lcovSource)) {
+          fs.copyFileSync(lcovSource, lcovDest);
+          console.log(`📊 Copied LCOV file to: ${path.relative(this.currentRunDir, lcovDest)}`);
+
+          // Parse LCOV and create additional formats
+          const lcovContent = fs.readFileSync(lcovSource, 'utf8');
+          const lcovRecords = this.parseLcovFile(lcovContent);
+
+          // Create CSV file
+          const csvContent = this.convertToCSV(lcovRecords);
+          const csvPath = path.join(coverageDir, 'coverage.csv');
+          fs.writeFileSync(csvPath, csvContent);
+          console.log(`📊 Created CSV coverage report: ${path.relative(this.currentRunDir, csvPath)}`);
+
+          // Create JSON file
+          const jsonPath = path.join(coverageDir, 'coverage.json');
+          fs.writeFileSync(jsonPath, JSON.stringify(lcovRecords, null, 2));
+          console.log(`📊 Created JSON coverage report: ${path.relative(this.currentRunDir, jsonPath)}`);
+
+          // Create enhanced summary
+          const summaryContent = this.generateCoverageSummary(lcovRecords);
+          const summaryPath = path.join(coverageDir, 'summary.txt');
+          fs.writeFileSync(summaryPath, summaryContent);
+          console.log(`📊 Created coverage summary: ${path.relative(this.currentRunDir, summaryPath)}`);
+        }
+
+        // Copy HTML report if it exists
+        const htmlIndexSource = path.join(jestCoveragePath, 'lcov-report', 'index.html');
+        if (fs.existsSync(htmlIndexSource)) {
+          const htmlReportDir = path.join(coverageDir, 'html-report');
+          if (!fs.existsSync(htmlReportDir)) {
+            fs.mkdirSync(htmlReportDir, { recursive: true });
+          }
+
+          // Copy entire HTML report directory
+          const htmlSourceDir = path.join(jestCoveragePath, 'lcov-report');
+          this.copyDirectory(htmlSourceDir, htmlReportDir);
+          console.log(`📊 Copied HTML coverage report to: ${path.relative(this.currentRunDir, htmlReportDir)}`);
+        }
+
+        return path.relative(this.currentRunDir, coverageDir);
+      } else {
+        console.warn(`⚠️  Jest coverage directory not found: ${jestCoveragePath}`);
+        return null;
+      }
+    } catch (error) {
+      console.warn(`⚠️  Failed to process coverage: ${(error as Error).message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Recursively copy directory
+   */
+  private copyDirectory(src: string, dest: string): void {
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest, { recursive: true });
+    }
+
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+
+      if (entry.isDirectory()) {
+        this.copyDirectory(srcPath, destPath);
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+  }
+
+  /**
+   * Extract Jest configuration info for debugging
+   */
+  private extractJestConfig(allOutput: string): string | null {
+    // Look for Jest configuration output
+    const configMatch = allOutput.match(/Jest configuration:[\s\S]*?(?=\n\n|\n[A-Z])/);
+    if (configMatch) {
+      return configMatch[0];
+    }
+
+    // Look for project info
+    const projectMatch = allOutput.match(/Found \d+ project[s]?:[\s\S]*?(?=\n\n|\n[^|\s])/);
+    if (projectMatch) {
+      return projectMatch[0];
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse LCOV file into structured data
+   */
+  private parseLcovFile(lcovContent: string): LcovRecord[] {
+    const records: LcovRecord[] = [];
+    const lines = lcovContent.split('\n');
+    let currentRecord: Partial<LcovRecord> | null = null;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('TN:')) continue;
+
+      if (trimmed.startsWith('SF:')) {
+        // Start of new record
+        if (currentRecord) {
+          records.push(currentRecord as LcovRecord);
+        }
+        currentRecord = {
+          file: trimmed.substring(3).replace(/\\/g, '/'), // Normalize path separators
+          functions: { found: 0, hit: 0, details: [] },
+          lines: { found: 0, hit: 0, details: [] },
+          branches: { found: 0, hit: 0, details: [] }
+        };
+      } else if (currentRecord) {
+        if (trimmed.startsWith('FN:')) {
+          // Function definition: FN:line,name
+          const [lineStr, name] = trimmed.substring(3).split(',');
+          // We'll get the hit count from FNDA later
+        } else if (trimmed.startsWith('FNDA:')) {
+          // Function data: FNDA:hits,name
+          const [hitsStr, name] = trimmed.substring(5).split(',');
+          const hits = parseInt(hitsStr);
+          currentRecord.functions?.details.push({ name, line: 0, hits });
+        } else if (trimmed.startsWith('FNF:')) {
+          // Functions found
+          if (currentRecord.functions) {
+            currentRecord.functions.found = parseInt(trimmed.substring(4));
+          }
+        } else if (trimmed.startsWith('FNH:')) {
+          // Functions hit
+          if (currentRecord.functions) {
+            currentRecord.functions.hit = parseInt(trimmed.substring(4));
+          }
+        } else if (trimmed.startsWith('DA:')) {
+          // Line data: DA:line,hits
+          const [lineStr, hitsStr] = trimmed.substring(3).split(',');
+          const line = parseInt(lineStr);
+          const hits = parseInt(hitsStr);
+          currentRecord.lines?.details.push({ line, hits });
+        } else if (trimmed.startsWith('LF:')) {
+          // Lines found
+          if (currentRecord.lines) {
+            currentRecord.lines.found = parseInt(trimmed.substring(3));
+          }
+        } else if (trimmed.startsWith('LH:')) {
+          // Lines hit
+          if (currentRecord.lines) {
+            currentRecord.lines.hit = parseInt(trimmed.substring(3));
+          }
+        } else if (trimmed.startsWith('BRDA:')) {
+          // Branch data: BRDA:line,block,branch,hits
+          const [lineStr, blockStr, branchStr, hitsStr] = trimmed.substring(5).split(',');
+          const line = parseInt(lineStr);
+          const block = parseInt(blockStr);
+          const branch = parseInt(branchStr);
+          const hits = hitsStr === '-' ? 0 : parseInt(hitsStr);
+          currentRecord.branches?.details.push({ line, block, branch, hits });
+        } else if (trimmed.startsWith('BRF:')) {
+          // Branches found
+          if (currentRecord.branches) {
+            currentRecord.branches.found = parseInt(trimmed.substring(4));
+          }
+        } else if (trimmed.startsWith('BRH:')) {
+          // Branches hit
+          if (currentRecord.branches) {
+            currentRecord.branches.hit = parseInt(trimmed.substring(4));
+          }
+        } else if (trimmed === 'end_of_record') {
+          // End of current record
+          records.push(currentRecord as LcovRecord);
+          currentRecord = null;
+        }
+      }
+    }
+
+    // Don't forget the last record if file doesn't end with end_of_record
+    if (currentRecord) {
+      records.push(currentRecord as LcovRecord);
+    }
+
+    return records;
+  }
+
+  /**
+   * Convert LCOV records to CSV format
+   */
+  private convertToCSV(records: LcovRecord[]): string {
+    const rows: CoverageRow[] = records.map(record => {
+      // Calculate uncovered lines
+      const uncoveredLines = record.lines.details
+        .filter(line => line.hits === 0)
+        .map(line => line.line.toString())
+        .join(',');
+
+      const stmtPercent = record.lines.found > 0 ? (record.lines.hit / record.lines.found) * 100 : 0;
+      const branchPercent = record.branches.found > 0 ? (record.branches.hit / record.branches.found) * 100 : 0;
+      const funcPercent = record.functions.found > 0 ? (record.functions.hit / record.functions.found) * 100 : 0;
+      const linePercent = stmtPercent; // In LCOV, statements and lines are typically the same
+
+      return {
+        file: record.file.replace(/^frontend[\/\\]src[\/\\]/, ''), // Clean up file paths
+        stmtPercent: Math.round(stmtPercent * 100) / 100,
+        branchPercent: Math.round(branchPercent * 100) / 100,
+        funcPercent: Math.round(funcPercent * 100) / 100,
+        linePercent: Math.round(linePercent * 100) / 100,
+        stmtHit: record.lines.hit,
+        stmtTotal: record.lines.found,
+        branchHit: record.branches.hit,
+        branchTotal: record.branches.found,
+        funcHit: record.functions.hit,
+        funcTotal: record.functions.found,
+        lineHit: record.lines.hit,
+        lineTotal: record.lines.found,
+        uncoveredLines: uncoveredLines || 'none'
+      };
+    });
+
+    // Create CSV header
+    const headers = [
+      'File',
+      'Stmt%',
+      'Branch%',
+      'Func%',
+      'Line%',
+      'Stmt Hit',
+      'Stmt Total',
+      'Branch Hit',
+      'Branch Total',
+      'Func Hit',
+      'Func Total',
+      'Line Hit',
+      'Line Total',
+      'Uncovered Lines'
+    ];
+
+    // Create CSV content
+    const csvLines = [
+      headers.join(','),
+      ...rows.map(row => [
+        `"${row.file}"`,
+        row.stmtPercent,
+        row.branchPercent,
+        row.funcPercent,
+        row.linePercent,
+        row.stmtHit,
+        row.stmtTotal,
+        row.branchHit,
+        row.branchTotal,
+        row.funcHit,
+        row.funcTotal,
+        row.lineHit,
+        row.lineTotal,
+        `"${row.uncoveredLines}"`
+      ].join(','))
+    ];
+
+    return csvLines.join('\n');
+  }
+
+  /**
+   * Generate coverage summary from LCOV records
+   */
+  private generateCoverageSummary(records: LcovRecord[]): string {
+    const totals = records.reduce(
+      (acc, record) => ({
+        stmtHit: acc.stmtHit + record.lines.hit,
+        stmtTotal: acc.stmtTotal + record.lines.found,
+        branchHit: acc.branchHit + record.branches.hit,
+        branchTotal: acc.branchTotal + record.branches.found,
+        funcHit: acc.funcHit + record.functions.hit,
+        funcTotal: acc.funcTotal + record.functions.found
+      }),
+      { stmtHit: 0, stmtTotal: 0, branchHit: 0, branchTotal: 0, funcHit: 0, funcTotal: 0 }
+    );
+
+    const stmtPercent = totals.stmtTotal > 0 ? (totals.stmtHit / totals.stmtTotal) * 100 : 0;
+    const branchPercent = totals.branchTotal > 0 ? (totals.branchHit / totals.branchTotal) * 100 : 0;
+    const funcPercent = totals.funcTotal > 0 ? (totals.funcHit / totals.funcTotal) * 100 : 0;
+
+    return [
+      '='.repeat(80),
+      'COVERAGE SUMMARY',
+      '='.repeat(80),
+      `Files analyzed: ${records.length}`,
+      '',
+      `Statements: ${totals.stmtHit}/${totals.stmtTotal} (${stmtPercent.toFixed(2)}%)`,
+      `Branches: ${totals.branchHit}/${totals.branchTotal} (${branchPercent.toFixed(2)}%)`,
+      `Functions: ${totals.funcHit}/${totals.funcTotal} (${funcPercent.toFixed(2)}%)`,
+      `Lines: ${totals.stmtHit}/${totals.stmtTotal} (${stmtPercent.toFixed(2)}%)`,
+      '='.repeat(80)
+    ].join('\n');
+  }
+
+  /**
+   * Run tests with enhanced output management and improved pattern handling
    */
   async runTests(): Promise<number> {
     const options = this.parseArgs();
@@ -527,21 +1065,33 @@ Examples:
       console.log(`📝 Comment: ${options.comment}`);
     }
 
+    if (options.pattern) {
+      console.log(`🎯 Test name pattern: "${options.pattern}"`);
+    }
+
+    if (options.testPathPattern) {
+      console.log(`📁 Test path pattern: "${options.testPathPattern}"`);
+    }
+
     // Setup directories and rotation
     this.rotateLogDirectories();
     this.setupTestRunDirectory();
     this.createRunMetadata(options);
 
-    // Build Jest command
-    const { command, args } = this.buildJestCommand(options);
+    // Build Jest command with improved pattern handling
+    const { command, args, cwd } = this.buildJestCommand(options);
 
     console.log(`📋 Running: ${command} ${args.join(' ')}`);
+    if (cwd) {
+      console.log(`📁 Working directory: ${cwd}`);
+    }
     console.log('');
 
     return new Promise(resolve => {
       const testProcess: ChildProcess = spawn(command, args, {
         stdio: ['inherit', 'pipe', 'pipe'],
         shell: true,
+        cwd: cwd || this.projectRoot,
       });
 
       let allOutput = '';
@@ -571,14 +1121,45 @@ Examples:
           );
         }
 
-        // Save complete output
+        // Save complete output and process coverage
+        let coverageFile: string | null = null;
         if (this.currentRunDir) {
           const completeOutputPath = path.join(this.currentRunDir, 'complete-output.log');
           fs.writeFileSync(completeOutputPath, this.stripAnsi(allOutput));
+          // Process and save coverage output if coverage was enabled
+          coverageFile = this.processCoverageOutput(allOutput, options);
+        }
+
+        // Extract Jest configuration info for debugging
+        const jestConfig = this.extractJestConfig(allOutput);
+        if (jestConfig && this.currentRunDir) {
+          const configPath = path.join(this.currentRunDir, 'jest-config.log');
+          fs.writeFileSync(configPath, this.stripAnsi(jestConfig));
+          console.log(`⚙️  Jest configuration saved to: jest-config.log`);
         }
 
         // Create summary report
         const summary = this.createSummaryReport(options, exitCode, duration);
+        if (coverageFile) {
+          summary.coverageFile = coverageFile;
+          // Update the summary file with coverage info
+          if (this.currentRunDir) {
+            const summaryPath = path.join(this.currentRunDir, 'summary.json');
+            fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
+          }
+        }
+
+        // Always write summary.json (already done above)
+        // If --ci or --json, print summary.json to stdout between CI_SUMMARY_JSON_START/END
+        if (options.ci || options.json) {
+          if (this.currentRunDir) {
+            const summaryPath = path.join(this.currentRunDir, 'summary.json');
+            const summaryContent = fs.readFileSync(summaryPath, 'utf8');
+            console.log('\nCI_SUMMARY_JSON_START');
+            console.log(summaryContent);
+            console.log('CI_SUMMARY_JSON_END\n');
+          }
+        }
 
         console.log('\n' + '='.repeat(60));
         console.log('📊 Test Run Complete!');
@@ -593,8 +1174,20 @@ Examples:
         console.log(`⏭️ Skipped: ${this.skippedTests}`);
         console.log(`📊 Total: ${summary.results.total}`);
 
+        if (coverageFile) {
+          console.log(`📊 Coverage report: ${coverageFile}`);
+        }
+
         if (options.comment) {
           console.log(`📝 Comment: ${options.comment}`);
+        }
+
+        // Show pattern information in summary
+        if (options.pattern) {
+          console.log(`🎯 Test name pattern used: "${options.pattern}"`);
+        }
+        if (options.testPathPattern) {
+          console.log(`📁 Test path pattern used: "${options.testPathPattern}"`);
         }
 
         resolve(exitCode);

@@ -2,6 +2,21 @@
 
 ```
 book-writer/
+├── plugins/                             # 🔌 Plugin Directory (ROOT LEVEL)
+│   ├── README.md                       # Plugin installation guide
+│   ├── star-trek-universe/             # Star Trek universe plugin
+│   │   ├── package.json               # Plugin metadata
+│   │   ├── index.ts                   # Main plugin implementation
+│   │   ├── README.md                  # Plugin documentation
+│   │   ├── themes/                    # LCARS and other ST themes
+│   │   │   └── lcars.ts
+│   │   └── frontend/                  # Frontend components
+│   │       └── components.tsx
+│   ├── simple-core/                   # Basic core plugin
+│   │   ├── package.json
+│   │   └── index.ts
+│   └── [user-plugins]/               # User-installed plugins
+│
 ├── packages/                            # Monorepo packages
 │   ├── core/                           # Core shared libraries
 │   │   ├── src/                       # Source code

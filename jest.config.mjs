@@ -1,9 +1,13 @@
+/**
+ * Root Jest Configuration
+ * Multi-project Jest configuration for the Universe Book Writer monorepo
+ */
+
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  // Default to node environment, but allow per-project override
-  testEnvironment: 'node',
+  // Global teardown
   globalTeardown: '<rootDir>/jest.teardown.global.mjs',
+  
   // Project-specific configurations
   projects: [
     // Frontend project with jsdom environment
@@ -35,16 +39,24 @@ export default {
         'node_modules/(?!(react-hook-form|@hookform|@testing-library)/)'
       ],
     },
-    // Backend and other projects with node environment
+    // Backend project
     {
       displayName: 'backend',
       testEnvironment: 'node',
-      testMatch: ['<rootDir>/backend/**/*.test.(ts|js)', '<rootDir>/backend/**/__tests__/**/*.(ts|js)'],
-      setupFiles: ['<rootDir>/backend/tests/jest.env.mjs'],
-      // Don't use global setup for backend, it has its own setup
+      testMatch: [
+        '<rootDir>/backend/tests/**/*.test.[jt]s?(x)',
+        '<rootDir>/backend/src/**/__tests__/**/*.[jt]s?(x)',
+        '<rootDir>/backend/**/?(*.)+(spec|test).[jt]s?(x)'
+      ],
+      setupFilesAfterEnv: ['<rootDir>/backend/tests/jest.env.mjs'],
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/backend/src/$1',
-        '^(\\.{1,2}/.*)\\.(m?js|ts)$': '$1',
+        '^(\\.{1,2}/.*)\\.js$': '$1',
+        '^(\\.{1,2}/.*)\\.m?js$': '$1',
+        '^(\\.{1,2}/.*)\\.ts$': '$1',
+        '^src/(.*)$': '<rootDir>/backend/src/$1',
+        '^tests/(.*)$': '<rootDir>/backend/tests/$1',
+        '^backend/(.*)$': '<rootDir>/backend/$1',
       },
       transform: {
         '^.+\\.(ts)$': [
@@ -55,15 +67,21 @@ export default {
           },
         ],
       },
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
       extensionsToTreatAsEsm: ['.ts'],
+      transformIgnorePatterns: [
+        'node_modules/(?!(react-is)/)'
+      ],
     },
     // AI Server
     {
       displayName: 'ai-server',
       testEnvironment: 'node',
       testMatch: ['<rootDir>/ai-server/**/*.test.(ts|js)', '<rootDir>/ai-server/**/__tests__/**/*.(ts|js)'],
+      setupFilesAfterEnv: ['<rootDir>/ai-server/tests/setup.ts'],
       moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
+        '^@/(.*)$': '<rootDir>/ai-server/src/$1',
       },
       transform: {
         '^.+\\.(ts)$': [
@@ -74,6 +92,7 @@ export default {
           },
         ],
       },
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
       extensionsToTreatAsEsm: ['.ts'],
     },
     // Collaboration Server
@@ -84,6 +103,7 @@ export default {
       setupFilesAfterEnv: ['<rootDir>/collaboration-server/jest.setup.ts'],
       moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
+        '^@/(.*)$': '<rootDir>/collaboration-server/src/$1',
       },
       transform: {
         '^.+\\.(ts)$': [
@@ -94,6 +114,7 @@ export default {
           },
         ],
       },
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
       extensionsToTreatAsEsm: ['.ts'],
     },
     // Packages
@@ -101,6 +122,11 @@ export default {
       displayName: 'packages',
       testEnvironment: 'node',
       testMatch: ['<rootDir>/packages/**/*.test.(ts|js)', '<rootDir>/packages/**/__tests__/**/*.(ts|js)'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      moduleNameMapper: {
+        '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
+        '^@/(.*)$': '<rootDir>/packages/src/$1',
+      },
       transform: {
         '^.+\\.(ts)$': [
           'ts-jest',
@@ -110,15 +136,21 @@ export default {
           },
         ],
       },
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
       extensionsToTreatAsEsm: ['.ts'],
+      transformIgnorePatterns: ['/node_modules/(?!(@?mongodb.*|bson)/)'],
     }
   ],
-  // Global configuration for all projects
+  
+  // Global configuration for all projects - these apply to all projects
   passWithNoTests: true,
   verbose: true,
   detectOpenHandles: true,
   forceExit: true,
   maxWorkers: 1,
+  testTimeout: 15000,
+  
+  // Global coverage configuration
   collectCoverageFrom: [
     'packages/**/*.{ts,tsx}',
     'frontend/src/**/*.{ts,tsx}',

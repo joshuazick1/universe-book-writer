@@ -4,7 +4,7 @@ import {
   ScaleTransition,
   SlideDownTransition,
   SlideUpTransition,
-  LoadingSpinner,
+  AnimatedLoadingSpinner,
   LoadingDots,
   LoadingPulse,
   LoadingBar,
@@ -21,6 +21,7 @@ import {
   animationUtils,
 } from './index';
 import { Button } from '../base';
+import { PluginAnimationShowcase } from './PluginAnimationShowcase';
 
 /**
  * Animation Framework Showcase
@@ -157,9 +158,9 @@ export const AnimationShowcase: React.FC = () => {
               <h3 className="font-medium mb-4">Spinners & Indicators</h3>
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <LoadingSpinner size="sm" />
-                  <LoadingSpinner size="md" />
-                  <LoadingSpinner size="lg" />
+                  <AnimatedLoadingSpinner size="sm" />
+                  <AnimatedLoadingSpinner size="md" />
+                  <AnimatedLoadingSpinner size="lg" />
                 </div>
 
                 <div className="flex items-center space-x-4">
@@ -315,6 +316,14 @@ export const AnimationShowcase: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* Plugin Animation Showcase */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-neutral-800">Plugin Animation Showcase</h2>
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <PluginAnimationShowcase />
+          </div>
+        </section>
       </div>
 
       {/* Toast Notification */}
@@ -339,6 +348,9 @@ export const AnimationShowcase: React.FC = () => {
         }}
         onClose={() => setShowNotification(false)}
       />
+
+      {/* Plugin Animation System */}
+      <PluginAnimationShowcase />
 
       {/* Loading Overlay */}
       <LoadingOverlay

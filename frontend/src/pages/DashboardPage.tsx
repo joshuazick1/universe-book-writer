@@ -24,19 +24,70 @@ export const DashboardPage: React.FC = () => {
         >
           {/* Admin Panel Card - Only show for admin users */}
           {isAdmin() && (
-            <div className="bg-purple-500/10 backdrop-blur-sm rounded-lg p-6 border border-purple-500/30">
-              <h2 className="text-2xl font-semibold mb-4 text-purple-400">🛡️ Admin Panel</h2>
-              <p className="text-universe-text-secondary mb-6">
+            <div
+              className="backdrop-blur-sm rounded-lg p-6 border"
+              style={{
+                backgroundColor: 'var(--color-universe-accent)',
+                borderColor: 'var(--color-universe-primary)',
+                opacity: 0.9
+              }}
+            >
+              <h2
+                className="text-2xl font-semibold mb-4"
+                style={{ color: 'var(--color-universe-background)' }}
+              >
+                🛡️ Admin Panel
+              </h2>
+              <p
+                className="mb-6 opacity-90"
+                style={{ color: 'var(--color-universe-background)' }}
+              >
                 Manage users, system settings, and security configurations.
               </p>
               <Link
                 to="/admin"
-                className="inline-block bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                className="inline-block px-6 py-3 rounded-lg transition-colors hover:opacity-90"
+                style={{
+                  backgroundColor: 'var(--color-universe-primary)',
+                  color: 'var(--color-universe-background)'
+                }}
               >
                 Open Admin Panel
               </Link>
             </div>
           )}
+
+          {/* Universe Management Card */}
+          <div
+            className="backdrop-blur-sm rounded-lg p-6 border"
+            style={{
+              backgroundColor: 'var(--color-universe-surface)',
+              borderColor: 'var(--color-universe-primary)'
+            }}
+          >
+            <h2
+              className="text-2xl font-semibold mb-4"
+              style={{ color: 'var(--color-universe-primary)' }}
+            >
+              📚 Universe Management
+            </h2>
+            <p
+              className="mb-6 opacity-75"
+              style={{ color: 'var(--color-universe-text)' }}
+            >
+              Create and manage your fictional universes for your book series.
+            </p>
+            <Link
+              to="/universes"
+              className="inline-block px-6 py-3 rounded-lg transition-colors hover:opacity-90"
+              style={{
+                backgroundColor: 'var(--color-universe-primary)',
+                color: 'var(--color-universe-background)'
+              }}
+            >
+              Manage Universes
+            </Link>
+          </div>
 
           {/* Authentication Status Card */}
           <div className="bg-green-500/10 backdrop-blur-sm rounded-lg p-6 border border-green-500/30">
@@ -54,21 +105,7 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Animation Showcase Card */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-universe-border">
-            <h2 className="text-2xl font-semibold mb-4 text-universe-primary">
-              🎨 Animation Framework
-            </h2>
-            <p className="text-universe-text-secondary mb-6">
-              Explore the complete animation system designed for plugin developers.
-            </p>
-            <a
-              href="/showcase/animations"
-              className="inline-block bg-universe-primary text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors"
-            >
-              View Animation Showcase
-            </a>
-          </div>
+
 
           {/* Coming Soon Card */}
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-universe-border">

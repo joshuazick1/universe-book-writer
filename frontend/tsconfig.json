@@ -4,32 +4,52 @@
     "target": "ES2022",
     "module": "ESNext",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "jsx": "react-jsx",
     "composite": true,
     "declarationMap": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
     "allowJs": true,
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "moduleResolution": "node",
-    "allowImportingTsExtensions": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["../packages/*"]
+      "@/*": [
+        "../packages/*"
+      ],
+      "@src/*": [
+        "src/*"
+      ]
     }
   },
   "references": [
-    { "path": "../packages/core" },
-    { "path": "../packages/ui-core" },
-    { "path": "../packages/plugin-sdk" }
+    {
+      "path": "../packages/core"
+    },
+    {
+      "path": "../packages/ui-core"
+    },
+    {
+      "path": "../packages/plugin-sdk"
+    }
   ],
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
   "exclude": [
     "dist",
+    "node_modules",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",

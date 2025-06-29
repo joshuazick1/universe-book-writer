@@ -26,17 +26,31 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 
 const getVariantClasses = (variant: InputProps['variant'], hasError: boolean) => {
   if (hasError) {
-    return 'border-error-500 focus:border-error-500 focus:ring-error-500';
+    return 'focus:ring-2 focus:ring-offset-2';
   }
 
   const variants = {
-    default:
-      'border-neutral-300 focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:focus:border-primary-400',
+    default: 'focus:ring-2 focus:ring-offset-2',
     universe:
       'border-universe-accent focus:border-universe-primary focus:ring-universe-primary universe-border',
   };
 
   return variants[variant || 'default'];
+};
+
+const getVariantStyles = (variant: InputProps['variant'], hasError: boolean) => {
+  if (variant === 'universe') {
+    return {}; // Universe variant uses CSS custom properties
+  }
+
+  const baseStyles = {
+    backgroundColor: 'var(--color-universe-surface)',
+    color: 'var(--color-universe-text)',
+    borderColor: hasError ? 'rgba(239, 68, 68, 0.5)' : 'var(--color-universe-primary)',
+    '--placeholder-color': 'rgba(var(--color-universe-text-rgb), 0.5)'
+  };
+
+  return baseStyles;
 };
 
 const getSizeClasses = (inputSize: InputProps['inputSize']) => {
@@ -66,21 +80,20 @@ const BaseInput = forwardRef<HTMLInputElement, InputProps>(
       fullWidth = false,
       className = '',
       id,
+      style,
       ...props
     },
     ref
   ) => {
     const hasError = Boolean(error);
     const variantClasses = getVariantClasses(variant, hasError);
+    const variantStyles = getVariantStyles(variant, hasError);
     const sizeClasses = getSizeClasses(inputSize);
 
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
     const baseInputClasses = [
       'block w-full rounded-lg border',
-      'bg-white dark:bg-neutral-800',
-      'text-neutral-900 dark:text-neutral-100',
-      'placeholder-neutral-500 dark:placeholder-neutral-400',
       'transition-colors duration-200',
       'focus:outline-none focus:ring-2 focus:ring-offset-2',
       'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -99,13 +112,19 @@ const BaseInput = forwardRef<HTMLInputElement, InputProps>(
 
     const containerClasses = fullWidth ? 'w-full' : '';
 
+    const combinedStyles = {
+      ...variantStyles,
+      ...style
+    };
+
     return (
       <div className={containerClasses}>
         {/* Label */}
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2"
+            className="block text-sm font-medium mb-2"
+            style={{ color: 'var(--color-universe-text)', opacity: 0.8 }}
           >
             {label}
           </label>
@@ -116,7 +135,15 @@ const BaseInput = forwardRef<HTMLInputElement, InputProps>(
           {/* Left Addon */}
           {leftAddon && (
             <div className="absolute inset-y-0 left-0 flex items-center">
-              <div className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border-r border-neutral-300 dark:border-neutral-600 rounded-l-lg text-neutral-500 dark:text-neutral-400">
+              <div
+                className="px-3 py-2 border-r rounded-l-lg"
+                style={{
+                  backgroundColor: 'var(--color-universe-surface)',
+                  borderColor: 'var(--color-universe-primary)',
+                  color: 'var(--color-universe-text)',
+                  opacity: 0.7
+                }}
+              >
                 {leftAddon}
               </div>
             </div>
@@ -125,24 +152,32 @@ const BaseInput = forwardRef<HTMLInputElement, InputProps>(
           {/* Left Icon */}
           {leftIcon && !leftAddon && (
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <span className="text-neutral-500 dark:text-neutral-400">{leftIcon}</span>
+              <span style={{ color: 'var(--color-universe-text)', opacity: 0.6 }}>{leftIcon}</span>
             </div>
           )}
 
           {/* Input Field */}
-          <input ref={ref} id={inputId} className={inputClasses} {...props} />
+          <input ref={ref} id={inputId} className={inputClasses} style={combinedStyles} {...props} />
 
           {/* Right Icon */}
           {rightIcon && !rightAddon && (
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <span className="text-neutral-500 dark:text-neutral-400">{rightIcon}</span>
+              <span style={{ color: 'var(--color-universe-text)', opacity: 0.6 }}>{rightIcon}</span>
             </div>
           )}
 
           {/* Right Addon */}
           {rightAddon && (
             <div className="absolute inset-y-0 right-0 flex items-center">
-              <div className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border-l border-neutral-300 dark:border-neutral-600 rounded-r-lg text-neutral-500 dark:text-neutral-400">
+              <div
+                className="px-3 py-2 border-l rounded-r-lg"
+                style={{
+                  backgroundColor: 'var(--color-universe-surface)',
+                  borderColor: 'var(--color-universe-primary)',
+                  color: 'var(--color-universe-text)',
+                  opacity: 0.7
+                }}
+              >
                 {rightAddon}
               </div>
             </div>
@@ -152,11 +187,11 @@ const BaseInput = forwardRef<HTMLInputElement, InputProps>(
         {/* Helper Text or Error */}
         {(helperText || error) && (
           <p
-            className={`mt-2 text-sm ${
-              error
-                ? 'text-error-600 dark:text-error-400'
-                : 'text-neutral-600 dark:text-neutral-400'
-            }`}
+            className="mt-2 text-sm"
+            style={{
+              color: error ? 'rgba(239, 68, 68, 0.8)' : 'var(--color-universe-text)',
+              opacity: error ? 1 : 0.7
+            }}
           >
             {error || helperText}
           </p>

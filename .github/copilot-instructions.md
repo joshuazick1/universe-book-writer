@@ -191,6 +191,24 @@ The project adopts a **monorepo structure** comprising:
   - Coverage reports: `--coverage` generates and organizes coverage data
   - Watch mode: `--watch` for continuous testing during development
 
+- **CI-Friendly Output**:
+
+  - Always include a `summary.json` file for every test run. This file must be written to the test results directory, regardless of flags.
+  - Use `--ci` or `--json` flags when running tests in CI/CD pipelines, or when you want machine-readable output for further automation or reporting.
+  - If either flag is present, the runner must print the full JSON summary (from `summary.json`) to stdout, wrapped between `CI_SUMMARY_JSON_START` and `CI_SUMMARY_JSON_END` markers.
+  - The `--ci` flag is intended for automated environments (CI/CD, build servers, etc.).
+  - The `--json` flag is for local or scripted runs where a JSON summary is desired in the output.
+  - Both flags can be used together; their effect is the same.
+
+- **Output Rules**:
+
+  - The JSON summary must include:
+    - Timestamp, target, patterns, comment, duration, exit code, test results (passed/failed/skipped/total), log file paths, and coverage file path if present.
+    - For each suite, include status, duration, log file, and failed test names if any.
+  - The summary must be valid JSON and suitable for parsing by CI tools or scripts.
+  - The summary must always be written to disk, even if the flags are not present.
+  - When the flags are present, the summary must be printed to stdout as a single block, for easy extraction by CI systems.
+
 - **Usage Examples**:
 
   ```bash
@@ -206,6 +224,15 @@ The project adopts a **monorepo structure** comprising:
 
   # Run specific project with pattern and coverage
   npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" --coverage --comment "UI testing"
+
+  # CI run, machine-readable output
+  npx tsx scripts/run-tests-with-output.ts --ci
+
+  # Local run, but want JSON summary in output
+  npx tsx scripts/run-tests-with-output.ts --json backend
+
+  # NPM script with CI output
+  yarn test --ci
   ```
 
 ### Environment Notes

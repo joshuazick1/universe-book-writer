@@ -73,7 +73,7 @@ export class AdminUseCase {
     private securityService: SecurityService,
     private passwordService: PasswordService,
     private emailService: EmailService
-  ) {} /**
+  ) { } /**
    * Get all users with filtering and pagination
    */
   async getAllUsers(options: UserListOptions): Promise<PaginatedResult<User>> {
@@ -129,6 +129,14 @@ export class AdminUseCase {
     // Validate role
     if (!Object.values(UserRole).includes(newRole)) {
       throw new Error('Invalid role');
+    }
+
+    // If downgrading an admin user, check if they're the last admin
+    if (user.role === UserRole.ADMIN && newRole !== UserRole.ADMIN) {
+      const adminUsers = await this.userRepository.findMany({ role: UserRole.ADMIN });
+      if (adminUsers.users.length <= 1) {
+        throw new Error('Cannot downgrade the last admin user. At least one admin must remain.');
+      }
     }
 
     // Update user
@@ -285,7 +293,7 @@ export class AdminUseCase {
         firstName,
         lastName,
         preferences: {
-          theme: 'auto',
+          theme: 'default',
           language: 'en',
           timezone: 'UTC',
           notifications: {
@@ -320,5 +328,41 @@ export class AdminUseCase {
     }
 
     return savedUser;
+  }
+
+  /**
+   * Delete user (admin only)
+   */
+  async deleteUser(userId: string, adminUserId: string): Promise<boolean> {
+    // Prevent self-deletion
+    if (userId === adminUserId) {
+      throw new Error('Cannot delete your own account');
+    }
+
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // If deleting an admin user, check if they're the last admin
+    if (user.role === UserRole.ADMIN) {
+      const adminUsers = await this.userRepository.findMany({ role: UserRole.ADMIN });
+      if (adminUsers.users.length <= 1) {
+        throw new Error('Cannot delete the last admin user. At least one admin must remain.');
+      }
+    }
+
+    const deleted = await this.userRepository.delete(userId);
+
+    if (deleted) {
+      // Log security event
+      await this.securityService.logSecurityEvent(adminUserId, 'admin_user_deleted', {
+        targetUserId: userId,
+        targetEmail: user.email,
+        targetRole: user.role,
+      });
+    }
+
+    return deleted;
   }
 }

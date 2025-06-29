@@ -132,55 +132,90 @@ npm run dev:collab     # Collaboration server
 
 ## 🧪 Testing
 
-The project includes an enhanced test runner with prettified console output and detailed file logging:
+The project uses two complementary testing systems:
+
+### Jest Unit Testing (Enhanced Test Runner)
+
+The project includes an enhanced TypeScript test runner with prettified console output and detailed file logging:
 
 ```bash
-# Run all tests with pretty console output
+# Run all unit tests with enhanced output
 npm test
 
 # Run specific test suites
-npm run test:backend    # Backend tests only
-npm run test:frontend   # Frontend tests only
-npm run test:coverage   # Tests with coverage report
+npm run test:backend       # Backend unit tests only
+npm run test:frontend      # Frontend unit tests only
+npm run test:ai-server     # AI server unit tests only
+npm run test:collaboration-server  # Collaboration server unit tests only
+npm run test:packages      # Package unit tests only
+npm run test:coverage      # Unit tests with coverage report
 
 # Run tests with issue tracking comments
-node scripts/run-tests-with-output.js --comment "Fixing auth bug" backend
-node scripts/run-tests-with-output.js -c "Testing new feature" frontend
+npx tsx scripts/run-tests-with-output.ts --comment "Fixing auth bug" backend
+npx tsx scripts/run-tests-with-output.ts -c "Testing new feature" frontend
+
+# Pattern matching for specific test categories
+npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth system"
+npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" -c "UI component tests"
 
 # Watch mode for development
 npm run test:watch
-
-# E2E tests
-npm run test:e2e
 ```
+
+### Playwright End-to-End Testing
+
+For browser-based integration testing, use Playwright-specific commands:
+
+```bash
+# Run all e2e tests (clean output, no HTML report)
+npm run test:e2e
+
+# Run e2e tests with UI
+npm run test:e2e:ui
+
+# Generate HTML report manually when needed
+npm run test:e2e:html
+npm run test:e2e:report        # View generated HTML report
+
+# Admin-specific e2e tests
+npm run test:e2e:admin
+npm run test:e2e:admin:ui        # With UI
+npm run test:e2e:admin:headed    # In headed mode
+npm run test:e2e:admin:debug     # Debug mode
+npm run test:e2e:admin:html      # Generate HTML report for admin tests
+npm run test:e2e:admin:report    # View admin HTML report
+```
+
+**Note**: The default e2e test commands now use line reporters for clean output without automatically opening HTML reports. Use the `:html` variants when you specifically need visual reports.
 
 ### Enhanced Test Runner Features
 
-The test runner provides dual output modes:
+The Jest test runner provides dual output modes:
 - **Console**: Prettified output with ✅ checkmarks, ❌ for failures, and ⏭️ for skipped tests
 - **File**: Complete Jest output with stack traces saved to `test-results/` directory
 
 #### Usage Examples:
 ```bash
 # Basic usage
-node scripts/run-tests-with-output.js backend
+npx tsx scripts/run-tests-with-output.ts backend
 
 # With issue tracking
-node scripts/run-tests-with-output.js --comment "Testing user authentication" backend
+npx tsx scripts/run-tests-with-output.ts --comment "Testing user authentication" backend
 
 # Multiple test types
-node scripts/run-tests-with-output.js coverage
-node scripts/run-tests-with-output.js watch  # No file output in watch mode
+npx tsx scripts/run-tests-with-output.ts --coverage
+npx tsx scripts/run-tests-with-output.ts --watch  # No file output in watch mode
 ```
 
-Output files are automatically timestamped and organized:
-- `test-results-backend-fixing-auth-bug-20250611-14.txt`
-- `test-results-coverage-20250611-15.txt`
+Output files are automatically timestamped and organized in `test-results/`:
+- `test-results/run_2024-01-15T14-30-45/backend-fixing-auth-bug.log`
+- `test-results/run_2024-01-15T14-35-12/coverage-report.log`
 
 Each file includes:
 - Execution metadata (timestamp, command, issue comment)
 - Complete Jest output for debugging
 - Full stack traces and error details
+- Automatic log rotation (keeps last 10 test runs)
 
 ## 🚀 Deployment
 

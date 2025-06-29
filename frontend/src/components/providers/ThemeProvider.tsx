@@ -3,8 +3,9 @@
  * Manages theme state and provides context for components
  */
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { logger } from '../../utils/logger';
+import { useAuth } from '../../auth/hooks';
 
 /* === TYPES === */
 
@@ -91,26 +92,61 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     useState<Record<string, ThemeConfig>>(DEFAULT_THEMES);
   const [pluginThemes, setPluginThemes] = useState<Set<string>>(new Set());
 
+  /* === AUTH & USER PROFILE INTEGRATION === */
+
+  const { user, updateProfile, isAuthenticated } = useAuth();
+
   /* === THEME MANAGEMENT === */
 
-  const setTheme = (themeName: string) => {
+  const setTheme = useCallback(async (themeName: string) => {
     if (registeredThemes[themeName]) {
       setCurrentTheme(themeName);
+
+      // Save to localStorage for immediate persistence
       localStorage.setItem('universe-theme', themeName);
+
+      // If user is authenticated, also save to user profile
+      if (isAuthenticated && user) {
+        try {
+          await updateProfile({
+            preferences: {
+              ...user.preferences,
+              theme: themeName as any, // Temporary type assertion - TODO: Fix type alignment
+            },
+          });
+          logger.info(`Theme preference saved to user profile: ${themeName}`);
+        } catch (error) {
+          logger.warn('Failed to save theme preference to user profile, falling back to localStorage', error);
+        }
+      }
+
+      logger.info(`Theme changed to: ${themeName}`);
     } else {
       logger.warn(`Theme "${themeName}" is not registered`);
     }
-  };
+  }, [registeredThemes, isAuthenticated, user, updateProfile]);
 
-  const registerTheme = (themeName: string, config: ThemeConfig) => {
-    setRegisteredThemes(prev => ({
-      ...prev,
-      [themeName]: config,
-    }));
-    setPluginThemes(prev => new Set([...prev, themeName]));
-  };
+  const registerTheme = useCallback((themeName: string, config: ThemeConfig) => {
+    setRegisteredThemes(prev => {
+      // Check if theme is already registered to avoid unnecessary updates
+      if (prev[themeName]) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [themeName]: config,
+      };
+    });
+    setPluginThemes(prev => {
+      // Check if already in plugin themes to avoid unnecessary updates
+      if (prev.has(themeName)) {
+        return prev;
+      }
+      return new Set([...prev, themeName]);
+    });
+  }, []);
 
-  const unregisterTheme = (themeName: string) => {
+  const unregisterTheme = useCallback((themeName: string) => {
     if (pluginThemes.has(themeName)) {
       setRegisteredThemes(prev => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -128,9 +164,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
         setTheme('default');
       }
     }
-  };
+  }, [pluginThemes, currentTheme, setTheme]);
 
-  const isPluginTheme = (themeName: string) => pluginThemes.has(themeName);
+  const isPluginTheme = useCallback((themeName: string) => pluginThemes.has(themeName), [pluginThemes]);
 
   /* === CSS VARIABLE APPLICATION === */
 
@@ -178,13 +214,28 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   /* === EFFECTS === */
 
-  // Initialize theme from localStorage
+  // Initialize theme from user profile or localStorage
   useEffect(() => {
-    const savedTheme = localStorage.getItem('universe-theme');
-    if (savedTheme && registeredThemes[savedTheme]) {
-      setCurrentTheme(savedTheme);
+    // Priority: 1. User profile theme, 2. localStorage, 3. default
+    let themeToSet = 'default';
+
+    if (isAuthenticated && user?.preferences?.theme) {
+      // User is logged in and has a theme preference
+      themeToSet = user.preferences.theme;
+      logger.info(`Loading theme from user profile: ${themeToSet}`);
+    } else {
+      // Fall back to localStorage
+      const savedTheme = localStorage.getItem('universe-theme');
+      if (savedTheme && registeredThemes[savedTheme]) {
+        themeToSet = savedTheme;
+        logger.info(`Loading theme from localStorage: ${themeToSet}`);
+      }
     }
-  }, []);
+
+    if (registeredThemes[themeToSet]) {
+      setCurrentTheme(themeToSet);
+    }
+  }, [isAuthenticated, user?.preferences?.theme, registeredThemes]);
 
   // Apply theme variables when current theme changes
   useEffect(() => {
@@ -199,13 +250,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
       if (currentTheme === 'default' || currentTheme === 'dark') {
-        setTheme(e.matches ? 'dark' : 'default');
+        setTheme(e.matches ? 'dark' : 'default').catch(error => {
+          logger.warn('Failed to update theme based on system preference', error);
+        });
       }
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [currentTheme]);
+  }, [currentTheme, setTheme]);
 
   /* === CONTEXT VALUE === */
 

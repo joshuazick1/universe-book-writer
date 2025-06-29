@@ -59,7 +59,7 @@ export class UserUseCase {
     private passwordService: PasswordService,
     private emailService: EmailService,
     private securityService: SecurityService
-  ) {}
+  ) { }
 
   /**
    * Create a new user
@@ -495,6 +495,39 @@ export class UserUseCase {
       suspended,
       verifiedEmails,
       newThisMonth,
+    };
+  }
+
+  /**
+   * Search users for collaboration invitations
+   */
+  async searchUsersForCollaboration(
+    query: string,
+    excludeUserId: string,
+    limit: number = 10
+  ): Promise<{
+    users: User[];
+    total: number;
+  }> {
+    const searchFilters: UserSearchFilters = {
+      search: query,
+      status: UserStatus.ACTIVE, // Only active users can be invited
+    };
+
+    const result = await this.userRepository.findMany(searchFilters, {
+      limit: limit + 1, // Get one extra to account for filtering out current user
+      sortBy: 'username',
+      sortOrder: 'asc',
+    });
+
+    // Filter out current user from results
+    const users = result.users.filter(user => user.id !== excludeUserId).slice(0, limit);
+
+    const total = await this.userRepository.count(searchFilters);
+
+    return {
+      users,
+      total: Math.max(0, total - 1), // Subtract 1 to account for excluded current user
     };
   }
 }

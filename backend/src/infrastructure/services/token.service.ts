@@ -217,7 +217,8 @@ export class JwtTokenService implements TokenService {
   getTokenExpiration(tokenType: TokenType): number {
     switch (tokenType) {
       case TokenType.ACCESS:
-        return 15 * 60 * 1000; // 15 minutes in milliseconds
+        // In development, use longer expiration to avoid frequent re-authentication
+        return process.env.NODE_ENV === 'development' ? 24 * 60 * 60 * 1000 : 15 * 60 * 1000; // 24 hours in dev, 15 minutes in prod
       case TokenType.REFRESH:
         return 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
       case TokenType.EMAIL_VERIFICATION:

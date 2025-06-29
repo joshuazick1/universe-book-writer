@@ -52,6 +52,35 @@ export const UserProfilePage: React.FC = () => {
     securityAlerts: true,
   });
 
+  // Helper functions for consistent styling
+  const getInputStyles = (hasError?: boolean) => ({
+    backgroundColor: 'var(--color-universe-surface)',
+    borderColor: hasError ? 'rgba(239, 68, 68, 0.5)' : 'var(--color-universe-primary)',
+    color: 'var(--color-universe-text)',
+    '--placeholder-color': 'rgba(var(--color-universe-text-rgb), 0.5)'
+  } as React.CSSProperties);
+
+  const getLabelStyles = () => ({
+    color: 'var(--color-universe-text)',
+    opacity: 0.8
+  });
+
+  const getSecondaryTextStyles = () => ({
+    color: 'var(--color-universe-text)',
+    opacity: 0.6
+  });
+
+  const getAvatarStyles = () => ({
+    background: `linear-gradient(135deg, var(--color-universe-primary), var(--color-universe-accent))`,
+    color: 'var(--color-universe-background)'
+  });
+
+  const getSurfaceStyles = () => ({
+    backgroundColor: 'var(--color-universe-surface)',
+    borderColor: 'var(--color-universe-primary)',
+    color: 'var(--color-universe-text)'
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -121,20 +150,20 @@ export const UserProfilePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-universe-background)' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--color-universe-primary)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-universe-background)' }}>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Profile & Settings</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold" style={{ color: 'var(--color-universe-text)' }}>Profile & Settings</h1>
+            <p className="mt-2" style={{ color: 'var(--color-universe-text)', opacity: 0.7 }}>
               Manage your personal information, preferences, and account settings
             </p>
           </div>
@@ -146,15 +175,21 @@ export const UserProfilePage: React.FC = () => {
                 <CardHeader>
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-xl font-semibold">Personal Information</h2>
-                      <p className="text-gray-600 text-sm mt-1">
+                      <h2 className="text-xl font-semibold" style={{ color: 'var(--color-universe-text)' }}>Personal Information</h2>
+                      <p className="text-sm mt-1" style={getSecondaryTextStyles()}>
                         Update your personal details and bio
                       </p>
                     </div>
                     {!isEditing && (
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        className="px-4 py-2 rounded-lg transition-colors"
+                        style={{
+                          backgroundColor: 'var(--color-universe-primary)',
+                          color: 'var(--color-universe-surface)'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                       >
                         Edit Profile
                       </button>
@@ -165,17 +200,19 @@ export const UserProfilePage: React.FC = () => {
                   <div className="space-y-6">
                     {/* Avatar Section */}
                     <div className="flex items-center space-x-6">
-                      <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                      <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold"
+                        style={getAvatarStyles()}
+                      >
                         {(formData.firstName[0] || user?.email[0] || 'U').toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <h3 className="text-lg font-medium" style={{ color: 'var(--color-universe-text)' }}>
                           {formData.firstName || formData.lastName
                             ? `${formData.firstName} ${formData.lastName}`.trim()
                             : 'Unnamed User'}
                         </h3>
-                        <p className="text-gray-600">{formData.email}</p>
-                        <p className="text-sm text-gray-500">
+                        <p style={getSecondaryTextStyles()}>{formData.email}</p>
+                        <p className="text-sm" style={getSecondaryTextStyles()}>
                           Member since{' '}
                           {new Date(user?.createdAt || Date.now()).toLocaleDateString()}
                         </p>
@@ -185,7 +222,7 @@ export const UserProfilePage: React.FC = () => {
                     {/* Form Fields */}
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium mb-2" style={getLabelStyles()}>
                           First Name
                         </label>
                         {isEditing ? (
@@ -194,16 +231,17 @@ export const UserProfilePage: React.FC = () => {
                             name="firstName"
                             value={formData.firstName}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-opacity-50"
                             placeholder="Enter your first name"
+                            style={getInputStyles()}
                           />
                         ) : (
-                          <p className="text-gray-900 py-2">{formData.firstName || 'Not set'}</p>
+                          <p className="py-2" style={{ color: 'var(--color-universe-text)' }}>{formData.firstName || 'Not set'}</p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium mb-2" style={getLabelStyles()}>
                           Last Name
                         </label>
                         {isEditing ? (
@@ -212,40 +250,42 @@ export const UserProfilePage: React.FC = () => {
                             name="lastName"
                             value={formData.lastName}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-opacity-50"
                             placeholder="Enter your last name"
+                            style={getInputStyles()}
                           />
                         ) : (
-                          <p className="text-gray-900 py-2">{formData.lastName || 'Not set'}</p>
+                          <p className="py-2" style={{ color: 'var(--color-universe-text)' }}>{formData.lastName || 'Not set'}</p>
                         )}
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium mb-2" style={getLabelStyles()}>
                         Email Address
                       </label>
-                      <p className="text-gray-900 py-2 bg-gray-50 px-3 rounded-lg border">
+                      <p className="py-2 px-3 rounded-lg border" style={getSurfaceStyles()}>
                         {formData.email}
-                        <span className="text-sm text-gray-500 ml-2">
+                        <span className="text-sm ml-2" style={getSecondaryTextStyles()}>
                           (Email cannot be changed here)
                         </span>
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                      <label className="block text-sm font-medium mb-2" style={getLabelStyles()}>Bio</label>
                       {isEditing ? (
                         <textarea
                           name="bio"
                           value={formData.bio}
                           onChange={handleInputChange}
                           rows={4}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-opacity-50"
+                          style={getInputStyles()}
                           placeholder="Tell us about yourself..."
                         />
                       ) : (
-                        <p className="text-gray-900 py-2 min-h-[100px]">
+                        <p className="py-2 min-h-[100px]" style={{ color: 'var(--color-universe-text)' }}>
                           {formData.bio || 'No bio added yet.'}
                         </p>
                       )}
@@ -257,18 +297,32 @@ export const UserProfilePage: React.FC = () => {
                         <button
                           onClick={handleCancel}
                           disabled={isSaving}
-                          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                          className="px-4 py-2 border rounded-lg transition-colors disabled:opacity-50"
+                          style={{
+                            backgroundColor: 'var(--color-universe-surface)',
+                            borderColor: 'var(--color-universe-primary)',
+                            color: 'var(--color-universe-text)'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleSaveProfile}
                           disabled={isSaving}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center"
+                          className="px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center"
+                          style={{
+                            backgroundColor: 'var(--color-universe-primary)',
+                            color: 'var(--color-universe-background)'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                         >
                           {isSaving && (
                             <svg
-                              className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
+                              className="animate-spin -ml-1 mr-3 h-4 w-4"
+                              style={{ color: 'var(--color-universe-surface)' }}
                               fill="none"
                               viewBox="0 0 24 24"
                             >
@@ -306,26 +360,36 @@ export const UserProfilePage: React.FC = () => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Email Verified</span>
+                      <span className="text-sm" style={getSecondaryTextStyles()}>Email Verified</span>
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          user?.emailVerified
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
+                        className="px-2 py-1 text-xs rounded-full"
+                        style={{
+                          backgroundColor: user?.emailVerified
+                            ? 'rgba(34, 197, 94, 0.1)'
+                            : 'rgba(245, 158, 11, 0.1)',
+                          color: user?.emailVerified
+                            ? 'rgb(34, 197, 94)'
+                            : 'rgb(245, 158, 11)'
+                        }}
                       >
                         {user?.emailVerified ? 'Verified' : 'Pending'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Account Status</span>
-                      <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                      <span className="text-sm" style={getSecondaryTextStyles()}>Account Status</span>
+                      <span className="px-2 py-1 text-xs rounded-full" style={{
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        color: 'rgb(34, 197, 94)'
+                      }}>
                         Active
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Role</span>
-                      <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 capitalize">
+                      <span className="text-sm" style={getSecondaryTextStyles()}>Role</span>
+                      <span className="px-2 py-1 text-xs rounded-full capitalize" style={{
+                        backgroundColor: 'rgba(var(--color-universe-primary-rgb), 0.1)',
+                        color: 'var(--color-universe-primary)'
+                      }}>
                         {user?.role || 'user'}
                       </span>
                     </div>
@@ -342,17 +406,23 @@ export const UserProfilePage: React.FC = () => {
                   <div className="space-y-4">
                     <button
                       onClick={() => setShowPasswordForm(!showPasswordForm)}
-                      className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex justify-between items-center"
+                      className="w-full px-4 py-2 text-left text-sm rounded-lg transition-colors flex justify-between items-center"
+                      style={{
+                        color: 'var(--color-universe-primary)',
+                        backgroundColor: showPasswordForm ? 'rgba(var(--color-universe-primary-rgb), 0.1)' : 'transparent'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(var(--color-universe-primary-rgb), 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = showPasswordForm ? 'rgba(var(--color-universe-primary-rgb), 0.1)' : 'transparent'}
                     >
                       Change Password
-                      <span className="text-xs text-gray-400">{showPasswordForm ? '−' : '+'}</span>
+                      <span className="text-xs" style={getSecondaryTextStyles()}>{showPasswordForm ? '−' : '+'}</span>
                     </button>
 
                     {showPasswordForm && (
-                      <div className="p-4 bg-gray-50 rounded-lg">
+                      <div className="p-4 rounded-lg" style={getSurfaceStyles()}>
                         <form onSubmit={handlePasswordChange} className="space-y-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium mb-1" style={getLabelStyles()}>
                               Current Password
                             </label>
                             <input
@@ -364,12 +434,13 @@ export const UserProfilePage: React.FC = () => {
                                   currentPassword: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-opacity-50"
+                              style={getInputStyles()}
                               required
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium mb-1" style={getLabelStyles()}>
                               New Password
                             </label>
                             <input
@@ -378,12 +449,13 @@ export const UserProfilePage: React.FC = () => {
                               onChange={e =>
                                 setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))
                               }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-opacity-50"
                               required
+                              style={getInputStyles()}
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium mb-1" style={getLabelStyles()}>
                               Confirm New Password
                             </label>
                             <input
@@ -395,15 +467,22 @@ export const UserProfilePage: React.FC = () => {
                                   confirmPassword: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-opacity-50"
                               required
+                              style={getInputStyles()}
                             />
                           </div>
                           <div className="flex gap-2">
                             <button
                               type="submit"
                               disabled={isChangingPassword}
-                              className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                              className="px-3 py-1 text-sm rounded-lg transition-colors disabled:opacity-50"
+                              style={{
+                                backgroundColor: 'var(--color-universe-primary)',
+                                color: 'var(--color-universe-surface)'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `rgba(var(--color-universe-primary-rgb), 0.8)`}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-universe-primary)'}
                             >
                               {isChangingPassword ? 'Changing...' : 'Update'}
                             </button>
@@ -417,7 +496,13 @@ export const UserProfilePage: React.FC = () => {
                                   confirmPassword: '',
                                 });
                               }}
-                              className="px-3 py-1 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                              className="px-3 py-1 text-sm border rounded-lg transition-colors"
+                              style={{
+                                borderColor: 'rgba(var(--color-universe-text-rgb), 0.3)',
+                                color: 'var(--color-universe-text)'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(var(--color-universe-text-rgb), 0.1)'}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                             >
                               Cancel
                             </button>
@@ -426,13 +511,34 @@ export const UserProfilePage: React.FC = () => {
                       </div>
                     )}
 
-                    <button className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm rounded-lg transition-colors"
+                      style={{
+                        color: 'var(--color-universe-primary)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(var(--color-universe-primary-rgb), 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
                       Privacy Settings
                     </button>
-                    <button className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm rounded-lg transition-colors"
+                      style={{
+                        color: 'var(--color-universe-primary)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(var(--color-universe-primary-rgb), 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
                       Download Data
                     </button>
-                    <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm rounded-lg transition-colors"
+                      style={{
+                        color: 'var(--color-universe-accent)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(var(--color-universe-accent-rgb), 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
                       Delete Account
                     </button>
                   </div>
@@ -452,7 +558,7 @@ export const UserProfilePage: React.FC = () => {
                           <p className="text-sm font-medium">
                             {key.replace(/([A-Z])/g, ' $1').trim()}
                           </p>
-                          <p className="text-xs text-gray-600">
+                          <p className="text-xs" style={getSecondaryTextStyles()}>
                             {key === 'emailNotifications' && 'Email updates'}
                             {key === 'pushNotifications' && 'Browser notifications'}
                             {key === 'weeklyDigest' && 'Weekly summary'}
@@ -468,7 +574,13 @@ export const UserProfilePage: React.FC = () => {
                             }
                             className="sr-only peer"
                           />
-                          <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                          <div
+                            className="w-9 h-5 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-all"
+                            style={{
+                              backgroundColor: value ? 'var(--color-universe-primary)' : 'rgba(var(--color-universe-text-rgb), 0.3)',
+                              borderColor: value ? 'var(--color-universe-primary)' : 'rgba(var(--color-universe-text-rgb), 0.3)'
+                            }}
+                          ></div>
                         </label>
                       </div>
                     ))}

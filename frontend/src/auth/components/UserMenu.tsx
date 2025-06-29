@@ -72,20 +72,35 @@ export const UserMenu: React.FC = () => {
       {/* User Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="flex items-center space-x-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50 transition-all"
+        style={{
+          '--tw-ring-color': 'var(--color-universe-primary)',
+          '--tw-ring-offset-color': 'var(--color-universe-background)'
+        } as React.CSSProperties}
         id="user-menu-button"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
         {' '}
-        <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-medium">
+        <div
+          className="h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium"
+          style={{
+            backgroundColor: 'var(--color-universe-primary)',
+            color: 'var(--color-universe-background)'
+          }}
+        >
           {getInitials(user)}
         </div>
-        <span className="hidden md:block text-gray-700 font-medium">{getDisplayName(user)}</span>
+        <span
+          className="hidden md:block font-medium"
+          style={{ color: 'var(--color-universe-text)' }}
+        >
+          {getDisplayName(user)}
+        </span>
         <svg
-          className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={`h-4 w-4 opacity-60 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
+            }`}
+          style={{ color: 'var(--color-universe-text)' }}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -96,15 +111,37 @@ export const UserMenu: React.FC = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none z-50">
+        <div
+          className="absolute right-0 mt-2 w-56 rounded-md shadow-lg ring-1 ring-opacity-5 focus:outline-none z-50"
+          style={{
+            backgroundColor: 'var(--color-universe-surface)',
+            borderColor: 'var(--color-universe-primary)'
+          }}
+        >
           {' '}
           {/* User Info Section */}
           <div className="px-4 py-3">
-            <p className="text-sm font-medium text-gray-900">{getDisplayName(user)}</p>
-            <p className="text-sm text-gray-500 truncate">{user.email}</p>
+            <p
+              className="text-sm font-medium"
+              style={{ color: 'var(--color-universe-text)' }}
+            >
+              {getDisplayName(user)}
+            </p>
+            <p
+              className="text-sm truncate opacity-75"
+              style={{ color: 'var(--color-universe-text)' }}
+            >
+              {user.email}
+            </p>
             {!user.emailVerified && (
               <div className="mt-2">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                <span
+                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  style={{
+                    backgroundColor: '#fef3c7',
+                    color: '#92400e'
+                  }}
+                >
                   Email not verified
                 </span>
               </div>
@@ -114,7 +151,16 @@ export const UserMenu: React.FC = () => {
           <div className="py-1">
             <Link
               to="/profile"
-              className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              className="group flex items-center px-4 py-2 text-sm hover:opacity-80 transition-all"
+              style={{ color: 'var(--color-universe-text)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--color-universe-accent)';
+                e.currentTarget.style.color = 'var(--color-universe-background)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--color-universe-text)';
+              }}
               onClick={() => setIsOpen(false)}
             >
               <svg
@@ -135,7 +181,16 @@ export const UserMenu: React.FC = () => {
 
             <Link
               to="/settings"
-              className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              className="group flex items-center px-4 py-2 text-sm hover:opacity-80 transition-all"
+              style={{ color: 'var(--color-universe-text)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--color-universe-accent)';
+                e.currentTarget.style.color = 'var(--color-universe-background)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--color-universe-text)';
+              }}
               onClick={() => setIsOpen(false)}
             >
               <svg
@@ -162,11 +217,22 @@ export const UserMenu: React.FC = () => {
 
             <Link
               to="/dashboard"
-              className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              className="group flex items-center px-4 py-2 text-sm transition-all hover:opacity-80"
+              style={{
+                color: 'var(--color-universe-text)',
+                backgroundColor: 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--color-universe-surface)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
               onClick={() => setIsOpen(false)}
             >
               <svg
-                className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                className="mr-3 h-5 w-5 opacity-60 group-hover:opacity-80"
+                style={{ color: 'var(--color-universe-text)' }}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -191,11 +257,22 @@ export const UserMenu: React.FC = () => {
             {user.role === 'admin' && (
               <Link
                 to="/admin"
-                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="group flex items-center px-4 py-2 text-sm transition-all hover:opacity-80"
+                style={{
+                  color: 'var(--color-universe-text)',
+                  backgroundColor: 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-universe-surface)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <svg
-                  className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                  className="mr-3 h-5 w-5 opacity-60 group-hover:opacity-80"
+                  style={{ color: 'var(--color-universe-text)' }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -216,11 +293,22 @@ export const UserMenu: React.FC = () => {
             <div className="py-1">
               <Link
                 to="/auth/verify-email"
-                className="group flex items-center px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50 hover:text-yellow-900"
+                className="group flex items-center px-4 py-2 text-sm transition-all hover:opacity-80"
+                style={{
+                  color: '#d97706', // Amber color for warning
+                  backgroundColor: 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-universe-surface)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <svg
-                  className="mr-3 h-5 w-5 text-yellow-400 group-hover:text-yellow-500"
+                  className="mr-3 h-5 w-5 opacity-60 group-hover:opacity-80"
+                  style={{ color: '#d97706' }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -241,7 +329,19 @@ export const UserMenu: React.FC = () => {
             <button
               onClick={handleLogout}
               disabled={isLoading}
-              className="group flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group flex items-center w-full px-4 py-2 text-sm transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                color: 'var(--color-universe-text)',
+                backgroundColor: 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = 'var(--color-universe-surface)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
             >
               {isLoading ? (
                 <svg

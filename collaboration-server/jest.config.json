@@ -1,27 +1,22 @@
-{
-  "preset": "ts-jest/presets/default-esm",
-  "extensionsToTreatAsEsm": [".ts"],
-  "testEnvironment": "node",
-  "roots": ["<rootDir>/src"],
-  "testMatch": ["**/__tests__/**/*.test.ts", "**/?(*.)+(spec|test).ts"],
-  "collectCoverageFrom": ["src/**/*.ts", "!src/**/*.d.ts", "!src/__tests__/**/*"],
-  "coverageDirectory": "coverage",
-  "coverageReporters": ["text", "lcov", "html"],
-  "setupFilesAfterEnv": ["<rootDir>/jest.setup.ts"],
-  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"],
-  "transform": {
-    "^.+\\.ts$": [
-      "ts-jest",
-      {
-        "useESM": true
-      }
-    ]
-  },
-  "moduleNameMapper": {
-    "^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$": "$1"
-  },
-  "testTimeout": 15000,
-  "verbose": false,
-  "forceExit": true,
-  "detectOpenHandles": false
-}
+/**
+ * Collaboration Server Jest Configuration
+ * Uses shared configuration with collaboration server-specific overrides
+ */
+import { createJestConfig } from '../jest.config.shared.mjs';
+
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+export default createJestConfig({
+  displayName: 'collaboration-server',
+  testEnvironment: 'node',
+  rootDir: '.',
+  testMatch: [
+    '<rootDir>/src/**/__tests__/**/*.test.ts', 
+    '<rootDir>/**/?(*.)+(spec|test).ts'
+  ],
+  setupFiles: ['<rootDir>/jest.setup.ts'],
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts', 
+    '!<rootDir>/src/**/*.d.ts', 
+    '!<rootDir>/src/__tests__/**/*'
+  ],
+});

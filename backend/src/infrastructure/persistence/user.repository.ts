@@ -20,7 +20,7 @@ interface UserDocument {
     avatar?: string;
     bio?: string;
     preferences: {
-      theme: 'light' | 'dark' | 'auto';
+      theme: string; // Allow any string for plugin/custom themes
       language: string;
       timezone: string;
       notifications: {
@@ -184,6 +184,34 @@ export class MongoUserRepository implements UserRepository {
       }
 
       return this.toEntity(result);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'User not found') {
+        throw error;
+      }
+      throw new Error('Invalid user ID format');
+    }
+  }
+
+  /**
+   * Update user metadata only
+   */
+  async updateMetadata(id: string, metadata: Record<string, unknown>): Promise<void> {
+    try {
+      const objectId = new ObjectId(id);
+
+      const result = await this.collection.updateOne(
+        { _id: objectId },
+        {
+          $set: {
+            metadata: metadata,
+            updatedAt: new Date()
+          }
+        }
+      );
+
+      if (result.matchedCount === 0) {
+        throw new Error('User not found');
+      }
     } catch (error) {
       if (error instanceof Error && error.message === 'User not found') {
         throw error;

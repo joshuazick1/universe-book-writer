@@ -6,6 +6,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, PluginRegistryProvider } from './components/providers';
+import { PluginThemeRegistrar } from './components/theme/PluginThemeRegistrar';
 // import { AnimationShowcase } from './components/animation';
 import { Layout } from './components/navigation';
 import { LoginForm, ProtectedRoute, PublicRoute } from './auth/components';
@@ -18,6 +19,7 @@ import { AdminSettingsPage } from './components/admin/pages/AdminSettingsPage';
 import { SecurityLogsPage } from './components/admin/pages/SecurityLogsPage';
 import { UserProfilePage, UserSettingsPage } from './components/user';
 import { DashboardPage } from './pages/DashboardPage';
+import { UniversesPage } from './pages/UniversesPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 
@@ -112,6 +114,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider defaultTheme="default">
       <PluginRegistryProvider>
+        <PluginThemeRegistrar />
         <BrowserRouter
           future={{
             v7_startTransition: true,
@@ -156,8 +159,10 @@ const App: React.FC = () => {
                 }
               >
                 <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="universes" element={<UniversesPage />} />
                 <Route path="profile" element={<UserProfilePage />} />
                 <Route path="settings" element={<UserSettingsPage />} />
+                // ...existing code...
                 <Route index element={<Navigate to="/dashboard" replace />} />
               </Route>
 

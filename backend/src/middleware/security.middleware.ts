@@ -362,12 +362,14 @@ export const securityAuditLogger = (req: Request, res: Response, next: NextFunct
  * Request size limiting middleware
  */
 export const requestSizeLimiter = (maxSize: string = '10mb') => {
+  // Validate the size format immediately when the middleware is created
+  const maxSizeInBytes = parseSize(maxSize);
+  
   return (req: Request, res: Response, next: NextFunction) => {
     const contentLength = req.get('Content-Length');
 
     if (contentLength) {
       const sizeInBytes = parseInt(contentLength, 10);
-      const maxSizeInBytes = parseSize(maxSize);
 
       if (sizeInBytes > maxSizeInBytes) {
         res.status(413).json({

@@ -39,6 +39,7 @@ export const UserManagementPage: React.FC = () => {
     updateUserStatus,
     deleteUser,
     createUser,
+    verifyUserEmail,
   } = useAdminUsers();
 
   // Ensure users is always an array
@@ -55,6 +56,9 @@ export const UserManagementPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Load users on mount and when filters change
   useEffect(() => {
@@ -72,9 +76,17 @@ export const UserManagementPage: React.FC = () => {
     });
   }, [filters, page, fetchUsers]);
 
+  // Clear success message when errors occur
+  useEffect(() => {
+    if (error) {
+      setSuccessMessage(null);
+    }
+  }, [error]);
+
   const handleFilterChange = (key: keyof UserFilters, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
     setPage(1); // Reset to first page when filtering
+    setSuccessMessage(null); // Clear success message when filtering
   };
 
   const getRoleColor = (role: string) => {
@@ -184,21 +196,76 @@ export const UserManagementPage: React.FC = () => {
   };
 
   const handleVerifyEmail = async (userId: string) => {
-    // For now, simulate email verification - this would need a real API endpoint
-    // eslint-disable-next-line no-console
-    console.log('Email verification for user:', userId);
-    await fetchUsers({
-      page,
-      limit: 20,
-      search: filters.search,
-      filters: {
-        role: filters.role || undefined,
-        status: filters.status || undefined,
-        emailVerified: filters.emailVerified ? filters.emailVerified === 'true' : undefined,
-      },
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    });
+    try {
+      setSuccessMessage(null); // Clear any previous messages
+      const success = await verifyUserEmail(userId);
+      if (success) {
+        setSuccessMessage('User email verified successfully');
+        // Optionally refresh the user list to ensure consistency
+        await fetchUsers({
+          page,
+          limit: 20,
+          search: filters.search,
+          filters: {
+            role: filters.role || undefined,
+            status: filters.status || undefined,
+            emailVerified: filters.emailVerified ? filters.emailVerified === 'true' : undefined,
+          },
+          sortBy: 'createdAt',
+          sortOrder: 'desc',
+        });
+
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMessage(null), 3000);
+      }
+    } catch (err) {
+      console.error('Failed to verify user email:', err);
+      // Error is already handled by the hook and displayed via the error state
+    }
+  };
+
+  const handleDeleteUser = (user: AdminUser) => {
+    setUserToDelete(user);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    try {
+      setSuccessMessage(null); // Clear any previous messages
+      const success = await deleteUser(userToDelete.id);
+      if (success) {
+        setSuccessMessage('User deleted successfully');
+        setShowDeleteModal(false);
+        setUserToDelete(null);
+
+        // Refresh the user list
+        await fetchUsers({
+          page,
+          limit: 20,
+          search: filters.search,
+          filters: {
+            role: filters.role || undefined,
+            status: filters.status || undefined,
+            emailVerified: filters.emailVerified ? filters.emailVerified === 'true' : undefined,
+          },
+          sortBy: 'createdAt',
+          sortOrder: 'desc',
+        });
+
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMessage(null), 3000);
+      }
+    } catch (err) {
+      console.error('Failed to delete user:', err);
+      // Error is already handled by the hook and displayed via the error state
+    }
+  };
+
+  const cancelDeleteUser = () => {
+    setShowDeleteModal(false);
+    setUserToDelete(null);
   };
 
   return (
@@ -276,6 +343,13 @@ export const UserManagementPage: React.FC = () => {
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-800">{error}</p>
+        </div>
+      )}
+
+      {/* Success Message Display */}
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-green-800">{successMessage}</p>
         </div>
       )}
 
@@ -368,9 +442,10 @@ export const UserManagementPage: React.FC = () => {
                           <span className="text-red-600">✗ Unverified</span>
                           <button
                             onClick={() => handleVerifyEmail(user.id)}
-                            className="text-blue-600 hover:text-blue-800 text-xs underline"
+                            disabled={loading}
+                            className="text-blue-600 hover:text-blue-800 text-xs underline disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Verify
+                            {loading ? 'Verifying...' : 'Verify'}
                           </button>
                         </div>
                       )}
@@ -387,7 +462,7 @@ export const UserManagementPage: React.FC = () => {
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteUser(user.id)}
+                          onClick={() => handleDeleteUser(user)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Delete
@@ -457,11 +532,10 @@ export const UserManagementPage: React.FC = () => {
                           )}
                           <button
                             onClick={() => setPage(pageNum)}
-                            className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                              page === pageNum
+                            className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${page === pageNum
                                 ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
                                 : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                            }`}
+                              }`}
                           >
                             {pageNum}
                           </button>
@@ -500,6 +574,41 @@ export const UserManagementPage: React.FC = () => {
           onClose={() => setShowCreateModal(false)}
           onCreate={handleCreateUser}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && userToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Confirm Delete User
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete the user{' '}
+              <span className="font-medium">
+                {userToDelete.firstName && userToDelete.lastName
+                  ? `${userToDelete.firstName} ${userToDelete.lastName}`
+                  : userToDelete.email}
+              </span>
+              ? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDeleteUser}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteUser}
+                disabled={loading}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? 'Deleting...' : 'Delete User'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

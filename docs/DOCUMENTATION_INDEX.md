@@ -28,9 +28,11 @@ Perfect for new users, developers, and contributors:
 Essential resources for developers working on the codebase:
 
 ### Core Development
-| Document | Description | Location |
+
+| Document | Description | Audience |
 |----------|-------------|----------|
-| **Development Guide** | Complete development workflow and best practices | [docs/DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) |
+| [Development Guide](DEVELOPMENT_GUIDE.md) | Comprehensive development workflow | Developers |
+| [MCP Integration Guide](MCP_INTEGRATION_GUIDE.md) | Model Context Protocol setup and usage | Developers |
 | **Frontend Documentation** | React architecture, components, state management | [frontend/docs/FRONTEND_DOCUMENTATION.md](../frontend/docs/FRONTEND_DOCUMENTATION.md) |
 | **Backend Architecture** | Clean architecture implementation | [backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md](../backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md) |
 | **Phase 1 Foundation** | Complete implementation overview | [docs/PHASE_1_FOUNDATION_COMPLETE.md](PHASE_1_FOUNDATION_COMPLETE.md) |
@@ -57,6 +59,7 @@ Understanding the system design and technical decisions:
 ### System Architecture
 | Document | Description | Location |
 |----------|-------------|----------|
+| **🔐 Advanced Permission System** | **CORE SYSTEM** - Comprehensive permission, privacy, encryption, and collaboration architecture | [docs/ADVANCED_PERMISSION_SYSTEM.md](ADVANCED_PERMISSION_SYSTEM.md) |
 | **Frontend Architecture Decisions** | React architecture and design patterns | [docs/FRONTEND_ARCHITECTURE_DECISIONS.md](FRONTEND_ARCHITECTURE_DECISIONS.md) |
 | **Frontend Design System Plan** | UI/UX design system specifications | [docs/FRONTEND_DESIGN_SYSTEM_PLAN.md](FRONTEND_DESIGN_SYSTEM_PLAN.md) |
 | **Base UI Components** | Component library specifications | [docs/BASE_UI_COMPONENTS.md](BASE_UI_COMPONENTS.md) |

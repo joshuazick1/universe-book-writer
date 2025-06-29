@@ -42,7 +42,7 @@ export interface UserProfile {
 }
 
 export interface UserPreferences {
-  theme?: 'light' | 'dark' | 'auto';
+  theme?: string; // Support any theme name (system themes + plugin themes)
   language?: string;
   notifications?: NotificationPreferences;
   privacy?: PrivacySettings;

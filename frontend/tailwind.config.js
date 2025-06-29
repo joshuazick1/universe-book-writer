@@ -201,6 +201,7 @@ module.exports = {
     },
   },
   plugins: [
+    require('tailwindcss-animate'),
     // Plugin for universe-specific utilities
     function ({ addUtilities, theme }) {
       const newUtilities = {

@@ -10,6 +10,8 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+process.env.NODE_ENV = 'test';
+
 // Load test environment variables
 dotenv.config({ path: path.join(__dirname, '.env.test') });
 

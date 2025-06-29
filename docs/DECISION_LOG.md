@@ -161,7 +161,7 @@ This document maintains a record of architectural decisions made during the deve
   - May require occasional manual file conversion for new contributors
   - Clear standard for future file creation
 
-### ADR-002: AI Configuration Management
+### ADR-008: AI Configuration Management
 
 - **Date:** 2025-06-06
 - **Status:** Accepted
@@ -178,7 +178,7 @@ This document maintains a record of architectural decisions made during the deve
     - Need to handle default settings on first run
     - Must ensure settings UI is available before AI features can be used
 
-### ADR-006: Database Migration Strategy
+### ADR-009: Database Migration Strategy
 
 - **Date:** 2025-06-06
 - **Status:** Accepted
@@ -206,3 +206,46 @@ This document maintains a record of architectural decisions made during the deve
     - Additional development overhead for migration files
     - Need to maintain schema validation in both migrations and application code
     - Must ensure migrations are tested before deployment
+
+### ADR-010: Adaptive Orchestration & Benchmarking
+
+- **Date:** 2025-06-26
+- **Status:** Accepted
+- **Context:**
+  - Need to optimize resource usage and performance in a multi-server, multi-model AI orchestration environment.
+  - Frequent benchmarking of all models/servers is wasteful, especially for single-server models or slow servers.
+- **Decision:**
+  - Prioritize benchmarking for models available on multiple servers.
+  - Benchmark single-server models less frequently.
+  - If a server's average response time is significantly higher than its initial average, deprioritize it for benchmarking (run benchmarks much less frequently).
+  - Only trigger benchmarks when new servers are added or after orchestrator inactivity.
+  - Expose health and benchmark data via `/api/orchestrator/health` and `/api/orchestrator/benchmarks` endpoints.
+  - **Manual benchmark trigger endpoint added:** `/api/orchestrator/benchmarks/server` allows admins or automation to trigger a benchmark for a specific server or model on demand.
+- **Consequences:**
+  - Reduces unnecessary load on servers and network.
+  - Ensures benchmarks are relevant to routing decisions.
+  - Provides clear visibility into orchestrator health and performance for admins and automation.
+  - Slightly more complex orchestration logic and scheduling.
+
+### ADR-011: Fair Load Distribution and Request Queuing in AI Orchestrator
+
+- **Date:** 2025-06-26
+- **Status:** Accepted
+- **Context:**
+  - The orchestrator must efficiently distribute requests across multiple AI servers for each model.
+  - Previous strategies (priority, round-robin, latency-only) did not guarantee fairness or optimal resource usage under high load.
+  - Need to prevent server overload and provide predictable, fair access to all users.
+  - Requirement to handle bursts of requests without dropping or overloading servers.
+- **Decision:**
+  - Implement a fair load distribution strategy: always select the healthy server with the fewest in-flight requests (least-connections) for the required model.
+  - If multiple servers have the same number of in-flight requests, select the one with the lowest recent benchmarked latency.
+  - Enforce a configurable maximum concurrency per server/model (default 4).
+  - If all servers for a model are at max concurrency, queue requests (FIFO) up to a configurable limit (default 10).
+  - If the queue is full, reject with a 429 Too Many Requests error and a Retry-After header.
+  - All logic is documented and covered by unit tests.
+- **Consequences:**
+  - Predictable, fair, and efficient request distribution under all load conditions.
+  - No server/model is starved or overloaded.
+  - Users receive clear feedback and retry guidance if the system is saturated.
+  - System is resilient to bursts and adapts to real-time server/model performance.
+  - Slightly increased memory usage for request queues, but bounded by configuration.

@@ -96,19 +96,19 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       {/* Menu Panel */}
       <div
         ref={menuRef}
-        className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-[9999] transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 w-64 shadow-lg z-[9999] transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        style={{ backgroundColor: 'var(--color-universe-surface)' }}
       >
         {/* User Info */}
-        <div className="px-6 py-6 bg-blue-600 text-white">
+        <div className="px-6 py-6" style={{ backgroundColor: 'var(--color-universe-primary)', color: 'white' }}>
           <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-full bg-blue-800 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
               <span className="font-medium text-sm">{getInitials(user || {})}</span>
             </div>
             <div className="flex flex-col">
               <span className="font-medium">{getDisplayName(user || {})}</span>
-              <span className="text-xs text-blue-200">{user?.email}</span>
+              <span className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>{user?.email}</span>
             </div>
           </div>
         </div>
@@ -116,17 +116,19 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
         {/* Navigation Links */}
         <nav className="mt-4 px-3">
           <div className="py-1">
-            <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <h3 className="px-3 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-universe-text)', opacity: 0.5 }}>
               Main
             </h3>
             <div className="mt-1 space-y-1">
               <Link
                 to="/dashboard"
-                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-white hover:bg-opacity-10"
+                style={{ color: 'var(--color-universe-text)' }}
                 onClick={onClose}
               >
                 <svg
-                  className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                  className="mr-3 h-5 w-5 opacity-60"
+                  style={{ color: 'var(--color-universe-text)' }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -142,12 +144,37 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
               </Link>
 
               <Link
-                to="/profile"
-                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                to="/universes"
+                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-white hover:bg-opacity-10"
+                style={{ color: 'var(--color-universe-text)' }}
                 onClick={onClose}
               >
                 <svg
-                  className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                  className="mr-3 h-5 w-5 opacity-60"
+                  style={{ color: 'var(--color-universe-text)' }}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+                Universes
+              </Link>
+
+              <Link
+                to="/profile"
+                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-white hover:bg-opacity-10"
+                style={{ color: 'var(--color-universe-text)' }}
+                onClick={onClose}
+              >
+                <svg
+                  className="mr-3 h-5 w-5 opacity-60"
+                  style={{ color: 'var(--color-universe-text)' }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -161,14 +188,15 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 </svg>
                 Profile
               </Link>
-
               <Link
                 to="/settings"
-                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-white hover:bg-opacity-10"
+                style={{ color: 'var(--color-universe-text)' }}
                 onClick={onClose}
               >
                 <svg
-                  className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                  className="mr-3 h-5 w-5 opacity-60"
+                  style={{ color: 'var(--color-universe-text)' }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -193,11 +221,13 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
               {isAdmin() && (
                 <Link
                   to="/admin"
-                  className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-purple-700 hover:bg-purple-50 hover:text-purple-900"
+                  className="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-white hover:bg-opacity-10"
+                  style={{ color: 'var(--color-universe-accent)' }}
                   onClick={onClose}
                 >
                   <svg
-                    className="mr-3 h-5 w-5 text-purple-400 group-hover:text-purple-500"
+                    className="mr-3 h-5 w-5 opacity-60"
+                    style={{ color: 'var(--color-universe-accent)' }}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -216,14 +246,15 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Other Section - Can be expanded later with more features */}
-          <div className="py-1 mt-6 border-t border-gray-200">
-            <h3 className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <div className="py-1 mt-6 border-t border-white border-opacity-20">
+            <h3 className="px-3 pt-4 pb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-universe-text)', opacity: 0.5 }}>
               Help & Support
             </h3>
             <div className="mt-1 space-y-1">
               <a
                 href="#"
-                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-white hover:bg-opacity-10"
+                style={{ color: 'var(--color-universe-text)' }}
                 onClick={e => {
                   e.preventDefault();
                   // Add help functionality in the future
@@ -231,7 +262,8 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 }}
               >
                 <svg
-                  className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                  className="mr-3 h-5 w-5 opacity-60"
+                  style={{ color: 'var(--color-universe-text)' }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -249,8 +281,8 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Version Info */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="px-3 text-xs text-gray-500">
+          <div className="mt-6 pt-6 border-t border-white border-opacity-20">
+            <div className="px-3 text-xs" style={{ color: 'var(--color-universe-text)', opacity: 0.5 }}>
               <p>Universe Book Writer</p>
               <p>Version: 0.1.0</p>
             </div>

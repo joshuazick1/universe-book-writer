@@ -11,7 +11,7 @@ export interface UserProfile {
   avatar?: string;
   bio?: string;
   preferences: {
-    theme: 'light' | 'dark' | 'auto';
+    theme: string; // Support any theme name (system themes + plugin themes)
     language: string;
     timezone: string;
     notifications: {

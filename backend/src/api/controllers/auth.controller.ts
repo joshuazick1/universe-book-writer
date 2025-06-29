@@ -60,7 +60,7 @@ export class AuthController {
     private authUseCase: AuthUseCase,
     private userUseCase: UserUseCase,
     private securityService: SecurityService
-  ) {}
+  ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -176,14 +176,13 @@ export class AuthController {
       const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
       const userAgent = req.get('User-Agent') || 'unknown';
 
-      // Rate limiting check
+      // Rate limiting check (more lenient in development)
       const rateLimitKey = `login:${ipAddress}`;
-      if (
-        this.securityService.isRateLimited(rateLimitKey, {
-          maxAttempts: 5,
-          windowMs: 15 * 60 * 1000,
-        })
-      ) {
+      const rateLimitConfig = process.env.NODE_ENV === 'development'
+        ? { maxAttempts: 50, windowMs: 5 * 60 * 1000 } // 50 attempts in 5 minutes for dev
+        : { maxAttempts: 5, windowMs: 15 * 60 * 1000 }; // 5 attempts in 15 minutes for prod
+
+      if (this.securityService.isRateLimited(rateLimitKey, rateLimitConfig)) {
         res.status(429).json({
           success: false,
           message: 'Too many login attempts. Please try again later.',
@@ -223,7 +222,7 @@ export class AuthController {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
-          maxAge: 15 * 60 * 1000, // 15 minutes
+          maxAge: process.env.NODE_ENV === 'development' ? 24 * 60 * 60 * 1000 : 15 * 60 * 1000, // 24 hours in dev, 15 minutes in prod
         });
 
         res.cookie('refreshToken', result.refreshToken, {

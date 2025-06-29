@@ -9,6 +9,12 @@ import { createPluginRoutes } from './api/routes/plugin.routes.js';
 import { createAuthRoutes } from './api/routes/auth.routes.js';
 import { createUserRoutes } from './api/routes/user.routes.js';
 import { createAdminRoutes } from './api/routes/admin.routes.js';
+import { createUniverseRoutes } from './api/routes/universe.routes.js';
+import { createUniverseCollaborationRoutes } from './api/routes/universe-collaboration.routes.js';
+import { createMonitoringRoutes } from './api/routes/monitoring.routes.js';
+import { createPluginHealthRoutes } from './api/routes/plugin-health.routes.js';
+import { createUserActivityAnalyticsRoutes } from './api/routes/user-activity-analytics.routes.js';
+import { createSecurityAuditRoutes } from './api/routes/security-audit.routes.js';
 import { mongoDBConnection } from './config/mongodb.config.js';
 import { PluginSystemFactory } from './plugins/manager/plugin-system.factory.js';
 import { errorHandler } from './api/middleware/error.middleware.js';
@@ -16,6 +22,12 @@ import { createAuthContainer, TOKENS } from './infrastructure/container/containe
 import type { AuthController } from './api/controllers/auth.controller.js';
 import type { UserController } from './api/controllers/user.controller.js';
 import type { AdminController } from './api/controllers/admin.controller.js';
+import type { UniverseController, UniverseValidationController } from './api/controllers/universe.controller.js';
+import type { UniverseCollaborationController } from './api/controllers/universe-collaboration.controller.js';
+import type { MonitoringController } from './api/controllers/monitoring.controller.js';
+import type { PluginHealthMonitoringController } from './api/controllers/plugin-health.controller.js';
+import type { UserActivityAnalyticsController } from './api/controllers/user-activity-analytics.controller.js';
+import type { SecurityAuditController } from './api/controllers/security-audit.controller.js';
 import { AuthMiddleware } from './api/middleware/auth.middleware.js';
 import { ValidationMiddleware } from './api/middleware/validation.middleware.js';
 
@@ -121,7 +133,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 // Initialize the application
-async function initializeApp() {
+export async function initializeApp() {
   try {
     // Connect to MongoDB
     console.log('Connecting to MongoDB...');
@@ -141,6 +153,8 @@ async function initializeApp() {
     // Resolve auth dependencies
     const authController = authContainer.resolve<AuthController>(TOKENS.AUTH_CONTROLLER);
     const userController = authContainer.resolve<UserController>(TOKENS.USER_CONTROLLER);
+    const authMiddleware = authContainer.resolve<AuthMiddleware>(TOKENS.AUTH_MIDDLEWARE);
+    const validationMiddleware = authContainer.resolve<ValidationMiddleware>(TOKENS.VALIDATION_MIDDLEWARE);
 
     // Try to resolve admin controller, but handle gracefully if not available
     let adminController: AdminController | null = null;
@@ -159,34 +173,26 @@ async function initializeApp() {
       );
     }
 
-    const authMiddleware = authContainer.resolve<AuthMiddleware>(TOKENS.AUTH_MIDDLEWARE);
-    const validationMiddleware = authContainer.resolve<ValidationMiddleware>(
-      TOKENS.VALIDATION_MIDDLEWARE
-    );
-
-    console.log('Authentication system initialized successfully');
-    console.log('Dependency container initialized successfully');
-
     // Initialize plugin system
-    console.log('Initializing plugin system...');
+    console.log('🔌 Initializing plugin system...');
+    console.log('📁 Current working directory:', process.cwd());
+
+    const pluginDirectories = [
+      path.join(process.cwd(), '..', 'plugins'),
+    ];
+
+    console.log('📂 Plugin directories array:');
+    pluginDirectories.forEach((dir, index) => {
+      console.log(`  ${index + 1}. ${dir}`);
+    });
+
     const pluginSystem = await PluginSystemFactory.create({
       mongoClient,
       databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
-      pluginDirectories: [
-        path.join(process.cwd(), 'plugins'),
-        path.join(process.cwd(), 'src/plugins/universe'),
-        path.join(process.cwd(), 'src/plugins/core'),
-      ],
+      pluginDirectories,
       autoLoadPlugins: true,
     });
-    console.log('Plugin system initialized successfully');
-
-    // Get authentication components from container
-    // TODO: Resolve authentication components once container is working
-    // const authController = container.resolve<AuthController>(TOKENS.AUTH_CONTROLLER);
-    // const userController = container.resolve<UserController>(TOKENS.USER_CONTROLLER);
-    // const authMiddleware = container.resolve<AuthMiddleware>(TOKENS.AUTH_MIDDLEWARE);
-    // const validationMiddleware = container.resolve<ValidationMiddleware>(TOKENS.VALIDATION_MIDDLEWARE);
+    console.log('✅ Plugin system initialized successfully');
 
     // Setup routes
     app.get('/api/health', (req: express.Request, res: express.Response) => {
@@ -270,8 +276,63 @@ async function initializeApp() {
       console.log('⚠️ Admin routes disabled - AdminController not available');
     }
 
+    // Universe management routes
+    try {
+      const universeController = authContainer.resolve<UniverseController>(TOKENS.UNIVERSE_CONTROLLER);
+      const universeValidationController = authContainer.resolve<UniverseValidationController>(TOKENS.UNIVERSE_VALIDATION_CONTROLLER);
+      app.use('/api/universes', authMiddleware.authenticate, createUniverseRoutes(universeController, universeValidationController));
+      console.log('✅ Universe routes enabled with authentication');
+    } catch (error) {
+      console.warn('⚠️ Failed to resolve Universe controllers:', error instanceof Error ? error.message : String(error));
+    }
+
+    // NEW: Simplified collaboration routes
+    try {
+      const collaborationController = authContainer.resolve<UniverseCollaborationController>(TOKENS.UNIVERSE_COLLABORATION_CONTROLLER);
+      app.use('/api/universes', authMiddleware.authenticate, createUniverseCollaborationRoutes(collaborationController));
+      console.log('✅ Universe collaboration routes enabled with authentication');
+    } catch (error) {
+      console.warn('⚠️ Failed to resolve Universe collaboration controller:', error instanceof Error ? error.message : String(error));
+    }
+
     // Plugin management routes
     app.use('/api/plugins', createPluginRoutes(pluginSystem.pluginController));
+
+    // Monitoring routes
+    try {
+      const monitoringController = authContainer.resolve<MonitoringController>(TOKENS.MONITORING_CONTROLLER);
+      app.use('/api/monitoring', createMonitoringRoutes(monitoringController, authMiddleware));
+      console.log('✅ Monitoring routes enabled');
+    } catch (error) {
+      console.warn('⚠️ Failed to resolve MonitoringController:', error instanceof Error ? error.message : String(error));
+    }
+
+    // Plugin health monitoring routes
+    try {
+      const pluginHealthController = authContainer.resolve<PluginHealthMonitoringController>(TOKENS.PLUGIN_HEALTH_CONTROLLER);
+      app.use('/api/plugin-health', createPluginHealthRoutes(pluginHealthController));
+      console.log('✅ Plugin health monitoring routes enabled');
+    } catch (error) {
+      console.warn('⚠️ Failed to resolve PluginHealthMonitoringController:', error instanceof Error ? error.message : String(error));
+    }
+
+    // User activity analytics routes
+    try {
+      const analyticsController = authContainer.resolve<UserActivityAnalyticsController>(TOKENS.USER_ACTIVITY_ANALYTICS_CONTROLLER);
+      app.use('/api/analytics', createUserActivityAnalyticsRoutes(analyticsController, authMiddleware));
+      console.log('✅ User activity analytics routes enabled');
+    } catch (error) {
+      console.warn('⚠️ Failed to resolve UserActivityAnalyticsController:', error instanceof Error ? error.message : String(error));
+    }
+
+    // Security audit logging routes
+    try {
+      const securityAuditController = authContainer.resolve<SecurityAuditController>(TOKENS.SECURITY_AUDIT_CONTROLLER);
+      app.use('/api/security-audit', createSecurityAuditRoutes(securityAuditController, authMiddleware));
+      console.log('✅ Security audit logging routes enabled');
+    } catch (error) {
+      console.warn('⚠️ Failed to resolve SecurityAuditController:', error instanceof Error ? error.message : String(error));
+    }
 
     // Global error handling middleware (must be last)
     app.use(errorHandler);
@@ -286,15 +347,39 @@ async function initializeApp() {
     );
 
     // Start server
-    app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
-      console.log(`📡 Health check: http://localhost:${port}/api/health`);
-      console.log(`🔌 Plugin API: http://localhost:${port}/api/plugins`);
-    });
+    let server;
+    try {
+      server = app.listen(port, () => {
+        console.log(`🚀 Server running on port ${port}`);
+        console.log(`📡 Health check: http://localhost:${port}/api/health`);
+        console.log(`🔌 Plugin API: http://localhost:${port}/api/plugins`);
+      });
+
+      // Add error handler for port conflicts
+      server.on('error', (err: any) => {
+        if (err.code === 'EADDRINUSE') {
+          console.error(`❌ Error: Port ${port} is already in use. Try using a different port.`);
+        } else {
+          console.error('❌ Server error:', err);
+        }
+      });
+    } catch (error) {
+      console.error('❌ Failed to start server:', error);
+      throw error;
+    }
+
+    return server;
   } catch (error) {
     console.error('Failed to initialize application:', error);
-    process.exit(1);
+    throw error;
   }
+}
+
+/**
+ * Start the server and initialize all components
+ */
+export async function startServer() {
+  return initializeApp();
 }
 
 // Handle graceful shutdown

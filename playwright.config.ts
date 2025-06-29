@@ -7,7 +7,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['html'], ['list']],
+  reporter: process.env.CI
+    ? [['github'], ['json', { outputFile: 'test-results/results.json' }]]
+    : [['line'], ['json', { outputFile: 'test-results/results.json' }]],
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',

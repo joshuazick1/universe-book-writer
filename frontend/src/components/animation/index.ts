@@ -17,7 +17,7 @@ export {
 
 // Loading state components
 export {
-  LoadingSpinner,
+  LoadingSpinner as AnimatedLoadingSpinner,
   LoadingDots,
   LoadingPulse,
   LoadingBar,
@@ -65,3 +65,9 @@ export {
 
 // Demo and testing components
 export { AnimationShowcase } from './AnimationShowcase';
+export { TransitionTester } from './TransitionTester';
+export { PluginAnimationShowcase } from './PluginAnimationShowcase';
+
+// Plugin animation registry
+export { animationRegistry, usePluginAnimations } from '../../services/plugin-animation-registry';
+export type { PluginAnimationComponent, PluginAnimationRegistry } from '../../services/plugin-animation-registry';

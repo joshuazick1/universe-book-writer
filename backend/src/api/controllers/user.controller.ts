@@ -1,14 +1,14 @@
 import { Response, NextFunction } from 'express';
 import { UserUseCase } from '../../application/use-cases/user.use-case.js';
 import { SecurityService } from '../../core/interfaces/auth.service.js';
-import { UserRole, UserStatus } from '../../core/entities/user.entity.js';
+import { User, UserRole, UserStatus } from '../../core/entities/user.entity.js';
 import { AuthRequest } from './auth.controller.js';
 
 export class UserController {
   constructor(
     private userUseCase: UserUseCase,
     private securityService: SecurityService
-  ) {}
+  ) { }
 
   async updateProfile(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -411,6 +411,61 @@ export class UserController {
         message: 'User suspended successfully',
         data: {
           user: suspendedUser,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Search users for collaboration invitations
+   * GET /api/users/search
+   */
+  async searchUsersForCollaboration(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const currentUserId = req.user?.id;
+      if (!currentUserId) {
+        res.status(401).json({
+          success: false,
+          message: 'Authentication required',
+        });
+        return;
+      }
+
+      const {
+        query,
+        limit = 10,
+      } = req.query;
+
+      if (!query || typeof query !== 'string' || query.length < 2) {
+        res.status(400).json({
+          success: false,
+          message: 'Search query must be at least 2 characters long',
+        });
+        return;
+      }
+
+      // Search for users with privacy controls - exclude current user
+      const result = await this.userUseCase.searchUsersForCollaboration(
+        query,
+        currentUserId,
+        parseInt(limit as string)
+      );
+
+      res.json({
+        success: true,
+        data: {
+          users: result.users.map((user: User) => ({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            firstName: user.profile.firstName,
+            lastName: user.profile.lastName,
+            status: user.status,
+            canInvite: user.status === UserStatus.ACTIVE
+          })),
+          total: result.total,
         },
       });
     } catch (error) {

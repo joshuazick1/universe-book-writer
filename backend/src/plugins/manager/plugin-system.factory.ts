@@ -50,8 +50,8 @@ export class PluginSystemFactory {
     const pluginController = new PluginController(pluginUseCase);
 
     // Auto-load plugins if requested
-    if (config.autoLoadPlugins) {
-      await pluginUseCase.loadAllPlugins();
+    if (config.autoLoadPlugins && config.pluginDirectories) {
+      await this.loadPluginsFromDirectories(pluginUseCase, config.pluginDirectories);
     }
 
     return {
@@ -68,6 +68,12 @@ export class PluginSystemFactory {
     pluginUseCase: PluginUseCase,
     directories: string[]
   ): Promise<void> {
+    console.log('🔍 PluginSystemFactory.loadPluginsFromDirectories called with:');
+    console.log('📂 Directory count:', directories.length);
+    directories.forEach((dir, index) => {
+      console.log(`📁 Directory ${index + 1}: ${dir}`);
+    });
+
     const loader = new FileSystemPluginLoader();
 
     for (const directory of directories) {
@@ -77,9 +83,20 @@ export class PluginSystemFactory {
         for (const plugin of plugins) {
           try {
             await pluginUseCase.register(plugin);
-            console.log(`Loaded plugin: ${plugin.metadata.name}@${plugin.metadata.version}`);
+            console.log(`✅ Loaded plugin: ${plugin.metadata.name}@${plugin.metadata.version}`);
           } catch (error) {
-            console.error(`Failed to register plugin ${plugin.metadata.name}:`, error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`❌ Failed to register plugin ${plugin.metadata.name}:`, errorMessage);
+
+            // In development, provide more detailed error info
+            if (process.env.NODE_ENV === 'development') {
+              console.error(`📋 Plugin details:`, {
+                name: plugin.metadata.name,
+                version: plugin.metadata.version,
+                type: plugin.metadata.type,
+                description: plugin.metadata.description
+              });
+            }
           }
         }
       } catch (error) {

@@ -266,6 +266,33 @@ export const useAdminUsers = () => {
     []
   );
 
+  const verifyUserEmail = useCallback(async (userId: string) => {
+    setError(null);
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/admin/users/${userId}/verify-email`,
+        {},
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        setUsers(prev =>
+          prev.map(user =>
+            user.id === userId ? { ...user, emailVerified: true } : user
+          )
+        );
+        return true;
+      } else {
+        throw new Error('Failed to verify user email');
+      }
+    } catch (err) {
+      logger.error('Error verifying user email:', err);
+      setError(err instanceof Error ? err.message : 'Failed to verify user email');
+      return false;
+    }
+  }, []);
+
   return {
     users,
     loading,
@@ -276,5 +303,6 @@ export const useAdminUsers = () => {
     updateUserStatus,
     deleteUser,
     createUser,
+    verifyUserEmail,
   };
 };

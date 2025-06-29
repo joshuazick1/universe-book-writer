@@ -24,6 +24,7 @@ export enum PluginType {
   AI = 'ai',
   CORE = 'core',
   GAMING = 'gaming',
+  TOOL = 'tool',
 }
 
 /**

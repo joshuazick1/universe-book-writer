@@ -16,23 +16,49 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./packages/*"]
+      "@/*": [
+        "./packages/*"
+      ]
     },
     "jsx": "react-jsx",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
     "allowJs": true,
-    "types": ["jest", "node"],
-    "typeRoots": ["./node_modules/@types", "./"],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./"
+    ],
     "checkJs": false
   },
   "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/ui-core" },
-    { "path": "./packages/plugin-sdk" },
-    { "path": "./frontend" },
-    { "path": "./backend" },
-    { "path": "./ai-server" },
-    { "path": "./collaboration-server" }
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/ui-core"
+    },
+    {
+      "path": "./packages/plugin-sdk"
+    },
+    {
+      "path": "./frontend"
+    },
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./ai-server"
+    },
+    {
+      "path": "./collaboration-server"
+    }
   ],
   "exclude": [
     "**/node_modules",
@@ -41,6 +67,12 @@
     "**/coverage/**",
     "coverage",
     "coverage/**",
+    "test-results",
+    "test-results/**",
+    "**/test-results",
+    "**/test-results/**",
+    "test-mcp-files",
+    "test-mcp-files/**",
     "**/*.test.ts",
     "**/*.config.js",
     "**/*.config.ts",
@@ -58,6 +90,13 @@
     "backend/debug-init.mjs",
     "backend/temp/**/*.js",
     "tools/**/*.mjs",
-    "*.d.ts"
+    "*.d.ts",
+    "test-api-structure.js",
+    "test-universe-api-with-auth.js",
+    "test-universe-api.js",
+    "test-universe-api.mjs",
+    "backend/scripts/test-repository-irreversible-status.ts",
+    "e2e/**/*",
+    "frontend/src/stories/**/*"
   ]
 }

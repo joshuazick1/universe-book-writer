@@ -10,7 +10,7 @@ import type { PluginUseCase } from '../../application/use-cases/plugin.use-case.
  * Plugin management controller
  */
 export class PluginController {
-  constructor(private pluginUseCase: PluginUseCase) {}
+  constructor(private pluginUseCase: PluginUseCase) { }
 
   /**
    * GET /api/plugins - Get all plugins
@@ -26,6 +26,7 @@ export class PluginController {
         state: PluginState;
         description: string;
         author: string;
+        loadPath?: string;
       }
 
       let plugins: PluginListItem[];
@@ -52,6 +53,7 @@ export class PluginController {
             state: p.state,
             description: p.metadata.description,
             author: p.metadata.author,
+            loadPath: (p as any).loadPath,
           }));
         } else {
           const loadedPlugins = this.pluginUseCase.getAllPlugins();
@@ -62,6 +64,7 @@ export class PluginController {
             state: p.state,
             description: p.metadata.description,
             author: p.metadata.author,
+            loadPath: (p as any).loadPath,
           }));
         }
       }
@@ -364,6 +367,144 @@ export class PluginController {
       res.status(500).json({
         success: false,
         error: error instanceof Error ? error.message : 'Failed to reload plugins',
+      });
+    }
+  }
+
+  /**
+   * GET /api/plugins/system-info - Get plugin system information
+   */
+  async getSystemInfo(req: Request, res: Response): Promise<void> {
+    try {
+      const plugins = this.pluginUseCase.getAllPlugins();
+
+      // Count total and active plugins
+      const totalPlugins = plugins.length;
+      const activePlugins = plugins.filter(p => p.state === PluginState.ACTIVE).length;
+
+      // Count plugins by type
+      const pluginsByType = {
+        core: plugins.filter(p => p.metadata.type === PluginType.CORE).length,
+        universe: plugins.filter(p => p.metadata.type === PluginType.UNIVERSE).length,
+        theme: plugins.filter(p => p.metadata.type === PluginType.THEME).length,
+        ai: plugins.filter(p => p.metadata.type === PluginType.AI).length,
+        gaming: plugins.filter(p => p.metadata.type === PluginType.GAMING).length,
+      };
+
+      res.status(200).json({
+        totalPlugins,
+        activePlugins,
+        pluginsByType,
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: 'Failed to get system info',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * GET /api/plugins/:name/status - Get detailed plugin status
+   */
+  async getPluginStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const { name } = req.params;
+
+      if (!name) {
+        res.status(400).json({
+          error: 'Plugin name is required',
+        });
+        return;
+      }
+
+      const status = await this.pluginUseCase.getPluginStatus(name);
+
+      if (!status) {
+        res.status(404).json({
+          error: 'Plugin not found',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        status,
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: 'Failed to get plugin status',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * GET /api/plugins/:name/sub-universes - Get available sub-universes for a plugin
+   */
+  async getPluginSubUniverses(req: Request, res: Response): Promise<void> {
+    try {
+      const { name } = req.params;
+
+      if (!name) {
+        res.status(400).json({
+          success: false,
+          error: 'Plugin name is required',
+        });
+        return;
+      }
+
+      const subUniverses = await this.pluginUseCase.getPluginSubUniverses(name);
+
+      if (subUniverses === null) {
+        res.status(404).json({
+          success: false,
+          error: `Plugin '${name}' not found or does not support sub-universes`,
+        });
+        return;
+      }
+
+      res.json({
+        success: true,
+        data: {
+          pluginName: name,
+          subUniverses: subUniverses,
+          supportedFeature: subUniverses.length > 0
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * DELETE /api/plugins/dev/clear - Clear all plugins (development only)
+   */
+  async clearAllPlugins(req: Request, res: Response): Promise<void> {
+    try {
+      if (process.env.NODE_ENV !== 'development') {
+        res.status(403).json({
+          success: false,
+          error: 'This endpoint is only available in development mode',
+        });
+        return;
+      }
+
+      await this.pluginUseCase.clearAllPlugins();
+
+      res.json({
+        success: true,
+        message: 'All plugins cleared successfully',
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error clearing plugins:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to clear plugins',
+        details: error instanceof Error ? error.message : String(error),
       });
     }
   }
