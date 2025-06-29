@@ -1,0 +1,55 @@
+{
+    "name": "@universe-book-writer/lotr-universe-plugin",
+    "version": "1.0.0",
+    "description": "Lord of the Rings Universe Plugin with Age-based timeline and Middle-earth geography",
+    "main": "index.ts",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "test": "jest",
+        "lint": "eslint src --ext .ts,.tsx"
+    },
+    "keywords": [
+        "lotr",
+        "lord-of-the-rings",
+        "middle-earth",
+        "fantasy",
+        "tolkien",
+        "universe-plugin"
+    ],
+    "author": "Universe Book Writer Team",
+    "license": "MIT",
+    "dependencies": {
+        "@universe-book-writer/core": "file:../../packages/core"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0",
+        "jest": "^29.0.0",
+        "eslint": "^8.0.0"
+    },
+    "peerDependencies": {
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/universe-book-writer/plugins/lotr-universe"
+    },
+    "pluginMetadata": {
+        "architecture": "age-based-timeline",
+        "temporal_system": "ages_of_middle_earth",
+        "transportation": "walking_riding_sailing",
+        "magic_system": "subtle_divine_intervention",
+        "focus": "epic_journeys_fellowship",
+        "themes": "none_required",
+        "distinctFrom": [
+            "star-trek-universe (federation vs age-based)",
+            "star-wars-universe (galactic politics vs pastoral fantasy)",
+            "harry-potter-universe (school system vs epic quest)"
+        ]
+    }
+}

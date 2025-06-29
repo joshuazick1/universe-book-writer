@@ -1,0 +1,26 @@
+{
+    "name": "simple-core-plugin",
+    "version": "1.0.0",
+    "description": "Simple core plugin for basic functionality",
+    "main": "index.ts",
+    "type": "module",
+    "author": "Universe Book Writer Team",
+    "license": "MIT",
+    "keywords": [
+        "core",
+        "basic",
+        "functionality"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "plugin": {
+        "type": "core",
+        "supportedFeatures": [
+            "basic-validation",
+            "core-utilities"
+        ]
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}

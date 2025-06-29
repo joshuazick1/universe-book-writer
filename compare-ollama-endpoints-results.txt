@@ -1,0 +1,3531 @@
+[INFO] Orchestrator servers set to local Ollama
+
+[GET /api/tags]
+Response diff: --- Orchestrator
++++ Ollama
+{
+  "models": [
+    {
+      "name": "smollm2:135m",
+      "model": "smollm2:135m",
+      "modified_at": "2025-06-25T21:51:12.2072122-04:00",
+      "size": 270898672,
+      "digest": "9077fe9d2ae1a4a41a868836b56b8163731a8fe16621397028c2c76f838c6907",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "134.52M",
+        "quantization_level": "F16"
+      },
+      "server": "ollama"
+    },
+    {
+      "name": "nomic-embed-text:latest",
+      "model": "nomic-embed-text:latest",
+      "modified_at": "2025-05-23T01:02:23.0920238-04:00",
+      "size": 274302450,
+      "digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "nomic-bert",
+        "families": [
+          "nomic-bert"
+        ],
+        "parameter_size": "137M",
+        "quantization_level": "F16"
+      },
+      "server": "ollama"
+    },
+    {
+      "name": "llama3:latest",
+      "model": "llama3:latest",
+      "modified_at": "2025-05-23T00:12:03.9628601-04:00",
+      "size": 4661224676,
+      "digest": "365c0bd3c000a25d28ddbf732fe1c6add414de7275464c4e4d1c3b5fcb5d8ad1",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "8.0B",
+        "quantization_level": "Q4_0"
+      },
+      "server": "ollama"
+    }
+  ]
+}
+---
+{
+  "models": [
+    {
+      "name": "smollm2:135m",
+      "model": "smollm2:135m",
+      "modified_at": "2025-06-25T21:51:12.2072122-04:00",
+      "size": 270898672,
+      "digest": "9077fe9d2ae1a4a41a868836b56b8163731a8fe16621397028c2c76f838c6907",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "134.52M",
+        "quantization_level": "F16"
+      }
+    },
+    {
+      "name": "nomic-embed-text:latest",
+      "model": "nomic-embed-text:latest",
+      "modified_at": "2025-05-23T01:02:23.0920238-04:00",
+      "size": 274302450,
+      "digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "nomic-bert",
+        "families": [
+          "nomic-bert"
+        ],
+        "parameter_size": "137M",
+        "quantization_level": "F16"
+      }
+    },
+    {
+      "name": "llama3:latest",
+      "model": "llama3:latest",
+      "modified_at": "2025-05-23T00:12:03.9628601-04:00",
+      "size": 4661224676,
+      "digest": "365c0bd3c000a25d28ddbf732fe1c6add414de7275464c4e4d1c3b5fcb5d8ad1",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "8.0B",
+        "quantization_level": "Q4_0"
+      }
+    }
+  ]
+}
+
+[GET /api/models]
+OK (responses match)
+
+[POST /api/generate]
+Response diff: --- Orchestrator
++++ Ollama
+{
+  "model": "smollm2:135m",
+  "response": "Hello. What can I help you with today?",
+  "done": true,
+  "done_reason": "stop",
+  "context": [
+    1,
+    9690,
+    198,
+    2683,
+    359,
+    253,
+    5356,
+    5646,
+    11173,
+    3365,
+    3511,
+    308,
+    34519,
+    28,
+    7018,
+    411,
+    407,
+    19712,
+    8182,
+    2,
+    198,
+    1,
+    4093,
+    198,
+    19556,
+    17,
+    2,
+    198,
+    1,
+    520,
+    9531,
+    198,
+    19556,
+    30,
+    1812,
+    416,
+    339,
+    724,
+    346,
+    351,
+    1834,
+    47
+  ],
+  "prompt_eval_count": 32,
+  "eval_count": 11
+}
+---
+{
+  "model": "smollm2:135m",
+  "created_at": "2025-06-26T23:16:06.8978565Z",
+  "response": "Hello! How can I assist you today?",
+  "done": true,
+  "done_reason": "stop",
+  "context": [
+    1,
+    9690,
+    198,
+    2683,
+    359,
+    253,
+    5356,
+    5646,
+    11173,
+    3365,
+    3511,
+    308,
+    34519,
+    28,
+    7018,
+    411,
+    407,
+    19712,
+    8182,
+    2,
+    198,
+    1,
+    4093,
+    198,
+    19556,
+    17,
+    2,
+    198,
+    1,
+    520,
+    9531,
+    198,
+    19556,
+    17,
+    1073,
+    416,
+    339,
+    4237,
+    346,
+    1834,
+    47
+  ],
+  "total_duration": 201599900,
+  "load_duration": 15611900,
+  "prompt_eval_count": 32,
+  "prompt_eval_duration": 21380700,
+  "eval_count": 10,
+  "eval_duration": 163399800
+}
+
+[POST /api/generate]
+Response diff: --- Orchestrator
++++ Ollama
+[
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:06.9437374Z",
+    "response": "Hello",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:06.9625007Z",
+    "response": "!",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:06.9809452Z",
+    "response": " I",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.0001858Z",
+    "response": "'m",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.0198658Z",
+    "response": " so",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.0392519Z",
+    "response": " glad",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.0580824Z",
+    "response": " you",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.074102Z",
+    "response": " found",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.0915828Z",
+    "response": " our",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.108304Z",
+    "response": " little",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.1254532Z",
+    "response": " chat",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.1420033Z",
+    "response": " about",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.1599152Z",
+    "response": " the",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.1783648Z",
+    "response": " history",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.1952075Z",
+    "response": " of",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.2111768Z",
+    "response": " language",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.2288606Z",
+    "response": ".",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.2458938Z",
+    "response": " What",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.262345Z",
+    "response": "'s",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.2780923Z",
+    "response": " on",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.295194Z",
+    "response": " your",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.3122021Z",
+    "response": " mind",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.3317325Z",
+    "response": "?",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.3483973Z",
+    "response": " Are",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.3648997Z",
+    "response": " you",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.3818579Z",
+    "response": " looking",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.3979122Z",
+    "response": " for",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.4140486Z",
+    "response": " something",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.4302675Z",
+    "response": " in",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.4492376Z",
+    "response": " particular",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.467254Z",
+    "response": " or",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.4830564Z",
+    "response": " just",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.500959Z",
+    "response": " curious",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.5174861Z",
+    "response": " about",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.5343749Z",
+    "response": " linguistics",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.5522623Z",
+    "response": "?",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.5734917Z",
+    "response": "",
+    "done": true,
+    "done_reason": "stop",
+    "context": [
+      1,
+      9690,
+      198,
+      2683,
+      359,
+      253,
+      5356,
+      5646,
+      11173,
+      3365,
+      3511,
+      308,
+      34519,
+      28,
+      7018,
+      411,
+      407,
+      19712,
+      8182,
+      2,
+      198,
+      1,
+      4093,
+      198,
+      19556,
+      17,
+      2,
+      198,
+      1,
+      520,
+      9531,
+      198,
+      19556,
+      17,
+      339,
+      5248,
+      588,
+      18948,
+      346,
+      983,
+      653,
+      1838,
+      11743,
+      563,
+      260,
+      1463,
+      282,
+      1789,
+      30,
+      1812,
+      506,
+      335,
+      469,
+      1945,
+      47,
+      4184,
+      346,
+      3012,
+      327,
+      1488,
+      281,
+      1542,
+      355,
+      915,
+      7436,
+      563,
+      25900,
+      47
+    ],
+    "total_duration": 668449100,
+    "load_duration": 16400200,
+    "prompt_eval_count": 32,
+    "prompt_eval_duration": 19892400,
+    "eval_count": 37,
+    "eval_duration": 631603200
+  }
+]
+---
+[
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.6179014Z",
+    "response": "Hello",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.6359347Z",
+    "response": ".",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.6568115Z",
+    "response": " How",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.6753897Z",
+    "response": " can",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.6947892Z",
+    "response": " I",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.7123932Z",
+    "response": " help",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.7286672Z",
+    "response": " you",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.7460222Z",
+    "response": " today",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.7632701Z",
+    "response": "?",
+    "done": false
+  },
+  {
+    "model": "smollm2:135m",
+    "created_at": "2025-06-26T23:16:07.7835424Z",
+    "response": "",
+    "done": true,
+    "done_reason": "stop",
+    "context": [
+      1,
+      9690,
+      198,
+      2683,
+      359,
+      253,
+      5356,
+      5646,
+      11173,
+      3365,
+      3511,
+      308,
+      34519,
+      28,
+      7018,
+      411,
+      407,
+      19712,
+      8182,
+      2,
+      198,
+      1,
+      4093,
+      198,
+      19556,
+      17,
+      2,
+      198,
+      1,
+      520,
+      9531,
+      198,
+      19556,
+      30,
+      1073,
+      416,
+      339,
+      724,
+      346,
+      1834,
+      47
+    ],
+    "total_duration": 204280200,
+    "load_duration": 17541500,
+    "prompt_eval_count": 32,
+    "prompt_eval_duration": 19790500,
+    "eval_count": 10,
+    "eval_duration": 166403200
+  }
+]
+
+[POST /api/generate/stream]
+Response diff: --- Orchestrator
++++ Ollama
+"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /api/generate/stream</pre>\n</body>\n</html>\n"
+---
+"404 page not found"
+
+[GET /api/show?model=smollm2:135m]
+Status mismatch: Orchestrator=404, Ollama=405
+Response diff: --- Orchestrator
++++ Ollama
+"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/show</pre>\n</body>\n</html>\n"
+---
+"405 method not allowed"
+
+[POST /api/show]
+Status mismatch: Orchestrator=404, Ollama=200
+Response diff: --- Orchestrator
++++ Ollama
+"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /api/show</pre>\n</body>\n</html>\n"
+---
+{
+  "license": "\n                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n\n   Copyright [yyyy] [name of copyright owner]\n\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n\n       http://www.apache.org/licenses/LICENSE-2.0\n\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.",
+  "modelfile": "# Modelfile generated by \"ollama show\"\n# To build a new Modelfile based on this, replace FROM with:\n# FROM smollm2:135m\n\nFROM C:\\Users\\jzick\\.ollama\\models\\blobs\\sha256-f535f83ec568d040f88ddc04a199fa6da90923bbb41d4dcaed02caa924d6ef57\nTEMPLATE \"\"\"{{- if .Messages }}\n{{- if .System }}<|im_start|>system\n{{ .System }}<|im_end|>\n{{ end }}\n{{- range $i, $_ := .Messages }}\n{{- $last := eq (len (slice $.Messages $i)) 1 -}}\n{{- if eq .Role \"user\" }}<|im_start|>user\n{{ .Content }}<|im_end|>\n{{ else if eq .Role \"assistant\" }}<|im_start|>assistant\n{{ .Content }}{{ if not $last }}<|im_end|>\n{{ end }}\n{{- end }}\n{{- if and (ne .Role \"assistant\") $last }}<|im_start|>assistant\n{{ end }}\n{{- end }}\n{{- else }}\n{{- if .System }}<|im_start|>system\n{{ .System }}<|im_end|>\n{{ end }}{{ if .Prompt }}<|im_start|>user\n{{ .Prompt }}<|im_end|>\n{{ end }}<|im_start|>assistant\n{{ end }}{{ .Response }}{{ if .Response }}<|im_end|>{{ end }}\"\"\"\nSYSTEM You are a helpful AI assistant named SmolLM, trained by Hugging Face\nPARAMETER stop <|im_start|>\nPARAMETER stop <|im_end|>\nLICENSE \"\"\"\n                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n\n   Copyright [yyyy] [name of copyright owner]\n\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n\n       http://www.apache.org/licenses/LICENSE-2.0\n\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.\"\"\"\n",
+  "parameters": "stop                           \"<|im_start|>\"\nstop                           \"<|im_end|>\"",
+  "template": "{{- if .Messages }}\n{{- if .System }}<|im_start|>system\n{{ .System }}<|im_end|>\n{{ end }}\n{{- range $i, $_ := .Messages }}\n{{- $last := eq (len (slice $.Messages $i)) 1 -}}\n{{- if eq .Role \"user\" }}<|im_start|>user\n{{ .Content }}<|im_end|>\n{{ else if eq .Role \"assistant\" }}<|im_start|>assistant\n{{ .Content }}{{ if not $last }}<|im_end|>\n{{ end }}\n{{- end }}\n{{- if and (ne .Role \"assistant\") $last }}<|im_start|>assistant\n{{ end }}\n{{- end }}\n{{- else }}\n{{- if .System }}<|im_start|>system\n{{ .System }}<|im_end|>\n{{ end }}{{ if .Prompt }}<|im_start|>user\n{{ .Prompt }}<|im_end|>\n{{ end }}<|im_start|>assistant\n{{ end }}{{ .Response }}{{ if .Response }}<|im_end|>{{ end }}",
+  "system": "You are a helpful AI assistant named SmolLM, trained by Hugging Face",
+  "details": {
+    "parent_model": "/Users/administrator/.ollama/models/blobs/sha256-f535f83ec568d040f88ddc04a199fa6da90923bbb41d4dcaed02caa924d6ef57",
+    "format": "gguf",
+    "family": "llama",
+    "families": [
+      "llama"
+    ],
+    "parameter_size": "134.52M",
+    "quantization_level": "F16"
+  },
+  "model_info": {
+    "general.architecture": "llama",
+    "general.basename": "smollm2",
+    "general.file_type": 1,
+    "general.finetune": "8k-lc100k-mix1-ep2",
+    "general.languages": null,
+    "general.license": "apache-2.0",
+    "general.organization": "HuggingFaceTB",
+    "general.parameter_count": 134515008,
+    "general.quantization_version": 2,
+    "general.size_label": "135M",
+    "general.type": "model",
+    "llama.attention.head_count": 9,
+    "llama.attention.head_count_kv": 3,
+    "llama.attention.layer_norm_rms_epsilon": 0.00001,
+    "llama.block_count": 30,
+    "llama.context_length": 8192,
+    "llama.embedding_length": 576,
+    "llama.feed_forward_length": 1536,
+    "llama.rope.dimension_count": 64,
+    "llama.rope.freq_base": 100000,
+    "llama.vocab_size": 49152,
+    "tokenizer.ggml.add_bos_token": false,
+    "tokenizer.ggml.add_space_prefix": false,
+    "tokenizer.ggml.bos_token_id": 1,
+    "tokenizer.ggml.eos_token_id": 2,
+    "tokenizer.ggml.merges": null,
+    "tokenizer.ggml.model": "gpt2",
+    "tokenizer.ggml.padding_token_id": 2,
+    "tokenizer.ggml.pre": "smollm",
+    "tokenizer.ggml.token_type": null,
+    "tokenizer.ggml.tokens": null,
+    "tokenizer.ggml.unknown_token_id": 0
+  },
+  "tensors": [
+    {
+      "name": "token_embd.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        49152
+      ]
+    },
+    {
+      "name": "blk.0.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.0.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.0.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.0.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.0.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.0.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.0.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.0.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.0.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.1.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.1.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.1.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.1.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.1.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.1.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.1.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.1.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.1.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.10.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.10.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.10.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.10.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.10.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.10.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.10.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.10.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.10.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.11.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.11.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.11.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.11.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.11.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.11.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.11.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.11.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.11.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.12.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.12.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.12.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.12.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.12.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.12.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.12.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.12.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.12.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.13.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.13.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.13.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.13.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.13.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.13.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.13.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.13.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.13.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.14.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.14.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.14.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.14.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.14.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.14.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.14.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.14.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.14.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.15.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.15.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.15.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.15.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.15.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.15.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.15.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.15.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.15.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.16.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.16.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.16.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.16.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.16.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.16.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.16.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.16.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.16.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.17.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.17.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.17.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.17.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.17.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.17.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.17.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.17.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.17.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.18.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.18.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.18.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.18.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.18.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.18.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.18.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.18.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.18.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.19.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.19.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.19.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.19.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.19.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.19.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.19.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.19.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.19.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.2.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.2.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.2.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.2.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.2.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.2.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.2.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.2.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.2.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.20.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.20.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.20.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.20.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.20.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.20.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.20.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.20.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.20.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.21.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.21.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.21.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.21.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.21.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.21.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.21.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.21.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.21.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.22.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.22.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.22.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.22.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.22.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.22.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.22.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.22.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.22.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.23.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.23.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.23.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.23.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.23.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.23.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.23.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.23.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.23.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.24.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.24.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.24.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.24.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.24.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.24.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.24.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.24.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.24.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.25.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.25.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.25.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.25.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.25.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.25.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.25.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.25.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.25.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.26.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.26.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.26.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.26.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.26.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.26.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.26.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.26.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.26.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.27.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.27.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.27.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.27.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.27.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.27.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.27.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.27.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.27.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.28.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.28.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.28.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.28.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.28.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.28.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.28.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.28.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.28.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.29.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.29.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.29.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.29.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.29.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.29.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.29.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.29.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.29.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.3.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.3.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.3.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.3.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.3.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.3.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.3.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.3.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.3.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.4.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.4.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.4.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.4.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.4.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.4.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.4.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.4.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.4.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.5.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.5.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.5.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.5.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.5.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.5.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.5.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.5.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.5.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.6.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.6.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.6.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.6.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.6.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.6.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.6.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.6.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.6.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.7.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.7.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.7.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.7.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.7.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.7.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.7.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.7.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.7.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.8.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.8.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.8.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.8.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.8.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.8.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.8.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.8.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.8.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.9.attn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.9.ffn_down.weight",
+      "type": "F16",
+      "shape": [
+        1536,
+        576
+      ]
+    },
+    {
+      "name": "blk.9.ffn_gate.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.9.ffn_up.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        1536
+      ]
+    },
+    {
+      "name": "blk.9.ffn_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    },
+    {
+      "name": "blk.9.attn_k.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "blk.9.attn_output.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.9.attn_q.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        576
+      ]
+    },
+    {
+      "name": "blk.9.attn_v.weight",
+      "type": "F16",
+      "shape": [
+        576,
+        192
+      ]
+    },
+    {
+      "name": "output_norm.weight",
+      "type": "F32",
+      "shape": [
+        576
+      ]
+    }
+  ],
+  "capabilities": [
+    "completion"
+  ],
+  "modified_at": "2025-06-25T21:51:12.2072122-04:00"
+}
+
+[POST /api/embeddings]
+Status mismatch: Orchestrator=404, Ollama=200
+Response diff: --- Orchestrator
++++ Ollama
+"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /api/embeddings</pre>\n</body>\n</html>\n"
+---
+{
+  "embedding": [
+    -1.4500006437301636,
+    -1.5254337787628174,
+    2.6847083568573,
+    1.9580960273742676,
+    0.5368358492851257,
+    -1.8208767175674438,
+    -1.2091609239578247,
+    -1.9162181615829468,
+    1.726820468902588,
+    -1.4607651233673096,
+    -0.8361415266990662,
+    0.7334014773368835,
+    0.9568861126899719,
+    -0.9689427614212036,
+    -5.892477512359619,
+    1.2961726188659668,
+    -1.0406185388565063,
+    -16.688364028930664,
+    0.34060749411582947,
+    -0.2250460386276245,
+    -0.7715793251991272,
+    -0.16872669756412506,
+    0.5616602301597595,
+    1.2762678861618042,
+    -0.4650944769382477,
+    9.872954368591309,
+    0.3482981026172638,
+    -2.0774097442626953,
+    -0.029945744201540947,
+    -0.5547914505004883,
+    -2.474839448928833,
+    2.4830241203308105,
+    -1.283734917640686,
+    -0.17136535048484802,
+    0.7840508222579956,
+    1.1187597513198853,
+    -1.2935986518859863,
+    0.30930835008621216,
+    1.6881332397460938,
+    -0.7286789417266846,
+    1.019043207168579,
+    -0.07731307297945023,
+    0.28780871629714966,
+    1.2241744995117188,
+    0.3275934159755707,
+    -1.7229081392288208,
+    2.324604034423828,
+    0.24705885350704193,
+    -2.6266400814056396,
+    1.0021514892578125,
+    -0.26803091168403625,
+    1.6701562404632568,
+    0.32635799050331116,
+    -0.528393030166626,
+    -1.0890916585922241,
+    -0.2509881258010864,
+    4.077248573303223,
+    0.8245720267295837,
+    0.43219465017318726,
+    -7.440680980682373,
+    0.4895453453063965,
+    -2.0084846019744873,
+    -0.2391105592250824,
+    -0.19898059964179993,
+    0.02973889745771885,
+    0.04977737367153168,
+    -0.4754013121128082,
+    -1.2298164367675781,
+    -1.0007390975952148,
+    -0.9215092062950134,
+    0.14366590976715088,
+    0.40023916959762573,
+    -0.42207440733909607,
+    -1.1981686353683472,
+    -2.547825336456299,
+    -0.5355371236801147,
+    -1.4978162050247192,
+    2.290098190307617,
+    0.6906001567840576,
+    0.7613933682441711,
+    -2.071594476699829,
+    0.039561640471220016,
+    1.7763091325759888,
+    3.3781259059906006,
+    -0.9905257225036621,
+    0.5468412637710571,
+    1.544034481048584,
+    1.066579818725586,
+    1.2122987508773804,
+    -0.002057976322248578,
+    0.9898168444633484,
+    1.0385465621948242,
+    -0.31672945618629456,
+    0.03738318011164665,
+    0.12097816169261932,
+    1.8486746549606323,
+    0.5242718458175659,
+    1.6286629438400269,
+    0.16551080346107483,
+    -1.3861291408538818,
+    -2.3107311725616455,
+    -0.6517624855041504,
+    -0.21317988634109497,
+    -0.2791510224342346,
+    -0.5229976773262024,
+    0.4826657474040985,
+    1.0332961082458496,
+    1.3000673055648804,
+    -0.05692264065146446,
+    0.31627070903778076,
+    2.388488292694092,
+    -0.424071341753006,
+    -0.5245552659034729,
+    0.27688702940940857,
+    0.8720929026603699,
+    1.0959653854370117,
+    -0.05952998623251915,
+    0.1983848363161087,
+    -0.8752532005310059,
+    -1.4460551738739014,
+    0.6153453588485718,
+    -0.43715527653694153,
+    -0.4783969521522522,
+    -1.0542936325073242,
+    -0.22383694350719452,
+    0.15289804339408875,
+    -1.4232081174850464,
+    -0.06692493706941605,
+    -0.2767203152179718,
+    -1.6256992816925049,
+    1.9793744087219238,
+    0.8961614370346069,
+    -0.8192011117935181,
+    -1.4465328454971313,
+    -0.8831374049186707,
+    -0.14647135138511658,
+    -1.2896087169647217,
+    0.30229631066322327,
+    -1.4587349891662598,
+    1.1033989191055298,
+    4.7431230545043945,
+    -3.4148552417755127,
+    -0.557558000087738,
+    0.6119885444641113,
+    0.2542351484298706,
+    0.10581320524215698,
+    -0.6638894081115723,
+    -0.42720943689346313,
+    -1.0540746450424194,
+    1.3891502618789673,
+    -0.9145130515098572,
+    -1.3441954851150513,
+    0.6099010705947876,
+    0.3515668213367462,
+    0.6453390121459961,
+    -0.702058732509613,
+    1.018184781074524,
+    0.8398459553718567,
+    -2.1461775302886963,
+    1.9696837663650513,
+    -1.2870737314224243,
+    1.0622105598449707,
+    -1.0655726194381714,
+    -2.1906697750091553,
+    0.5279503464698792,
+    0.5315183997154236,
+    -1.1381309032440186,
+    -1.6616175174713135,
+    -0.17363271117210388,
+    0.18864111602306366,
+    -0.6357091665267944,
+    -1.8398633003234863,
+    1.1564745903015137,
+    10.00964641571045,
+    1.1954089403152466,
+    -1.5776876211166382,
+    -0.1892663985490799,
+    -1.5680732727050781,
+    -1.0975680351257324,
+    0.8458376526832581,
+    -1.3469865322113037,
+    -2.60578989982605,
+    0.6220470070838928,
+    0.11479327082633972,
+    1.785042405128479,
+    0.27384066581726074,
+    -0.9703498482704163,
+    1.6176162958145142,
+    1.9186244010925293,
+    0.588494598865509,
+    -0.5378294587135315,
+    -0.9048022627830505,
+    1.5386073589324951,
+    1.8726654052734375,
+    1.9495599269866943,
+    -0.566676914691925,
+    1.5016441345214844,
+    -0.31839483976364136,
+    0.9656156897544861,
+    16.219501495361328,
+    -1.0920246839523315,
+    -1.0100473165512085,
+    -0.13728035986423492,
+    0.5712670683860779,
+    0.10611119866371155,
+    -2.5396695137023926,
+    -1.7888846397399902,
+    -0.7786268591880798,
+    -0.7911859750747681,
+    -0.28298959136009216,
+    1.1361300945281982,
+    0.054431136697530746,
+    1.4315674304962158,
+    0.5065211653709412,
+    0.3847121596336365,
+    0.5799861550331116,
+    1.4737765789031982,
+    0.09183494746685028,
+    0.34914514422416687,
+    1.3805023431777954,
+    0.2781597673892975,
+    0.28100329637527466,
+    0.8615344166755676,
+    0.4703499376773834,
+    -2.520730495452881,
+    -0.46427321434020996,
+    -0.5183635950088501,
+    -0.1986328512430191,
+    -1.1818004846572876,
+    -2.5863258838653564,
+    0.8895978927612305,
+    1.1400976181030273,
+    -1.5399270057678223,
+    1.382927417755127,
+    -0.4415358603000641,
+    1.1024320125579834,
+    0.7768657207489014,
+    -0.2873515784740448,
+    -0.3634815514087677,
+    -0.8478397130966187,
+    -0.5598664879798889,
+    -0.08940917253494263,
+    -0.8963736295700073,
+    4.068989276885986,
+    -0.8848767280578613,
+    -0.14166855812072754,
+    0.024273499846458435,
+    -0.2508872449398041,
+    5.906186103820801,
+    1.089033603668213,
+    -0.7965548038482666,
+    -0.027290968224406242,
+    -1.6183794736862183,
+    -1.3592108488082886,
+    -2.5850069522857666,
+    0.7790651321411133,
+    -1.0735572576522827,
+    -0.63884037733078,
+    0.40793871879577637,
+    -0.38195380568504333,
+    1.0671340227127075,
+    -0.9985782504081726,
+    -0.33608782291412354,
+    -0.3372580409049988,
+    1.72438383102417,
+    0.667508065700531,
+    1.9458853006362915,
+    -1.521615743637085,
+    1.956027626991272,
+    0.6960462331771851,
+    -0.01664089597761631,
+    -0.9145267009735107,
+    -0.5564188361167908,
+    2.8966197967529297,
+    0.53188556432724,
+    2.076974391937256,
+    -2.365140199661255,
+    1.261756420135498,
+    -0.11221485584974289,
+    -0.34555137157440186,
+    2.119363307952881,
+    -0.19191089272499084,
+    0.5479150414466858,
+    -0.8440110683441162,
+    -1.8072365522384644,
+    -0.5450078248977661,
+    -0.281628280878067,
+    0.7283427119255066,
+    -0.22780640423297882,
+    -0.03975670784711838,
+    0.09800440818071365,
+    -1.2242670059204102,
+    0.9114663600921631,
+    -0.7464756965637207,
+    -0.752311110496521,
+    -0.05468202754855156,
+    -4.110445022583008,
+    -0.42481911182403564,
+    -1.1513952016830444,
+    -7.223681926727295,
+    1.066701889038086,
+    0.691324770450592,
+    0.22548504173755646,
+    -1.8673722743988037,
+    -0.37607499957084656,
+    -1.1770458221435547,
+    1.7815321683883667,
+    1.9512132406234741,
+    1.6776546239852905,
+    -0.25980737805366516,
+    0.3351903557777405,
+    -0.406137615442276,
+    -2.0267393589019775,
+    1.18558669090271,
+    1.3244560956954956,
+    1.371181607246399,
+    -0.6712051033973694,
+    -0.07628229260444641,
+    0.053770821541547775,
+    -1.428364872932434,
+    1.2176135778427124,
+    0.6872081160545349,
+    11.986268997192383,
+    0.46848011016845703,
+    -0.3905971646308899,
+    0.4190182387828827,
+    -0.013184687122702599,
+    -0.9311453104019165,
+    0.33797797560691833,
+    -1.154978632926941,
+    -0.6449606418609619,
+    3.387380838394165,
+    -0.8708063960075378,
+    0.848281979560852,
+    1.4058527946472168,
+    -0.11319905519485474,
+    2.8536243438720703,
+    -0.37884852290153503,
+    -0.05338287353515625,
+    0.4329553246498108,
+    -1.1527490615844727,
+    0.010661263018846512,
+    1.1868703365325928,
+    -0.08787016570568085,
+    -0.037709932774305344,
+    3.776416778564453,
+    -0.7859995365142822,
+    -0.7114109396934509,
+    1.016143560409546,
+    1.1363277435302734,
+    5.492743968963623,
+    0.7674127221107483,
+    -1.2957589626312256,
+    2.8203747272491455,
+    -1.744060754776001,
+    -1.0435020923614502,
+    0.0641481801867485,
+    0.6757980585098267,
+    -0.17583763599395752,
+    -0.5548946261405945,
+    0.729472815990448,
+    -0.08674505352973938,
+    -1.2140854597091675,
+    -1.648939847946167,
+    -0.6748226284980774,
+    1.4866262674331665,
+    -0.09509120136499405,
+    -0.4218940734863281,
+    -3.113232135772705,
+    -0.20789343118667603,
+    -0.00552956061437726,
+    -2.46100115776062,
+    1.4660135507583618,
+    0.05546262860298157,
+    -0.4908859431743622,
+    1.1101911067962646,
+    -0.43242204189300537,
+    -1.709936261177063,
+    0.6372055411338806,
+    0.1595204770565033,
+    -0.11137112230062485,
+    0.6680424213409424,
+    -0.5176078677177429,
+    -0.2577708661556244,
+    -0.5205926299095154,
+    0.02262343280017376,
+    0.14476971328258514,
+    13.190518379211426,
+    -1.4931995868682861,
+    -0.36861658096313477,
+    1.2865073680877686,
+    0.8074999451637268,
+    1.4080572128295898,
+    1.257832646369934,
+    1.4453853368759155,
+    -0.27961474657058716,
+    3.30869460105896,
+    -0.43707871437072754,
+    -0.3056049048900604,
+    -1.5677074193954468,
+    0.022888099774718285,
+    0.26999983191490173,
+    -0.7693747878074646,
+    0.06481856107711792,
+    -0.45890456438064575,
+    0.04432692378759384,
+    -0.33619174361228943,
+    -0.05360829457640648,
+    -0.23623985052108765,
+    1.0580531358718872,
+    -0.09980706125497818,
+    0.9928703308105469,
+    2.592582941055298,
+    -2.070143938064575,
+    -1.1441748142242432,
+    -1.0561935901641846,
+    -0.2043154537677765,
+    -0.02179182879626751,
+    -0.5237743258476257,
+    0.975496232509613,
+    -0.6282165050506592,
+    -1.4029910564422607,
+    0.40981248021125793,
+    0.19024088978767395,
+    0.19313713908195496,
+    -0.6497068405151367,
+    -0.8678199052810669,
+    0.41494810581207275,
+    1.9656316041946411,
+    -0.18334271013736725,
+    1.0610500574111938,
+    1.3948668241500854,
+    -0.27457746863365173,
+    -0.12187584489583969,
+    1.1518974304199219,
+    0.8043752908706665,
+    -0.53391432762146,
+    -0.8578386902809143,
+    -1.3753083944320679,
+    0.12914496660232544,
+    -0.7366071343421936,
+    -0.7326032519340515,
+    -0.5096549987792969,
+    -1.009462594985962,
+    -0.33072131872177124,
+    -1.4019383192062378,
+    0.9322143197059631,
+    -0.0206875242292881,
+    -0.6324900984764099,
+    -0.22790613770484924,
+    1.5282903909683228,
+    1.2118335962295532,
+    1.1198443174362183,
+    -0.6410915851593018,
+    -1.477843165397644,
+    1.086958646774292,
+    1.497077465057373,
+    0.21240364015102386,
+    0.14976787567138672,
+    -0.17411237955093384,
+    0.41286501288414,
+    -0.7846015691757202,
+    -1.7399085760116577,
+    -0.7198838591575623,
+    0.8544609546661377,
+    -0.9563727378845215,
+    -0.08528445661067963,
+    -0.6010400652885437,
+    -0.9634159803390503,
+    -1.1612268686294556,
+    1.3961111307144165,
+    -2.4747376441955566,
+    1.9398705959320068,
+    -0.16446185111999512,
+    -2.477534770965576,
+    1.6312898397445679,
+    0.11799313873052597,
+    -1.5376707315444946,
+    -0.39241743087768555,
+    -0.6069305539131165,
+    -1.9381282329559326,
+    -1.8454387187957764,
+    0.9806075692176819,
+    1.1795778274536133,
+    0.29380929470062256,
+    -0.3042578399181366,
+    -0.3043249249458313,
+    -0.1321299821138382,
+    1.6459559202194214,
+    0.018660791218280792,
+    -1.0048362016677856,
+    0.543319046497345,
+    0.01650533825159073,
+    -0.6174420118331909,
+    0.4255046248435974,
+    -0.41023144125938416,
+    2.7935099601745605,
+    0.9371351003646851,
+    0.5085126757621765,
+    1.576540470123291,
+    0.008475651033222675,
+    -0.17889337241649628,
+    -2.243422508239746,
+    1.5489370822906494,
+    0.546280562877655,
+    -1.2379865646362305,
+    0.5858575701713562,
+    0.5824092626571655,
+    0.5306149125099182,
+    0.4691579341888428,
+    0.962349534034729,
+    1.0800663232803345,
+    1.466370940208435,
+    0.78980553150177,
+    0.08375774323940277,
+    0.44586774706840515,
+    -0.2955632209777832,
+    -0.16288501024246216,
+    0.19410136342048645,
+    -0.2596553862094879,
+    -0.46363070607185364,
+    -5.085115432739258,
+    -0.15380364656448364,
+    1.240431547164917,
+    -1.0553629398345947,
+    2.3456130027770996,
+    0.2825007140636444,
+    0.08121640235185623,
+    -1.2877299785614014,
+    0.7680221796035767,
+    -0.6698857545852661,
+    5.419389247894287,
+    -1.3878291845321655,
+    0.8885165452957153,
+    1.3316514492034912,
+    0.79831463098526,
+    0.9861113429069519,
+    -1.0255917310714722,
+    0.6686733365058899,
+    -1.6801737546920776,
+    -0.07399675250053406,
+    0.855351984500885,
+    1.1844587326049805,
+    0.38015469908714294,
+    -0.8180960416793823,
+    -0.4391467571258545,
+    -0.449736624956131,
+    0.33104392886161804,
+    -1.1070297956466675,
+    0.023143259808421135,
+    -0.7945053577423096,
+    2.0808238983154297,
+    0.12399160861968994,
+    1.9079819917678833,
+    -0.9901514649391174,
+    1.5346276760101318,
+    2.854816436767578,
+    -0.6263183355331421,
+    -1.3599222898483276,
+    -1.216538906097412,
+    -0.9102601408958435,
+    2.171721935272217,
+    0.31833282113075256,
+    -1.0038632154464722,
+    1.0550425052642822,
+    0.7529690861701965,
+    1.261383056640625,
+    0.18216753005981445,
+    -1.0276086330413818,
+    0.6123517155647278,
+    -0.5156424641609192,
+    -0.12305482476949692,
+    -0.3915630877017975,
+    0.5338528156280518,
+    0.7416034936904907,
+    -0.10069221258163452
+  ]
+}
+
+[POST /api/create]
+Response diff: --- Orchestrator
++++ Ollama
+[
+  {
+    "status": 200
+  }
+]
+---
+[
+  {
+    "error": "neither 'from' or 'files' was specified",
+    "status": 400
+  }
+]
+
+[POST /api/convert]
+Status mismatch: Orchestrator=200, Ollama=404
+Response diff: --- Orchestrator
++++ Ollama
+[
+  {
+    "status": 200
+  }
+]
+---
+"404 page not found"
+
+[POST /api/stop]
+Status mismatch: Orchestrator=200, Ollama=404
+Response diff: --- Orchestrator
++++ Ollama
+[
+  {
+    "status": 200
+  }
+]
+---
+"404 page not found"
+
+[POST /api/push]
+Response diff: --- Orchestrator
++++ Ollama
+[
+  {
+    "status": 200
+  }
+]
+---
+[
+  {
+    "status": "retrieving manifest"
+  },
+  {
+    "status": "pushing f535f83ec568",
+    "digest": "sha256:f535f83ec568d040f88ddc04a199fa6da90923bbb41d4dcaed02caa924d6ef57",
+    "total": 270885952,
+    "completed": 270885952
+  },
+  {
+    "status": "pushing fbacade46b4d",
+    "digest": "sha256:fbacade46b4da804e0398c339c64b944d4b954452adf77cf050b49420116129e",
+    "total": 68,
+    "completed": 68
+  },
+  {
+    "status": "pushing d502d55c1d60",
+    "digest": "sha256:d502d55c1d609104ae6127aee92eb940e51e15c56dfb26dbd067e2771ee746f1",
+    "total": 675,
+    "completed": 675
+  },
+  {
+    "status": "pushing 58d1e17ffe51",
+    "digest": "sha256:58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+    "total": 11357,
+    "completed": 11357
+  },
+  {
+    "status": "pushing f02dd72bb242",
+    "digest": "sha256:f02dd72bb2423204352eabc5637b44d79d17f109fdb510a7c51455892aa2d216",
+    "total": 59,
+    "completed": 59
+  },
+  {
+    "status": "pushing b0f58c4c1a3c",
+    "digest": "sha256:b0f58c4c1a3ca56f34a7673b353d7d09b773a1abce00451a58d5ebd2541331cf",
+    "total": 561,
+    "completed": 561
+  },
+  {
+    "status": "pushing manifest"
+  },
+  {
+    "error": "403: {\"errors\":[{\"code\":\"ANONYMOUS_ACCESS_DENIED\",\"message\":\"anonymous access denied\"}]}"
+  }
+]

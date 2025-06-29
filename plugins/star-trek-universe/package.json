@@ -1,0 +1,36 @@
+{
+    "name": "star-trek-universe-plugin",
+    "version": "1.0.0",
+    "description": "Official Star Trek Universe plugin with LCARS theme and Starfleet protocols",
+    "main": "index.ts",
+    "type": "module",
+    "author": "Universe Book Writer Team",
+    "license": "MIT",
+    "keywords": [
+        "star-trek",
+        "sci-fi",
+        "universe",
+        "lcars"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "plugin": {
+        "type": "universe",
+        "universeType": "star-trek",
+        "supportedFeatures": [
+            "sub-universes",
+            "themes",
+            "validation",
+            "ai-prompts",
+            "ui-components"
+        ],
+        "frontend": {
+            "components": "./frontend/components",
+            "themes": "./themes",
+            "assets": "./assets"
+        }
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}

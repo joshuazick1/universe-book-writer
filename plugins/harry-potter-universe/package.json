@@ -1,0 +1,66 @@
+{
+    "name": "@universe-book-writer/harry-potter-universe",
+    "version": "1.0.0",
+    "description": "Official Harry Potter Universe plugin with magical systems and Hogwarts school mechanics",
+    "author": "Universe Book Writer Team",
+    "license": "MIT",
+    "type": "module",
+    "keywords": [
+        "harry-potter",
+        "wizarding-world",
+        "magic",
+        "hogwarts",
+        "fantasy",
+        "universe-plugin"
+    ],
+    "main": "index.ts",
+    "types": "index.d.ts",
+    "files": [
+        "dist/**/*",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "test": "jest",
+        "dev": "tsc --watch"
+    },
+    "dependencies": {
+        "@universe-book-writer/core": "file:../../packages/core",
+        "@universe-book-writer/plugin-sdk": "file:../../packages/plugin-sdk"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/universe-book-writer/plugins",
+        "directory": "harry-potter-universe"
+    },
+    "peerDependencies": {
+        "@universe-book-writer/plugin-sdk": "file:../../packages/plugin-sdk"
+    },
+    "metadata": {
+        "universe": "harry-potter",
+        "schoolYear": "1991-1998",
+        "era": "modern-wizarding",
+        "magicalSystem": "wand-based",
+        "supportedHouses": [
+            "gryffindor",
+            "hufflepuff",
+            "ravenclaw",
+            "slytherin"
+        ],
+        "timeline": {
+            "foundersEra": "990-1000",
+            "medievalPeriod": "1000-1600",
+            "maraudersEra": "1971-1978",
+            "harryPotterEra": "1991-1998",
+            "nextGeneration": "2019-2026"
+        }
+    }
+}

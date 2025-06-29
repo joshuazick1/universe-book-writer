@@ -1,0 +1,334 @@
+import { test, expect } from '@playwright/test';
+
+/**
+ * Universe Book Writer - Admin Panel Test Suite
+ * 
+ * This test suite covers the key functionality of the Universe Book Writer application,
+ * focusing on authentication, role-based access control, and admin panel features.
+ * 
+ * Test Credentials:
+ * - Admin User: admin@universe-writer.com / WriteTheStars2025!
+ * - Regular User: testcollab@example.com / z?j%K=5#&APRvH9b
+ */
+
+test.describe('Universe Book Writer - Admin Panel Functionality', () => {
+    const baseURL = 'http://localhost:5173';
+
+    // Test credentials
+    const adminCredentials = {
+        email: 'admin@universe-writer.com',
+        password: 'WriteTheStars2025!'
+    };
+
+    const userCredentials = {
+        email: 'testcollab@example.com',
+        password: 'z?j%K=5#&APRvH9b'
+    };
+    test.beforeEach(async ({ page }) => {
+        // Navigate to the application
+        await page.goto(baseURL);
+    });
+    // Helper function to login as admin
+    async function loginAsAdmin(page) {
+        // Check if already logged in by looking for user menu button
+        const userMenuVisible = await page.locator('#user-menu-button').isVisible().catch(() => false);
+        if (userMenuVisible) {
+            return; // Already logged in
+        }
+
+        // Look for login form or navigate to login
+        const emailFieldVisible = await page.getByRole('textbox', { name: 'Email Address' }).isVisible().catch(() => false);
+
+        if (!emailFieldVisible) {
+            // Try to trigger login page - look for sign in link/button
+            const signInVisible = await page.getByText('Sign In').first().isVisible().catch(() => false);
+            if (signInVisible) {
+                await page.getByText('Sign In').first().click();
+                await page.waitForTimeout(1000);
+            }
+        }        // Fill login form
+        await page.getByRole('textbox', { name: 'Email Address' }).fill(adminCredentials.email);
+        await page.getByRole('textbox', { name: 'Password' }).fill(adminCredentials.password);
+        await page.getByRole('button', { name: 'Sign In' }).click();
+
+        // Wait for page to load completely
+        await page.waitForLoadState('networkidle');
+
+        // Wait for successful login - more flexible approach for cross-browser compatibility
+        try {
+            await page.waitForURL(baseURL + '/', { timeout: 5000 });
+        } catch (error) {
+            // If URL doesn't redirect, check if we're already on the dashboard
+            console.log('URL redirect timeout, checking for dashboard elements...');
+        }
+
+        // Look for user menu button as primary indicator of successful login
+        await expect(page.locator('#user-menu-button')).toBeVisible({ timeout: 15000 });
+    }
+    // Helper function to login as regular user
+    async function loginAsUser(page) {
+        // Logout if logged in as different user
+        await logoutIfLoggedIn(page);
+
+        // Check if we're on login page
+        const emailFieldVisible = await page.getByRole('textbox', { name: 'Email Address' }).isVisible().catch(() => false);
+
+        if (!emailFieldVisible) {
+            // Navigate to login or find login trigger
+            const signInVisible = await page.getByText('Sign In').first().isVisible().catch(() => false);
+            if (signInVisible) {
+                await page.getByText('Sign In').first().click();
+                await page.waitForTimeout(1000);
+            }
+        }        // Fill login form
+        await page.getByRole('textbox', { name: 'Email Address' }).fill(userCredentials.email);
+        await page.getByRole('textbox', { name: 'Password' }).fill(userCredentials.password);
+        await page.getByRole('button', { name: 'Sign In' }).click();
+
+        // Wait for page to load completely
+        await page.waitForLoadState('networkidle');
+
+        // Wait for successful login - more flexible approach for cross-browser compatibility
+        try {
+            await page.waitForURL(baseURL + '/', { timeout: 5000 });
+        } catch (error) {
+            // If URL doesn't redirect, check if we're already on the dashboard
+            console.log('URL redirect timeout, checking for dashboard elements...');
+        }
+
+        // Look for user avatar button as primary indicator of successful login
+        await expect(page.getByRole('button', { name: 'TC' })).toBeVisible({ timeout: 15000 });
+    }
+    // Helper function to logout if logged in
+    async function logoutIfLoggedIn(page) {
+        const userMenuVisible = await page.locator('#user-menu-button').isVisible().catch(() => false);
+        if (userMenuVisible) {
+            await page.locator('#user-menu-button').click();
+            await page.waitForTimeout(500); // Wait for dropdown to appear
+            const signOutVisible = await page.getByText('Sign out').isVisible().catch(() => false);
+            if (signOutVisible) {
+                await page.getByText('Sign out').click();
+                // Wait for logout to complete
+                await page.waitForTimeout(2000);
+            }
+        }
+    } test('should display the main dashboard when accessing root URL', async ({ page }) => {
+        // The main page might show a login form initially, so we need to handle this
+
+        // Check if we can see the dashboard elements (might need to login first)
+        const dashboardVisible = await page.getByText('Phase A.1 Authentication Complete').isVisible().catch(() => false);
+
+        if (!dashboardVisible) {
+            // Try to login as admin to see the full dashboard
+            await loginAsAdmin(page);
+        }
+
+        // Verify the main page loads correctly
+        await expect(page).toHaveTitle('Universe Book Writer');
+
+        // Check for key dashboard elements
+        await expect(page.getByText('Phase A.1 Authentication Complete')).toBeVisible();
+        await expect(page.getByRole('heading', { name: '🛡️ Admin Panel' })).toBeVisible();
+        await expect(page.getByText('Universe Management')).toBeVisible();
+        await expect(page.getByRole('heading', { name: '🔐 Authentication System' })).toBeVisible();
+    }); test('should allow admin login and access to admin panel', async ({ page }) => {
+        // Login as admin first
+        await loginAsAdmin(page);
+
+        // Navigate to admin panel
+        await page.getByRole('link', { name: 'Open Admin Panel' }).click();
+
+        // Should be on admin page and show admin content
+        await expect(page.getByText('Admin Dashboard')).toBeVisible();
+        await expect(page.getByRole('link', { name: 'User Management', exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'System Status' })).toBeVisible();        // Verify admin-specific elements are visible
+        await expect(page.getByText('Total')).toBeVisible();
+        // Look for "Active" specifically in the context of user management stats
+        await expect(page.getByRole('link', { name: /User Management.*4 Total.*4 Active/ })).toBeVisible();
+    }); test('should display user management with existing users', async ({ page }) => {
+        // Login as admin first
+        await loginAsAdmin(page);
+
+        // Access admin panel
+        await page.getByRole('link', { name: 'Open Admin Panel' }).click();
+
+        // Navigate to user management
+        await page.goto(`${baseURL}/admin/users`);
+
+        // Verify user management page
+        await expect(page.getByRole('heading', { name: 'User Management' })).toBeVisible();
+        await expect(page.getByText('Manage users, roles, and permissions')).toBeVisible();        // Check for existing test users in the user table
+        await expect(page.getByRole('cell', { name: 'testcollab@example.com' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'admin@universe-writer.com' })).toBeVisible();        // Verify user table headers - check for table structure
+        // First, ensure the table exists
+        await expect(page.locator('table')).toBeVisible();
+
+        // Check for column headers using more flexible selectors - the table has 6 columns
+        const headers = page.locator('th, [role="columnheader"]');
+        await expect(headers).toHaveCount(6); // Should have 6 column headers
+
+        // Check for specific headers with more flexible matching
+        await expect(page.locator('th:has-text("Role"), [role="columnheader"]:has-text("Role")')).toBeVisible();
+        await expect(page.locator('th:has-text("Status"), [role="columnheader"]:has-text("Status")')).toBeVisible();
+        await expect(page.locator('th:has-text("Email"), [role="columnheader"]:has-text("Email")')).toBeVisible();
+    }); test('should open create user modal with all required fields', async ({ page }) => {
+        // Login as admin first
+        await loginAsAdmin(page);
+
+        // Navigate to user management
+        await page.goto(`${baseURL}/admin/users`);
+
+        // Click create user button
+        await page.getByRole('button', { name: 'Create User' }).click();
+
+        // Verify modal opens with all required fields
+        await expect(page.getByText('Create New User')).toBeVisible();
+        await expect(page.getByLabel('Email Address *')).toBeVisible();
+        await expect(page.getByLabel('First Name *')).toBeVisible();
+        await expect(page.getByLabel('Last Name *')).toBeVisible();
+        await expect(page.locator('#password')).toBeVisible();
+        await expect(page.getByLabel('Confirm Password *')).toBeVisible();        // Check role dropdown options exist
+        await expect(page.locator('#role')).toBeVisible();
+        await expect(page.locator('#role')).toContainText('User');
+        await expect(page.locator('#role')).toContainText('Admin');
+
+        // Check status dropdown options exist
+        await expect(page.locator('#status')).toBeVisible();
+        await expect(page.locator('#status')).toContainText('Active');
+
+        // Close modal
+        await page.keyboard.press('Escape');
+    }); test('should successfully logout and show login page', async ({ page }) => {
+        // Login as admin first
+        await loginAsAdmin(page);
+
+        // Ensure we're on the main dashboard
+        await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+
+        // Click on user menu (the avatar with admin email)
+        await page.locator('#user-menu-button').click();
+
+        // Verify dropdown menu appears
+        await expect(page.getByText('Sign out')).toBeVisible();
+
+        // Click sign out
+        await page.getByText('Sign out').click();
+
+        // Verify redirect to login page
+        await expect(page.getByText('Sign in to access your writing universe')).toBeVisible();
+        await expect(page.getByText('Welcome Back')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible();
+    }); test('should login as regular user and verify role-based access control', async ({ page }) => {
+        // Login as regular user
+        await loginAsUser(page);
+
+        // Verify successful login - should see dashboard
+        await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'TC' })).toBeVisible(); // Avatar should show "TC" for Test Collaboration
+
+        // Verify Admin Panel is NOT visible for regular user (role-based access control)
+        await expect(page.getByText('Admin Panel')).not.toBeVisible();
+
+        // Verify other sections are still visible
+        await expect(page.getByText('Universe Management')).toBeVisible();
+        await expect(page.getByRole('heading', { name: '🔐 Authentication System' })).toBeVisible();
+    });
+    test('should access universe management and display plugin templates', async ({ page }) => {
+        // Login as regular user
+        await loginAsUser(page);
+
+        // Navigate to Universe Management
+        await page.getByRole('link', { name: 'Manage Universes' }).click();
+
+        // Verify universe management page
+        await expect(page.getByText('Universe Management')).toBeVisible();
+        await expect(page.getByText('Create and manage your fictional universes')).toBeVisible();
+
+        // Check for plugin templates
+        await expect(page.getByText('Plugin Universe Templates')).toBeVisible();
+        await expect(page.getByText('Star Trek Universe')).toBeVisible();
+        await expect(page.getByText('Star Wars Universe')).toBeVisible();
+
+        // Verify "Your Universes" section
+        await expect(page.getByText('Your Universes')).toBeVisible();
+        await expect(page.getByText('No universes found')).toBeVisible();
+    });
+    test('should expand Star Trek universe template and show sub-universes', async ({ page }) => {
+        // Login as regular user
+        await loginAsUser(page);
+
+        // Navigate to universe management
+        await page.getByRole('link', { name: 'Manage Universes' }).click();
+
+        // Click on Star Trek Universe to expand
+        await page.getByText('Star Trek Universe').click();
+
+        // Verify sub-universes are displayed
+        await expect(page.getByText('Prime Timeline')).toBeVisible();
+        await expect(page.getByText('Kelvin Timeline')).toBeVisible();
+        await expect(page.getByText('Mirror Universe')).toBeVisible();
+
+        // Verify descriptions
+        await expect(page.getByText('The original Star Trek timeline (TOS, TNG, DS9, VOY, ENT)')).toBeVisible();
+        await expect(page.getByText('The alternate timeline from the 2009 reboot films')).toBeVisible();
+    }); test('should open universe creation modal when selecting a sub-universe', async ({ page }) => {
+        // Login as regular user
+        await loginAsUser(page);
+
+        // Navigate to universe management
+        await page.getByRole('link', { name: 'Manage Universes' }).click();
+
+        // Expand Star Trek and select Prime Timeline
+        await page.getByText('Star Trek Universe').click();
+        await page.getByText('Prime Timeline').click();
+
+        // Verify universe creation modal opens
+        await expect(page.getByText('Create Universe from Star Trek Universe - Prime Timeline')).toBeVisible();
+        await expect(page.getByText('Creating Custom Universe from Template')).toBeVisible();
+
+        // Check form fields
+        await expect(page.getByText('Universe Name *')).toBeVisible();
+        await expect(page.getByText('Description')).toBeVisible();
+
+        // Verify template information is pre-filled in the description textarea
+        await expect(page.getByRole('textbox', { name: 'Description' })).toHaveValue(/Star Trek timeline/);
+
+        // Close modal
+        await page.keyboard.press('Escape');
+    }); test('should maintain session state across page navigation', async ({ page }) => {
+        // Login as admin first
+        await loginAsAdmin(page);
+
+        // Verify admin is logged in
+        await expect(page.locator('#user-menu-button')).toBeVisible();
+
+        // Navigate to different pages
+        await page.getByRole('link', { name: 'Open Admin Panel' }).click();
+        await expect(page.getByText('Admin Dashboard')).toBeVisible();
+
+        // Navigate back to main dashboard
+        await page.goto(baseURL);
+
+        // Session should still be maintained
+        await expect(page.locator('#user-menu-button')).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+    }); test('should display system status information correctly', async ({ page }) => {
+        // Login as admin first to ensure we can see all system info
+        await loginAsAdmin(page);
+
+        // Verify main dashboard system status
+        await expect(page.getByRole('heading', { name: '🔐 Authentication System' })).toBeVisible();
+        await expect(page.getByText('✅ User registration and login')).toBeVisible();
+        await expect(page.getByText('✅ JWT token authentication')).toBeVisible();
+        await expect(page.getByText('✅ HTTP-only cookie security')).toBeVisible();
+        await expect(page.getByText('✅ Protected route access')).toBeVisible();
+        await expect(page.getByText('✅ Role-based permissions')).toBeVisible();
+
+        // Check backend API status
+        await expect(page.getByRole('heading', { name: '🚀 Backend API' })).toBeVisible();
+        await expect(page.getByText('✅ Express.js server running')).toBeVisible();
+        await expect(page.getByText('✅ MongoDB connection active')).toBeVisible();
+        await expect(page.getByText('Port: 5000')).toBeVisible();
+        await expect(page.getByText('Status: Online')).toBeVisible();
+    });
+});
