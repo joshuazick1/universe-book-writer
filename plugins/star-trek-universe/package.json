@@ -1,10 +1,10 @@
 {
     "name": "star-trek-universe-plugin",
-    "version": "1.0.0",
+    "version": "0.0.1-dev",
     "description": "Official Star Trek Universe plugin with LCARS theme and Starfleet protocols",
     "main": "index.ts",
     "type": "module",
-    "author": "Universe Book Writer Team",
+    "author": "VerseForge Team",
     "license": "MIT",
     "keywords": [
         "star-trek",

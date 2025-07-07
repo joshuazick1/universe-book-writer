@@ -1,28 +1,31 @@
-# Phase A.3: Story Management System
+# Phase A.3: Story Management & RAG-Aware UI Framework
 
-**Duration**: 4-5 days (reduced from 6-8 days due to enhanced A.2.5 foundation)  
-**Status**: ⏳ **AWAITING A.2.5 COMPLETION**  
-**Priority**: CRITICAL - Core content creation functionality  
-**Dependencies**: Phase A.2.5 Enhanced Foundation ✅ Required
+> **This file is the canonical source for requirements, status, and planning for this phase.**
 
-## ✨ **A.2.5 FOUNDATION BENEFITS**
+**Duration**: 6-8 days (RAG-integrated UI development)  
+**Status**: ⏳ **AWAITING A.2.6 RAG FOUNDATION**  
+**Priority**: CRITICAL - RAG-aware UI framework and knowledge-integrated story management  
+**Dependencies**: Phase A.2.6 RAG Architecture Foundation ✅ Required
 
-**Accelerated Development**: Thanks to the comprehensive foundation built in Phase A.2.5, Phase A.3 development will be significantly faster and more reliable:
+## ✨ **A.2.6 RAG FOUNDATION BENEFITS**
 
-### **🎯 Pre-Built Infrastructure Available**
-- **✅ Complete Testing Framework**: E2E testing, performance monitoring, automated validation
-- **✅ Production-Ready Security**: 2FA, session management, comprehensive audit logging
-- **✅ Enhanced Plugin System**: Hot reload, dependency management, security sandbox
-- **✅ Optimized Performance**: Sub-100ms APIs, optimized queries, comprehensive caching
-- **✅ Mobile-First Design**: Responsive UI, touch interactions, accessibility compliance
-- **✅ Developer Experience**: Interactive documentation, debugging tools, comprehensive SDK
+**Knowledge-First Development**: Thanks to the comprehensive RAG architecture built in A.2.6, Phase A.3 can deliver knowledge-aware UI components from day one:
 
-### **🚀 Development Velocity Multipliers**
-- **Database Operations**: Migration system and optimized queries already implemented
-- **Security Framework**: Authentication, authorization, and audit trails ready for content
-- **Real-time Infrastructure**: WebSocket foundation and sync mechanisms established
-- **Error Handling**: Comprehensive error tracking and recovery systems in place
-- **Performance Monitoring**: Real-time metrics and bottleneck detection operational
+### **🎯 RAG-Enabled Infrastructure Available**
+- **✅ Knowledge Graph**: Complete RAG system with nodes, relationships, and context layers
+- **✅ AI Server Integration**: RAG endpoints operational for UI data queries
+- **✅ Plugin System v2**: RAG-native plugins with knowledge seeding capabilities
+- **✅ Encryption Integration**: Field-level encryption for RAG content with privacy classification
+- **✅ Multimodal Routing Foundation**: Basic framework for intelligent AI task routing
+- **✅ Hybrid Storage**: Database indexes + RAG semantic search for optimal performance
+
+### **🚀 Knowledge-Aware UI Components**
+- **Obsidian-Style Visualization**: Graph view of knowledge relationships and connections
+- **Timeline Integration**: Character/event intersections with temporal relationship mapping
+- **Context Assembly**: AI Chat Box leverages RAG for rich context-aware responses
+- **Plugin-Specific Nodes**: Universe-specific visualizations (Star Trek starships, Star Wars Force connections)
+- **Semantic Search**: All UI modules can perform semantic queries across knowledge graph
+- **Real-time Knowledge Updates**: Content changes automatically propagate through relationship graph
 
 ## 🧭 Navigation Links
 
@@ -33,8 +36,9 @@
 ### **🔄 Phase A Workflow**
 - **A.1: Authentication** ✅ **COMPLETE**
 - **A.2: Universe Management** ✅ **COMPLETE**
-- **[A.2.5: Plugin Override System & Foundation Hardening](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** 🔄 **PREREQUISITE**
-- **A.3: Story Management** ⏳ **CURRENT**
+- **[A.2.5: Plugin Override System & Foundation Hardening](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** ✅ **COMPLETE**
+- **[A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md)** ✅ **PREREQUISITE**
+- **A.3: Story Management & Knowledge-Aware UI Framework** ⏳ **CURRENT**
 - **[A.4: Integration Testing](./PHASE_A4_INTEGRATION_TESTING_V2.md)** ⏳ **NEXT**
 
 ### **🔗 Dependencies & Integration**
@@ -47,29 +51,44 @@
 
 ## Subphase Overview
 
-Phase A.3 implements the complete story management system enabling users to create, edit, and organize books and chapters. Building on the universe management foundation from A.2, this phase provides the core writing functionality that makes the application valuable to users.
+Phase A.3 implements the complete story management system AND all major UI module frameworks, enabling users to create, edit, and organize books/chapters while providing the visual foundation for all VerseForge modules. Building on the universe management foundation from A.2 and the RAG knowledge graph from A.2.6, this phase delivers both core writing functionality and the comprehensive UI framework.
 
-**Core Philosophy**: *"Writers create content with flexible privacy and collaboration options, building on the advanced permission foundation from A.2"*
+**Core Philosophy**: *"All major UI modules visible and navigable, with knowledge-aware components powered by RAG integration"*
 
 ### **Key Deliverables**
+
+#### **Story Management (Backend + Basic UI)**
 - Complete book and chapter CRUD operations with **advanced permission controls**
 - **Book-level privacy and encryption** (private, contributors-only, public, published)
 - Rich text content editing with auto-save and **content diff tracking**
 - Story organization with **spoiler protection foundation**
-- **Canon/non-canon** content labeling and approval workflows
-- **Collaborative editing** with granular access controls
-- Mobile-optimized writing experience with **real-time sync**
-- Voice note integration foundation
+
+#### **Major UI Module Framework (Primary Focus) - RAG-Integrated**
+- **Workspace Module**: Layout framework and panel system with knowledge graph integration
+- **Editor Module**: Basic rich text editor with RAG-powered inline suggestions
+- **AI Chat Box Module**: Basic chat interface with RAG context assembly and multimodal routing foundation
+- **RAG System Module**: Obsidian-style graph visualization with filtering and context layers
+- **Timeline System Module**: Timeline visualization with character/event intersections and temporal relationships
+- **Reference & Encyclopedia Module**: Entity sheets with semantic connections and cross-linking
+- **Character Bot Module**: Character selection with timeline/context awareness integration
+- **Plugin System Module**: Plugin management interface with knowledge seeding visualization
+- **Collaboration Module**: Collaboration indicators with knowledge graph sharing
+- **Export & Integration Module**: Export options with RAG content serialization
+
+#### **RAG Integration (Knowledge-First UI)**
+- **Knowledge Graph Navigation**: Obsidian-style exploration with node filtering and relationship traversal
+- **Semantic Content Discovery**: Search and discovery across all content types through RAG
+- **Context-Aware Interactions**: All modules leverage multi-layer context system
+- **Plugin-Specific Visualizations**: Universe-specific node types and relationship displays
+- **Timeline-Aware Queries**: Temporal context integration across all UI modules
 
 ### **Success Criteria**
-- Users can create books with **flexible privacy settings** (private/collaborative/public)
-- **Book-level encryption** protects private content while enabling collaboration
-- **Content diff tracking** captures character/plot/location changes for spoiler protection
-- **Canon enforcement** works according to universe contribution policies
-- **Collaborative editing** supports multiple contributors with appropriate access levels
-- Auto-save functionality prevents content loss across all privacy levels
-- Books work with or without universe association, inheriting universe permission models
-- Mobile experience supports writing workflows with **real-time synchronization**
+- **All major UI modules are visible and navigable** 
+- **UI modules leverage RAG for dynamic content and relationships**
+- Basic story management functionality operational
+- Knowledge graph integration working in Timeline, Reference, and AI Chat modules
+- Plugin override system integrated with UI framework
+- Mobile-responsive layout framework established
 
 ## Implementation Strategy
 

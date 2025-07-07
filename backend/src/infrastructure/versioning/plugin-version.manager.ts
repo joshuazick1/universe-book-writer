@@ -2,7 +2,7 @@
  * Plugin version management system - Handles semantic versioning and compatibility checks
  */
 
-import type { PluginMetadata } from '@universe-book-writer/core';
+import type { PluginMetadata } from '@verseforge/core';
 
 /**
  * Semantic version structure

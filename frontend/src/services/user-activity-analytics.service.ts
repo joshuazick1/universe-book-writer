@@ -222,7 +222,7 @@ class UserActivityAnalyticsService {
      */
     public getFeatureUsageMetrics(): FeatureUsageMetrics[] {
         const featureEvents = this.events.filter(e => e.eventType === 'feature_use');
-        const featureMap = new Map<string, FeatureUsageMetricsInternal>();
+        const featureMap = new Map<string, FeatureUsageMetricsInternal & { totalDuration: number; durationCount: number }>();
 
         featureEvents.forEach(event => {
             const featureName = event.properties.feature;
@@ -233,6 +233,8 @@ class UserActivityAnalyticsService {
                 totalUses: 0,
                 uniqueUsers: new Set<string>(),
                 avgDuration: 0,
+                totalDuration: 0,
+                durationCount: 0,
                 lastUsed: 0,
                 popularTimes: {} as Record<string, number>,
                 userSegments: {},
@@ -242,8 +244,10 @@ class UserActivityAnalyticsService {
             existing.uniqueUsers.add(event.userId);
             existing.lastUsed = Math.max(existing.lastUsed, event.timestamp);
 
-            if (event.duration) {
-                existing.avgDuration = (existing.avgDuration + event.duration) / 2;
+            if (event.properties.duration !== undefined) {
+                existing.totalDuration += event.properties.duration;
+                existing.durationCount++;
+                existing.avgDuration = existing.totalDuration / existing.durationCount;
             }
 
             // Track popular times (hour of day)
@@ -255,8 +259,13 @@ class UserActivityAnalyticsService {
 
         // Convert Sets to numbers and return
         return Array.from(featureMap.values()).map(metric => ({
-            ...metric,
+            featureName: metric.featureName,
+            totalUses: metric.totalUses,
             uniqueUsers: metric.uniqueUsers.size,
+            avgDuration: metric.avgDuration,
+            lastUsed: metric.lastUsed,
+            popularTimes: metric.popularTimes,
+            userSegments: metric.userSegments,
         }));
     }
 

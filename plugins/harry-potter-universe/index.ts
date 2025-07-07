@@ -18,7 +18,7 @@ import {
     type UniverseValidation,
     type UniverseUIComponents,
     type UniverseAIPrompts,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 
 // Import Harry Potter utilities and themes
 import { MagicalCalculator } from './utils/index.js';
@@ -28,8 +28,8 @@ export const metadata = {
     name: 'harry-potter-universe',
     version: '1.0.0',
     description: 'Official Harry Potter Universe plugin with magical systems, Hogwarts houses, and wizarding world mechanics',
-    author: 'Universe Book Writer Team',
-    homepage: 'https://github.com/universe-book-writer/plugins/harry-potter',
+    author: 'VerseForge Team',
+    homepage: 'https://github.com/verseforge/plugins/harry-potter',
     license: 'MIT',
     keywords: ['harry-potter', 'wizarding-world', 'magic', 'hogwarts', 'fantasy'],
     type: PluginType.UNIVERSE,

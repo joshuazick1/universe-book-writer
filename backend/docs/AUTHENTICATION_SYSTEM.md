@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Universe Book Writer authentication system provides secure user management, session handling, and role-based access control. Built on JWT tokens with refresh token rotation, the system ensures security while maintaining user convenience.
+The VerseForge authentication system provides secure user management, session handling, and role-based access control. Built on JWT tokens with refresh token rotation, the system ensures security while maintaining user convenience.
 
 ## Architecture
 
@@ -836,7 +836,7 @@ SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_USER=your-email@example.com
 SMTP_PASS=your-email-password
-FROM_EMAIL=noreply@universe-book-writer.com
+FROM_EMAIL=noreply@verseforge.com
 
 # Security
 CORS_ORIGIN=http://localhost:3000

@@ -9,7 +9,7 @@ export const StarWarsManifest = {
     name: 'Star Wars Universe',
     description: 'Comprehensive Star Wars universe plugin with faction-based architecture and galactic politics',
     version: '1.0.0',
-    author: 'Universe Book Writer Team',
+    author: 'VerseForge Team',
     license: 'MIT',
 
     // Architecture Type - Key Difference from Star Trek

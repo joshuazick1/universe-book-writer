@@ -15,6 +15,7 @@ import { createMonitoringRoutes } from './api/routes/monitoring.routes.js';
 import { createPluginHealthRoutes } from './api/routes/plugin-health.routes.js';
 import { createUserActivityAnalyticsRoutes } from './api/routes/user-activity-analytics.routes.js';
 import { createSecurityAuditRoutes } from './api/routes/security-audit.routes.js';
+import { createRAGRoutes } from './routes/rag.routes.js';
 import { mongoDBConnection } from './config/mongodb.config.js';
 import { PluginSystemFactory } from './plugins/manager/plugin-system.factory.js';
 import { errorHandler } from './api/middleware/error.middleware.js';
@@ -28,6 +29,7 @@ import type { MonitoringController } from './api/controllers/monitoring.controll
 import type { PluginHealthMonitoringController } from './api/controllers/plugin-health.controller.js';
 import type { UserActivityAnalyticsController } from './api/controllers/user-activity-analytics.controller.js';
 import type { SecurityAuditController } from './api/controllers/security-audit.controller.js';
+import type { RAGController } from './controllers/rag.controller.js';
 import { AuthMiddleware } from './api/middleware/auth.middleware.js';
 import { ValidationMiddleware } from './api/middleware/validation.middleware.js';
 
@@ -144,7 +146,7 @@ export async function initializeApp() {
     console.log('Initializing dependency container...');
     const authContainer = createAuthContainer({
       mongoClient,
-      databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
+      databaseName: process.env.MONGODB_DB_NAME || 'verseforge',
     });
 
     // Initialize auth repositories
@@ -188,7 +190,7 @@ export async function initializeApp() {
 
     const pluginSystem = await PluginSystemFactory.create({
       mongoClient,
-      databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
+      databaseName: process.env.MONGODB_DB_NAME || 'verseforge',
       pluginDirectories,
       autoLoadPlugins: true,
     });
@@ -297,6 +299,68 @@ export async function initializeApp() {
 
     // Plugin management routes
     app.use('/api/plugins', createPluginRoutes(pluginSystem.pluginController));
+
+    // RAG system routes
+    try {
+      console.log('🔧 Starting RAG system initialization...');
+      const { logInfo, logWarn, logError, logDebug } = await import('./infrastructure/logger.js');
+
+      logInfo('RAG initialization started');
+      logDebug('Importing RAG services...');
+
+      const { RAGIntegrationService } = await import('./services/rag-integration.service.js');
+      logDebug('RAGIntegrationService imported successfully');
+
+      const { createRAGRoutes } = await import('./routes/rag.routes.js');
+      logDebug('createRAGRoutes imported successfully');
+
+      // Initialize RAG integration service
+      const ragConfig = {
+        aiServerUrl: process.env.AI_SERVER_URL || 'http://localhost:5100',
+        databaseUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017',
+        databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
+        syncInterval: 300000, // 5 minutes
+        batchSize: 100,
+        aiServerApiKey: process.env.AI_SERVER_API_KEY
+      };
+
+      logDebug(`RAG config: ${JSON.stringify(ragConfig)}`);
+      logInfo('Creating RAG integration service...');
+
+      const ragIntegrationService = new RAGIntegrationService(ragConfig);
+      logDebug('RAG integration service created');
+
+      // Initialize the service
+      logInfo('Initializing RAG integration service...');
+      await ragIntegrationService.initialize();
+      logInfo('RAG integration service initialized successfully');
+
+      logInfo('Creating RAG routes...');
+      const ragRouter = createRAGRoutes(ragIntegrationService);
+      logDebug('RAG routes created successfully');
+
+      logInfo('Registering RAG routes at /api/rag...');
+      app.use('/api/rag', ragRouter);
+
+      console.log('✅ RAG system routes enabled');
+      logInfo('RAG system routes enabled successfully');
+
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+
+      console.warn('⚠️ Failed to initialize RAG routes:', errorMsg);
+
+      // Import logger for error logging
+      try {
+        const { logError, logWarn } = await import('./infrastructure/logger.js');
+        logError(`RAG initialization failed: ${errorMsg}`);
+        logError(`RAG error stack: ${errorStack}`);
+        logWarn('RAG routes will not be available');
+      } catch (loggerError) {
+        console.error('Failed to log RAG error:', loggerError);
+      }
+    }
 
     // Monitoring routes
     try {

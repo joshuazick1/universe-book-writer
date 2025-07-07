@@ -17,7 +17,7 @@ import {
     type UniverseValidation,
     type UniverseUIComponents,
     type UniverseAIPrompts,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 
 // Import LOTR utilities
 import { MiddleEarthCalculator } from './utils/index.js';
@@ -26,8 +26,8 @@ export const metadata = {
     name: 'lotr-universe',
     version: '1.0.0',
     description: 'Official Lord of the Rings Universe plugin with Age-based timeline and Middle-earth geography',
-    author: 'Universe Book Writer Team',
-    homepage: 'https://github.com/universe-book-writer/plugins/lotr',
+    author: 'VerseForge Team',
+    homepage: 'https://github.com/verseforge/plugins/lotr',
     license: 'MIT',
     keywords: ['lotr', 'lord-of-the-rings', 'middle-earth', 'fantasy', 'tolkien'],
     type: PluginType.UNIVERSE,

@@ -8,7 +8,7 @@ import { UniverseEntity, CanonLevel } from '../src/core/entities/universe.entity
 import { MongoUniverseRepository } from '../src/infrastructure/repositories/universe.repository.js';
 import { UniverseEncryptionService } from '../src/core/services/encryption.service.js';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/verseforge';
 
 async function testRepositoryWithIrreversibleStatus() {
     console.log('🔐 Testing Repository Integration with Irreversible Public Status...\n');

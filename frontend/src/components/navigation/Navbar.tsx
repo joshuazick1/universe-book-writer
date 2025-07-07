@@ -64,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu, isMobileMenu
               )}
             </button>
             <Link to="/dashboard" className="flex items-center">
-              <h1 className="text-xl font-bold text-universe-primary">Universe Book Writer</h1>
+              <h1 className="text-xl font-bold text-universe-primary">VerseForge</h1>
             </Link>
           </div>
           {/* Navigation - Only visible on extra large screens when sidebar is closed */}

@@ -2,7 +2,7 @@
  * Tests for the PluginDomainService class
  */
 
-import { PluginState, PluginType } from '@universe-book-writer/core';
+import { PluginState, PluginType } from '@verseforge/core';
 import { PluginDomainService } from '../../../src/core/services/plugin.domain.service.js';
 import type { PluginRepository } from '../../../src/core/interfaces/plugin.repository.interface.js';
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';

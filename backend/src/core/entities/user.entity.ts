@@ -3,7 +3,7 @@
  * Core business logic for user management
  */
 
-import { BaseEntity } from '@universe-book-writer/core';
+import { BaseEntity } from '@verseforge/core';
 
 export interface UserProfile {
   firstName?: string;

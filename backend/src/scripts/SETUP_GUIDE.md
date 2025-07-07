@@ -25,7 +25,7 @@ npm install
 Create or update your `.env` file in the backend directory:
 
 ```env
-MONGODB_URI=mongodb://localhost:27017/universe-book-writer
+MONGODB_URI=mongodb://localhost:27017/verseforge
 NODE_ENV=development
 ```
 
@@ -164,7 +164,7 @@ You can manually check the data using MongoDB shell:
 
 ```javascript
 // Connect to database
-use universe-book-writer
+use verseforge
 
 // Check collections
 show collections

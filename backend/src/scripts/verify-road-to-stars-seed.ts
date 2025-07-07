@@ -20,7 +20,7 @@ interface VerificationResult {
  */
 export async function verifyRoadToStarsSeeding(): Promise<void> {
   const client = new MongoClient(
-    process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer'
+    process.env.MONGODB_URI || 'mongodb://localhost:27017/verseforge'
   );
 
   try {

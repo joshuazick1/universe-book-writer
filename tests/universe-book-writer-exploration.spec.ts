@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Universe Book Writer - Comprehensive Application Test
+ * VerseForge - Comprehensive Application Test
  * 
- * This test suite explores the main functionality of the Universe Book Writer application,
+ * This test suite explores the main functionality of the VerseForge application,
  * covering authentication, admin panel access, and universe management features.
  * 
  * Test Credentials:
  * - Admin User: admin@universe-writer.com / WriteTheStars2025!
  */
 
-test.describe('Universe Book Writer - Application Exploration', () => {
+test.describe('VerseForge - Application Exploration', () => {
     const baseURL = 'http://localhost:5173';
 
     // Admin credentials found in the E2E test file
@@ -26,7 +26,7 @@ test.describe('Universe Book Writer - Application Exploration', () => {
 
     test('should successfully login as admin and explore dashboard', async ({ page }) => {
         // Verify we start at the login page
-        await expect(page.getByText('Universe Book Writer')).toBeVisible();
+        await expect(page.getByText('VerseForge')).toBeVisible();
         await expect(page.getByText('Sign in to access your writing universe')).toBeVisible();
 
         // Login with admin credentials
@@ -173,7 +173,7 @@ test.describe('Universe Book Writer - Application Exploration', () => {
         // Complete application exploration flow
 
         // 1. Start at login page
-        await expect(page.getByText('Universe Book Writer').first()).toBeVisible();
+        await expect(page.getByText('VerseForge').first()).toBeVisible();
 
         // 2. Login as admin
         await page.getByRole('textbox', { name: /email/i }).fill(adminCredentials.email);

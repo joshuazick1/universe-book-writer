@@ -1,8 +1,17 @@
 import { jest } from '@jest/globals';
+
+// Mock the persistence module before importing any other modules
+jest.unstable_mockModule('../src/orchestrator-persistence.js', () => ({
+    saveServersToDisk: jest.fn(),
+    loadServersFromDisk: jest.fn(() => [])
+}));
+
 let orchestratorInstance: any;
 let AIOrchestrator: any;
+let persistenceMock: any;
 
 beforeAll(async () => {
+    persistenceMock = await import('../src/orchestrator-persistence.js');
     orchestratorInstance = await import('../src/orchestrator-instance');
     AIOrchestrator = (await import('../src/orchestrator')).AIOrchestrator;
 });
@@ -10,6 +19,7 @@ beforeAll(async () => {
 describe('orchestrator-instance.ts', () => {
     afterEach(() => {
         orchestratorInstance.resetOrchestratorInstance();
+        jest.clearAllMocks();
     });
 
     it('should create a singleton orchestrator instance', () => {
@@ -27,21 +37,21 @@ describe('orchestrator-instance.ts', () => {
         expect(inst2).toBeInstanceOf(AIOrchestrator);
     });
 
-    it('should handle error/fallback logic in addServer/removeServer patching', () => {
+    it('should handle error/fallback logic in addServer/removeServer patching', async () => {
         const orchestrator = orchestratorInstance.getOrchestratorInstance();
-        // Simulate addServer/saveServersToDisk throwing
-        const spy = jest.spyOn(
-            require('../src/orchestrator-persistence'),
-            'saveServersToDisk'
-        ).mockImplementation(() => { throw new Error('Disk error'); });
+
+        // Simulate saveServersToDisk throwing
+        (persistenceMock.saveServersToDisk as jest.Mock).mockImplementation(() => {
+            throw new Error('Disk error');
+        });
+
         expect(() => orchestrator.addServer({ id: 'fail', url: 'http://fail', type: 'ollama' })).toThrow('Disk error');
-        spy.mockRestore();
-        // Simulate removeServer/saveServersToDisk throwing
-        const spy2 = jest.spyOn(
-            require('../src/orchestrator-persistence'),
-            'saveServersToDisk'
-        ).mockImplementation(() => { throw new Error('Disk error'); });
+
+        // Reset mock and test removeServer
+        (persistenceMock.saveServersToDisk as jest.Mock).mockImplementation(() => {
+            throw new Error('Disk error');
+        });
+
         expect(() => orchestrator.removeServer('fail')).toThrow('Disk error');
-        spy2.mockRestore();
     });
 });

@@ -31,7 +31,7 @@ jest.mock('react-router-dom', () => {
 });
 
 // Create API mock object - matches auth store test pattern
-const authApiMock = {
+const loginFormMockApi = {
   login: jest.fn(),
   register: jest.fn(),
   logout: jest.fn(),
@@ -47,7 +47,7 @@ const authApiMock = {
 
 // Mock the auth utils module - SAME AS AUTH STORE TEST
 jest.unstable_mockModule('../../src/auth/utils/index.ts', () => ({
-  authApi: authApiMock,
+  authApi: loginFormMockApi,
   authEvents: {
     emit: jest.fn(),
     on: jest.fn(),
@@ -80,7 +80,7 @@ describe('LoginForm - Using Working Mock Pattern', () => {
     mockNavigate.mockClear();
 
     // Set up successful mock response - SAME PATTERN AS AUTH STORE TEST
-    (authApiMock.login as any).mockResolvedValue({
+    (loginFormMockApi.login as any).mockResolvedValue({
       data: {
         success: true,
         data: { user: mockUser, message: 'Login successful' },
@@ -116,13 +116,13 @@ describe('LoginForm - Using Working Mock Pattern', () => {
       // Wait for the API to be called
       await waitFor(
         () => {
-          expect(authApiMock.login).toHaveBeenCalledTimes(1);
+          expect(loginFormMockApi.login).toHaveBeenCalledTimes(1);
         },
         { timeout: 5000 }
       );
 
       // Check that the API was called with correct data
-      expect(authApiMock.login).toHaveBeenCalledWith(validLogin);
+      expect(loginFormMockApi.login).toHaveBeenCalledWith(validLogin);
 
       // Check navigation was called
       await waitFor(() => {
@@ -132,7 +132,7 @@ describe('LoginForm - Using Working Mock Pattern', () => {
 
     it('should handle login errors', async () => {
       const errorMessage = 'Invalid credentials';
-      (authApiMock.login as any).mockRejectedValueOnce(new Error(errorMessage));
+      (loginFormMockApi.login as any).mockRejectedValueOnce(new Error(errorMessage));
 
       renderForm();
 
@@ -147,7 +147,7 @@ describe('LoginForm - Using Working Mock Pattern', () => {
       // Wait for the API to be called
       await waitFor(
         () => {
-          expect(authApiMock.login).toHaveBeenCalledWith(validLogin);
+          expect(loginFormMockApi.login).toHaveBeenCalledWith(validLogin);
         },
         { timeout: 5000 }
       );

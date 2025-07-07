@@ -10,7 +10,7 @@ import { UniverseEncryptionService } from '../src/core/services/universe-encrypt
 import { User, UserRole, UserStatus } from '../src/core/entities/user.entity.js';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const DB_NAME = 'universe_book_writer_test';
+const DB_NAME = 'verseforge_test';
 
 async function testUserLevelSaltEncryption() {
     console.log('🔐 Testing User-Level Salt Encryption...\n');

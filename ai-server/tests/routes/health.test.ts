@@ -1,36 +1,47 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
-
-jest.mock('../../src/orchestrator-instance', () => ({
-    getOrchestratorInstance: jest.fn()
-}));
+import { getOrchestratorInstance, resetOrchestratorInstance } from '../../src/orchestrator-instance.js';
 
 import healthRouter from '../../src/routes/health';
-import * as orchestratorInstance from '../../src/orchestrator-instance';
 
 describe('Health API', () => {
     let app: express.Express;
+    let orchestrator: any;
+
+    beforeAll(() => {
+        // Reset orchestrator and set up test state
+        resetOrchestratorInstance();
+        orchestrator = getOrchestratorInstance();
+    });
+
     beforeEach(() => {
         app = express();
         app.use(express.json());
+
+        // Set the orchestrator on app locals (required by routes)
+        app.locals.orchestrator = orchestrator;
+
         app.use('/api', healthRouter);
-        (orchestratorInstance.getOrchestratorInstance as jest.Mock).mockReset();
-        (orchestratorInstance.getOrchestratorInstance as jest.Mock).mockReturnValue({
-            getServers: jest.fn(() => [
-                {
-                    id: 's1',
-                    url: 'http://localhost:1234',
-                    type: 'ollama',
-                    healthy: true,
-                    lastResponseTime: 42,
-                    models: ['m1', 'm2'],
-                    maxConcurrency: 4
-                }
-            ]),
-            getServerAvgLatency: jest.fn(() => 123),
-            getInitialAvgResponseTime: jest.fn(() => 456)
-        });
+
+        // Mock orchestrator methods for health tests
+        jest.spyOn(orchestrator, 'getServers').mockReturnValue([
+            {
+                id: 's1',
+                url: 'http://localhost:1234',
+                type: 'ollama',
+                healthy: true,
+                lastResponseTime: 42,
+                models: ['m1', 'm2'],
+                maxConcurrency: 4
+            }
+        ]);
+        jest.spyOn(orchestrator, 'getServerAvgLatency').mockReturnValue(123);
+        jest.spyOn(orchestrator, 'getInitialAvgResponseTime').mockReturnValue(456);
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
     });
 
     it('GET /health returns status ok and timestamp', async () => {
@@ -60,11 +71,7 @@ describe('Health API', () => {
     });
 
     it('GET /orchestrator/health handles empty server list', async () => {
-        (orchestratorInstance.getOrchestratorInstance as jest.Mock).mockReturnValue({
-            getServers: jest.fn(() => []),
-            getServerAvgLatency: jest.fn(),
-            getInitialAvgResponseTime: jest.fn()
-        });
+        orchestrator.getServers.mockReturnValue([]);
         const res = await request(app).get('/api/orchestrator/health');
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('servers');
@@ -72,7 +79,7 @@ describe('Health API', () => {
     });
 
     it('GET /orchestrator/health handles orchestrator errors', async () => {
-        (orchestratorInstance.getOrchestratorInstance as jest.Mock).mockImplementation(() => { throw new Error('fail'); });
+        orchestrator.getServers.mockImplementation(() => { throw new Error('fail'); });
         const res = await request(app).get('/api/orchestrator/health');
         // Should return 500 or handle error gracefully
         expect([200, 500]).toContain(res.status);

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import orchestrator from '../orchestrator-instance.js';
+import { getOrchestratorInstance } from '../orchestrator-instance.js';
 
 const router = Router();
 
@@ -12,7 +12,9 @@ router.get('/', (_req, res) => {
 router.get('/:model', (async (req: any, res: any) => {
     const { model } = req.params as { model: string };
     if (!model) return res.status(400).json({ error: 'Model name is required.' });
-    const servers = orchestrator.getServers().filter(s => s.healthy && s.models.includes(model));
+    // Use orchestrator from app.locals if available, else fallback to singleton
+    const orchestrator = req.app?.locals?.orchestrator || getOrchestratorInstance();
+    const servers = orchestrator.getServers().filter((s: any) => s.healthy && s.models.includes(model));
     if (servers.length === 0) return res.status(404).json({ error: `model '${model}' not found` });
     const allModelInfo: any = {};
     for (const server of servers) {

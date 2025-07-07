@@ -1,6 +1,8 @@
 import { jest } from '@jest/globals';
+
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 let persistence: any;
 let orchestratorTypes: any;
@@ -19,13 +21,22 @@ beforeAll(async () => {
     orchestratorTypes = await import('../src/orchestrator');
 });
 
+
 describe('orchestrator-persistence.ts', () => {
+    // Use the same logic as the implementation to construct the persist path (ESM compatible)
     const persistPath = path.join(
-        path.dirname(require.resolve('../src/orchestrator-persistence.ts')),
+        path.dirname(fileURLToPath(import.meta.url)),
         '../data/orchestrator-servers.json'
     );
 
+    beforeEach(() => {
+        // Ensure clean state before each test
+        if (fs.existsSync(persistPath)) {
+            fs.unlinkSync(persistPath);
+        }
+    });
     afterEach(() => {
+        // Clean up after each test
         if (fs.existsSync(persistPath)) {
             fs.unlinkSync(persistPath);
         }

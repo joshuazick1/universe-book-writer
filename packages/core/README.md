@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `@universe-book-writer/core` package provides the foundational business logic, domain models, and shared utilities for the Universe Book Writer application. This package serves as the central hub for type definitions, validation schemas, and core functionality that is used across all other packages and applications.
+The `@verseforge/core` package provides the foundational business logic, domain models, and shared utilities for the VerseForge application. This package serves as the central hub for type definitions, validation schemas, and core functionality that is used across all other packages and applications.
 
 ## Architecture
 
@@ -932,7 +932,7 @@ The core package is imported and used throughout the application:
 
 ```typescript
 // In backend API
-import { UniverseValidator, ValidationError } from '@universe-book-writer/core';
+import { UniverseValidator, ValidationError } from '@verseforge/core';
 
 app.post('/api/universes', async (req, res) => {
   try {
@@ -954,7 +954,7 @@ app.post('/api/universes', async (req, res) => {
 });
 
 // In frontend components
-import { Character, CharacterValidator } from '@universe-book-writer/core';
+import { Character, CharacterValidator } from '@verseforge/core';
 
 const CharacterForm: React.FC = () => {
   const [character, setCharacter] = useState<Partial<Character>>({});
@@ -981,9 +981,9 @@ const CharacterForm: React.FC = () => {
 
 ```json
 {
-  "name": "@universe-book-writer/core",
+  "name": "@verseforge/core",
   "version": "1.0.0",
-  "description": "Core business logic and types for Universe Book Writer",
+  "description": "Core business logic and types for VerseForge",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -1034,4 +1034,4 @@ const CharacterForm: React.FC = () => {
 
 ## Conclusion
 
-The `@universe-book-writer/core` package provides a solid foundation for the entire application with comprehensive type safety, validation, and domain modeling. It serves as the single source of truth for business logic and ensures consistency across all application layers while maintaining framework independence and reusability.
+The `@verseforge/core` package provides a solid foundation for the entire application with comprehensive type safety, validation, and domain modeling. It serves as the single source of truth for business logic and ensures consistency across all application layers while maintaining framework independence and reusability.

@@ -283,7 +283,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           {/* Version Info */}
           <div className="mt-6 pt-6 border-t border-white border-opacity-20">
             <div className="px-3 text-xs" style={{ color: 'var(--color-universe-text)', opacity: 0.5 }}>
-              <p>Universe Book Writer</p>
+              <p>VerseForge</p>
               <p>Version: 0.1.0</p>
             </div>
           </div>

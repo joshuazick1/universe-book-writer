@@ -1,5 +1,5 @@
 /**
- * Main Stylesheet - Universe Book Writer
+ * Main Stylesheet - VerseForge
  * Imports design tokens, base styles, and component styles
  */
 
@@ -114,12 +114,10 @@ p {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--color-universe-primary),
-    var(--color-universe-secondary),
-    var(--color-universe-accent)
-  );
+  background: linear-gradient(90deg,
+      var(--color-universe-primary),
+      var(--color-universe-secondary),
+      var(--color-universe-accent));
   animation: scan 2s linear infinite;
 }
 
@@ -127,6 +125,7 @@ p {
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }

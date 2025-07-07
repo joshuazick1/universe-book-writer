@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
 import { MongoClient } from 'mongodb';
-import { PluginState } from '@universe-book-writer/core';
+import { PluginState } from '@verseforge/core';
 import type { PluginUseCase } from '../../src/application/use-cases/plugin.use-case.js';
 import { PluginSystemFactory } from '../../src/plugins/manager/plugin-system.factory.js';
 import { setupMongoForTest } from '../helpers/mongodb-test-helper.js';

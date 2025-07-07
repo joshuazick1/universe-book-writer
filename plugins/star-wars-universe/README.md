@@ -1,6 +1,6 @@
 # Star Wars Universe Plugin
 
-**Version**: 1.0.0  
+**Version**: 0.0.1-dev  
 **Architecture**: Faction-Based  
 **Focus**: Galactic Politics & Force Powers
 
@@ -233,7 +233,7 @@ When contributing to the Star Wars plugin, maintain the architectural difference
 
 ## License
 
-MIT License - Part of the Universe Book Writer project.
+MIT License - Part of the VerseForge project.
 
 ---
 

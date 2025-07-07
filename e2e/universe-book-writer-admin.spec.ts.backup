@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Universe Book Writer - Admin Panel Test Suite
+ * VerseForge - Admin Panel Test Suite
  * 
- * This test suite covers the key functionality of the Universe Book Writer application,
+ * This test suite covers the key functionality of the VerseForge application,
  * focusing on authentication, role-based access control, and admin panel features.
  * 
  * Test Credentials:
@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
  * - Regular User: testcollab@example.com / z?j%K=5#&APRvH9b
  */
 
-test.describe('Universe Book Writer - Admin Panel Functionality', () => {
+test.describe('VerseForge - Admin Panel Functionality', () => {
     const baseURL = 'http://localhost:5173';
 
     // Test credentials
@@ -108,7 +108,7 @@ test.describe('Universe Book Writer - Admin Panel Functionality', () => {
         }
 
         // Verify the main page loads correctly
-        await expect(page).toHaveTitle('Universe Book Writer');
+        await expect(page).toHaveTitle('VerseForge');
 
         // Check for key dashboard elements
         await expect(page.getByText('Phase A.1 Authentication Complete')).toBeVisible();

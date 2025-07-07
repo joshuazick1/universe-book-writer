@@ -1,6 +1,6 @@
 # Enhanced Test Runner
 
-An advanced testing system for the Universe Book Writer project that provides organized output management, log rotation, and flexible test execution options.
+An advanced testing system for the VerseForge project that provides organized output management, log rotation, and flexible test execution options.
 
 ## Features
 

@@ -6,7 +6,7 @@ import { MongoClient } from 'mongodb';
 
 async function createUniverseCollections() {
     const url = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-    const dbName = process.env.MONGODB_DB_NAME || 'universe_book_writer';
+    const dbName = process.env.MONGODB_DB_NAME || 'verseforge';
 
     console.log('Creating universe management collections...');
 

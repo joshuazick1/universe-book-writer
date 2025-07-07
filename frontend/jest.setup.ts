@@ -1,12 +1,19 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+
+// Polyfill fetch API
+import 'whatwg-fetch';
+
+// Polyfill TextEncoder/TextDecoder
+Object.assign(global, { TextDecoder, TextEncoder });
 
 // Mock DOM APIs that might be missing in jsdom
 global.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe() { }
+  unobserve() { }
+  disconnect() { }
 };
 
 global.IntersectionObserver = class IntersectionObserver {
@@ -14,11 +21,11 @@ global.IntersectionObserver = class IntersectionObserver {
   rootMargin: string = '0px';
   thresholds: ReadonlyArray<number> = [0];
 
-  constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {}
+  constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) { }
 
-  observe(_target: Element) {}
-  unobserve(_target: Element) {}
-  disconnect() {}
+  observe(_target: Element) { }
+  unobserve(_target: Element) { }
+  disconnect() { }
   takeRecords(): IntersectionObserverEntry[] {
     return [];
   }
@@ -39,11 +46,11 @@ Object.defineProperty(window, 'matchMedia', {
     matches: false,
     media: query,
     onchange: null,
-    addListener: () => {}, // deprecated
-    removeListener: () => {}, // deprecated
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => {},
+    addListener: () => { }, // deprecated
+    removeListener: () => { }, // deprecated
+    addEventListener: () => { },
+    removeEventListener: () => { },
+    dispatchEvent: () => { },
   }),
 });
 

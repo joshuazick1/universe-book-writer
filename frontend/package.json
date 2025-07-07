@@ -1,6 +1,6 @@
 {
-  "name": "@universe-book-writer/frontend",
-  "version": "0.1.0",
+  "name": "@verseforge/frontend",
+  "version": "0.0.1-alpha.1",
   "private": true,
   "type": "module",
   "scripts": {

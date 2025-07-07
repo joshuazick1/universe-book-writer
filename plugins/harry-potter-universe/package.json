@@ -1,8 +1,8 @@
 {
-    "name": "@universe-book-writer/harry-potter-universe",
-    "version": "1.0.0",
+    "name": "@verseforge/harry-potter-universe",
+    "version": "0.0.1-dev",
     "description": "Official Harry Potter Universe plugin with magical systems and Hogwarts school mechanics",
-    "author": "Universe Book Writer Team",
+    "author": "VerseForge Team",
     "license": "MIT",
     "type": "module",
     "keywords": [
@@ -26,8 +26,8 @@
         "dev": "tsc --watch"
     },
     "dependencies": {
-        "@universe-book-writer/core": "file:../../packages/core",
-        "@universe-book-writer/plugin-sdk": "file:../../packages/plugin-sdk"
+        "@verseforge/core": "file:../../packages/core",
+        "@verseforge/plugin-sdk": "file:../../packages/plugin-sdk"
     },
     "devDependencies": {
         "@types/node": "^20.0.0",
@@ -38,11 +38,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/universe-book-writer/plugins",
+        "url": "https://github.com/verseforge/plugins",
         "directory": "harry-potter-universe"
     },
     "peerDependencies": {
-        "@universe-book-writer/plugin-sdk": "file:../../packages/plugin-sdk"
+        "@verseforge/plugin-sdk": "file:../../packages/plugin-sdk"
     },
     "metadata": {
         "universe": "harry-potter",

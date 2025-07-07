@@ -16,7 +16,7 @@
 
 ## Overview
 
-The Universe Book Writer frontend is a modern React application built with TypeScript, Vite, and Tailwind CSS. It provides an intuitive interface for managing multi-universe book series with real-time collaboration, AI assistance, and extensible plugin support.
+The VerseForge frontend is a modern React application built with TypeScript, Vite, and Tailwind CSS. It provides an intuitive interface for managing multi-universe book series with real-time collaboration, AI assistance, and extensible plugin support.
 
 ### Technology Stack
 
@@ -127,7 +127,7 @@ Located in `src/components/features/`, these are complex, feature-specific compo
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd Universe_Book_Writer
+cd verseforge
 
 # Install dependencies
 cd frontend
@@ -350,14 +350,14 @@ export const useAppStore = create<AppState>()(
         ...createUISlice(...args),
       }),
       {
-        name: 'universe-book-writer-store',
+        name: 'verseforge-store',
         partialize: (state) => ({
           auth: state.auth,
           preferences: state.preferences,
         }),
       }
     ),
-    { name: 'universe-book-writer' }
+    { name: 'verseforge' }
   )
 );
 ```
@@ -823,7 +823,7 @@ export const starTrekPlugin: PluginConfig = {
   name: 'Star Trek Universe',
   version: '1.0.0',
   description: 'Official Star Trek universe plugin',
-  author: 'Universe Book Writer Team',
+  author: 'VerseForge Team',
   universeType: 'star-trek',
   components: {
     CharacterForm: StarfleetCharacterForm,
@@ -1105,4 +1105,4 @@ export default defineConfig(({ mode }) => ({
 
 **Version**: 1.0.0  
 **Last Updated**: 2024  
-**Maintainer**: Universe Book Writer Team
+**Maintainer**: VerseForge Team

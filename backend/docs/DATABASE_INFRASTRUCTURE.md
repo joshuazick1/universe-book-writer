@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Universe Book Writer project uses a dual-database architecture with MongoDB as the primary document store and Redis for caching and session management. This document provides comprehensive coverage of the database infrastructure, including setup, configuration, migration system, validation, and operational procedures.
+The VerseForge project uses a dual-database architecture with MongoDB as the primary document store and Redis for caching and session management. This document provides comprehensive coverage of the database infrastructure, including setup, configuration, migration system, validation, and operational procedures.
 
 ## Architecture Overview
 
@@ -74,7 +74,7 @@ interface MongoDBConfig {
 ```bash
 # MongoDB Primary Configuration
 MONGODB_URI=mongodb://localhost:27017
-MONGODB_DB_NAME=universe_book_writer
+MONGODB_DB_NAME=verseforge
 
 # Connection Pool Settings
 MONGODB_MAX_POOL_SIZE=10
@@ -632,7 +632,7 @@ export class StoryValidator extends BaseValidator<Story> {
 
 ```typescript
 import { Request, Response, NextFunction } from 'express';
-import { ValidationError } from '@universe-book-writer/core';
+import { ValidationError } from '@verseforge/core';
 
 export function validateRequest<T>(validator: BaseValidator<T>) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -775,7 +775,7 @@ jest.mock('ioredis', () => {
 # Test Environment Configuration
 MONGODB_URI=mongodb://localhost:27017
 NODE_ENV=test
-TEST_DB_PREFIX=universe_book_writer_test
+TEST_DB_PREFIX=verseforge_test
 REDIS_HOST=localhost
 REDIS_PORT=6379
 ```
@@ -1104,7 +1104,7 @@ REDIS_CACHE_TTL=3600      # 1 hour
 ```bash
 # MongoDB Development Settings
 MONGODB_URI=mongodb://localhost:27017
-MONGODB_DB_NAME=universe_book_writer_dev
+MONGODB_DB_NAME=verseforge_dev
 MONGODB_MAX_POOL_SIZE=10
 MONGODB_MIN_POOL_SIZE=2
 
@@ -1121,7 +1121,7 @@ REDIS_CACHE_TTL=1800      # 30 minutes
 ```bash
 # MongoDB Test Settings
 MONGODB_URI=mongodb://localhost:27017
-TEST_DB_PREFIX=universe_book_writer_test
+TEST_DB_PREFIX=verseforge_test
 MONGODB_MAX_POOL_SIZE=5
 
 # Redis Test Settings (uses ioredis-mock)
@@ -1161,6 +1161,6 @@ REDIS_MOCK_ENABLED=true
 
 ## Conclusion
 
-The database infrastructure provides a robust foundation for the Universe Book Writer application with comprehensive support for data storage, validation, migration, and performance optimization. The dual-database architecture ensures optimal performance for both persistent storage and real-time operations while maintaining data consistency and security.
+The database infrastructure provides a robust foundation for the VerseForge application with comprehensive support for data storage, validation, migration, and performance optimization. The dual-database architecture ensures optimal performance for both persistent storage and real-time operations while maintaining data consistency and security.
 
 The system is designed for scalability and maintainability, with comprehensive testing, monitoring, and troubleshooting capabilities to ensure reliable operation in production environments.

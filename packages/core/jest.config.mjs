@@ -9,7 +9,7 @@ export default {
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  
+
   transform: {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
@@ -19,23 +19,24 @@ export default {
       },
     ],
   },
-  
+
   moduleNameMapper: {
-    // Handle JS imports without extensions
+    // Handle JS imports without extensions (packages use .js extension for TS files)
     '^(\\.{1,2}/.*)\\.js$': '$1',
     // Handle TypeScript imports
     '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
     // Path aliases
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  
+
   testMatch: [
     '<rootDir>/**/*.test.{ts,js}',
     '<rootDir>/**/__tests__/**/*.{ts,js}'
   ],
-  
-  setupFilesAfterEnv: ['../../jest.setup.ts'],
-  
+
+  // ESM configuration
+  preset: 'ts-jest/presets/default-esm',
+
   // Test execution configuration
   passWithNoTests: true,
   verbose: true,
@@ -43,9 +44,9 @@ export default {
   forceExit: true,
   maxWorkers: 1,
   testTimeout: 15000,
-  
+
   transformIgnorePatterns: ['/node_modules/(?!(@?mongodb.*|bson)/)'],
-  
+
   // Coverage configuration
   collectCoverageFrom: [
     '<rootDir>/src/**/*.{ts,tsx}',

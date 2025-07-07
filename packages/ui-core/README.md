@@ -1,6 +1,6 @@
-# UI Core Package (@universe-book-writer/ui-core)
+# UI Core Package (@verseforge/ui-core)
 
-A foundational React UI component library providing core design system components, hooks, and utilities for the Universe Book Writer application. This package serves as the base layer for all user interface components across the platform.
+A foundational React UI component library providing core design system components, hooks, and utilities for the VerseForge application. This package serves as the base layer for all user interface components across the platform.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ A foundational React UI component library providing core design system component
 ## Installation
 
 ```bash
-npm install @universe-book-writer/ui-core
+npm install @verseforge/ui-core
 ```
 
 ## Core Philosophy
@@ -291,7 +291,7 @@ interface Theme {
 ### Theme Provider
 
 ```typescript
-import { ThemeProvider, createTheme } from '@universe-book-writer/ui-core';
+import { ThemeProvider, createTheme } from '@verseforge/ui-core';
 
 const customTheme = createTheme({
   colors: {
@@ -314,7 +314,7 @@ function App() {
 ### Dark Mode Support
 
 ```typescript
-import { useDarkMode, DarkModeProvider } from '@universe-book-writer/ui-core';
+import { useDarkMode, DarkModeProvider } from '@verseforge/ui-core';
 
 function ThemeToggle() {
   const { isDark, toggle } = useDarkMode();
@@ -350,7 +350,7 @@ function ThemeToggle() {
 ### Implementation Example
 
 ```typescript
-import { useA11y } from '@universe-book-writer/ui-core';
+import { useA11y } from '@verseforge/ui-core';
 
 function AccessibleButton({ children, ...props }) {
   const { focusProps, pressProps } = useA11y();
@@ -386,7 +386,7 @@ const breakpoints = {
 ### Responsive Hooks
 
 ```typescript
-import { useBreakpoint, useMediaQuery } from '@universe-book-writer/ui-core';
+import { useBreakpoint, useMediaQuery } from '@verseforge/ui-core';
 
 function ResponsiveComponent() {
   const breakpoint = useBreakpoint();
@@ -407,7 +407,7 @@ function ResponsiveComponent() {
 ### Transition Utilities
 
 ```typescript
-import { motion, Transition } from '@universe-book-writer/ui-core';
+import { motion, Transition } from '@verseforge/ui-core';
 
 const fadeIn: Transition = {
   initial: { opacity: 0 },
@@ -439,7 +439,7 @@ function AnimatedCard() {
 ### Form Components
 
 ```typescript
-import { Form, FormField, FormValidation } from '@universe-book-writer/ui-core';
+import { Form, FormField, FormValidation } from '@verseforge/ui-core';
 
 const schema = z.object({
   email: z.string().email(),
@@ -474,7 +474,7 @@ function SignupForm() {
 ### Validation Integration
 
 ```typescript
-import { useFormValidation } from '@universe-book-writer/ui-core';
+import { useFormValidation } from '@verseforge/ui-core';
 
 function CustomForm() {
   const {
@@ -534,7 +534,7 @@ function StarTrekApp() {
 
 ```typescript
 // Extend base components for universe-specific needs
-import { Button as BaseButton } from '@universe-book-writer/ui-core';
+import { Button as BaseButton } from '@verseforge/ui-core';
 
 interface StarfleetButtonProps extends ButtonProps {
   rank?: 'ensign' | 'lieutenant' | 'commander' | 'captain';
@@ -704,10 +704,10 @@ Breaking changes and migration steps will be documented here when new versions a
 
 ## License
 
-Private - Universe Book Writer Project
+Private - VerseForge Project
 
 ---
 
-**Version**: 0.1.0  
+**Version**: 0.0.1-alpha.1  
 **Last Updated**: 2024  
-**Maintainer**: Universe Book Writer Team
+**Maintainer**: VerseForge Team

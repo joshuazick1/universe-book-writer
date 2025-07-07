@@ -1,27 +1,29 @@
-# Phase A.4: Integration Testing & Quality Assurance
+# Phase A.4: Integration Testing & RAG Interactivity
 
-**Duration**: 1-2 days (significantly reduced from 2-3 days due to A.2.5 testing infrastructure)  
-**Status**: ⏳ **AWAITING A.2.5 & A.3**  
-**Priority**: CRITICAL - Foundation validation before AI integration  
-**Dependencies**: Phase A.2.5 Enhanced Foundation ✅ Required, Phase A.3 Story Management ✅ Required
+> **This file is the canonical source for requirements, status, and planning for this phase.**
 
-## ✨ **A.2.5 TESTING INFRASTRUCTURE BENEFITS**
+**Duration**: 2-3 days (RAG testing + UI interactivity)  
+**Status**: ⏳ **AWAITING A.2.6 RAG FOUNDATION & A.3 UI FRAMEWORK**  
+**Priority**: CRITICAL - RAG integration validation and UI interactivity before Phase B  
+**Dependencies**: Phase A.2.6 RAG Architecture ✅ Required, Phase A.3 RAG-Aware UI Framework ✅ Required
 
-**Dramatically Streamlined Testing**: The comprehensive testing infrastructure built in Phase A.2.5 eliminates most manual testing requirements:
+## ✨ **A.2.6 RAG & A.3 UI FOUNDATION BENEFITS**
 
-### **🎯 Pre-Built Testing Systems Available**
-- **✅ Automated E2E Test Suite**: Complete user workflow automation with Playwright
-- **✅ Performance Monitoring**: Real-time metrics and automated benchmark validation
-- **✅ Security Testing Framework**: Automated vulnerability scanning and penetration testing
-- **✅ Mobile Testing Infrastructure**: Cross-device and cross-browser validation automation
-- **✅ Plugin Integration Testing**: Comprehensive plugin lifecycle and override testing
+**Knowledge-Integrated Testing**: The comprehensive RAG architecture from A.2.6 and knowledge-aware UI framework from A.3 enable advanced integration testing:
 
-### **🚀 Testing Velocity Multipliers**
-- **Automated Regression Testing**: Continuous validation of all existing functionality
-- **Real-time Performance Monitoring**: Instant detection of performance degradation
-- **Comprehensive Error Tracking**: Automatic issue detection and categorization
-- **Cross-Platform Validation**: Automated testing across all supported platforms
-- **Security Audit Automation**: Continuous security posture monitoring
+### **🎯 RAG-Powered Systems Available**
+- **✅ Complete RAG Knowledge Graph**: Nodes, relationships, context layers, and timeline integration
+- **✅ AI Server RAG Endpoints**: Semantic search, context assembly, and knowledge graph APIs
+- **✅ RAG-Aware UI Modules**: All major modules integrated with knowledge graph
+- **✅ Plugin System v2**: RAG-native plugins with knowledge seeding capabilities
+- **✅ Multimodal Routing Foundation**: Basic framework for intelligent AI task routing
+
+### **🚀 Advanced Integration Testing Focus**
+- **Knowledge Graph Workflows**: End-to-end testing of RAG node and relationship operations
+- **Context Assembly Testing**: AI Chat Box context retrieval from knowledge graph
+- **Timeline Integration Testing**: Character/event intersection queries and visualization
+- **Plugin Integration Testing**: Plugin v2 integration with RAG system
+- **Semantic Search Validation**: Cross-module knowledge discovery and navigation
 
 ## 🧭 Navigation Links
 
@@ -32,9 +34,10 @@
 ### **🔄 Phase A Workflow**
 - **A.1: Authentication** ✅ **COMPLETE**
 - **A.2: Universe Management** ✅ **COMPLETE**
-- **[A.2.5: Plugin Override System & Foundation Hardening](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** 🔄 **PREREQUISITE**
-- **[A.3: Story Management](./PHASE_A3_STORY_MANAGEMENT_V2.md)** ⏳ **PREREQUISITE**
-- **A.4: Integration Testing** ⏳ **CURRENT**
+- **[A.2.5: Plugin Override System & Foundation Hardening](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** ✅ **COMPLETE**
+- **[A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md)** ✅ **PREREQUISITE**
+- **[A.3: Story Management & UI Framework](./PHASE_A3_STORY_MANAGEMENT_V2.md)** ✅ **PREREQUISITE**
+- **A.4: Integration Testing & UI Interactivity** ⏳ **CURRENT**
 
 ### **🔗 Handoff to Next Phases**
 - **[Phase B: Security & Plugin Foundation](./PHASE_B_SECURITY_PLUGIN_FOUNDATION.md)** 🔒 **IMMEDIATE NEXT**
@@ -46,34 +49,41 @@
 
 ## Subphase Overview
 
-Phase A.4 provides comprehensive end-to-end testing and validation of the complete foundation system established in Phases A.1-A.3. This phase ensures system reliability, performance, and user experience quality before building advanced features.
+Phase A.4 focuses on making all UI modules interactive and validating end-to-end workflows. Building on the UI framework from A.3 and the production-ready foundation from A.2.6, this phase enables basic flows and prepares the system for advanced features.
 
-**Core Philosophy**: *"Validate everything works together seamlessly, including advanced permissions, encryption, and spoiler protection, before adding complexity"*
+**Core Philosophy**: *"All UI modules are interactive with basic workflows testable, leveraging knowledge graph integration"*
 
 ### **Key Deliverables**
-- Complete end-to-end workflow validation **with permission and encryption testing**
-- **Advanced permission system validation** across all privacy levels
-- **Multi-scope encryption testing** (user/universe/book/public)
-- **Spoiler protection system testing** with content diff validation
-- **Canon labeling and approval workflow testing**
-- Cross-device synchronization testing **with encryption preservation**
-- Performance benchmark verification **for encrypted operations**
-- Security vulnerability assessment **for all permission boundaries**
-- User experience validation **for collaborative features**
-- System documentation and handoff preparation
+
+#### **RAG Integration Testing (Primary Focus)**
+- **End-to-end knowledge graph workflows**: Node creation, relationship mapping, context assembly
+- **RAG query flows**: Semantic search, timeline queries, and context retrieval testing
+- **Knowledge graph navigation**: Obsidian-style exploration and filtering validation
+- **AI Chat Box context assembly**: RAG-powered context retrieval for AI interactions
+- **Plugin integration testing**: Plugin v2 integration with RAG system and knowledge seeding
+- **Performance testing**: RAG + database hybrid query performance validation
+
+#### **UI Interactivity (Knowledge-Aware)**
+- **Interactive knowledge map**: Plugin-specific visualizations and relationship exploration
+- **Timeline interactivity**: Character/event intersection navigation and temporal queries
+- **Context-aware AI Chat**: Multimodal routing foundation and extensibility framework
+- **Plugin-specific features**: Universe-specific node types and relationship displays
+- **Cross-module navigation**: Seamless RAG-powered data flow between modules
+
+#### **System Preparation for Phase B & C**
+- **AI integration readiness**: RAG context assembly validation for Phase C
+- **Plugin security validation**: Plugin v2 security framework testing for Phase B
+- **Performance benchmarks**: RAG query performance meets targets for advanced features
 
 ### **Success Criteria**
-- All user workflows complete successfully end-to-end **with proper permission validation**
-- **Permission boundaries properly enforced** at universe and book levels
-- **Multi-scope encryption** protects content appropriately and performs within benchmarks
-- **Spoiler protection** prevents unauthorized content exposure
-- **Canon conflict resolution** works according to flexible policies
-- **Collaborative features** support real-time editing with proper access controls
-- Performance benchmarks met for all operations **including encrypted content**
-- Security assessment passes with no critical vulnerabilities **in permission or encryption systems**
-- User experience testing shows >4.0/5 satisfaction **for collaborative and privacy features**
-- Cross-device functionality works reliably **with encryption sync**
-- System ready for Phase B development **with validated security foundation**
+- **All UI modules are interactive with basic workflows testable**
+- **AI Chat Box extensibility framework is functional**
+- Knowledge graph integration working in Timeline, Reference, and AI Chat modules
+- Plugin override system working with interactive components
+- Basic user workflows complete successfully end-to-end
+- Performance benchmarks met for interactive operations
+- Mobile experience is responsive and accessible
+- System ready for Phase B development with validated UI foundation
 
 ## Daily Implementation Plan
 

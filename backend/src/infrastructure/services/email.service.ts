@@ -27,7 +27,7 @@ export class NodemailerEmailService implements EmailService {
     async sendEmailVerification(email: string, token: string): Promise<void> {
         try {
             const mailOptions = {
-                from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                 to: email,
                 subject: 'Verify Your Email Address',
                 html: `
@@ -62,7 +62,7 @@ export class NodemailerEmailService implements EmailService {
     async sendPasswordResetEmail(email: string, token: string): Promise<void> {
         try {
             const mailOptions = {
-                from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                 to: email,
                 subject: 'Reset Your Password',
                 html: `
@@ -97,7 +97,7 @@ export class NodemailerEmailService implements EmailService {
     ): Promise<void> {
         try {
             const mailOptions = {
-                from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                 to: email,
                 subject: 'New Login Detected',
                 html: `
@@ -130,7 +130,7 @@ export class NodemailerEmailService implements EmailService {
     ): Promise<void> {
         try {
             const mailOptions = {
-                from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                 to: email,
                 subject: `Security Alert: ${alertType}`,
                 html: `
@@ -164,7 +164,7 @@ export class NodemailerEmailService implements EmailService {
     ): Promise<void> {
         try {
             const mailOptions = {
-                from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                 to: email,
                 subject: `Invitation to collaborate on "${universeName}"`,
                 html: `
@@ -201,7 +201,7 @@ export class NodemailerEmailService implements EmailService {
     ): Promise<void> {
         try {
             const mailOptions = {
-                from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                 to: email,
                 subject: `You've been added to collaborate on "${universeName}"`,
                 html: `
@@ -236,7 +236,7 @@ export class NodemailerEmailService implements EmailService {
     ): Promise<void> {
         try {
             const mailOptions = {
-                from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                 to: email,
                 subject: `Removed from collaboration on "${universeName}"`,
                 html: `
@@ -267,7 +267,7 @@ export class NodemailerEmailService implements EmailService {
         try {
             const promises = recipients.map(email => {
                 const mailOptions = {
-                    from: process.env.EMAIL_FROM || 'noreply@universe-book-writer.com',
+                    from: process.env.EMAIL_FROM || 'noreply@verseforge.com',
                     to: email,
                     subject,
                     html: htmlContent,

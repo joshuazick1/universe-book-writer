@@ -1,264 +1,225 @@
-# Multi-Universe Book Series Writing Assistant
+# VerseForge
 
-A comprehensive, AI-powered writing assistant designed to help authors create and manage complex book series across multiple fictional universes. The application features a robust plugin-based architecture that supports any fictional universe through a consistent, extensible interface.
+A comprehensive, AI-powered writing assistant for crafting and managing book series across multiple fictional universes. Built for extensibility, collaboration, and reliability, it empowers authors and teams to create, organize, and maintain complex worlds and stories with confidence.
 
-## 🚀 Project Status
+---
 
-**Current Phase**: Phase 1 Foundation - **COMPLETED** ✅
+## 🚦 Project Status
 
-All foundational infrastructure has been implemented and documented, including:
-- ✅ Plugin system with hot reload
-- ✅ JWT-based authentication with role management  
-- ✅ MongoDB/Redis database infrastructure
-- ✅ AI server integration with Ollama
-- ✅ Real-time collaboration via WebSocket
-- ✅ Comprehensive UI component library
-- ✅ Complete API documentation
-- ✅ Production-ready deployment guides
+- **Current Version:** 0.0.1-alpha.1 (Development) – Phase A.2.5 Enhanced Foundation Optimized
+- **Status:** Phase A.2.5 In Progress (Rock-Solid Foundation First, Accelerated Development Later)
+- **Philosophy:** Invest in a robust, extensible foundation to dramatically reduce future development time and improve quality.
 
-## 🎯 Core Features
+---
 
-### Writing & World Building
-- **Universe Management**: Create and manage multiple fictional universes
-- **Story Architecture**: Structure complex multi-book series with consistency tracking
-- **Character Development**: Rich character profiles with relationship mapping
-- **Timeline Management**: Visual timelines and chronology validation
-- **Lore & Worldbuilding**: Comprehensive world documentation system
+## ✨ Key Features
 
-### AI-Powered Assistance
-- **Intelligent Writing Support**: Context-aware writing assistance via Ollama
-- **Consistency Checking**: Automated story and character consistency validation
-- **Content Generation**: AI-assisted plot development and scene creation
-- **Universe-Specific AI**: Tailored AI models for different fictional universes
+### World-Building & Story Management
+
+- **Universe Management:** Create, edit, and organize multiple universes with plugin-based customization.
+- **Story & Chapter Management:** Structure multi-book series, manage stories and chapters, and ensure narrative consistency.
+- **Character Development:** Rich profiles, relationship mapping, and cross-book tracking.
+- **Timeline & Lore Tools:** Visual timelines, lore documentation, and world consistency validation.
+
+### AI-Assisted Writing
+
+- **Ollama Integration:** Context-aware writing assistance, plot suggestions, and content generation.
+- **Consistency Checking:** Automated validation for story, character, and universe coherence.
+- **Universe-Specific AI:** Tailored models and prompt templates per universe/plugin.
 
 ### Collaboration & Productivity
-- **Real-Time Collaboration**: Multi-user editing with Operational Transform
-- **Version Control**: Track changes and manage document versions
-- **Plugin System**: Extensible architecture for universe-specific features
-- **Advanced Search**: Full-text search across all content with semantic matching
 
-## 🏗️ Architecture
+- **Real-Time Collaboration:** Multi-user editing, operational transform, and live sync.
+- **Version Control:** Track changes, manage document versions, and recover lost data.
+- **Advanced Search:** Full-text and semantic search across all content.
+- **Plugin System:** Extensible for universe-specific rules, UI, and AI.
 
-The project follows a modern, scalable monorepo architecture:
+---
+
+## 🏗️ Architecture Overview
+
+- **Monorepo:** All services and packages in a single repository.
+- **Layered Backend:** Core (domain), API, Application, Infrastructure.
+- **Frontend:** React + TypeScript + Vite + Tailwind CSS.
+- **AI Server:** Orchestrator for multiple Ollama instances, load balancing, and health monitoring.
+- **Collaboration Server:** Real-time sync via WebSocket.
+- **Database:** MongoDB (primary), Redis (caching/sessions).
 
 ```
-universe-book-writer/
+verseforge/
 ├── frontend/              # React + TypeScript + Vite
 ├── backend/               # Node.js + Express + TypeScript
-├── ai-server/             # Ollama integration & model management
+├── ai-server/             # Ollama orchestration & model management
 ├── collaboration-server/  # WebSocket server for real-time features
-├── packages/
-│   ├── core/             # Domain models & validation
-│   ├── ui-core/          # Base UI component library
-│   └── plugin-sdk/       # Plugin development framework
-├── plugins/              # Official universe plugins
-└── docs/                 # Comprehensive documentation
+├── packages/              # Core domain, UI, plugin SDK
+├── plugins/               # Official and custom universe plugins
+└── docs/                  # Comprehensive documentation
 ```
 
-## 📚 Documentation
+---
 
-**📋 [Complete Documentation Index](docs/DOCUMENTATION_INDEX.md)** - Find all documentation in one place
+## 🔌 API Overview
 
-### Quick Start Guides
-- **[Getting Started](docs/GETTING_STARTED.md)** - Setup and first run
-- **[Development Guide](docs/DEVELOPMENT_GUIDE.md)** - Development workflow
-- **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - Production deployment
+### Authentication
 
-### Architecture Documentation
-- **[Phase 1 Foundation Complete](docs/PHASE_1_FOUNDATION_COMPLETE.md)** - Implementation overview
-- **[Frontend Architecture](frontend/docs/FRONTEND_DOCUMENTATION.md)** - React architecture & patterns
-- **[Backend API Documentation](backend/docs/API_DOCUMENTATION.md)** - Complete REST API specification
-- **[Database Infrastructure](backend/docs/DATABASE_INFRASTRUCTURE.md)** - MongoDB & Redis setup
-- **[Authentication System](backend/docs/AUTHENTICATION_SYSTEM.md)** - JWT implementation & security
+- `POST /api/v1/auth/register` – Register new user
+- `POST /api/v1/auth/login` – Login and receive JWT
+- `POST /api/v1/auth/refresh` – Refresh JWT
+- `POST /api/v1/auth/logout` – Logout
+- `POST /api/v1/auth/forgot-password` – Request password reset
+- `POST /api/v1/auth/reset-password` – Reset password
+- `POST /api/v1/auth/verify-email` – Verify email
 
-### Component Libraries
-- **[UI Core Components](packages/ui-core/README.md)** - Base component library
-- **[Plugin SDK](packages/plugin-sdk/README.md)** - Plugin development framework
-- **[Core Domain Models](packages/core/README.md)** - Business logic & validation
+### User Management
 
-### Service Documentation
-- **[AI Server](ai-server/README.md)** - Ollama integration & model management
-- **[Collaboration Server](collaboration-server/README.md)** - Real-time features & WebSocket API
-- **[OpenAPI Specification](backend/docs/openapi.yaml)** - Machine-readable API documentation
+- `GET /api/v1/users/profile` – Get current user profile
+- `PUT /api/v1/users/profile` – Update profile
+- `PUT /api/v1/users/change-password` – Change password
+- `DELETE /api/v1/users/account` – Delete account
+- `GET /api/v1/users/:id` – Get user by ID
+- `GET /api/v1/users/` – List users (admin/mod)
+- `PUT /api/v1/users/:id/roles` – Update user role (admin)
+- `POST /api/v1/users/:id/suspend` – Suspend user (admin/mod)
+
+### Universe Management
+
+- `GET /api/v1/universes` – List universes
+- `POST /api/v1/universes` – Create universe
+- `GET /api/v1/universes/:id` – Get universe details
+- `PUT /api/v1/universes/:id` – Update universe
+- `DELETE /api/v1/universes/:id` – Delete universe
+- `POST /api/v1/universes/:id/collaborate` – Add collaborator
+
+### Story & Chapter Management
+
+- `GET /api/v1/universes/:universeId/stories` – List stories in universe
+- `POST /api/v1/universes/:universeId/stories` – Create story
+- `GET /api/v1/stories/:id` – Get story details
+- `PUT /api/v1/stories/:id` – Update story
+- `DELETE /api/v1/stories/:id` – Delete story
+- `GET /api/v1/stories/:id/chapters` – List chapters
+- `POST /api/v1/stories/:id/chapters` – Create chapter
+
+### Plugin Management
+
+- `GET /api/v1/plugins` – List plugins
+- `GET /api/v1/plugins/:name` – Plugin details
+- `POST /api/v1/plugins/load` – Load plugin
+- `POST /api/v1/plugins/:name/activate` – Activate plugin
+- `POST /api/v1/plugins/:name/deactivate` – Deactivate plugin
+- `DELETE /api/v1/plugins/:name` – Unload plugin
+- `PUT /api/v1/plugins/:name/config` – Update plugin config
+
+### Collaboration
+
+- `POST /api/v1/collaboration-invitations` – Create invitation
+- `GET /api/v1/collaboration-invitations/me` – My invitations
+- `POST /api/v1/collaboration-invitations/:token/accept` – Accept invitation
+- `POST /api/v1/collaboration-invitations/:token/decline` – Decline invitation
+
+### AI Server (Ollama Orchestrator)
+
+- `GET /health` – Server status
+- `POST /api/generate` – Text generation
+- `POST /api/generate/stream` – Streaming generation
+- `GET /api/models` – List models
+- `POST /api/models/pull` – Install model (admin)
+- `GET /api/servers/status` – Server status
+- `POST /api/config/strategy` – Change load balancing
+- `GET /api/orchestrator/benchmarks` – Benchmark data
+
+> See [backend/docs/API_DOCUMENTATION.md](backend/docs/API_DOCUMENTATION.md) and [ai-server/README.md](ai-server/README.md) for full details and request/response examples.
+
+---
+
+## 🧪 Testing & Quality
+
+- **Unit Tests:** Jest + Enhanced TypeScript runner (`npm test`, `npm run test:backend`, etc.)
+- **E2E Tests:** Playwright (`npm run test:e2e`)
+- **Coverage:** `npm run test:coverage` (target: >85%)
+- **CI/CD:** All tests must pass before merge; coverage and summary JSONs for automation.
+- **Logs:** Test results and logs are organized in `test-results/` with rotation and metadata.
+
+---
 
 ## 🛠️ Getting Started
 
 ### Prerequisites
-- **Node.js** 18+ and npm 9+
-- **Git** for version control
-- **MongoDB** 6.0+ for data storage
-- **Redis** 7.0+ for caching and sessions
-- **Ollama** (optional) for AI features
 
-### Installation
+- Node.js 18+
+- npm 9+
+- MongoDB 6.0+
+- Redis 7.0+
+- Ollama (for AI features)
+- Git
 
-1. **Clone and install dependencies:**
-```bash
+### Setup
+
+```powershell
 git clone <repository-url>
-cd universe-book-writer
+cd verseforge
 npm install
-```
-
-2. **Build core packages:**
-```bash
 npm run build
-```
-
-3. **Configure environment:**
-```bash
-# Copy example environment files
+# Copy and edit .env files for backend and frontend
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
-# Edit .env files with your configuration
 ```
 
-4. **Start development servers:**
-```bash
-# All services (recommended)
-npm run dev
+### Running
 
-# Or individually:
-npm run dev:frontend   # Frontend dev server
-npm run dev:backend    # Backend API server
-npm run dev:ai         # AI server
-npm run dev:collab     # Collaboration server
+```powershell
+npm run dev         # Start all services (recommended)
+npm run dev:frontend
+npm run dev:backend
+npm run dev:ai
+npm run dev:collab
 ```
 
-### Access Points
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:5000
-- **API Documentation**: http://localhost:5000/docs
-- **Collaboration**: ws://localhost:5001
-
-## 🧪 Testing
-
-The project uses two complementary testing systems:
-
-### Jest Unit Testing (Enhanced Test Runner)
-
-The project includes an enhanced TypeScript test runner with prettified console output and detailed file logging:
-
-```bash
-# Run all unit tests with enhanced output
-npm test
-
-# Run specific test suites
-npm run test:backend       # Backend unit tests only
-npm run test:frontend      # Frontend unit tests only
-npm run test:ai-server     # AI server unit tests only
-npm run test:collaboration-server  # Collaboration server unit tests only
-npm run test:packages      # Package unit tests only
-npm run test:coverage      # Unit tests with coverage report
-
-# Run tests with issue tracking comments
-npx tsx scripts/run-tests-with-output.ts --comment "Fixing auth bug" backend
-npx tsx scripts/run-tests-with-output.ts -c "Testing new feature" frontend
-
-# Pattern matching for specific test categories
-npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth system"
-npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" -c "UI component tests"
-
-# Watch mode for development
-npm run test:watch
-```
-
-### Playwright End-to-End Testing
-
-For browser-based integration testing, use Playwright-specific commands:
-
-```bash
-# Run all e2e tests (clean output, no HTML report)
-npm run test:e2e
-
-# Run e2e tests with UI
-npm run test:e2e:ui
-
-# Generate HTML report manually when needed
-npm run test:e2e:html
-npm run test:e2e:report        # View generated HTML report
-
-# Admin-specific e2e tests
-npm run test:e2e:admin
-npm run test:e2e:admin:ui        # With UI
-npm run test:e2e:admin:headed    # In headed mode
-npm run test:e2e:admin:debug     # Debug mode
-npm run test:e2e:admin:html      # Generate HTML report for admin tests
-npm run test:e2e:admin:report    # View admin HTML report
-```
-
-**Note**: The default e2e test commands now use line reporters for clean output without automatically opening HTML reports. Use the `:html` variants when you specifically need visual reports.
-
-### Enhanced Test Runner Features
-
-The Jest test runner provides dual output modes:
-- **Console**: Prettified output with ✅ checkmarks, ❌ for failures, and ⏭️ for skipped tests
-- **File**: Complete Jest output with stack traces saved to `test-results/` directory
-
-#### Usage Examples:
-```bash
-# Basic usage
-npx tsx scripts/run-tests-with-output.ts backend
-
-# With issue tracking
-npx tsx scripts/run-tests-with-output.ts --comment "Testing user authentication" backend
-
-# Multiple test types
-npx tsx scripts/run-tests-with-output.ts --coverage
-npx tsx scripts/run-tests-with-output.ts --watch  # No file output in watch mode
-```
-
-Output files are automatically timestamped and organized in `test-results/`:
-- `test-results/run_2024-01-15T14-30-45/backend-fixing-auth-bug.log`
-- `test-results/run_2024-01-15T14-35-12/coverage-report.log`
-
-Each file includes:
-- Execution metadata (timestamp, command, issue comment)
-- Complete Jest output for debugging
-- Full stack traces and error details
-- Automatic log rotation (keeps last 10 test runs)
-
-## 🚀 Deployment
-
-See the [Deployment Guide](docs/DEPLOYMENT_GUIDE.md) for comprehensive deployment instructions including:
-- Docker containerization
-- CI/CD pipeline setup
-- Production environment configuration
-- Monitoring and logging
-- Backup and recovery procedures
-
-## 🔌 Plugin Development
-
-The application is designed with extensibility in mind. Create plugins for:
-- **Universe-specific features** (Star Trek, Star Wars, etc.)
-- **Custom AI models** for different writing styles
-- **Specialized UI themes** and components
-- **Integration with external services**
-
-See the [Plugin SDK Documentation](packages/plugin-sdk/README.md) for development guides and examples.
-
-## 📋 Project Roadmap
-
-- **Phase 1: Foundation** ✅ **COMPLETED**
-- **Phase 1.5: User Experience Foundation** 🔄 *Next*
-- **Phase 2: Basic Features** 📋 *Planned*
-- **Phase 3: AI Integration** 📋 *Planned*
-- **Phase 4: Collaboration** 📋 *Planned*
-- **Phase 5: Plugin Development** 📋 *Planned*
-
-See [Project Checklist](PROJECT_CHECKLIST.md) for detailed implementation tracking.
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for:
-- Development workflow
-- Code style guidelines
-- Testing requirements
-- Pull request process
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:5000
+- **AI Server:** http://localhost:11434 (default Ollama)
+- **Collaboration:** ws://localhost:5001
 
 ---
 
-**Built with ❤️ for authors who create amazing fictional universes**
+## 📚 Documentation
+
+- [Master Phase Plan](docs/checklists/PHASE_MASTER_PLAN.md) – Roadmap, phases, and rationale
+- [API Documentation](backend/docs/API_DOCUMENTATION.md) – REST API details
+- [AI Server & Orchestrator](ai-server/README.md) – AI architecture and endpoints
+- [Plugin SDK](packages/plugin-sdk/README.md) – Plugin development
+- [Frontend Guide](frontend/docs/FRONTEND_DOCUMENTATION.md)
+- [Development Guide](docs/DEVELOPMENT_GUIDE.md)
+- [Deployment Guide](docs/DEPLOYMENT_GUIDE.md)
+
+---
+
+## 🔌 Plugin System
+
+- **Plugin-First:** All universe-specific logic (e.g., Star Trek, Star Wars) is encapsulated in plugins.
+- **SDK:** See [packages/plugin-sdk/README.md](packages/plugin-sdk/README.md) for guides and examples.
+- **Custom AI Models:** Plugins can register their own prompt templates and AI behaviors.
+- **UI Extensions:** Plugins can add universe-specific UI and validation.
+
+---
+
+## 🏆 Quality Gates & Success Criteria
+
+- **Test Coverage:** >85% for all phases
+- **Performance:** All benchmarks met (see phase plan)
+- **Security:** Zero critical vulnerabilities
+- **Reliability:** >99.5% uptime during development
+- **User Experience:** <5 min to first story, >80% feature adoption, >4.5/5 satisfaction
+
+---
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for code style, testing, and PR process.
+
+---
+
+**Built for authors, by world-builders.**  
+*Create, collaborate, and imagine without limits.*
+
+---

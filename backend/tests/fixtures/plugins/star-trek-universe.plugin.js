@@ -1,13 +1,13 @@
 /**
  * Star Trek Universe Plugin - Test Fixture Implementation
  */
-import { PluginState, PluginType, } from '@universe-book-writer/core';
+import { PluginState, PluginType, } from '@verseforge/core';
 export const metadata = {
     name: 'star-trek-universe',
     version: '1.0.0',
     description: 'Official Star Trek Universe plugin with LCARS theme and Starfleet protocols',
-    author: 'Universe Book Writer Team',
-    homepage: 'https://github.com/universe-book-writer/plugins/star-trek',
+    author: 'VerseForge Team',
+    homepage: 'https://github.com/verseforge/plugins/star-trek',
     license: 'MIT',
     keywords: ['star-trek', 'sci-fi', 'universe', 'lcars'],
     type: PluginType.UNIVERSE,

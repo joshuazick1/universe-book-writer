@@ -202,7 +202,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       <div className="bg-white shadow-lg rounded-lg p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold" style={{ color: 'var(--color-universe-text)' }}>Create Account</h2>
-          <p className="mt-2" style={{ color: 'var(--color-universe-text)', opacity: 0.7 }}>Join Universe Book Writer today</p>
+          <p className="mt-2" style={{ color: 'var(--color-universe-text)', opacity: 0.7 }}>Join VerseForge today</p>
         </div>
 
         <form
@@ -423,12 +423,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 <div className="flex-1 h-2 bg-gray-200 rounded-full">
                   <div
                     className={`h-full rounded-full transition-all ${passwordStrength.color === 'red'
-                        ? 'bg-red-500'
-                        : passwordStrength.color === 'orange'
-                          ? 'bg-yellow-500'
-                          : passwordStrength.color === 'green'
-                            ? 'bg-green-500'
-                            : 'bg-gray-300'
+                      ? 'bg-red-500'
+                      : passwordStrength.color === 'orange'
+                        ? 'bg-yellow-500'
+                        : passwordStrength.color === 'green'
+                          ? 'bg-green-500'
+                          : 'bg-gray-300'
                       }`}
                     style={{ width: `${(passwordStrength.strength / 3) * 100}%` }}
                   />

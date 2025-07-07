@@ -16,17 +16,19 @@ describe('Server Startup Configuration', () => {
   let consoleLogs: string[];
   let consoleErrors: string[];
   let originalEnv: NodeJS.ProcessEnv;
+  let mockServer: any;
+  let mockHttpServer: any;
 
   beforeAll(async () => {
     // Setup test database
     mongoSetup = await setupMongoForTest('server_startup_test');
-    
+
     // Mock console methods
     originalConsoleLog = console.log;
     originalConsoleError = console.error;
     consoleLogs = [];
     consoleErrors = [];
-    
+
     console.log = jest.fn((...args) => {
       consoleLogs.push(args.join(' '));
     });
@@ -36,16 +38,29 @@ describe('Server Startup Configuration', () => {
 
     // Save original environment
     originalEnv = { ...process.env };
+
+    // Set required environment variables
+    process.env.NODE_ENV = 'test';
+    process.env.PORT = '5000';
+    process.env.MONGODB_URI = 'mongodb://localhost:27017';
+    process.env.MONGODB_DB_NAME = 'server_startup_test';
+    process.env.JWT_ACCESS_SECRET = 'test-access-secret';
+    process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
+    process.env.JWT_EMAIL_SECRET = 'test-email-secret';
+    process.env.JWT_RESET_SECRET = 'test-reset-secret';
+    process.env.JWT_ACCESS_EXPIRY = '15m';
+    process.env.JWT_REFRESH_EXPIRY = '7d';
+    process.env.CORS_ORIGIN = 'http://localhost:5173';
   });
 
   afterAll(async () => {
     // Restore console methods
     console.log = originalConsoleLog;
     console.error = originalConsoleError;
-    
+
     // Restore environment
     process.env = originalEnv;
-    
+
     // Cleanup
     await mongoSetup.cleanup();
   });
@@ -56,19 +71,61 @@ describe('Server Startup Configuration', () => {
     consoleErrors.length = 0;
   });
 
-  describe('Environment Configuration', () => {
-    it('should handle development environment', () => {
-      process.env.NODE_ENV = 'development';
-      process.env.PORT = '3000';
-      
-      expect(process.env.NODE_ENV).toBe('development');
-      expect(process.env.PORT).toBe('3000');
+  describe('Server Startup', () => {
+    beforeEach(() => {
+      jest.resetModules();
+    });
+
+    it('should have required environment variables for startup', () => {
+      const requiredVars = [
+        'NODE_ENV',
+        'PORT',
+        'MONGODB_URI',
+        'MONGODB_DB_NAME',
+        'JWT_ACCESS_SECRET',
+        'JWT_REFRESH_SECRET',
+        'JWT_EMAIL_SECRET',
+        'JWT_RESET_SECRET',
+        'JWT_ACCESS_EXPIRY',
+        'JWT_REFRESH_EXPIRY',
+        'CORS_ORIGIN'
+      ];
+
+      requiredVars.forEach(varName => {
+        expect(process.env[varName]).toBeDefined();
+        expect(process.env[varName]).not.toBe('');
+      });
+    });
+
+    it('should import server without errors', async () => {
+      // This will throw if there are any issues with the server setup
+      await expect(import('../../../src/index.js')).resolves.not.toThrow();
+    });
+
+    it('should validate server configuration', async () => {
+      // Import server module
+      const server = await import('../../../src/index.js');
+
+      // Config properties should be defined
+      expect(process.env.PORT).toBe('5000');
+      expect(process.env.NODE_ENV).toBe('test');
+
+      // CORS should be configured for development
+      expect(process.env.CORS_ORIGIN).toBe('http://localhost:5173');
+
+      // JWT configs should be set
+      expect(process.env.JWT_ACCESS_EXPIRY).toBe('15m');
+      expect(process.env.JWT_REFRESH_EXPIRY).toBe('7d');
+
+      // MongoDB config should be set
+      expect(process.env.MONGODB_URI).toBe('mongodb://localhost:27017');
+      expect(process.env.MONGODB_DB_NAME).toBe('server_startup_test');
     });
 
     it('should handle production environment', () => {
       process.env.NODE_ENV = 'production';
       process.env.PORT = '5000';
-      
+
       expect(process.env.NODE_ENV).toBe('production');
       expect(process.env.PORT).toBe('5000');
     });
@@ -76,14 +133,14 @@ describe('Server Startup Configuration', () => {
     it('should use default port when not specified', () => {
       delete process.env.PORT;
       const defaultPort = process.env.PORT || '5000';
-      
+
       expect(defaultPort).toBe('5000');
     });
 
     it('should handle database configuration', () => {
       process.env.MONGODB_URI = 'mongodb://localhost:27017';
       process.env.MONGODB_DB_NAME = 'test_database';
-      
+
       expect(process.env.MONGODB_URI).toBe('mongodb://localhost:27017');
       expect(process.env.MONGODB_DB_NAME).toBe('test_database');
     });
@@ -128,7 +185,7 @@ describe('Server Startup Configuration', () => {
     it('should parse port from environment', () => {
       process.env.PORT = '8080';
       const port = parseInt(process.env.PORT, 10);
-      
+
       expect(port).toBe(8080);
       expect(typeof port).toBe('number');
     });
@@ -136,17 +193,17 @@ describe('Server Startup Configuration', () => {
     it('should handle invalid port values', () => {
       process.env.PORT = 'invalid';
       const port = parseInt(process.env.PORT, 10) || 5000;
-      
+
       expect(port).toBe(5000);
     });
 
     it('should handle port ranges', () => {
       const testPorts = ['3000', '5000', '8000', '9000'];
-      
+
       testPorts.forEach(portStr => {
         process.env.PORT = portStr;
         const port = parseInt(process.env.PORT, 10);
-        
+
         expect(port).toBeGreaterThan(0);
         expect(port).toBeLessThan(65536);
       });
@@ -157,7 +214,7 @@ describe('Server Startup Configuration', () => {
     it('should create MongoDB connection config', () => {
       const mongoConfig = {
         uri: process.env.MONGODB_URI || 'mongodb://localhost:27017',
-        dbName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
+        dbName: process.env.MONGODB_DB_NAME || 'verseforge',
         options: {
           maxPoolSize: 10,
           minPoolSize: 2,
@@ -276,7 +333,7 @@ describe('Server Startup Configuration', () => {
   describe('Graceful Shutdown Configuration', () => {
     it('should define shutdown signals', () => {
       const shutdownSignals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
-      
+
       shutdownSignals.forEach(signal => {
         expect(signal).toMatch(/^SIG[A-Z0-9]+$/);
       });
@@ -284,7 +341,7 @@ describe('Server Startup Configuration', () => {
 
     it('should configure shutdown timeout', () => {
       const shutdownTimeout = parseInt(process.env.SHUTDOWN_TIMEOUT || '10000', 10);
-      
+
       expect(shutdownTimeout).toBeGreaterThan(0);
       expect(shutdownTimeout).toBeLessThanOrEqual(30000);
     });
@@ -309,7 +366,7 @@ describe('Server Startup Configuration', () => {
 
     it('should validate health check endpoint', () => {
       const healthEndpoint = '/health';
-      
+
       expect(healthEndpoint).toBe('/health');
       expect(healthEndpoint).toMatch(/^\/health$/);
     });

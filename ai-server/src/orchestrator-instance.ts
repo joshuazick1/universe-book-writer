@@ -18,6 +18,9 @@ export function getOrchestratorInstance(): AIOrchestrator {
             orchestrator.addServer({ id: s.id, url: s.url, type: s.type });
         }
         // (Benchmark persistence removed)
+        // ...existing code...
+    } else {
+        // ...existing code...
     }
     return orchestrator;
 }

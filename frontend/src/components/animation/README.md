@@ -1,6 +1,6 @@
 # Animation Framework
 
-The Universe Book Writer Animation Framework provides a comprehensive set of animation components and utilities for creating smooth, accessible, and performant user interfaces.
+The VerseForge Animation Framework provides a comprehensive set of animation components and utilities for creating smooth, accessible, and performant user interfaces.
 
 ## Overview
 

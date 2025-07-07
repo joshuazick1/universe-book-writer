@@ -1,6 +1,6 @@
 {
-  "name": "universe-book-writer",
-  "version": "0.1.0",
+  "name": "verseforge",
+  "version": "0.0.1-alpha.1",
   "private": true,
   "workspaces": {
     "packages": [
@@ -83,6 +83,7 @@
     "glob": "^11.0.2",
     "helmet": "^8.1.0",
     "hpp": "^0.2.3",
+    "http-proxy-middleware": "^3.0.5",
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
@@ -117,7 +118,7 @@
     "@storybook/addon-onboarding": "^9.0.6",
     "@storybook/addon-vitest": "^9.0.6",
     "@storybook/react-vite": "^9.0.6",
-    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/axios": "^0.9.36",
@@ -131,6 +132,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.19.0",
     "@types/node-cron": "^3.0.11",
+    "@types/node-fetch": "^2.6.12",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
@@ -168,7 +170,8 @@
     "tsx": "^4.20.3",
     "typescript": "~5.3.3",
     "vite": "^6.3.5",
-    "vitest": "^3.2.2"
+    "vitest": "^3.2.2",
+    "whatwg-fetch": "^3.6.20"
   },
   "type": "module",
   "exports": {

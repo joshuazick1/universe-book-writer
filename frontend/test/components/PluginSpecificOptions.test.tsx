@@ -4,8 +4,10 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { PluginSpecificOptions } from '../../src/components/universe/PluginSpecificOptions.js';
+import { renderWithProviders } from '../utils.js';
 
 describe('PluginSpecificOptions', () => {
     const mockOnChange = jest.fn();
@@ -19,15 +21,21 @@ describe('PluginSpecificOptions', () => {
         mockOnChange.mockClear();
     });
 
+    const renderComponent = (props = {}) => {
+        return renderWithProviders(
+            <PluginSpecificOptions {...defaultProps} {...props} />
+        );
+    };
+
     it('should render universe-level configuration info', () => {
-        render(<PluginSpecificOptions {...defaultProps} />);
+        renderComponent();
 
         expect(screen.getByText('Universe-Level Configuration')).toBeInTheDocument();
         expect(screen.getByText(/These settings define the fundamental rules/)).toBeInTheDocument();
     });
 
     it('should render Star Trek options', () => {
-        render(<PluginSpecificOptions {...defaultProps} />);
+        renderComponent();
 
         expect(screen.getByText('🖖 Star Trek Configuration')).toBeInTheDocument();
         expect(screen.getByText('Primary Era')).toBeInTheDocument();
@@ -36,12 +44,7 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should render Star Wars options', () => {
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                pluginId="star-wars-universe"
-            />
-        );
+        renderComponent({ pluginId: 'star-wars-universe' });
 
         expect(screen.getByText('⭐ Star Wars Universe Configuration')).toBeInTheDocument();
         expect(screen.getByText('Canon Level')).toBeInTheDocument();
@@ -52,12 +55,7 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should render LOTR options', () => {
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                pluginId="lotr-universe"
-            />
-        );
+        renderComponent({ pluginId: 'lotr-universe' });
 
         expect(screen.getByText('💍 Middle-earth Universe Configuration')).toBeInTheDocument();
         expect(screen.getByText('Canon Level')).toBeInTheDocument();
@@ -66,12 +64,7 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should render Harry Potter options', () => {
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                pluginId="harry-potter-universe"
-            />
-        );
+        renderComponent({ pluginId: 'harry-potter-universe' });
 
         expect(screen.getByText('⚡ Wizarding World Universe Configuration')).toBeInTheDocument();
         expect(screen.getByText('Canon Level')).toBeInTheDocument();
@@ -82,18 +75,13 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should not render anything for unknown plugin', () => {
-        const { container } = render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                pluginId="unknown-plugin"
-            />
-        );
+        const { container } = renderComponent({ pluginId: 'unknown-plugin' });
 
         expect(container.firstChild).toBeNull();
     });
 
     it('should handle Star Trek era selection change', () => {
-        render(<PluginSpecificOptions {...defaultProps} />);
+        renderComponent();
 
         const eraSelect = screen.getByDisplayValue('The Next Generation (2360s)');
         fireEvent.change(eraSelect, { target: { value: 'tos' } });
@@ -102,7 +90,7 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should handle Star Trek canon compliance change', () => {
-        render(<PluginSpecificOptions {...defaultProps} />);
+        renderComponent();
 
         const canonSelect = screen.getByDisplayValue('Flexible Canon - Allow minor deviations');
         fireEvent.change(canonSelect, { target: { value: 'strict' } });
@@ -111,12 +99,7 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should handle Star Wars canon level change', () => {
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                pluginId="star-wars-universe"
-            />
-        );
+        renderComponent({ pluginId: 'star-wars-universe' });
 
         const canonSelect = screen.getByDisplayValue('Disney Canon Only');
         fireEvent.change(canonSelect, { target: { value: 'legends' } });
@@ -125,24 +108,16 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should show Kelvin timeline option for Star Trek Kelvin sub-universe', () => {
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                subUniverseId="kelvin"
-            />
-        );
+        renderComponent({ subUniverseId: 'kelvin' });
 
         expect(screen.getByText('Kelvin Timeline (2250s-2260s)')).toBeInTheDocument();
     });
 
     it('should show sequel era option for Star Wars canon sub-universe', () => {
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                pluginId="star-wars-universe"
-                subUniverseId="canon"
-            />
-        );
+        renderComponent({
+            pluginId: 'star-wars-universe',
+            subUniverseId: 'canon'
+        });
 
         expect(screen.getByText('Sequel Era (28 ABY+)')).toBeInTheDocument();
     });
@@ -150,12 +125,7 @@ describe('PluginSpecificOptions', () => {
     it('should preserve existing options when changing one option', () => {
         const existingOptions = { era: 'tos', canonLevel: 'strict' };
 
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                options={existingOptions}
-            />
-        );
+        renderComponent({ options: existingOptions });
 
         const techSelect = screen.getByDisplayValue('Standard Starfleet Technology');
         fireEvent.change(techSelect, { target: { value: 'advanced' } });
@@ -168,7 +138,7 @@ describe('PluginSpecificOptions', () => {
     });
 
     it('should use default values when no options provided', () => {
-        render(<PluginSpecificOptions {...defaultProps} />);
+        renderComponent();
 
         // Check default selections are shown
         expect(screen.getByDisplayValue('The Next Generation (2360s)')).toBeInTheDocument();
@@ -183,12 +153,7 @@ describe('PluginSpecificOptions', () => {
             technologyLevel: 'advanced'
         };
 
-        render(
-            <PluginSpecificOptions
-                {...defaultProps}
-                options={options}
-            />
-        );
+        renderComponent({ options });
 
         expect(screen.getByDisplayValue('The Original Series (2260s)')).toBeInTheDocument();
         expect(screen.getByDisplayValue('Strict Canon - Follow established timeline')).toBeInTheDocument();

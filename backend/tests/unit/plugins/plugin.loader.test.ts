@@ -8,7 +8,7 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { PluginType } from '@universe-book-writer/core';
+import { PluginType } from '@verseforge/core';
 import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 
 // Mock fs module with proper jest functions
@@ -377,7 +377,7 @@ describe('FileSystemPluginLoader', () => {
           dependencies: { 'dependency-a': '1.0.0' },
           peerDependencies: { 'peer-dep': '2.0.0' },
           engines: { node: '>=14', npm: '>=7' },
-          'universe-book-writer': {
+          'verseforge': {
             type: PluginType.UNIVERSE,
           },
         };

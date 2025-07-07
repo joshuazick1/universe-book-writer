@@ -1,5 +1,7 @@
 # 🎮 Interactive Gaming Plugins Architecture
 
+> **This file is the canonical source for requirements, status, and planning for this phase.**
+
 ## Overview
 
 Interactive Gaming Plugins leverage the existing universe knowledge bases to create immersive storytelling experiences like Choose Your Own Adventure (CYOA), D&D campaigns, and interactive fiction. These plugins consume data from Universe Plugins (Star Trek, Star Wars, custom universes) to create rich, canon-compliant gaming experiences.

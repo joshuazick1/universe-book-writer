@@ -30,7 +30,7 @@ app.get('/api/health', (req, res) => {
 // Basic API info
 app.get('/api', (req, res) => {
   res.json({
-    message: 'Universe Book Writer API - Minimal Mode',
+    message: 'VerseForge API - Minimal Mode',
     version: '0.1.0',
     mode: 'minimal',
   });

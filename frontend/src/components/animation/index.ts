@@ -1,6 +1,6 @@
 /**
  * Animation Framework Components
- * Comprehensive animation system for the Universe Book Writer frontend
+ * Comprehensive animation system for the VerseForge frontend
  */
 
 // Base transition components

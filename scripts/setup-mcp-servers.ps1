@@ -1,7 +1,7 @@
-# MCP Server Setup Script for Universe Book Writer
+# MCP Server Setup Script for VerseForge
 # This script installs and configures MCP servers for enhanced GitHub Copilot integration
 
-Write-Host "=== Setting up MCP servers for Universe Book Writer ===" -ForegroundColor Green
+Write-Host "=== Setting up MCP servers for VerseForge ===" -ForegroundColor Green
 
 # Check if npm is available
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {

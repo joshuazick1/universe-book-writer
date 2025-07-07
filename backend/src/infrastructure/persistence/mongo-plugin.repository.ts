@@ -8,7 +8,7 @@ import type {
   PluginType,
   PluginMetadata,
   PluginConfig,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 import { type Collection, type Db, type MongoClient, ObjectId } from 'mongodb';
 import type { PluginRepository } from '../../core/interfaces/plugin.repository.interface.js';
 
@@ -19,7 +19,7 @@ export class MongoPluginRepository implements PluginRepository {
   private db: Db;
   private collection: Collection<PluginRegistryEntry>;
 
-  constructor(client: MongoClient, dbName = 'universe_book_writer') {
+  constructor(client: MongoClient, dbName = 'verseforge') {
     this.db = client.db(dbName);
     this.collection = this.db.collection<PluginRegistryEntry>('plugins');
   }

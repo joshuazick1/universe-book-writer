@@ -67,7 +67,7 @@ export class MongoMonitoringRepository {
     private errorsCollection: Collection<StoredError>;
     private metricsCollection: Collection<StoredPerformanceMetric>;
 
-    constructor(private client: MongoClient, databaseName: string = 'universe_book_writer') {
+    constructor(private client: MongoClient, databaseName: string = 'verseforge') {
         this.db = client.db(databaseName);
         this.errorsCollection = this.db.collection('monitoring_errors');
         this.metricsCollection = this.db.collection('monitoring_performance');

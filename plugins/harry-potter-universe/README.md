@@ -55,7 +55,7 @@ Official Harry Potter Universe plugin for the Multi-Universe Book Series Writing
 ## Usage
 
 ```typescript
-import { HarryPotterUniversePlugin } from '@universe-book-writer/harry-potter-universe';
+import { HarryPotterUniversePlugin } from '@verseforge/harry-potter-universe';
 
 const plugin = new HarryPotterUniversePlugin();
 

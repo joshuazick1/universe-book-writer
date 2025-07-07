@@ -15,7 +15,7 @@ export interface ComponentRegistration {
   component: ComponentType<any>;
   props?: Record<string, unknown>;
   universe: string;
-}gistry - Universe Book Writer
+}gistry - VerseForge
  * Manages registration and loading of universe-specific components
  */
 

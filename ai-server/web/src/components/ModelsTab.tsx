@@ -1,9 +1,42 @@
 import React, { useEffect, useState } from "react";
 
+interface ModelAnalytics {
+    serverId: string;
+    modelName: string;
+    performanceMetrics: {
+        latencyMs?: number;
+        throughput?: number;
+        lastTested?: number;
+        averageLatency?: number;
+        stabilityScore?: number;
+        qualityScore?: number;
+    };
+    usageFrequency: {
+        last24h: number;
+        last7d: number;
+        last30d: number;
+        averagePerDay: number;
+    };
+    usagePatterns: {
+        taskTypes: Record<string, number>;
+        mostCommonTaskType: string;
+    };
+    totalUsageCount: number;
+    lastUsed?: string;
+}
+
+interface DeploymentStats {
+    totalCombinations: number;
+    uniqueModels: number;
+    uniqueServers: number;
+    mostUsedModels: Array<{ modelName: string; serverCount: number; totalUsage: number }>;
+    mostActiveServers: Array<{ serverId: string; modelCount: number; totalUsage: number }>;
+}
+
 /**
  * ModelsTab displays all available models and their server associations.
+ * Enhanced with RAG database analytics for usage patterns, performance metrics, and insights.
  * Users can view models per server or servers per model, and delete models from all servers.
- * Updated to use /api/orchestrator/model-map and orchestrator endpoints.
  */
 const ModelsTab: React.FC = () => {
     const [modelToServers, setModelToServers] = useState<Record<string, string[]>>({});
@@ -14,12 +47,19 @@ const ModelsTab: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [deleteStatus, setDeleteStatus] = useState<string>("");
-    const [tab, setTab] = useState<'models-per-server' | 'servers-per-model'>("models-per-server");
+    const [tab, setTab] = useState<'models-per-server' | 'servers-per-model' | 'analytics'>("models-per-server");
     const [serverIdToUrl, setServerIdToUrl] = useState<Record<string, string>>({});
     const [expandedServers, setExpandedServers] = useState<Record<string, boolean>>({});
     const [expandedModels, setExpandedModels] = useState<Record<string, boolean>>({});
     const [fleetModelInput, setFleetModelInput] = useState("");
     const [fleetAddStatus, setFleetAddStatus] = useState<Record<string, string>>({});
+
+    // RAG Analytics State
+    const [modelAnalytics, setModelAnalytics] = useState<ModelAnalytics[]>([]);
+    const [deploymentStats, setDeploymentStats] = useState<DeploymentStats | null>(null);
+    const [analyticsLoading, setAnalyticsLoading] = useState(false);
+    const [analyticsError, setAnalyticsError] = useState<string | null>(null);
+    const [analyticsLastUpdated, setAnalyticsLastUpdated] = useState<string | null>(null);
 
     // Fetch model-server mapping
     const fetchModelMap = async () => {
@@ -53,8 +93,41 @@ const ModelsTab: React.FC = () => {
         }
     };
 
+    // Fetch RAG analytics data
+    const fetchRAGAnalytics = async () => {
+        setAnalyticsLoading(true);
+        setAnalyticsError(null);
+        try {
+            const [analyticsRes, performanceRes] = await Promise.all([
+                fetch("/api/orchestrator/rag/analytics"),
+                fetch("/api/orchestrator/rag/model-performance?limit=100")
+            ]);
+
+            if (analyticsRes.ok) {
+                const analyticsData = await analyticsRes.json();
+                setDeploymentStats(analyticsData.analytics.deploymentStats);
+                setAnalyticsLastUpdated(analyticsData.analytics.timestamp);
+            } else {
+                console.warn("Analytics endpoint not available");
+            }
+
+            if (performanceRes.ok) {
+                const performanceData = await performanceRes.json();
+                setModelAnalytics(performanceData.performanceData || []);
+            } else {
+                console.warn("Performance endpoint not available");
+            }
+        } catch (e: any) {
+            setAnalyticsError(e.message || "Failed to fetch analytics");
+            console.error("Analytics fetch error:", e);
+        } finally {
+            setAnalyticsLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchModelMap();
+        fetchRAGAnalytics();
     }, []);
 
     const handleDelete = async () => {
@@ -104,6 +177,7 @@ const ModelsTab: React.FC = () => {
         }
         setFleetModelInput("");
         await fetchModelMap();
+        await fetchRAGAnalytics(); // Refresh analytics after model changes
     };
 
     return (
@@ -121,6 +195,12 @@ const ModelsTab: React.FC = () => {
                     onClick={() => setTab('servers-per-model')}
                 >
                     Servers per Model
+                </button>
+                <button
+                    className={`px-3 py-1 rounded ${tab === 'analytics' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setTab('analytics')}
+                >
+                    Analytics & Usage
                 </button>
             </div>
             {loading ? (
@@ -185,6 +265,150 @@ const ModelsTab: React.FC = () => {
                                             );
                                         })}
                                 </ul>
+                            )}
+                        </div>
+                    ) : tab === 'analytics' ? (
+                        <div className="mb-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold">RAG Analytics & Usage Insights</h3>
+                                <button
+                                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm"
+                                    onClick={fetchRAGAnalytics}
+                                    disabled={analyticsLoading}
+                                >
+                                    {analyticsLoading ? "Refreshing..." : "Refresh Analytics"}
+                                </button>
+                            </div>
+
+                            {analyticsError && (
+                                <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+                                    <p>Analytics Error: {analyticsError}</p>
+                                    <p className="text-sm mt-1">Note: RAG analytics requires the orchestrator to be running with RAG integration enabled.</p>
+                                </div>
+                            )}
+
+                            {analyticsLastUpdated && (
+                                <div className="text-sm text-gray-500 mb-4">
+                                    Last updated: {new Date(analyticsLastUpdated).toLocaleString()}
+                                </div>
+                            )}
+
+                            {/* Deployment Statistics */}
+                            {deploymentStats && (
+                                <div className="bg-white border rounded-lg p-4 mb-6">
+                                    <h4 className="font-medium text-lg mb-3">Deployment Overview</h4>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-blue-600">{deploymentStats.totalCombinations}</div>
+                                            <div className="text-sm text-gray-600">Total Combinations</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-green-600">{deploymentStats.uniqueModels}</div>
+                                            <div className="text-sm text-gray-600">Unique Models</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-purple-600">{deploymentStats.uniqueServers}</div>
+                                            <div className="text-sm text-gray-600">Active Servers</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-orange-600">
+                                                {deploymentStats.mostUsedModels.length > 0 ? deploymentStats.mostUsedModels[0].totalUsage : 0}
+                                            </div>
+                                            <div className="text-sm text-gray-600">Top Model Usage</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Most Used Models */}
+                                    <div className="mb-4">
+                                        <h5 className="font-medium mb-2">Most Used Models</h5>
+                                        <div className="space-y-2">
+                                            {deploymentStats.mostUsedModels.slice(0, 5).map((model, idx) => (
+                                                <div key={model.modelName} className="flex justify-between items-center bg-gray-50 px-3 py-2 rounded">
+                                                    <span className="font-mono text-sm">{model.modelName}</span>
+                                                    <div className="text-sm text-gray-600">
+                                                        {model.serverCount} servers, {model.totalUsage} uses
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Most Active Servers */}
+                                    <div>
+                                        <h5 className="font-medium mb-2">Most Active Servers</h5>
+                                        <div className="space-y-2">
+                                            {deploymentStats.mostActiveServers.slice(0, 5).map((server, idx) => (
+                                                <div key={server.serverId} className="flex justify-between items-center bg-gray-50 px-3 py-2 rounded">
+                                                    <span className="font-mono text-sm">{serverIdToUrl[server.serverId] || server.serverId}</span>
+                                                    <div className="text-sm text-gray-600">
+                                                        {server.modelCount} models, {server.totalUsage} uses
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Model Performance Analytics */}
+                            {modelAnalytics.length > 0 && (
+                                <div className="bg-white border rounded-lg p-4">
+                                    <h4 className="font-medium text-lg mb-3">Performance & Usage Analytics</h4>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full text-sm">
+                                            <thead>
+                                                <tr className="bg-gray-100">
+                                                    <th className="px-3 py-2 text-left">Model</th>
+                                                    <th className="px-3 py-2 text-left">Server</th>
+                                                    <th className="px-3 py-2 text-right">Total Uses</th>
+                                                    <th className="px-3 py-2 text-right">Last 24h</th>
+                                                    <th className="px-3 py-2 text-right">Avg Latency</th>
+                                                    <th className="px-3 py-2 text-left">Most Common Task</th>
+                                                    <th className="px-3 py-2 text-left">Last Used</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {modelAnalytics
+                                                    .sort((a, b) => b.totalUsageCount - a.totalUsageCount)
+                                                    .slice(0, 20)
+                                                    .map((analytics, idx) => (
+                                                        <tr key={`${analytics.serverId}:${analytics.modelName}`} className={idx % 2 ? "bg-gray-50" : ""}>
+                                                            <td className="px-3 py-2 font-mono">{analytics.modelName}</td>
+                                                            <td className="px-3 py-2 font-mono text-xs">{serverIdToUrl[analytics.serverId] || analytics.serverId}</td>
+                                                            <td className="px-3 py-2 text-right font-medium">{analytics.totalUsageCount}</td>
+                                                            <td className="px-3 py-2 text-right">{analytics.usageFrequency?.last24h || 0}</td>
+                                                            <td className="px-3 py-2 text-right">
+                                                                {analytics.performanceMetrics?.averageLatency ?
+                                                                    `${analytics.performanceMetrics.averageLatency.toFixed(1)}ms` :
+                                                                    analytics.performanceMetrics?.latencyMs ?
+                                                                        `${analytics.performanceMetrics.latencyMs.toFixed(1)}ms` : '-'
+                                                                }
+                                                            </td>
+                                                            <td className="px-3 py-2">{analytics.usagePatterns?.mostCommonTaskType || '-'}</td>
+                                                            <td className="px-3 py-2 text-xs">
+                                                                {analytics.lastUsed ? new Date(analytics.lastUsed).toLocaleDateString() : '-'}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {modelAnalytics.length > 20 && (
+                                        <div className="text-sm text-gray-500 mt-2 text-center">
+                                            Showing top 20 of {modelAnalytics.length} model/server combinations
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {modelAnalytics.length === 0 && !analyticsLoading && !analyticsError && (
+                                <div className="bg-gray-100 border rounded-lg p-8 text-center">
+                                    <div className="text-gray-500 mb-2">No analytics data available</div>
+                                    <div className="text-sm text-gray-400">
+                                        Analytics data will appear here once models are used for inference requests
+                                    </div>
+                                </div>
                             )}
                         </div>
                     ) : (

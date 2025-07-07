@@ -1,5 +1,5 @@
 /**
- * Button Component - Universe Book Writer
+ * Button Component - VerseForge
  * Base button component with universe theme support and plugin extensibility
  */
 

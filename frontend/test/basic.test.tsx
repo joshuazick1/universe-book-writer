@@ -3,14 +3,16 @@
  * Simple test to verify the test infrastructure is working
  */
 
+import React from 'react';
+import type { FC } from 'react';
 import { describe, it, expect, jest } from '@jest/globals';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, mockUser, mockAdminUser, validCredentials } from './utils.js';
 
 // Simple test component
-function TestComponent() {
+const TestComponent: FC = () => {
   return <div data-testid="test-component">Test Component</div>;
-}
+};
 
 describe('Basic Frontend Test Infrastructure', () => {
   describe('Test Utilities', () => {
@@ -56,6 +58,7 @@ describe('Basic Frontend Test Infrastructure', () => {
       expect(mockFn).toHaveBeenCalledWith('test');
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
+
     it('should have mock user data available', () => {
       expect(mockUser).toBeDefined();
       expect(mockUser.email).toBe('test@example.com');

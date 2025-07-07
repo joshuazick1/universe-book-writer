@@ -1,1 +1,3 @@
-export * from './routes.test.js';
+// Routes test suite
+// Tests are automatically discovered by Jest
+// This file is kept for potential future test utilities

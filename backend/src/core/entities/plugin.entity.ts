@@ -7,7 +7,7 @@ import {
   type PluginConfig,
   type PluginMetadata,
   PluginState,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 
 /**
  * Plugin entity representing a loaded plugin instance

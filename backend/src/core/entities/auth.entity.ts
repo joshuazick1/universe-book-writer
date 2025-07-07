@@ -3,7 +3,7 @@
  * Core business logic for authentication and authorization
  */
 
-import { BaseEntity } from '@universe-book-writer/core';
+import { BaseEntity } from '@verseforge/core';
 import { User } from './user.entity.js';
 
 export enum TokenType {

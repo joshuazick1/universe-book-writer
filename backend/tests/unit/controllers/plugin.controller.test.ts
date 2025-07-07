@@ -7,7 +7,7 @@ import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals
 import { Request, Response } from 'express';
 import { PluginController } from '../../../src/api/controllers/plugin.controller.js';
 import { PluginUseCase } from '../../../src/application/use-cases/plugin.use-case.js';
-import { PluginState, PluginType, Plugin, PluginRegistryEntry } from '@universe-book-writer/core';
+import { PluginState, PluginType, Plugin, PluginRegistryEntry } from '@verseforge/core';
 
 // Mock dependencies
 const mockPluginUseCase = {
@@ -245,7 +245,7 @@ describe('PluginController', () => {
   describe('getPlugin', () => {
     it('should return plugin details when plugin exists', async () => {
       // Arrange
-      mockRequest.params = { name: 'star-trek-plugin' };      const pluginStatus = {
+      mockRequest.params = { name: 'star-trek-plugin' }; const pluginStatus = {
         name: 'star-trek-plugin',
         state: PluginState.ACTIVE,
         metadata: mockPluginMetadata,

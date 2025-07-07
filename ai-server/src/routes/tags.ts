@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { getOrchestratorInstance } from '../orchestrator-instance.js';
 
@@ -38,8 +37,8 @@ function mergeTags(tagsArr: unknown[], modelKey: string): Record<string, unknown
         }
     }
 
-    // Ensure all required fields and all keys are present and not undefined
-    for (const field of new Set([...allKeys, ...REQUIRED_FIELDS])) {
+    // Ensure all required fields are present and not undefined
+    for (const field of REQUIRED_FIELDS) {
         if (field === 'details') {
             if (!isTagObject(merged[field])) {
                 merged[field] = {};
@@ -48,23 +47,47 @@ function mergeTags(tagsArr: unknown[], modelKey: string): Record<string, unknown
             merged[field] = null;
         }
     }
-
-    // If model is missing, set it to the group key
+    // Always set model to modelKey if missing or null
     if (merged.model === null || merged.model === undefined) {
         merged.model = modelKey;
     }
-
     return merged;
 }
 
 
-router.get('/', async (_req, res) => {
-    const orchestrator = getOrchestratorInstance();
+router.get('/', async (req, res) => {
+    const orchestrator = res.req?.app?.locals?.orchestrator || getOrchestratorInstance();
+    // Targeted debug output
+    // eslint-disable-next-line no-console
+    console.log('[tags] GET /api/tags - START');
+    // eslint-disable-next-line no-console
+    console.log('[tags] orchestrator instance:', !!orchestrator);
+    // eslint-disable-next-line no-console
+    console.log('[tags] orchestrator servers count:', orchestrator.getServers().length);
+    // eslint-disable-next-line no-console
+    console.log('[tags] orchestrator servers:', JSON.stringify(orchestrator.getServers(), null, 2));
+
     const allTags = await orchestrator.getCachedTags();
+    // eslint-disable-next-line no-console
+    console.log('[tags] allTags:', allTags);
     const tagList = Object.entries(allTags).flatMap(([modelKey, tagsArr]) => {
         if (!Array.isArray(tagsArr) || tagsArr.length === 0) return [];
-        return [mergeTags(tagsArr, modelKey)];
+        // Filter out empty/invalid tags, but keep those with at least a model or name
+        const validTags = tagsArr.filter(t => {
+            if (!t || typeof t !== 'object') return false;
+            return t.model != null || t.name != null;
+        });
+        if (validTags.length === 0) return [];
+        // Always include the merged tag, even if all fields are null except model
+        // eslint-disable-next-line no-console
+        console.log('[tags] modelKey:', modelKey, 'tagsArr:', tagsArr);
+        const merged = mergeTags(validTags, modelKey);
+        // Only include if merged.model is defined (should always be true)
+        if (merged.model == null) return [];
+        return [merged];
     });
+    // eslint-disable-next-line no-console
+    console.log('[tags] tagList:', tagList);
     res.status(200).json({ models: tagList });
 });
 

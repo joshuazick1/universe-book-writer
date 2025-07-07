@@ -1,6 +1,6 @@
 /**
  * Collaboration Server
- * Real-time collaboration server using Socket.IO for the Universe Book Writer project
+ * Real-time collaboration server using Socket.IO for the VerseForge project
  */
 
 import express from 'express';

@@ -10,7 +10,7 @@ import {
   type PluginMetadata,
   type PluginConfig,
   PluginType,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 import { PluginEntity } from '../../core/entities/plugin.entity.js';
 
 /**
@@ -225,8 +225,8 @@ export class FileSystemPluginLoader implements PluginLoader {
    * Extract metadata from package.json
    */
   private extractMetadataFromPackageJson(packageJson: Record<string, unknown>): PluginMetadata {
-    const universeBookWriter =
-      (packageJson['universe-book-writer'] as Record<string, unknown>) || {};
+    const verseforge =
+      (packageJson['verseforge'] as Record<string, unknown>) || {};
 
     return {
       name: packageJson.name as string,
@@ -238,7 +238,7 @@ export class FileSystemPluginLoader implements PluginLoader {
         (packageJson.repository as { url?: string })?.url || (packageJson.repository as string),
       license: packageJson.license as string | undefined,
       keywords: (packageJson.keywords as string[]) || [],
-      type: (universeBookWriter.type as PluginType) || PluginType.CORE,
+      type: (verseforge.type as PluginType) || PluginType.CORE,
       dependencies: (packageJson.dependencies as Record<string, string>) || {},
       peerDependencies: packageJson.peerDependencies as Record<string, string> | undefined,
       engines: packageJson.engines as { node?: string; npm?: string } | undefined,

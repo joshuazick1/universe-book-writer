@@ -5,7 +5,7 @@
 
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/verseforge';
 
 async function bypassEmailVerification(email: string) {
     const client = new MongoClient(MONGODB_URI);

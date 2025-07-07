@@ -17,7 +17,7 @@ import {
     type UniverseValidation,
     type UniverseUIComponents,
     type UniverseAIPrompts,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 
 // Import Star Wars utilities
 import { HyperdriveCalculator } from './utils/index.js';
@@ -26,8 +26,8 @@ export const metadata = {
     name: 'star-wars-universe',
     version: '1.0.0',
     description: 'Official Star Wars Universe plugin with faction-based architecture and galactic politics',
-    author: 'Universe Book Writer Team',
-    homepage: 'https://github.com/universe-book-writer/plugins/star-wars',
+    author: 'VerseForge Team',
+    homepage: 'https://github.com/verseforge/plugins/star-wars',
     license: 'MIT',
     keywords: ['star-wars', 'sci-fi', 'universe', 'imperial', 'rebel', 'force'],
     type: PluginType.UNIVERSE,

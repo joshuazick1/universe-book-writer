@@ -1,5 +1,5 @@
 /**
- * Plugin Theme Registration - Universe Book Writer
+ * Plugin Theme Registration - VerseForge
  * Registers plugin themes on application startup
  */
 

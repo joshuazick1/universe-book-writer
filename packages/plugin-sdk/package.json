@@ -1,6 +1,6 @@
 {
-  "name": "@universe-book-writer/plugin-sdk",
-  "version": "0.1.0",
+  "name": "@verseforge/plugin-sdk",
+  "version": "0.0.1-alpha.1",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

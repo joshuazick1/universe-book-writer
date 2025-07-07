@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Universe Book Writer Plugin SDK provides a comprehensive framework for developing plugins that extend the application's functionality. The plugin system is designed to be universe-agnostic while allowing for universe-specific customizations and features.
+The VerseForge Plugin SDK provides a comprehensive framework for developing plugins that extend the application's functionality. The plugin system is designed to be universe-agnostic while allowing for universe-specific customizations and features.
 
 ## Architecture
 
@@ -56,7 +56,7 @@ interface AIPlugin extends BasePlugin {
 
 1. **Initialize Plugin Project**
    ```bash
-   npx @universe-book-writer/plugin-cli create my-plugin
+   npx @verseforge/plugin-cli create my-plugin
    cd my-plugin
    npm install
    ```
@@ -77,12 +77,12 @@ interface AIPlugin extends BasePlugin {
 
 3. **Basic Plugin Implementation**
    ```typescript
-   import { UniversePlugin, PluginType } from '@universe-book-writer/plugin-sdk';
+   import { UniversePlugin, PluginType } from '@verseforge/plugin-sdk';
 
    export class MyUniversePlugin implements UniversePlugin {
      readonly id = 'my-universe-plugin';
      readonly name = 'My Universe Plugin';
-     readonly version = '1.0.0';
+     readonly version = '0.0.1-dev';
      readonly type = PluginType.UNIVERSE;
      readonly description = 'A custom universe plugin';
      readonly author = 'Plugin Developer';
@@ -144,7 +144,7 @@ The `plugin.config.json` file defines plugin metadata:
 {
   "id": "my-universe-plugin",
   "name": "My Universe Plugin",
-  "version": "1.0.0",
+  "version": "0.0.1-dev",
   "type": "universe",
   "description": "A custom universe plugin for creative writing",
   "author": "Plugin Developer",
@@ -153,10 +153,10 @@ The `plugin.config.json` file defines plugin metadata:
   "license": "MIT",
   "keywords": ["universe", "sci-fi", "writing"],
   "dependencies": {
-    "@universe-book-writer/core": "^1.0.0"
+    "@verseforge/core": "^0.0.1-alpha.1"
   },
   "peerDependencies": {
-    "@universe-book-writer/plugin-sdk": "^1.0.0"
+    "@verseforge/plugin-sdk": "^0.0.1-alpha.1"
   },
   "files": ["dist/**/*", "README.md", "LICENSE"],
   "main": "dist/index.js",
@@ -377,7 +377,7 @@ if (process.env.NODE_ENV === 'development') {
 The SDK includes comprehensive testing utilities:
 
 ```typescript
-import { createPluginTestSuite } from '@universe-book-writer/plugin-sdk/testing';
+import { createPluginTestSuite } from '@verseforge/plugin-sdk/testing';
 
 describe('My Universe Plugin', () => {
   const testSuite = createPluginTestSuite(MyUniversePlugin);
@@ -402,7 +402,7 @@ describe('My Universe Plugin', () => {
 Testing utilities provide a mock environment:
 
 ```typescript
-import { createMockPluginEnvironment } from '@universe-book-writer/plugin-sdk/testing';
+import { createMockPluginEnvironment } from '@verseforge/plugin-sdk/testing';
 
 const mockEnv = createMockPluginEnvironment({
   plugins: ['test-universe-plugin'],
@@ -429,12 +429,12 @@ Plugins can be published to the official plugin registry:
 
 2. **Validate Plugin**
    ```bash
-   npx @universe-book-writer/plugin-cli validate
+   npx @verseforge/plugin-cli validate
    ```
 
 3. **Publish Plugin**
    ```bash
-   npx @universe-book-writer/plugin-cli publish
+   npx @verseforge/plugin-cli publish
    ```
 
 ### Plugin Distribution
@@ -488,13 +488,13 @@ Quick start templates for common plugin types:
 
 ```bash
 # Create universe plugin
-npx @universe-book-writer/plugin-cli create --template=universe
+npx @verseforge/plugin-cli create --template=universe
 
 # Create theme plugin  
-npx @universe-book-writer/plugin-cli create --template=theme
+npx @verseforge/plugin-cli create --template=theme
 
 # Create AI plugin
-npx @universe-book-writer/plugin-cli create --template=ai
+npx @verseforge/plugin-cli create --template=ai
 ```
 
 ## API Reference
@@ -541,15 +541,15 @@ npx @universe-book-writer/plugin-cli create --template=ai
 
 - [Plugin Development Guide](./PLUGIN_DEVELOPMENT.md)
 - [API Reference](./API_REFERENCE.md)
-- [Examples Repository](https://github.com/universe-book-writer/plugin-examples)
+- [Examples Repository](https://github.com/verseforge/plugin-examples)
 
 ### Community
 
-- [Discord Server](https://discord.gg/universe-book-writer)
-- [GitHub Discussions](https://github.com/universe-book-writer/plugin-sdk/discussions)
-- [Developer Forums](https://forum.universe-book-writer.com)
+- [Discord Server](https://discord.gg/verseforge)
+- [GitHub Discussions](https://github.com/verseforge/plugin-sdk/discussions)
+- [Developer Forums](https://forum.verseforge.com)
 
 ---
 
-*Plugin SDK Version: 1.0.0*  
+*Plugin SDK Version: 0.0.1-alpha.1*  
 *Last Updated: June 7, 2025*

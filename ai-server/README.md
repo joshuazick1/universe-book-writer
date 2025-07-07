@@ -1,6 +1,6 @@
 # AI Server & Orchestrator
 
-The AI Server is a robust orchestration layer for managing multiple Ollama instances, providing advanced load balancing, health monitoring, and intelligent request routing. It is designed for scalable, reliable, and extensible AI text generation—powering the Universe Book Writer’s multi-universe storytelling.
+The AI Server is a robust orchestration layer for managing multiple Ollama instances, providing advanced load balancing, health monitoring, and intelligent request routing. It is designed for scalable, reliable, and extensible AI text generation—powering the VerseForge’s multi-universe storytelling.
 
 ---
 
@@ -265,4 +265,4 @@ You can safely document the above features as "planned" or "experimental," but o
 
 ---
 
-This infrastructure provides a robust, scalable foundation for AI text generation services, supporting the Universe Book Writer's multi-universe storytelling capabilities with enterprise-grade reliability and performance.
+This infrastructure provides a robust, scalable foundation for AI text generation services, supporting the VerseForge's multi-universe storytelling capabilities with enterprise-grade reliability and performance.

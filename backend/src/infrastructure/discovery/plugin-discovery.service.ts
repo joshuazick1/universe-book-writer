@@ -5,7 +5,7 @@
 import { EventEmitter } from 'node:events';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { type Plugin, type PluginMetadata, PluginType } from '@universe-book-writer/core';
+import { type Plugin, type PluginMetadata, PluginType } from '@verseforge/core';
 import { FileSystemPluginLoader } from '../loaders/plugin.loader.js';
 
 /**
@@ -397,8 +397,8 @@ export class PluginDiscoveryService extends EventEmitter {
 
         // Check if it's a valid plugin package
         if (
-          packageJson['universe-book-writer'] ||
-          packageJson.keywords?.includes('universe-book-writer-plugin')
+          packageJson['verseforge'] ||
+          packageJson.keywords?.includes('verseforge-plugin')
         ) {
           return await this.createDiscoveryEntry(dirPath, packageJson);
         }
@@ -510,8 +510,8 @@ export class PluginDiscoveryService extends EventEmitter {
    * Extract metadata from package.json
    */
   private extractMetadataFromPackageJson(packageJson: Record<string, unknown>): PluginMetadata {
-    const universeBookWriter =
-      (packageJson['universe-book-writer'] as Record<string, unknown>) || {};
+    const verseforge =
+      (packageJson['verseforge'] as Record<string, unknown>) || {};
 
     return {
       name: packageJson.name as string,
@@ -523,7 +523,7 @@ export class PluginDiscoveryService extends EventEmitter {
         (packageJson.repository as { url?: string })?.url || (packageJson.repository as string),
       license: packageJson.license as string | undefined,
       keywords: (packageJson.keywords as string[]) || [],
-      type: (universeBookWriter.type as PluginType) || PluginType.CORE,
+      type: (verseforge.type as PluginType) || PluginType.CORE,
       dependencies: (packageJson.dependencies as Record<string, string>) || {},
       peerDependencies: packageJson.peerDependencies as Record<string, string> | undefined,
       engines: packageJson.engines as { node?: string; npm?: string } | undefined,

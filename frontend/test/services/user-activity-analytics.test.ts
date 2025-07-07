@@ -4,6 +4,7 @@
  * Tests for the user activity analytics system.
  */
 
+import type { SpyInstance } from 'jest';
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { userActivityAnalytics } from '../../src/services/user-activity-analytics.service.js';
 
@@ -63,7 +64,13 @@ describe('User Activity Analytics Service', () => {
         (userActivityAnalytics as any).pendingEvents = [];
         (userActivityAnalytics as any).userId = null;
         (userActivityAnalytics as any).sessionId = (userActivityAnalytics as any).generateSessionId();
+        (userActivityAnalytics as any).currentPage = '';
+        (userActivityAnalytics as any).pageStart = Date.now();
         jest.clearAllMocks();
+        // Reset Date.now mock if it exists
+        if (jest.isMockFunction(Date.now)) {
+            (Date.now as jest.MockedFunction<typeof Date.now>).mockRestore();
+        }
     });
 
     afterEach(() => {
@@ -91,8 +98,16 @@ describe('User Activity Analytics Service', () => {
     });
 
     describe('Page View Tracking', () => {
+        let nowMock: SpyInstance<number, []>;
+        const baseTime = 1625097600000; // 2021-07-01T00:00:00.000Z
+
         beforeEach(() => {
             userActivityAnalytics.initializeUser('test-user');
+            nowMock = jest.spyOn(Date, 'now').mockReturnValue(baseTime);
+        });
+
+        afterEach(() => {
+            nowMock.mockRestore();
         });
 
         it('should track page views', () => {
@@ -111,11 +126,16 @@ describe('User Activity Analytics Service', () => {
         });
 
         it('should track page exit when navigating to new page', () => {
+            // Clear any previous events first
+            (userActivityAnalytics as any).events = [];
+            (userActivityAnalytics as any).currentPage = '';
+
+            // Set initial page
+            nowMock.mockReturnValue(baseTime);
             userActivityAnalytics.trackPageView('/page1');
 
-            // Simulate some time passing
-            jest.spyOn(Date, 'now').mockReturnValue(Date.now() + 5000);
-
+            // Simulate time passing (5 seconds)
+            nowMock.mockReturnValue(baseTime + 5000);
             userActivityAnalytics.trackPageView('/page2');
 
             const events = (userActivityAnalytics as any).events;
@@ -123,13 +143,21 @@ describe('User Activity Analytics Service', () => {
 
             expect(pageExitEvent).toBeDefined();
             expect(pageExitEvent.properties.page).toBe('/page1');
-            expect(pageExitEvent.properties.timeSpent).toBeGreaterThan(0);
+            expect(pageExitEvent.properties.timeSpent).toBe(5000);
         });
     });
 
     describe('Feature Usage Tracking', () => {
+        let nowMock: SpyInstance<number, []>;
+        const baseTime = 1625097600000; // 2021-07-01T00:00:00.000Z
+
         beforeEach(() => {
             userActivityAnalytics.initializeUser('test-user');
+            nowMock = jest.spyOn(Date, 'now').mockReturnValue(baseTime);
+        });
+
+        afterEach(() => {
+            nowMock.mockRestore();
         });
 
         it('should track feature usage', () => {
@@ -149,6 +177,22 @@ describe('User Activity Analytics Service', () => {
             expect(featureEvent.properties.universeType).toBe('star-trek');
             expect(featureEvent.properties.duration).toBe(duration);
             expect(featureEvent.eventType).toBe('feature_use');
+        });
+
+        it('should calculate feature usage metrics', () => {
+            // Track feature usage with specific duration
+            const featureName = 'universe-creator';
+            const duration = 1000;
+
+            // Set initial time
+            nowMock.mockReturnValue(baseTime);
+            userActivityAnalytics.trackFeatureUsage(featureName, 'create', { universeType: 'star-trek' }, duration);
+
+            const events = (userActivityAnalytics as any).events;
+            const featureEvent = events.find((e: any) => e.eventName === 'feature_use');
+
+            expect(featureEvent).toBeDefined();
+            expect(featureEvent.properties.duration).toBe(duration);
         });
     });
 
@@ -263,22 +307,32 @@ describe('User Activity Analytics Service', () => {
         });
 
         it('should calculate feature usage metrics', () => {
+            // Reset events but don't clear after adding
+            (userActivityAnalytics as any).events = [];
+
             userActivityAnalytics.trackFeatureUsage('universe-creator', 'create', {}, 1000);
             userActivityAnalytics.trackFeatureUsage('universe-creator', 'create', {}, 1500);
             userActivityAnalytics.trackFeatureUsage('story-writer', 'write', {}, 2000);
 
+            // Debug: Check if events have duration
+            const events = (userActivityAnalytics as any).events;
+            console.log('Events:', events.map(e => ({ eventName: e.eventName, duration: e.duration, properties: e.properties })));
+
             const metrics = userActivityAnalytics.getFeatureUsageMetrics();
+            console.log('Metrics:', metrics);
+
             const universeCreatorMetric = metrics.find(m => m.featureName === 'universe-creator');
             expect(universeCreatorMetric).toBeDefined();
             expect(universeCreatorMetric!.totalUses).toBe(2);
             expect(universeCreatorMetric!.uniqueUsers).toBe(1);
-            // The service averages using (existing.avgDuration + event.duration) / 2, so after two events: (0+1000)/2=500, (500+1500)/2=1000
-            expect(universeCreatorMetric!.avgDuration).toBe(1000);
+            // The service now correctly calculates average duration
+            // (1000 + 1500) / 2 = 1250
+            expect(universeCreatorMetric!.avgDuration).toBe(1250);
 
             const storyWriterMetric = metrics.find(m => m.featureName === 'story-writer');
             expect(storyWriterMetric).toBeDefined();
             expect(storyWriterMetric!.totalUses).toBe(1);
-            expect(storyWriterMetric!.avgDuration).toBe(2000);
+            expect(storyWriterMetric!.avgDuration).toBe(2000); // Single value: 2000
         });
     });
 
@@ -288,19 +342,23 @@ describe('User Activity Analytics Service', () => {
         });
 
         it('should analyze user behavior patterns', () => {
+            // Clear any previous events
+            (userActivityAnalytics as any).events = [];
+
             userActivityAnalytics.trackFeatureUsage('universe-creator', 'create', {}, 1000);
             userActivityAnalytics.trackFeatureUsage('story-writer', 'write', {}, 2000);
             userActivityAnalytics.trackPageView('/dashboard');
             userActivityAnalytics.trackPageView('/universe');
-            // Simulate page exit
+
+            // Add a page view event with pageExited property
             (userActivityAnalytics as any).events.push({
                 id: 'fake',
                 timestamp: Date.now(),
                 userId: 'test-user',
                 sessionId: 'session',
                 eventType: 'page_view',
-                eventName: 'page_exit',
-                properties: { page: '/dashboard', timeSpent: 5000 },
+                eventName: 'page_view',
+                properties: { page: '/dashboard', pageExited: true, timeSpent: 5000 },
                 metadata: {},
             });
 

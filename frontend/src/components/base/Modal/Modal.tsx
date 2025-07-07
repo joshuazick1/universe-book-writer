@@ -1,5 +1,5 @@
 /**
- * Modal Component - Universe Book Writer
+ * Modal Component - VerseForge
  * Base modal component with universe theme support and plugin extensibility
  */
 

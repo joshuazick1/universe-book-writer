@@ -7,7 +7,7 @@
     }
   };mple implementation
  */
-import { PluginState, PluginType, } from '@universe-book-writer/core';
+import { PluginState, PluginType, } from '@verseforge/core';
 export const metadata = {
     name: 'simple-core-plugin',
     version: '1.0.0',

@@ -20,7 +20,7 @@ export class UserActivityAnalyticsRepository {
     private db: Db;
     private eventsCollection: Collection<UserActivityEvent>;
 
-    constructor(client: MongoClient, dbName: string = 'universe_book_writer') {
+    constructor(client: MongoClient, dbName: string = 'verseforge') {
         this.db = client.db(dbName);
         this.eventsCollection = this.db.collection('user_activity_events');
 

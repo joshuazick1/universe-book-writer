@@ -24,8 +24,17 @@ describe('Security Audit System', () => {
     let controller: SecurityAuditController;
 
     beforeAll(async () => {
+        // Set up a clean MongoDB instance for testing
         mongoSetup = await setupMongoForTest('security_audit_test');
         mongoClient = mongoSetup.mongoClient;
+
+        // Ensure all collections are dropped before starting
+        const db = mongoClient.db('test-security-audit');
+        await Promise.all([
+            db.collection('security_events').drop().catch(() => { }),
+            db.collection('security_alert_rules').drop().catch(() => { }),
+            db.collection('security_alerts').drop().catch(() => { })
+        ]);
     });
 
     afterAll(async () => {
@@ -33,20 +42,35 @@ describe('Security Audit System', () => {
     });
 
     beforeEach(async () => {
+        // Clean up before each test
+        const db = mongoClient.db('test-security-audit');
+        await Promise.all([
+            db.collection('security_events').deleteMany({}),
+            db.collection('security_alert_rules').deleteMany({}),
+            db.collection('security_alerts').deleteMany({})
+        ]);
+
+        // Initialize fresh instances for each test
         repository = new MongoSecurityAuditRepository(mongoClient, 'test-security-audit');
         await repository.initialize();
         service = new SecurityAuditServiceImpl(repository);
         controller = new SecurityAuditController(service);
+
+        // Mock Date.now() to make time-based tests deterministic
+        jest.spyOn(Date, 'now').mockImplementation(() => 1625097600000); // 2021-07-01T00:00:00Z
     });
 
     afterEach(async () => {
-        // Clean up test data
-        if (mongoClient) {
-            const db = mongoClient.db('test-security-audit');
-            await db.collection('security_events').deleteMany({});
-            await db.collection('security_alert_rules').deleteMany({});
-            await db.collection('security_alerts').deleteMany({});
-        }
+        // Clean up after each test
+        const db = mongoClient.db('test-security-audit');
+        await Promise.all([
+            db.collection('security_events').deleteMany({}),
+            db.collection('security_alert_rules').deleteMany({}),
+            db.collection('security_alerts').deleteMany({})
+        ]);
+
+        // Restore Date.now
+        jest.restoreAllMocks();
     });
 
     describe('MongoSecurityAuditRepository', () => {
@@ -119,8 +143,8 @@ describe('Security Audit System', () => {
         });
 
         it('should generate audit summary', async () => {
-            // Log multiple events over time
-            const baseDate = new Date();
+            // Use fixed timestamp from our mock for consistent testing
+            const fixedTimestamp = 1625097600000; // 2021-07-01T00:00:00Z
             const events = [
                 {
                     eventType: SecurityEventType.LOGIN_SUCCESS,
@@ -129,6 +153,7 @@ describe('Security Audit System', () => {
                     source: 'auth-service',
                     details: { action: 'login' },
                     outcome: SecurityEventOutcome.SUCCESS,
+                    timestamp: new Date(fixedTimestamp - 1000), // 1 second before
                 },
                 {
                     eventType: SecurityEventType.ACCESS_DENIED,
@@ -137,15 +162,16 @@ describe('Security Audit System', () => {
                     source: 'api-service',
                     details: { action: 'access_denied' },
                     outcome: SecurityEventOutcome.BLOCKED,
+                    timestamp: new Date(fixedTimestamp), // At fixed time
                 },
             ];
 
-            for (const event of events) {
-                await repository.logEvent(event);
-            }
+            // Insert events with explicit timestamps
+            await Promise.all(events.map(event => repository.logEvent(event)));
 
-            const startDate = new Date(baseDate.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
-            const endDate = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+            // Use fixed time range for consistent results
+            const startDate = new Date(fixedTimestamp - 24 * 60 * 60 * 1000); // 24 hours before
+            const endDate = new Date(fixedTimestamp + 24 * 60 * 60 * 1000); // 24 hours after
 
             const summary = await repository.getSummary(startDate, endDate);
 
@@ -227,21 +253,42 @@ describe('Security Audit System', () => {
         });
 
         it('should clean up old events', async () => {
-            // Log some events
-            const event = {
-                eventType: SecurityEventType.LOGIN_SUCCESS,
-                eventCategory: SecurityEventCategory.AUTHENTICATION,
-                severity: SecurityEventSeverity.LOW,
-                source: 'test-service',
-                details: { action: 'login' },
-                outcome: SecurityEventOutcome.SUCCESS,
-            };
+            // Create events with known timestamps
+            const fixedTimestamp = 1625097600000; // 2021-07-01T00:00:00Z
+            const events = [
+                {
+                    eventType: SecurityEventType.LOGIN_SUCCESS,
+                    eventCategory: SecurityEventCategory.AUTHENTICATION,
+                    severity: SecurityEventSeverity.LOW,
+                    source: 'test-service',
+                    details: { action: 'login' },
+                    outcome: SecurityEventOutcome.SUCCESS,
+                    timestamp: new Date(fixedTimestamp - 5 * 24 * 60 * 60 * 1000), // 5 days old
+                },
+                {
+                    eventType: SecurityEventType.LOGIN_SUCCESS,
+                    eventCategory: SecurityEventCategory.AUTHENTICATION,
+                    severity: SecurityEventSeverity.LOW,
+                    source: 'test-service',
+                    details: { action: 'login' },
+                    outcome: SecurityEventOutcome.SUCCESS,
+                    timestamp: new Date(fixedTimestamp), // Current
+                },
+            ];
 
-            await repository.logEvent(event);
+            // Insert events with explicit timestamps
+            await Promise.all(events.map(event => repository.logEvent(event)));
 
-            // Clean up events older than 1 day (should delete the event we just created)
-            const deletedCount = await service.cleanupOldEvents(0); // 0 days retention
-            expect(deletedCount).toBeGreaterThanOrEqual(0);
+            // Clean up events older than 3 days
+            const deletedCount = await service.cleanupOldEvents(3);
+
+            // Should delete only the 5-day old event
+            expect(deletedCount).toBe(1);
+
+            // Verify only the current event remains
+            const remaining = await repository.getEvents({});
+            expect(remaining).toHaveLength(1);
+            expect(remaining[0].timestamp.getTime()).toBe(fixedTimestamp);
         });
     });
 

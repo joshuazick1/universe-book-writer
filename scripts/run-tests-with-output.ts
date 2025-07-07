@@ -72,6 +72,7 @@ interface TestSummary {
   };
   files: string[];
   coverageFile?: string;
+  targets?: TestSummary[]; // For aggregate 'all' results
 }
 
 interface LogEntry {
@@ -117,6 +118,10 @@ interface CoverageRow {
 }
 
 class TestRunner {
+  /**
+   * Buffer for output before any suite starts (so early debug output is not lost)
+   */
+  private _preSuiteBuffer: string = '';
   private testResultsDir: string;
   private maxLogDirs: number;
   private currentRunDir: string | null;
@@ -164,7 +169,7 @@ class TestRunner {
 
           // Check if this is the monorepo root by looking for our specific structure
           if (
-            packageJson.name === 'universe-book-writer' ||
+            packageJson.name === 'verseforge' ||
             (packageJson.workspaces && Array.isArray(packageJson.workspaces)) ||
             (fs.existsSync(path.join(currentDir, 'frontend')) &&
               fs.existsSync(path.join(currentDir, 'backend')) &&
@@ -291,7 +296,7 @@ Enhanced Test Runner with Output Management
 Usage: npx tsx scripts/run-tests-with-output.ts [options] [target] [pattern]
 
 Targets:
-  all                    Run all tests (default)
+  all                    Run all available test targets sequentially (default)
   backend               Run backend tests only
   frontend              Run frontend tests only
   ai-server             Run AI server tests only
@@ -314,6 +319,12 @@ Options:
 Pattern Matching:
   --pattern: Matches test names/descriptions within test files (e.g., "should validate user")
   --file: Matches test file paths (e.g., "auth" matches auth.test.ts, user-auth.test.ts)
+
+Behavior Notes:
+  - When using 'all', each target runs from its own directory sequentially
+  - Each target maintains separate test output logs and results
+  - Final summary aggregates results from all targets
+  - Failed targets don't stop execution of remaining targets
   
 Examples:
   npx tsx scripts/run-tests-with-output.ts --all
@@ -454,9 +465,12 @@ Examples:
   }
   /**
    * Process test output line by line, track started/completed suites, failed tests, and suite times
+   * Captures all output (including debug/console) for each suite's log file.
    */
   processTestOutput(data: Buffer): void {
     const lines = data.toString().split('\n');
+    // Buffer for output before any suite starts
+    if (!this._preSuiteBuffer) this._preSuiteBuffer = '';
     for (const line of lines) {
       if (!line.trim()) continue;
 
@@ -472,13 +486,20 @@ Examples:
         }
         // Use the actual test file path as the suite name
         this.currentTestSuite = suiteMatch[1];
-        this.testSuiteOutputs.set(this.currentTestSuite, '');
+        // If there was pre-suite output, prepend it to the first suite's log
+        let initialOutput = '';
+        if (this._preSuiteBuffer && !this.testSuiteOutputs.has(this.currentTestSuite)) {
+          initialOutput = this._preSuiteBuffer;
+          this._preSuiteBuffer = '';
+        }
+        this.testSuiteOutputs.set(this.currentTestSuite, initialOutput);
         this.startedSuites.add(this.currentTestSuite);
         this.suiteStartTimes.set(this.currentTestSuite, Date.now());
         this.suiteFailedTests.set(this.currentTestSuite, []);
         console.log(`\n📋 Starting test suite: ${this.currentTestSuite}`);
       }
-      // Add line to current test suite output
+
+      // Add every line to the current suite's output (including debug/console output)
       if (this.currentTestSuite) {
         const currentOutput = this.testSuiteOutputs.get(this.currentTestSuite) || '';
         this.testSuiteOutputs.set(this.currentTestSuite, currentOutput + line + '\n');
@@ -491,7 +512,11 @@ Examples:
           if (!arr.includes(name)) arr.push(name);
           this.suiteFailedTests.set(this.currentTestSuite, arr);
         }
+      } else {
+        // Buffer output before any suite starts
+        this._preSuiteBuffer += line + '\n';
       }
+
       // Parse test results for summary - look for individual test results
       if (line.includes('√')) {
         this.passedTests++;
@@ -706,7 +731,70 @@ Examples:
       throw new Error('No current run directory set');
     }
 
-    const summary: TestSummary = {
+    // Gather suite details for machine-readable summary
+    const suiteDetails: Array<{
+      suite: string;
+      status: 'passed' | 'failed' | 'skipped';
+      passed: number;
+      failed: number;
+      skipped: number;
+      failedTests: string[];
+      logFile: string;
+    }> = [];
+
+    const logFiles = fs.readdirSync(this.currentRunDir).filter(f => f.endsWith('.log'));
+    for (const logFile of logFiles) {
+      // Try to infer suite name from log file name
+      // The log file is named from the suite path, sanitized
+      // We'll reverse the mapping using the suiteLogPaths map
+      let suiteName = null;
+      for (const [suite, logPath] of this.suiteLogPaths.entries()) {
+        if (logPath && path.basename(logPath) === logFile) {
+          suiteName = suite;
+          break;
+        }
+      }
+      if (!suiteName) {
+        suiteName = logFile.replace(/\.log$/, '');
+      }
+      // Get failed tests for this suite
+      const failedTests = this.suiteFailedTests.get(suiteName) || [];
+      // Determine status
+      let status: 'passed' | 'failed' | 'skipped' = 'passed';
+      if (failedTests.length > 0) status = 'failed';
+      // Count passed/failed/skipped from log file (simple parse)
+      const logPath = path.join(this.currentRunDir, logFile);
+      const logContent = fs.readFileSync(logPath, 'utf8');
+      const passed = (logContent.match(/\s*[✓√]\s+/g) || []).length;
+      const failed = (logContent.match(/\s*[×xX]\s+/g) || []).length;
+      const skipped = (logContent.match(/\s*○ skipped/g) || []).length;
+      if (failed > 0) status = 'failed';
+      suiteDetails.push({
+        suite: suiteName,
+        status,
+        passed,
+        failed,
+        skipped,
+        failedTests,
+        logFile
+      });
+    }
+
+    // Add any suites that started but did not complete (crashed etc)
+    const unrunSuites = Array.from(this.startedSuites).filter(suite => !this.completedSuites.has(suite));
+    for (const suite of unrunSuites) {
+      suiteDetails.push({
+        suite,
+        status: 'failed',
+        passed: 0,
+        failed: 0,
+        skipped: 0,
+        failedTests: ['Test suite did not complete (possible crash or timeout)'],
+        logFile: (this.suiteLogPaths.get(suite) ? path.basename(this.suiteLogPaths.get(suite)!) : suite.replace(/[/\\]/g, '_') + '.log')
+      });
+    }
+
+    const summary: TestSummary & { suites?: typeof suiteDetails } = {
       timestamp: new Date().toISOString(),
       target: options.target,
       pattern: options.pattern,
@@ -720,7 +808,8 @@ Examples:
         skipped: this.skippedTests,
         total: this.passedTests + this.failedTests + this.skippedTests,
       },
-      files: fs.readdirSync(this.currentRunDir).filter(f => f.endsWith('.log')),
+      files: logFiles,
+      suites: suiteDetails
     };
 
     const summaryPath = path.join(this.currentRunDir, 'summary.json');
@@ -1053,35 +1142,52 @@ Examples:
   }
 
   /**
-   * Run tests with enhanced output management and improved pattern handling
+   * Get all available test targets that exist in the project
    */
-  async runTests(): Promise<number> {
-    const options = this.parseArgs();
-    const startTime = Date.now();
+  private getAvailableTargets(): string[] {
+    const possibleTargets = ['backend', 'frontend', 'ai-server', 'collaboration-server', 'packages', 'e2e'];
+    const availableTargets: string[] = [];
 
-    console.log('🚀 Starting Enhanced Test Runner...');
+    for (const target of possibleTargets) {
+      const targetPath = path.join(this.projectRoot, target);
+      if (fs.existsSync(targetPath)) {
+        // Check if it has tests (look for jest config or test files)
+        const hasJestConfig = fs.existsSync(path.join(targetPath, 'jest.config.mjs')) ||
+          fs.existsSync(path.join(targetPath, 'jest.config.js'));
+        const hasTestFiles = this.hasTestFiles(targetPath);
 
-    if (options.comment) {
-      console.log(`📝 Comment: ${options.comment}`);
+        if (hasJestConfig || hasTestFiles) {
+          availableTargets.push(target);
+        }
+      }
     }
 
-    if (options.pattern) {
-      console.log(`🎯 Test name pattern: "${options.pattern}"`);
+    return availableTargets;
+  }
+
+  /**
+   * Check if a directory has test files
+   */
+  private hasTestFiles(dirPath: string): boolean {
+    try {
+      const files = fs.readdirSync(dirPath, { recursive: true });
+      return files.some(file =>
+        typeof file === 'string' &&
+        (file.includes('.test.') || file.includes('.spec.')) &&
+        (file.endsWith('.ts') || file.endsWith('.js') || file.endsWith('.tsx') || file.endsWith('.jsx'))
+      );
+    } catch {
+      return false;
     }
+  }
 
-    if (options.testPathPattern) {
-      console.log(`📁 Test path pattern: "${options.testPathPattern}"`);
-    }
+  /**
+   * Run a single target's tests
+   */
+  private async runSingleTarget(targetOptions: TestRunOptions): Promise<{ exitCode: number; allOutput: string; summary: TestSummary }> {
+    const { command, args, cwd } = this.buildJestCommand(targetOptions);
 
-    // Setup directories and rotation
-    this.rotateLogDirectories();
-    this.setupTestRunDirectory();
-    this.createRunMetadata(options);
-
-    // Build Jest command with improved pattern handling
-    const { command, args, cwd } = this.buildJestCommand(options);
-
-    console.log(`📋 Running: ${command} ${args.join(' ')}`);
+    console.log(`📋 Running ${targetOptions.target}: ${command} ${args.join(' ')}`);
     if (cwd) {
       console.log(`📁 Working directory: ${cwd}`);
     }
@@ -1109,8 +1215,6 @@ Examples:
       });
 
       testProcess.on('close', (code: number | null) => {
-        const endTime = Date.now();
-        const duration = endTime - startTime;
         const exitCode = code ?? 1;
 
         // Save any remaining test suite output
@@ -1121,83 +1225,272 @@ Examples:
           );
         }
 
-        // Save complete output and process coverage
-        let coverageFile: string | null = null;
-        if (this.currentRunDir) {
-          const completeOutputPath = path.join(this.currentRunDir, 'complete-output.log');
-          fs.writeFileSync(completeOutputPath, this.stripAnsi(allOutput));
-          // Process and save coverage output if coverage was enabled
-          coverageFile = this.processCoverageOutput(allOutput, options);
-        }
+        // Create a summary for this target
+        const summary = this.createTargetSummary(targetOptions, exitCode, allOutput);
 
-        // Extract Jest configuration info for debugging
-        const jestConfig = this.extractJestConfig(allOutput);
-        if (jestConfig && this.currentRunDir) {
-          const configPath = path.join(this.currentRunDir, 'jest-config.log');
-          fs.writeFileSync(configPath, this.stripAnsi(jestConfig));
-          console.log(`⚙️  Jest configuration saved to: jest-config.log`);
-        }
-
-        // Create summary report
-        const summary = this.createSummaryReport(options, exitCode, duration);
-        if (coverageFile) {
-          summary.coverageFile = coverageFile;
-          // Update the summary file with coverage info
-          if (this.currentRunDir) {
-            const summaryPath = path.join(this.currentRunDir, 'summary.json');
-            fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
-          }
-        }
-
-        // Always write summary.json (already done above)
-        // If --ci or --json, print summary.json to stdout between CI_SUMMARY_JSON_START/END
-        if (options.ci || options.json) {
-          if (this.currentRunDir) {
-            const summaryPath = path.join(this.currentRunDir, 'summary.json');
-            const summaryContent = fs.readFileSync(summaryPath, 'utf8');
-            console.log('\nCI_SUMMARY_JSON_START');
-            console.log(summaryContent);
-            console.log('CI_SUMMARY_JSON_END\n');
-          }
-        }
-
-        console.log('\n' + '='.repeat(60));
-        console.log('📊 Test Run Complete!');
-        console.log('='.repeat(60));
-        console.log(`⏱️  Duration: ${Math.round(duration / 1000)}s`);
-        if (this.currentRunDir) {
-          console.log(`📁 Results saved to: ${path.relative(process.cwd(), this.currentRunDir)}`);
-        }
-        console.log('');
-        console.log(`✅ Passed: ${this.passedTests}`);
-        console.log(`❌ Failed: ${this.failedTests}`);
-        console.log(`⏭️ Skipped: ${this.skippedTests}`);
-        console.log(`📊 Total: ${summary.results.total}`);
-
-        if (coverageFile) {
-          console.log(`📊 Coverage report: ${coverageFile}`);
-        }
-
-        if (options.comment) {
-          console.log(`📝 Comment: ${options.comment}`);
-        }
-
-        // Show pattern information in summary
-        if (options.pattern) {
-          console.log(`🎯 Test name pattern used: "${options.pattern}"`);
-        }
-        if (options.testPathPattern) {
-          console.log(`📁 Test path pattern used: "${options.testPathPattern}"`);
-        }
-
-        resolve(exitCode);
+        resolve({ exitCode, allOutput, summary });
       });
 
       testProcess.on('error', (error: Error) => {
-        console.error('❌ Failed to start test process:', error);
-        resolve(1);
+        console.error(`❌ Failed to start test process for ${targetOptions.target}:`, error);
+        const summary = this.createTargetSummary(targetOptions, 1, '');
+        resolve({ exitCode: 1, allOutput: '', summary });
       });
     });
+  }
+
+  /**
+   * Create a summary for a single target
+   */
+  private createTargetSummary(options: TestRunOptions, exitCode: number, output: string): TestSummary {
+    // Count tests from this target's output
+    const targetPassed = this.passedTests;
+    const targetFailed = this.failedTests;
+    const targetSkipped = this.skippedTests;
+
+    // Reset counters for next target
+    this.passedTests = 0;
+    this.failedTests = 0;
+    this.skippedTests = 0;
+
+    return {
+      timestamp: new Date().toISOString(),
+      target: options.target,
+      pattern: options.pattern,
+      testPathPattern: options.testPathPattern,
+      comment: options.comment,
+      duration: 0, // Will be calculated by caller
+      exitCode,
+      results: {
+        passed: targetPassed,
+        failed: targetFailed,
+        skipped: targetSkipped,
+        total: targetPassed + targetFailed + targetSkipped,
+      },
+      files: [],
+    };
+  }
+
+  /**
+   * Run tests with enhanced output management and improved pattern handling
+   */
+  async runTests(): Promise<number> {
+    const options = this.parseArgs();
+    const startTime = Date.now();
+
+    console.log('🚀 Starting Enhanced Test Runner...');
+
+    if (options.comment) {
+      console.log(`📝 Comment: ${options.comment}`);
+    }
+
+    if (options.pattern) {
+      console.log(`🎯 Test name pattern: "${options.pattern}"`);
+    }
+
+    if (options.testPathPattern) {
+      console.log(`📁 Test path pattern: "${options.testPathPattern}"`);
+    }
+
+    // Setup directories and rotation
+    this.rotateLogDirectories();
+    this.setupTestRunDirectory();
+    this.createRunMetadata(options);
+
+    let finalExitCode = 0;
+    let combinedOutput = '';
+    const targetSummaries: TestSummary[] = [];
+
+    if (options.target === 'all') {
+      // Run each target sequentially from their own directory
+      const availableTargets = this.getAvailableTargets();
+
+      if (availableTargets.length === 0) {
+        console.warn('⚠️  No test targets found in the project');
+        return 1;
+      }
+
+      console.log(`📂 Found ${availableTargets.length} test targets: ${availableTargets.join(', ')}\n`);
+
+      for (let i = 0; i < availableTargets.length; i++) {
+        const target = availableTargets[i];
+        const targetStartTime = Date.now();
+
+        console.log('='.repeat(80));
+        console.log(`🎯 Running tests for: ${target.toUpperCase()} (${i + 1}/${availableTargets.length})`);
+        console.log('='.repeat(80));
+
+        // Create target-specific options
+        const targetOptions: TestRunOptions = {
+          ...options,
+          target,
+        };
+
+        // Reset test suite tracking for this target
+        this.currentTestSuite = null;
+        this.testSuiteOutputs.clear();
+        this.startedSuites.clear();
+        this.completedSuites.clear();
+        this.suiteLogPaths.clear();
+        this.suiteStartTimes.clear();
+        this.suiteFailedTests.clear();
+
+        const { exitCode, allOutput, summary } = await this.runSingleTarget(targetOptions);
+
+        const targetDuration = Date.now() - targetStartTime;
+        summary.duration = targetDuration;
+
+        combinedOutput += `\n${'='.repeat(80)}\n`;
+        combinedOutput += `TARGET: ${target.toUpperCase()}\n`;
+        combinedOutput += `${'='.repeat(80)}\n`;
+        combinedOutput += allOutput;
+
+        targetSummaries.push(summary);
+
+        if (exitCode !== 0) {
+          finalExitCode = exitCode;
+        }
+
+        console.log(`\n✅ Completed ${target} in ${Math.round(targetDuration / 1000)}s`);
+        console.log(`   📊 ${summary.results.passed} passed, ${summary.results.failed} failed, ${summary.results.skipped} skipped\n`);
+      }
+    } else {
+      // Run single target
+      const { exitCode, allOutput } = await this.runSingleTarget(options);
+      finalExitCode = exitCode;
+      combinedOutput = allOutput;
+    }
+
+    const endTime = Date.now();
+    const totalDuration = endTime - startTime;
+
+    // Save complete output and process coverage
+    let coverageFile: string | null = null;
+    if (this.currentRunDir) {
+      const completeOutputPath = path.join(this.currentRunDir, 'complete-output.log');
+      fs.writeFileSync(completeOutputPath, this.stripAnsi(combinedOutput));
+      // Process and save coverage output if coverage was enabled
+      coverageFile = this.processCoverageOutput(combinedOutput, options);
+    }
+
+    // Extract Jest configuration info for debugging
+    const jestConfig = this.extractJestConfig(combinedOutput);
+    if (jestConfig && this.currentRunDir) {
+      const configPath = path.join(this.currentRunDir, 'jest-config.log');
+      fs.writeFileSync(configPath, this.stripAnsi(jestConfig));
+      console.log(`⚙️  Jest configuration saved to: jest-config.log`);
+    }
+
+    // Create final summary report
+    let summary: TestSummary;
+    if (options.target === 'all') {
+      // Aggregate all target summaries
+      const totalPassed = targetSummaries.reduce((sum, s) => sum + s.results.passed, 0);
+      const totalFailed = targetSummaries.reduce((sum, s) => sum + s.results.failed, 0);
+      const totalSkipped = targetSummaries.reduce((sum, s) => sum + s.results.skipped, 0);
+
+      summary = {
+        timestamp: new Date().toISOString(),
+        target: 'all',
+        pattern: options.pattern,
+        testPathPattern: options.testPathPattern,
+        comment: options.comment,
+        duration: totalDuration,
+        exitCode: finalExitCode,
+        results: {
+          passed: totalPassed,
+          failed: totalFailed,
+          skipped: totalSkipped,
+          total: totalPassed + totalFailed + totalSkipped,
+        },
+        files: [],
+        targets: targetSummaries, // Include individual target results
+      };
+    } else {
+      summary = this.createSummaryReport(options, finalExitCode, totalDuration);
+    }
+
+    if (coverageFile) {
+      summary.coverageFile = coverageFile;
+    }
+
+    // Save final summary
+    if (this.currentRunDir) {
+      const summaryPath = path.join(this.currentRunDir, 'summary.json');
+      fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
+    }
+
+    // Always write summary.json (already done above)
+    // If --ci or --json, print summary.json to stdout between CI_SUMMARY_JSON_START/END
+    if (options.ci || options.json) {
+      if (this.currentRunDir) {
+        const summaryPath = path.join(this.currentRunDir, 'summary.json');
+        const summaryContent = fs.readFileSync(summaryPath, 'utf8');
+        console.log('\nCI_SUMMARY_JSON_START');
+        console.log(summaryContent);
+        console.log('CI_SUMMARY_JSON_END\n');
+      }
+    }
+
+    console.log('\n' + '='.repeat(60));
+    console.log('📊 Test Run Complete!');
+    console.log('='.repeat(60));
+    console.log(`⏱️  Total Duration: ${Math.round(totalDuration / 1000)}s`);
+    if (this.currentRunDir) {
+      console.log(`📁 Results saved to: ${path.relative(process.cwd(), this.currentRunDir)}`);
+    }
+    console.log('');
+
+    if (options.target === 'all') {
+      // Show aggregate results
+      console.log('📊 AGGREGATE RESULTS:');
+      console.log(`✅ Total Passed: ${summary.results.passed}`);
+      console.log(`❌ Total Failed: ${summary.results.failed}`);
+      console.log(`⏭️ Total Skipped: ${summary.results.skipped}`);
+      console.log(`📊 Grand Total: ${summary.results.total}\n`);
+
+      // Show per-target breakdown
+      console.log('📋 PER-TARGET BREAKDOWN:');
+      targetSummaries.forEach(targetSummary => {
+        const status = targetSummary.exitCode === 0 ? '✅' : '❌';
+        console.log(`${status} ${targetSummary.target}: ${targetSummary.results.passed} passed, ${targetSummary.results.failed} failed, ${targetSummary.results.skipped} skipped (${Math.round(targetSummary.duration / 1000)}s)`);
+      });
+    } else {
+      console.log(`✅ Passed: ${summary.results.passed}`);
+      console.log(`❌ Failed: ${summary.results.failed}`);
+      console.log(`⏭️ Skipped: ${summary.results.skipped}`);
+      console.log(`📊 Total: ${summary.results.total}`);
+    }
+
+    if (coverageFile) {
+      console.log(`📊 Coverage report: ${coverageFile}`);
+    }
+
+    if (options.comment) {
+      console.log(`📝 Comment: ${options.comment}`);
+    }
+
+    // Show pattern information in summary
+    if (options.pattern) {
+      console.log(`🎯 Test name pattern used: "${options.pattern}"`);
+    }
+    if (options.testPathPattern) {
+      console.log(`📁 Test path pattern used: "${options.testPathPattern}"`);
+    }
+
+    // Announce summary file and its purpose
+    if (this.currentRunDir) {
+      const summaryPath = path.join(this.currentRunDir, 'summary.json');
+      console.log(
+        `\nTest summary written to: ${path.relative(process.cwd(), summaryPath)}\n` +
+        'This file provides a machine-readable list of all test suites, their pass/fail status, and direct links to individual log files for analysis.\n'
+      );
+    }
+
+    // Show test suites that failed to run completely
+    this.showUnrunSuitesSummary();
+
+    return finalExitCode;
   }
 }
 

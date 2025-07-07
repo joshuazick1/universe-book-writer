@@ -1,5 +1,5 @@
 /**
- * Animation utilities for the Universe Book Writer frontend
+ * Animation utilities for the VerseForge frontend
  * Provides consistent animation patterns across the application
  */
 

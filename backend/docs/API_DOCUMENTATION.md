@@ -13,12 +13,12 @@
 
 ## Overview
 
-The Universe Book Writer backend API provides a RESTful interface for managing users, universes, stories, characters, and plugins. Built with Node.js, Express, and TypeScript, following clean architecture principles.
+The VerseForge backend API provides a RESTful interface for managing users, universes, stories, characters, and plugins. Built with Node.js, Express, and TypeScript, following clean architecture principles.
 
 ### Base URL
 ```
 Development: http://localhost:5000/api
-Production: https://api.universebookwriter.com/api
+Production: https://api.verseforge.com/api
 ```
 
 ### API Version
@@ -719,7 +719,7 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 ### Postman Collection
 
-A complete Postman collection is available at `/docs/postman/Universe-Book-Writer-API.json`
+A complete Postman collection is available at `/docs/postman/verseforge-API.json`
 
 ## Security
 

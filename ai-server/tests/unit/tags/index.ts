@@ -1,2 +1,3 @@
-export * from './tags-api.test.js';
-export * from './tags-api-edge-cases.test.js';
+// Tags test suite
+// Tests are automatically discovered by Jest
+// This file is kept for potential future test utilities

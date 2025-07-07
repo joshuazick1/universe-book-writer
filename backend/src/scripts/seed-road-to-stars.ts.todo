@@ -53,7 +53,7 @@
  */
 
 import { MongoClient, Db, ObjectId } from 'mongodb';
-import type { Universe, Character, Book, Location } from '@universe-book-writer/core';
+import type { Universe, Character, Book, Location } from '@verseforge/core';
 
 /**
  * 📝 TYPE DEFINITIONS
@@ -174,7 +174,7 @@ interface SeedOrganization {
  */
 export async function seedRoadToTheStars(): Promise<void> {
   const client = new MongoClient(
-    process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer'
+    process.env.MONGODB_URI || 'mongodb://localhost:27017/verseforge'
   );
 
   try {

@@ -1,3 +1,3 @@
-export * from './express-app.test.js';
-export * from './middleware.test.js';
-export * from './error-handling.test.js';
+// Express test suite
+// Tests are automatically discovered by Jest
+// This file is kept for potential future test utilities

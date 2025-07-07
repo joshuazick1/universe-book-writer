@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Universe Book Writer API
+  title: VerseForge API
   description: |
-    RESTful API for the Universe Book Writer application - a comprehensive platform for creating and managing multi-universe book series with AI assistance, real-time collaboration, and plugin extensibility.
+    RESTful API for the VerseForge application - a comprehensive platform for creating and managing multi-universe book series with AI assistance, real-time collaboration, and plugin extensibility.
     
     ## Features
     - User authentication and authorization
@@ -14,15 +14,15 @@ info:
     
   version: 1.0.0
   contact:
-    name: Universe Book Writer Team
-    email: api@universebookwriter.com
+    name: VerseForge Team
+    email: api@verseforge.com
   license:
     name: Private License
     
 servers:
   - url: http://localhost:5000/api/v1
     description: Development server
-  - url: https://api.universebookwriter.com/api/v1
+  - url: https://api.verseforge.com/api/v1
     description: Production server
 
 security:

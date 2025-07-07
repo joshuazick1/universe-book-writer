@@ -1,5 +1,5 @@
 /**
- * Input Component - Universe Book Writer
+ * Input Component - VerseForge
  * Base input component with universe theme support and plugin extensibility
  */
 

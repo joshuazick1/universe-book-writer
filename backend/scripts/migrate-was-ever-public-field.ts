@@ -8,7 +8,7 @@
 
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/verseforge';
 
 async function addWasEverPublicField() {
     console.log('🔄 Adding was_ever_public field to universe settings...\n');

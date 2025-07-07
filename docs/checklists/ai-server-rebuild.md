@@ -1,5 +1,7 @@
 # AI Server Rebuild Checklist (In-Progress)
 
+> **This file is the canonical source for requirements, status, and planning for this phase.**
+
 ## Completed Milestones (2025-06-26/copilot)
 - Old AI server code removed; new backend scaffolded (Express, TypeScript, ES Modules)
 - Multi-server/model orchestration layer implemented
@@ -57,7 +59,7 @@
         - [x] **Model/Server Mapping**
             - [x] `GET /api/orchestrator/model-map` — Return a mapping of models to servers and vice versa (2025-06-27/copilot)
     - [ ] Update and expand automated tests for all new and updated API endpoints to ensure ≥80% coverage and parity with OpenAPI/Swagger documentation
-    - [ ] Add endpoints to support Phase C AI orchestration features:
+    - [ ] Add endpoints to support Phase C AI orchestration features (requires RAG foundation from A.2.6):
         - [ ] Universe Generation API (C.1)
             - [ ] Design OpenAPI schema for universe generation requests and responses
             - [ ] Implement endpoint: `POST /api/orchestrator/universe/generate`

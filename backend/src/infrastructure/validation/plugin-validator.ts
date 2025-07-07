@@ -9,7 +9,7 @@ import {
   type PluginConfig,
   type PluginMetadata,
   PluginType,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 
 /**
  * Validation severity levels

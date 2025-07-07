@@ -1,5 +1,5 @@
 /**
- * Card Component - Universe Book Writer
+ * Card Component - VerseForge
  * Base card component with universe theme support and plugin extensibility
  */
 

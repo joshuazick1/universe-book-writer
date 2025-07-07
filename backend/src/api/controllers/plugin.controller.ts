@@ -2,7 +2,7 @@
  * Plugin controller - API layer for plugin management endpoints
  */
 
-import { PluginState, PluginType } from '@universe-book-writer/core';
+import { PluginState, PluginType } from '@verseforge/core';
 import type { Request, Response } from 'express';
 import type { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
 

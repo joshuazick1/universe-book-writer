@@ -1,6 +1,6 @@
 # Collaboration Server - WebSocket Infrastructure
 
-Real-time collaboration server for the Universe Book Writer project, providing comprehensive WebSocket-based communication for multi-user document editing, real-time synchronization, and collaborative features.
+Real-time collaboration server for the VerseForge project, providing comprehensive WebSocket-based communication for multi-user document editing, real-time synchronization, and collaborative features.
 
 ## Overview
 
@@ -283,7 +283,7 @@ socket.on('user-joined', user => {
 ### Server Integration
 
 ```typescript
-import { CollaborationServer } from '@universe-book-writer/collaboration-server';
+import { CollaborationServer } from '@verseforge/collaboration-server';
 
 const server = new CollaborationServer({
   port: 3001,
@@ -436,4 +436,4 @@ Ensure all required environment variables are set in production:
 
 ## License
 
-This project is part of the Universe Book Writer application and follows the same licensing terms.
+This project is part of the VerseForge application and follows the same licensing terms.

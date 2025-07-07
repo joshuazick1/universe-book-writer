@@ -1,5 +1,5 @@
 /**
- * Theme Selector Component - Universe Book Writer
+ * Theme Selector Component - VerseForge
  * Provides UI for users to select and switch between available themes
  */
 

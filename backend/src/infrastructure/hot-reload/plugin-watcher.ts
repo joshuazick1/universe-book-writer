@@ -4,7 +4,7 @@
 
 import { EventEmitter } from 'node:events';
 import path from 'node:path';
-import { type Plugin, PluginState } from '@universe-book-writer/core';
+import { type Plugin, PluginState } from '@verseforge/core';
 import { type FSWatcher, watch } from 'chokidar';
 import type { PluginUseCase } from '../../application/use-cases/plugin.use-case.js';
 
@@ -51,11 +51,11 @@ export interface WatchConfig {
   followSymlinks?: boolean;
   depth?: number;
   awaitWriteFinish?:
-    | boolean
-    | {
-        stabilityThreshold?: number;
-        pollInterval?: number;
-      };
+  | boolean
+  | {
+    stabilityThreshold?: number;
+    pollInterval?: number;
+  };
 }
 
 /**

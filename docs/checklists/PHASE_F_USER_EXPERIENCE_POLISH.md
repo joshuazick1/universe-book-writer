@@ -1,5 +1,7 @@
 # Phase F: User Experience & Polish
 
+> **This file is the canonical source for requirements, status, and planning for this phase.**
+
 **Duration**: 2-3 weeks (4 subphases)  
 **Status**: ⏳ **AWAITING PHASE E**  
 **Priority**: HIGH - Final user experience and production readiness  
@@ -33,19 +35,19 @@ Phase F provides the final polish and user experience optimization that transfor
 
 **Core Philosophy**: *"Every user interaction should feel intuitive, helpful, and delightful"*
 
-### **Key Deliverables**
-- AI-generated guidance and onboarding system
-- Comprehensive wiki and canon information system
-- Enhanced plugin SDK and marketplace foundation
-- Complete user experience testing and optimization
-- Production readiness validation and launch preparation
+### **Key Deliverables (RAG-Enhanced)**
+- **AI-generated guidance and onboarding system** using RAG knowledge graph for contextual help
+- **Comprehensive wiki and canon information system** built on RAG semantic relationships
+- **Enhanced plugin SDK v2 and marketplace foundation** with RAG knowledge seeding examples
+- **Complete user experience testing and optimization** including knowledge graph navigation
+- **Production readiness validation** with RAG performance benchmarks and multimodal routing
 
-### **Success Criteria**
-- New users can become productive within 5 minutes
-- AI-generated guidance provides contextual help throughout the application
-- Plugin marketplace enables third-party ecosystem development
-- User experience testing shows >4.5/5 satisfaction rating
-- System is fully production-ready with comprehensive documentation
+### **Success Criteria (Knowledge-Aware)**
+- New users can navigate knowledge graph and create content within 5 minutes
+- AI-generated guidance provides contextual help using RAG semantic understanding
+- Plugin marketplace enables third-party RAG-native plugins with knowledge seeding
+- User experience testing shows >4.5/5 satisfaction including knowledge discovery features
+- System is production-ready with RAG scalability and intelligent multimodal routing operational
 
 ## Subphase Breakdown
 
@@ -66,8 +68,8 @@ Intelligent user guidance and onboarding system:
 **Status**: ⏳ **AWAITING Phase E**  
 **Documentation**: `PHASE_F2_WIKI_CANON_SYSTEM.md`
 
-Comprehensive knowledge management and reference system:
-- 📋 RAG-integrated wiki system for universe information
+Comprehensive knowledge management and reference system (builds on RAG foundation from A.2.6):
+- 📋 Advanced RAG-integrated wiki system for universe information  
 - 📋 Canon database with AI-powered search and retrieval
 - 📋 Community-contributed content management
 - 📋 Cross-reference and relationship mapping
@@ -447,7 +449,7 @@ interface MonitoringValidation {
 
 ### **Week 1: AI Guidance & Wiki Foundation (F.1 & F.2 Parallel)**
 - Days 1-3: AI-powered onboarding wizard and contextual help
-- Days 1-3: RAG-integrated wiki system and canon database (parallel)
+- Days 1-3: Advanced RAG-integrated wiki system and canon database (parallel) - builds on A.2.6 RAG foundation
 - Days 4-5: Feature discovery and personalized guidance
 - Days 4-5: Community content management and cross-references (parallel)
 - Days 6-7: Integration testing and user experience validation
@@ -470,4 +472,4 @@ interface MonitoringValidation {
 
 ---
 
-**Launch Ready**: Complete Universe Book Writer system ready for production deployment with outstanding user experience, comprehensive feature set, and thriving plugin ecosystem.
+**Launch Ready**: Complete VerseForge system ready for production deployment with outstanding user experience, comprehensive feature set, and thriving plugin ecosystem.

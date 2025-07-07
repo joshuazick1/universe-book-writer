@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { PluginType } from '@universe-book-writer/core';
+import { PluginType } from '@verseforge/core';
 
 describe('PluginSystemFactory Integration Test', () => {
   it('should successfully import PluginSystemFactory', async () => {
@@ -17,7 +17,7 @@ describe('PluginSystemFactory Integration Test', () => {
 
   it('should have proper method signatures', async () => {
     const { PluginSystemFactory } = await import('../../../src/plugins/manager/plugin-system.factory');
-    
+
     // Test that methods exist and are functions
     expect(PluginSystemFactory.create).toBeInstanceOf(Function);
     expect(PluginSystemFactory.loadPluginsFromDirectories).toBeInstanceOf(Function);
@@ -48,7 +48,7 @@ describe('PluginSystemFactory Integration Test', () => {
 
   it('should have valid plugin configuration interface', async () => {
     const { PluginSystemFactory } = await import('../../../src/plugins/manager/plugin-system.factory');
-    
+
     // Test basic configuration structure (without actually creating it)
     const mockConfig = {
       mongoClient: {} as any, // Type assertion to avoid mock complexity
@@ -60,7 +60,7 @@ describe('PluginSystemFactory Integration Test', () => {
     expect(mockConfig.databaseName).toBe('test_db');
     expect(mockConfig.pluginDirectories).toEqual(['/test/plugins']);
     expect(mockConfig.autoLoadPlugins).toBe(false);
-    
+
     // Verify the config structure matches what the factory expects
     expect(typeof mockConfig.mongoClient).toBe('object');
     expect(typeof mockConfig.databaseName).toBe('string');
@@ -86,7 +86,7 @@ describe('PluginSystemFactory Integration Test', () => {
     // Import and test the interface is available
     const factoryModule = await import('../../../src/plugins/manager/plugin-system.factory');
     expect(factoryModule.PluginSystemFactory).toBeDefined();
-    
+
     // Test that the factory has the expected static methods
     const factoryClass = factoryModule.PluginSystemFactory;
     expect(factoryClass.create).toBeDefined();

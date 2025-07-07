@@ -1,6 +1,6 @@
 # Contributing to Multi-Universe Book Series Writing Assistant
 
-We're excited that you want to contribute to the Universe Book Writer! This guide will help you get started with contributing to our open-source project.
+We're excited that you want to contribute to the VerseForge! This guide will help you get started with contributing to our open-source project.
 
 ## Code of Conduct
 
@@ -47,8 +47,8 @@ We welcome feature requests! Please:
 1. **Fork the repository**
    ```bash
    # Fork on GitHub, then clone your fork
-   git clone https://github.com/YOUR_USERNAME/universe-book-writer.git
-   cd universe-book-writer
+   git clone https://github.com/YOUR_USERNAME/verseforge.git
+   cd verseforge
    ```
 
 2. **Set up development environment**
@@ -328,7 +328,7 @@ We recognize various types of contributions:
 ### Reporting Security Issues
 Please do **not** report security vulnerabilities through public GitHub issues. Instead:
 
-1. Email security@universe-book-writer.com
+1. Email security@verseforge.com
 2. Include detailed description of the vulnerability
 3. Provide steps to reproduce if possible
 4. Allow time for us to address the issue before public disclosure
@@ -351,10 +351,10 @@ Your contributions will be attributed to you, and you retain copyright of your c
 Don't hesitate to ask questions! You can:
 - Open a GitHub Discussion for general questions
 - Join our Discord community for real-time help
-- Email contributors@universe-book-writer.com for specific inquiries
+- Email contributors@verseforge.com for specific inquiries
 
 We're here to help you succeed as a contributor!
 
 ---
 
-**Thank you for contributing to the Universe Book Writer! Together, we're building an amazing tool for writers everywhere. 🚀📚**
+**Thank you for contributing to the VerseForge! Together, we're building an amazing tool for writers everywhere. 🚀📚**

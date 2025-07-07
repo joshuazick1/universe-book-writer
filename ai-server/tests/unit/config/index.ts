@@ -1,2 +1,3 @@
-export * from './config.test.js';
-export * from './orchestrator-config.test.js';
+// Config test suite
+// Tests are automatically discovered by Jest
+// This file is kept for potential future test utilities

@@ -8,8 +8,12 @@ if (!fs.existsSync(LOG_DIR)) {
     fs.mkdirSync(LOG_DIR);
 }
 
+
 function formatMsg(level: string, msg: string) {
-    return `[${new Date().toISOString()}] [${level}] ${msg}\n`;
+    let safeMsg = '';
+    if (msg === undefined || msg === null) safeMsg = '';
+    else safeMsg = String(msg);
+    return `[${new Date().toISOString()}] [${level}]${safeMsg.length ? ' ' + safeMsg : ''}\n`;
 }
 
 export function logInfo(msg: string) {

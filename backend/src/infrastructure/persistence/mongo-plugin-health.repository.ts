@@ -23,7 +23,7 @@ export class PluginHealthMonitoringRepository {
     private errorEventsCollection: Collection<PluginErrorEvent>;
     private performanceEventsCollection: Collection<PluginPerformanceEvent>;
 
-    constructor(client: MongoClient, dbName: string = 'universe_book_writer') {
+    constructor(client: MongoClient, dbName: string = 'verseforge') {
         this.db = client.db(dbName);
         this.healthMetricsCollection = this.db.collection('plugin_health_metrics');
         this.loadEventsCollection = this.db.collection('plugin_load_events');

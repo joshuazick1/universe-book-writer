@@ -1,10 +1,10 @@
 {
     "name": "simple-core-plugin",
-    "version": "1.0.0",
+    "version": "0.0.1-dev",
     "description": "Simple core plugin for basic functionality",
     "main": "index.ts",
     "type": "module",
-    "author": "Universe Book Writer Team",
+    "author": "VerseForge Team",
     "license": "MIT",
     "keywords": [
         "core",

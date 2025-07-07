@@ -1,6 +1,6 @@
 {
-    "name": "@universe-book-writer/lotr-universe-plugin",
-    "version": "1.0.0",
+    "name": "@verseforge/lotr-universe-plugin",
+    "version": "0.0.1-dev",
     "description": "Lord of the Rings Universe Plugin with Age-based timeline and Middle-earth geography",
     "main": "index.ts",
     "type": "module",
@@ -17,10 +17,10 @@
         "tolkien",
         "universe-plugin"
     ],
-    "author": "Universe Book Writer Team",
+    "author": "VerseForge Team",
     "license": "MIT",
     "dependencies": {
-        "@universe-book-writer/core": "file:../../packages/core"
+        "@verseforge/core": "file:../../packages/core"
     },
     "devDependencies": {
         "@types/node": "^20.0.0",
@@ -37,7 +37,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/universe-book-writer/plugins/lotr-universe"
+        "url": "https://github.com/verseforge/plugins/lotr-universe"
     },
     "pluginMetadata": {
         "architecture": "age-based-timeline",

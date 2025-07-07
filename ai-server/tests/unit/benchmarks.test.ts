@@ -31,6 +31,56 @@ describe('AIOrchestrator Benchmarks & Concurrency', () => {
         }
     });
 
+    it('should not run benchmarks for unhealthy servers', async () => {
+        const s1 = orchestrator.getServers()[0];
+        // Clear any existing benchmarks for this server
+        for (const m of s1.models) {
+            orchestrator.setBenchmark(s1.id, m, { latencyMs: 1, throughput: 1, lastTested: Date.now() });
+        }
+        s1.healthy = false;
+        await orchestrator.runBenchmarks();
+        for (const m of s1.models) {
+            // If unhealthy, benchmark should not be updated (should remain as set above)
+            const bench = orchestrator.getBenchmark(s1.id, m);
+            // Accept either unchanged (old) or undefined, but not a new value
+            expect(bench?.latencyMs === 1 && bench?.throughput === 1).toBe(true);
+        }
+    });
+
+    it('should overwrite existing benchmark with setBenchmark', () => {
+        const now = Date.now();
+        orchestrator.setBenchmark('s1', 'm1', { latencyMs: 100, throughput: 10, lastTested: now });
+        expect(orchestrator.getBenchmark('s1', 'm1')).toEqual({ latencyMs: 100, throughput: 10, lastTested: now });
+        orchestrator.setBenchmark('s1', 'm1', { latencyMs: 50, throughput: 20, lastTested: now + 1 });
+        expect(orchestrator.getBenchmark('s1', 'm1')).toEqual({ latencyMs: 50, throughput: 20, lastTested: now + 1 });
+    });
+
+    it('should return undefined for missing benchmark', () => {
+        expect(orchestrator.getBenchmark('nope', 'nope')).toBeUndefined();
+    });
+
+    it('should not decrement in-flight below zero', () => {
+        expect(orchestrator.getInFlight('s1', 'm1')).toBe(0);
+        orchestrator.decrementInFlight('s1', 'm1');
+        expect(orchestrator.getInFlight('s1', 'm1')).toBe(0);
+    });
+
+    it('should handle increment/decrement for unknown server/model', () => {
+        expect(orchestrator.getInFlight('unknown', 'unknown')).toBe(0);
+        orchestrator.incrementInFlight('unknown', 'unknown');
+        expect(orchestrator.getInFlight('unknown', 'unknown')).toBe(1);
+        orchestrator.decrementInFlight('unknown', 'unknown');
+        expect(orchestrator.getInFlight('unknown', 'unknown')).toBe(0);
+    });
+
+    it('should handle extreme benchmark values', () => {
+        const now = Date.now();
+        orchestrator.setBenchmark('s1', 'm1', { latencyMs: 0, throughput: 0, lastTested: now });
+        expect(orchestrator.getBenchmark('s1', 'm1')).toEqual({ latencyMs: 0, throughput: 0, lastTested: now });
+        orchestrator.setBenchmark('s1', 'm1', { latencyMs: 1e9, throughput: 1e6, lastTested: now + 1 });
+        expect(orchestrator.getBenchmark('s1', 'm1')).toEqual({ latencyMs: 1e9, throughput: 1e6, lastTested: now + 1 });
+    });
+
     it('should track in-flight requests per server/model', () => {
         expect(orchestrator.getInFlight('s1', 'm1')).toBe(0);
         orchestrator.incrementInFlight('s1', 'm1');

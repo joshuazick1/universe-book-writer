@@ -16,6 +16,9 @@
       "path": "../packages/core"
     }
   ],
+  "files": [
+    "src/config/database.config.ts"
+  ],
   "include": [
     "src/**/*",
     "tests/**/*",

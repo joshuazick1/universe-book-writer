@@ -1,7 +1,7 @@
 /**
  * Custom TypeScript Migration Runner
  * 
- * Handles running TypeScript migrations for the Universe Book Writer backend.
+ * Handles running TypeScript migrations for the VerseForge backend.
  * Uses MongoDB native driver and provides logging and error handling.
  */
 
@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 const config = {
   mongodb: {
     url: process.env.MONGODB_URI || 'mongodb://localhost:27017',
-    databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer'
+    databaseName: process.env.MONGODB_DB_NAME || 'verseforge'
   },
   migrationsDir: path.join(__dirname, '..', 'src', 'migrations'),
   changelogCollection: 'migration_changelog'
@@ -64,19 +64,19 @@ class MigrationRunner {
 
   async getAppliedMigrations(): Promise<string[]> {
     if (!this.db) throw new Error('Database not connected');
-    
+
     const records = await this.db
       .collection<MigrationRecord>(config.changelogCollection)
       .find({ success: true })
       .sort({ appliedAt: 1 })
       .toArray();
-    
+
     return records.map(record => record.version);
   }
 
   async recordMigration(version: string, description: string, success: boolean, error?: string): Promise<void> {
     if (!this.db) throw new Error('Database not connected');
-    
+
     await this.db.collection<MigrationRecord>(config.changelogCollection).insertOne({
       version,
       description,
@@ -98,7 +98,7 @@ class MigrationRunner {
       try {
         const filePath = path.join(config.migrationsDir, file);
         const migrationModule = await import(filePath);
-        
+
         const version = file.replace('.ts', '');
         const migration: Migration = {
           version,
@@ -106,7 +106,7 @@ class MigrationRunner {
           up: migrationModule.up,
           down: migrationModule.down
         };
-        
+
         migrations.push(migration);
         console.log(`Loaded migration: ${version} - ${migration.description}`);
       } catch (error) {
@@ -122,10 +122,10 @@ class MigrationRunner {
     if (!this.db) throw new Error('Database not connected');
 
     console.log('Running migrations up...');
-    
+
     const appliedMigrations = await this.getAppliedMigrations();
     const allMigrations = await this.loadMigrations();
-    
+
     const pendingMigrations = allMigrations.filter(
       migration => !appliedMigrations.includes(migration.version)
     );
@@ -158,10 +158,10 @@ class MigrationRunner {
     if (!this.db) throw new Error('Database not connected');
 
     console.log('Running migrations down...');
-    
+
     const appliedMigrations = await this.getAppliedMigrations();
     const allMigrations = await this.loadMigrations();
-    
+
     let migrationsToRevert = allMigrations.filter(
       migration => appliedMigrations.includes(migration.version)
     ).reverse(); // Reverse order for rollback
@@ -188,12 +188,12 @@ class MigrationRunner {
       try {
         console.log(`Reverting migration: ${migration.version} - ${migration.description}`);
         await migration.down(this.db);
-        
+
         // Remove from changelog
         await this.db.collection(config.changelogCollection).deleteMany({
           version: migration.version
         });
-        
+
         console.log(`✅ Successfully reverted: ${migration.version}`);
       } catch (error) {
         console.error(`❌ Failed to revert migration ${migration.version}:`, error);
@@ -209,25 +209,25 @@ class MigrationRunner {
 
     console.log('Migration Status:');
     console.log('================');
-    
+
     const appliedMigrations = await this.getAppliedMigrations();
     const allMigrations = await this.loadMigrations();
-    
+
     console.log(`Database: ${config.mongodb.databaseName}`);
     console.log(`Total migrations: ${allMigrations.length}`);
     console.log(`Applied migrations: ${appliedMigrations.length}`);
     console.log(`Pending migrations: ${allMigrations.length - appliedMigrations.length}`);
     console.log('');
-    
+
     console.log('Migration Details:');
     console.log('------------------');
-    
+
     for (const migration of allMigrations) {
       const isApplied = appliedMigrations.includes(migration.version);
       const status = isApplied ? '✅ Applied' : '⏳ Pending';
       console.log(`${status} | ${migration.version} - ${migration.description}`);
     }
-    
+
     // Show recent migration history
     const recentRecords = await this.db
       .collection<MigrationRecord>(config.changelogCollection)
@@ -235,12 +235,12 @@ class MigrationRunner {
       .sort({ appliedAt: -1 })
       .limit(5)
       .toArray();
-    
+
     if (recentRecords.length > 0) {
       console.log('');
       console.log('Recent Migration History:');
       console.log('------------------------');
-      
+
       for (const record of recentRecords) {
         const status = record.success ? '✅' : '❌';
         const date = record.appliedAt.toISOString().split('T')[0];

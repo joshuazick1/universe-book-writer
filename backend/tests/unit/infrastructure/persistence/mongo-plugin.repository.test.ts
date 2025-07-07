@@ -5,8 +5,8 @@
 // @ts-nocheck - Disable TypeScript checking for mock configuration issues
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
-import { PluginType, PluginState } from '@universe-book-writer/core';
-import type { PluginRegistryEntry, PluginMetadata, PluginConfig } from '@universe-book-writer/core';
+import { PluginType, PluginState } from '@verseforge/core';
+import type { PluginRegistryEntry, PluginMetadata, PluginConfig } from '@verseforge/core';
 import { MongoPluginRepository } from '../../../../src/infrastructure/persistence/mongo-plugin.repository.js';
 
 // Mock MongoDB
@@ -77,7 +77,7 @@ describe('MongoPluginRepository', () => {
 
         it('should initialize with default database name', () => {
             const defaultRepo = new MongoPluginRepository(mockClient);
-            expect(mockClient.db).toHaveBeenCalledWith('universe_book_writer');
+            expect(mockClient.db).toHaveBeenCalledWith('verseforge');
         });
     });
 

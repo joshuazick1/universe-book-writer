@@ -1,37 +1,47 @@
-import { describe, it, expect, beforeEach, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeEach, beforeAll, jest } from '@jest/globals';
 import request from 'supertest';
-import { resetOrchestrator, setupMockOrchestrator, addMockServer } from '../../helpers/test-helpers';
 
+import { ensureMockServersInitialized, installOllamaServerFetchMock } from '../../helpers/test-helpers.js';
+
+
+import { getOrchestratorInstance, resetOrchestratorInstance } from '../../../src/orchestrator-instance.js';
 let app: any;
+
 
 beforeAll(async () => {
     const appModule = await import('../../../src/index.js');
     app = appModule.default;
 });
 
+
 describe('/api/tags', () => {
     beforeEach(() => {
-        resetOrchestrator();
-        setupMockOrchestrator();
-        addMockServer({
-            id: 's1',
-            url: 'http://localhost:9001',
-            models: ['modelA', 'modelB'],
-            tags: [
-                { name: 'modelA', model: 'modelA', modified_at: '2025-06-25T00:00:00Z', size: 100, digest: 'd1', details: { version: '1.0.0' } },
-                { name: 'modelB', model: 'modelB', modified_at: '2025-06-24T00:00:00Z', size: 200, digest: 'd2', details: { version: '2.0.0' } }
-            ],
-            healthy: true
-        });
-        addMockServer({
-            id: 's2',
-            url: 'http://localhost:9002',
-            models: ['modelA'],
-            tags: [
-                { name: 'modelA', model: 'modelA', modified_at: '2025-06-26T00:00:00Z', size: 150, digest: 'd3', details: { version: '1.1.0' } }
-            ],
-            healthy: true
-        });
+        // Reset orchestrator singleton for test isolation
+        resetOrchestratorInstance();
+        const orchestrator = getOrchestratorInstance();
+        ensureMockServersInitialized(orchestrator, [
+            {
+                id: 's1',
+                url: 'http://localhost:9001',
+                models: ['modelA', 'modelB'],
+                tags: [
+                    { name: 'modelA', model: 'modelA', modified_at: '2025-06-25T00:00:00Z', size: 100, digest: 'd1', details: { version: '1.0.0' } },
+                    { name: 'modelB', model: 'modelB', modified_at: '2025-06-24T00:00:00Z', size: 200, digest: 'd2', details: { version: '2.0.0' } }
+                ],
+                healthy: true
+            },
+            {
+                id: 's2',
+                url: 'http://localhost:9002',
+                models: ['modelA'],
+                tags: [
+                    { name: 'modelA', model: 'modelA', modified_at: '2025-06-26T00:00:00Z', size: 150, digest: 'd3', details: { version: '1.1.0' } }
+                ],
+                healthy: true
+            }
+        ]);
+        installOllamaServerFetchMock(orchestrator);
+        jest.clearAllMocks();
     });
 
     it('GET returns models array with all required fields', async () => {

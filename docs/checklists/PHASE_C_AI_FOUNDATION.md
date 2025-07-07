@@ -1,29 +1,32 @@
 # Phase C: AI Foundation
 
-**Duration**: 2-3 weeks (significantly reduced from 3-4 weeks due to A.2.5 AI infrastructure)  
-**Status**: ✅ **AI Orchestration Server & Endpoints Implemented (2025-06-26/copilot)**  
-**Priority**: HIGH - Core AI capabilities for content assistance and universe generation  
-**Dependencies**: Phase B Security & Plugin Foundation ✅ Required (A.2.5 Enhanced Foundation provides AI-ready infrastructure)
+> **This file is the canonical source for requirements, status, and planning for this phase.**
 
-> **Note:** The AI orchestration server and all planned endpoints (universe generation, plugin security analysis, permission-aware routing, context management, universe-aware content generation, multi-format import, and validation) have been implemented as of 2025-06-26. The focus for the remainder of Phase C is on advanced features, comprehensive testing, integration, and user experience.
+**Duration**: 1-2 weeks (**dramatically reduced from 2-3 weeks due to A.2.6 RAG foundation**)  
+**Status**: ✅ **AI Orchestration Server & Endpoints Implemented + RAG Integration Ready**  
+**Priority**: HIGH - AI capabilities accelerated by RAG knowledge foundation  
+**Dependencies**: Phase B Security & Plugin Foundation ✅ Required, **Phase A.2.6 RAG Architecture ✅ CRITICAL**
 
-## ✨ **A.2.5 AI INFRASTRUCTURE BENEFITS**
+> **Note:** The AI orchestration server and planned endpoints have been implemented as of 2025-06-26. **The RAG foundation from A.2.6 dramatically accelerates Phase C by providing the knowledge graph and context assembly infrastructure.** Focus is now on RAG-powered AI features, intelligent multimodal routing, and advanced context management.
 
-**Accelerated AI Development**: The comprehensive infrastructure built in Phase A.2.5 provides significant advantages for AI integration:
+## ✨ **A.2.6 RAG FOUNDATION BENEFITS**
 
-### **🎯 AI-Ready Infrastructure Already Implemented**
-- **✅ Performance Optimization**: Sub-100ms API responses and optimized queries ready for AI workloads
-- **✅ Comprehensive Monitoring**: Real-time performance tracking and resource usage monitoring for AI services
-- **✅ Enhanced Plugin System**: Hot reload and dependency management supports AI model plugins
-- **✅ Database Optimization**: Optimized indexing and caching layers ready for AI context storage
-- **✅ Security Framework**: Plugin security sandbox ready for AI model isolation and validation
+**RAG-Accelerated AI Development**: The comprehensive RAG architecture from Phase A.2.6 provides transformative advantages for AI integration:
 
-### **🚀 Development Velocity Multipliers for AI**
-- **Model Loading & Management**: Hot reload system enables seamless AI model updates
-- **Performance Monitoring**: Real-time tracking of AI response times and resource usage
-- **Error Handling**: Comprehensive error tracking covers AI service failures and recovery
-- **Caching Infrastructure**: Optimized caching reduces AI API calls and improves response times
-- **Security Validation**: Plugin security framework extends to AI model validation and sandboxing
+### **🎯 RAG-Powered AI Infrastructure**
+- **✅ Knowledge Graph Foundation**: Complete RAG system with nodes, relationships, and context layers
+- **✅ AI Server RAG Integration**: RAG endpoints operational within AI Server (port 8000)
+- **✅ Context Assembly Engine**: Multi-layer context system ready for AI interactions
+- **✅ Plugin Knowledge Seeding**: Plugin v2 system seeds RAG with universe-specific knowledge
+- **✅ Semantic Search Foundation**: Vector similarity and contextual retrieval operational
+- **✅ Timeline Integration**: Temporal relationship mapping ready for AI context
+
+### **🚀 Intelligent AI Features Ready for Implementation**
+- **Context-Aware AI**: RAG context assembly provides rich, relevant context for all AI interactions
+- **Knowledge-Graph AI**: AI can navigate and reason about complex relationships in knowledge graph
+- **Plugin-Aware AI**: Universe-specific AI responses using plugin-seeded knowledge
+- **Timeline-Aware AI**: AI understands temporal context and character development arcs
+- **Multimodal Routing Intelligence**: RAG context enhances routing decisions for optimal AI responses
 
 ## 🧭 Navigation Links
 
@@ -33,6 +36,7 @@
 ### **🔄 Phase Dependencies**
 - **[Phase A: Essential Foundation](./PHASE_A_ESSENTIAL_FOUNDATION_V2.md)** ✅ **CONTENT FOUNDATION**
   - **[A.2.5: Plugin Override & Foundation Hardening](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** - Performance optimization for AI workloads
+  - **[A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md)** - RAG foundation & API hardening for AI integration
   - **[A.3: Story Management](./PHASE_A3_STORY_MANAGEMENT_V2.md)** - Content to enhance with AI
 - **[Phase B: Security & Plugin Foundation](./PHASE_B_SECURITY_PLUGIN_FOUNDATION.md)** ✅ **PREREQUISITE**
 
@@ -45,11 +49,138 @@
 - **[Phase Order Analysis](../PHASE_ORDER_ANALYSIS.md)** - Why AI foundation comes after security framework
 - **[🔐 Advanced Permission System](../ADVANCED_PERMISSION_SYSTEM.md)** - **AI INTEGRATION TARGET** - Permission-aware AI, spoiler protection, and dynamic content generation
 
+
+## Phase C: Deferred Advanced Compatibility & Orchestration (Nice to Have, Not Blocking RAG)
+
+### OpenAI Compatibility (Deferred)
+- Advanced parameter support in `/v1/chat/completions` (all OpenAI params, function calling, system message handling, etc.)
+- Full error response standardization (all error types/codes, metadata, headers)
+- API key validation, org tracking, advanced auth/rate limiting, usage tracking, quota/billing, request/response logging
+- Full OpenAI response format standardization (all metadata, content-types, etc.)
+
+### Ollama Compatibility (Deferred)
+- Enhanced endpoint parameters (context, options, keep_alive, raw, etc.)
+- Enhanced model management (full Modelfile parsing, registry integration, versioning/tagging, etc.)
+- Streaming enhancements (context preservation, token counting, timing info)
+- Model performance benchmarking, cost-aware routing, real-time model availability monitoring
+
+### Unified Orchestration (Deferred)
+- Multi-provider abstraction, unified request/response translation, provider-specific auth, load balancing, failover/retry logic
+- Model mapping/discovery, capability detection, cost/latency optimization, context-aware routing
+
+### Testing (Deferred)
+- Full compatibility testing with official OpenAI/Ollama clients, LangChain, etc.
+- Performance/load testing, advanced edge-case/error testing, CI automation for all edge cases
+
+---
+
+## 🔧 **DEFERRED API COMPATIBILITY ENHANCEMENTS**
+
+> **Moved from Phase A.2.6**: These enhancements were deferred to avoid blocking RAG implementation. The essential OpenAI/Ollama endpoints are fully functional for RAG needs.
+
+### **Advanced Ollama API Enhancements**
+
+#### **Enhanced Existing Ollama Endpoints**
+- [ ] `/api/generate` - Add missing parameters: `context`, `options`, `keep_alive`, `raw`
+  - **Current**: `{"model": "llama2", "prompt": "Hello", "stream": false}`
+  - **Enhanced**: `{"model": "llama2", "prompt": "Hello", "context": [1, 2, 3], "options": {"temperature": 0.8, "num_ctx": 2048}, "keep_alive": "5m", "raw": false, "stream": false}`
+  - **Response**: `{"model": "llama2", "created_at": "2023-12-07T09:30:00Z", "response": "Hello! How can I help?", "done": true, "context": [1, 2, 3, 4], "total_duration": 500000000, "load_duration": 100000000, "prompt_eval_count": 26, "prompt_eval_duration": 200000000, "eval_count": 298, "eval_duration": 200000000}`
+
+- [ ] `/api/chat` - Add missing parameters: `options`, `keep_alive`, `context`
+  - **Current**: `{"model": "llama2", "messages": [{"role": "user", "content": "Hello"}], "stream": false}`
+  - **Enhanced**: `{"model": "llama2", "messages": [...], "options": {"temperature": 0.8}, "keep_alive": "10m", "stream": false}`
+  - **Response**: `{"model": "llama2", "created_at": "2023-12-07T09:30:00Z", "message": {"role": "assistant", "content": "Hello! How can I help?"}, "done": true, "total_duration": 500000000, "load_duration": 100000000, "prompt_eval_count": 26, "prompt_eval_duration": 200000000, "eval_count": 298, "eval_duration": 200000000}`
+
+- [ ] `/api/create` - Full model creation from Modelfile
+  - **Current**: Basic model creation with limited Modelfile support
+  - **Enhanced**: `{"name": "custom-model", "modelfile": "FROM llama2\nPARAMETER temperature 0.8\nSYSTEM You are a helpful assistant.", "stream": true}`
+  - **Response**: Streaming NDJSON with `{"status": "reading modelfile"}`, `{"status": "creating model layer"}`, `{"status": "success"}`
+
+- [ ] `/api/show` - Complete model information with parameters, template, system
+  - **Current**: Basic model info with some fields missing
+  - **Enhanced response**: `{"modelfile": "FROM llama2...", "parameters": "temperature 0.8\nnum_ctx 2048", "template": "{{ .System }}\nUser: {{ .Prompt }}\nAssistant:", "system": "You are a helpful assistant", "details": {"parent_model": "llama2:7b", "format": "gguf", "family": "llama", "families": ["llama"], "parameter_size": "7B", "quantization_level": "Q4_0"}, "modified_at": "2023-12-07T09:30:00Z"}`
+
+- [ ] `/api/tags` - Enhanced model listing with full metadata
+  - **Current**: Basic model list with limited metadata
+  - **Enhanced response**: `{"models": [{"name": "llama2:7b", "model": "llama2:7b", "modified_at": "2023-12-07T09:30:00Z", "size": 3825819519, "digest": "sha256:...", "details": {"parent_model": "", "format": "gguf", "family": "llama", "families": ["llama"], "parameter_size": "7B", "quantization_level": "Q4_0"}}]}`
+
+- [ ] `/api/ps` - Running models with resource usage information
+  - **Current**: Basic running model list
+  - **Enhanced response**: `{"models": [{"name": "llama2:7b", "model": "llama2:7b", "size": 3825819519, "size_vram": 2048000000, "digest": "sha256:...", "details": {...}, "expires_at": "2023-12-07T10:30:00Z", "processor": "gpu"}]}`
+
+#### **Advanced Streaming Compatibility**
+- [ ] NDJSON streaming format for `/api/generate` and `/api/chat`
+  - **Format**: One JSON object per line, each line terminated with `\n`
+  - **Generate streaming**: `{"model": "llama2", "response": "Hello", "done": false}\n{"model": "llama2", "response": " there", "done": false}\n{"model": "llama2", "response": "!", "done": true, "context": [1,2,3], "total_duration": 500000000}\n`
+  - **Chat streaming**: `{"model": "llama2", "message": {"role": "assistant", "content": "Hello"}, "done": false}\n{"model": "llama2", "message": {"role": "assistant", "content": " there"}, "done": false}\n{"model": "llama2", "message": {"role": "assistant", "content": "!"}, "done": true, "total_duration": 500000000}\n`
+
+- [ ] Proper `done` field handling and final response aggregation
+  - **Incremental responses**: `"done": false` for partial responses
+  - **Final response**: `"done": true` with complete metadata (timing, token counts, context)
+  - **Client handling**: Accumulate response text from all chunks until `done: true`
+
+- [ ] Context preservation across streaming chunks
+  - **Context array**: Maintain conversation context for next request
+  - **Context limit**: Respect model context window limits
+  - **Context truncation**: Intelligent truncation when context exceeds limits
+
+- [ ] Token counting and timing information
+  - **Timing fields**: `total_duration`, `load_duration`, `prompt_eval_duration`, `eval_duration` (all in nanoseconds)
+  - **Token fields**: `prompt_eval_count`, `eval_count` (number of tokens processed/generated)
+  - **Performance metrics**: Include in final response chunk for monitoring
+
+#### **Advanced Model Management**
+- [ ] Modelfile parsing and model creation
+  - **Modelfile format**: Support full Ollama Modelfile syntax
+  - **FROM instruction**: `FROM llama2:7b` or `FROM ./custom-model.gguf`
+  - **PARAMETER instruction**: `PARAMETER temperature 0.8`, `PARAMETER num_ctx 4096`
+  - **TEMPLATE instruction**: `TEMPLATE "{{ .System }}\nUser: {{ .Prompt }}\nAssistant: "`
+  - **SYSTEM instruction**: `SYSTEM "You are a helpful assistant specialized in creative writing"`
+  - **ADAPTER instruction**: `ADAPTER ./lora-adapter` for LoRA fine-tuning
+  - **LICENSE instruction**: `LICENSE "Apache 2.0"` for model licensing
+  - **MESSAGE instruction**: `MESSAGE user "Hello"` and `MESSAGE assistant "Hi there!"` for examples
+
+- [ ] Model parameter extraction and display
+  - **Parameter types**: `temperature`, `top_k`, `top_p`, `num_ctx`, `num_predict`, `repeat_penalty`, `seed`, `stop`, `tfs_z`, `num_thread`
+  - **Parameter validation**: Validate parameter ranges and types
+  - **Default values**: Apply appropriate defaults when parameters not specified
+
+- [ ] Model registry integration for pull/push operations
+  - **Registry URLs**: Support Ollama Hub and custom registries
+  - **Authentication**: Support registry authentication for private models
+  - **Progress tracking**: Detailed progress for pull/push operations with cancellation support
+  - **Registry caching**: Local registry cache for improved performance
+
+### **Advanced OpenAI API Enhancements**
+- [ ] Advanced authentication and organization management
+- [ ] Rate limiting and usage tracking
+- [ ] Advanced fine-tuning job management with progress tracking
+- [ ] File management with advanced storage backends
+- [ ] Batch processing for embeddings and completions
+- [ ] Advanced assistant configurations and tool calling
+- [ ] Thread management with advanced conversation context
+- [ ] Advanced audio processing with multiple models
+- [ ] Advanced image generation with multiple engines
+- [ ] Content moderation with custom rules and categories
+
+### **Enterprise Features**
+- [ ] Multi-tenant API key management
+- [ ] Advanced logging and analytics
+- [ ] Custom model deployment and versioning
+- [ ] Advanced security features and audit logging
+- [ ] Performance monitoring and alerting
+- [ ] Load balancing and scaling configurations
+- [ ] Disaster recovery and backup strategies
+
+---
+
 ## Phase Overview
 
-Phase C establishes the comprehensive AI infrastructure that powers content assistance, universe generation, plugin security analysis, and advanced content features. Building on the secure plugin framework from Phase B and the AI hooks established in Phase A, this phase integrates AI capabilities safely and efficiently.
+Phase C establishes the comprehensive AI infrastructure that powers content assistance, universe generation, plugin security analysis, and advanced content features. Building on the secure plugin framework from Phase B, the AI hooks established in Phase A, and the **RAG foundation from A.2.6**, this phase integrates AI capabilities safely and efficiently.
 
 **Core Philosophy**: *"AI enhances human creativity through intelligent analysis, generation, and security - while respecting privacy boundaries and permission controls"*
+
+**Foundation Integration**: All AI features in Phase C leverage the knowledge graph, node/relationship schemas, and plugin hooks established in A.2.6, enabling sophisticated context-aware AI interactions from day one.
 
 ### **Revolutionary AI Capabilities**
 - **🌌 AI-Driven Universe Generation**: Analyze existing universe plugins to create new, coherent fictional universes
@@ -67,115 +198,97 @@ Phase C establishes the comprehensive AI infrastructure that powers content assi
 - **Privacy-respecting AI writing assistance** with content isolation
 - **Comprehensive AI testing** with permission boundary validation
 
-### **Success Criteria**
-- **AI Universe Generator** creates coherent, original universes from existing patterns
-- **Plugin Security Analyzer** detects 95%+ of common vulnerabilities with low false positives
-- **AI task routing** handles complex workflows reliably while respecting privacy levels
-- **AI context management** prevents token limit issues without exposing private content
-- **AI writing assistance** provides measurable value while maintaining content isolation
-- **AI security** prevents misuse and abuse while enforcing permission boundaries
+### **Success Criteria (RAG-Enhanced)**
+- **AI task routing and orchestration works** with RAG context assembly
+- **AI context management handles token limits** using multi-layer context system
+- **AI-enhanced story creation provides value** leveraging knowledge graph relationships
+- **Content import supports multiple formats** with automatic RAG semantic indexing
+- **AI security prevents misuse and abuse** while enforcing RAG-aware permission boundaries
+- **AI Chat Box supports multimodal responses and UI generation** with intelligent routing
+- **RAG system supports plugin-defined node types and relationships** for universe-specific AI behavior
+- **AI-generated UI elements are properly sandboxed and accessible** through advanced routing framework
+- **Intelligent multimodal routing** adapts to user patterns and optimizes AI interactions
+- **Knowledge graph AI reasoning** provides contextually aware and temporally sensitive responses
 
 ## Subphase Breakdown
 
 ## Subphase Breakdown
 
-### **C.1: AI-Driven Universe Generation System** 🌌 FIRST
-**Duration**: 8-10 days  
+### **C.1: AI Context Management & Task Routing** 🤖 **FIRST (RAG-POWERED)**
+**Duration**: 6-8 days (**reduced due to RAG foundation**)  
 **Status**: ⏳ **READY TO START**  
-**Documentation**: `PHASE_C1_AI_UNIVERSE_GENERATION.md`
+**Documentation**: `PHASE_C1_AI_CONTEXT_TASK_ROUTING.md`
 
-Revolutionary universe creation through AI analysis and pattern recognition:
-- 📋 **Plugin Ruleset Analysis Engine** - Extract patterns from existing universe plugins
-- 📋 **Universe Pattern Recognition System** - Identify successful design patterns across universes
-- 📋 **AI Universe Generator** - Create coherent new universes from learned patterns
-- 📋 **Ruleset Validation & Consistency Engine** - Ensure generated rules are internally consistent
-- 📋 **Universe Generation API & UI** - User-friendly interface for AI-generated universes
+**RAG-Powered AI orchestration with intelligent multimodal routing**:
+- 📋 **Intelligent Task Classification**: Writing assistance vs. code generation vs. analysis (uses A.2.6 RAG context assembly engine)
+- 📋 **Model Selection Routing**: Route requests to appropriate Ollama models based on task type and RAG context
+- 📋 **Context-Aware Routing**: Use RAG knowledge graph to inform routing decisions and context assembly
+- 📋 **Performance Optimization**: Load balancing based on model capabilities, availability, and knowledge graph complexity
+- 📋 **RAG Context Assembly**: Multi-layer context system with semantic relationships and timeline awareness
 
-**Revolutionary Features**:
-- Analyze Star Trek, Star Wars, and custom universe plugins to learn structure patterns
-- Generate completely new universes with coherent rules, species, technology, and cultures
-- Create universe variants (e.g., "What if Star Trek had magic?" or "Sci-fi universe with medieval politics")
-- Ensure generated content respects logical consistency and narrative coherence
+**Multimodal Routing Intelligence**:
+```typescript
+interface IntelligentTaskClassifier {
+  classifyWritingTask: (request: ChatRequest, ragContext: RAGContext) => WritingTaskType;
+  classifyCodeTask: (request: ChatRequest, codeContext: CodeContext) => CodeTaskType;
+  classifyAnalysisTask: (request: ChatRequest, contentContext: ContentContext) => AnalysisTaskType;
+  classifyUIGenerationTask: (request: ChatRequest, uiContext: UIContext) => UITaskType;
+  estimateComplexity: (task: Task, context: MultimodalContext) => ComplexityEstimate;
+}
 
-### **C.2: Plugin Security Analysis & Exploit Detection** � SECOND (Parallel with C.1)
-**Duration**: 8-10 days  
-**Status**: ⏳ **AWAITING C.1 PATTERNS**  
-**Documentation**: `PHASE_C2_PLUGIN_SECURITY_ANALYSIS.md`
+interface SemanticRoutingEngine {
+  routeByKnowledgeGraph: (request: ChatRequest, graphContext: KnowledgeGraphContext) => RoutingDecision;
+  routeByTimeline: (request: ChatRequest, timelineContext: TimelineContext) => RoutingDecision;
+  routeByCharacterContext: (request: ChatRequest, characterContext: CharacterContext) => RoutingDecision;
+  routeByUniverseRules: (request: ChatRequest, universeContext: UniverseContext) => RoutingDecision;
+}
+```
 
-Automated security analysis for plugin ecosystem protection:
-- 📋 **Plugin Code Analysis Engine** - Scan plugin code for security vulnerabilities
-- 📋 **Common Exploit Detection System** - Identify injection, execution, and privilege escalation risks
-- 📋 **Security Pattern Recognition** - Learn from known vulnerabilities to detect new variants
-- 📋 **Automated Security Patch Generator** - Generate patches for common vulnerability types
-- 📋 **Plugin Security Dashboard** - Real-time security monitoring for plugin ecosystem
+### **C.2: AI-Enhanced Story Creation** 🎭 **SECOND (RAG-ENHANCED)**
+**Duration**: 6-8 days (**reduced due to RAG knowledge graph**)  
+**Status**: ⏳ **AWAITING C.1**  
+**Documentation**: `PHASE_C2_AI_ENHANCED_STORY_CREATION.md`
 
-**Security Features**:
-- Detect SQL injection, code injection, and remote code execution vulnerabilities
-- Identify data leakage, privilege escalation, and denial-of-service attack vectors
-- Generate security reports with severity levels and remediation recommendations
-- Continuous monitoring of plugin ecosystem for emerging security threats
+**RAG-powered story creation with semantic content routing**:
+- 📋 **Semantic Content Routing**: Route based on knowledge graph relationships and context
+- 📋 **Timeline-Aware Routing**: Consider temporal context when routing character/universe queries
+- 📋 **Permission-Aware Routing**: Route based on content privacy levels and user permissions
+- 📋 **Plugin-Aware Routing**: Route universe-specific queries to appropriate plugin models
+- 📋 **Context Enhancement**: Leverage RAG knowledge graph for rich story context
 
-### **C.3: Permission-Aware AI Architecture & Task Routing** 🛡️ THIRD
-**Duration**: 8-10 days  
+### **C.3: AI Content Import & Analysis** 📚 **THIRD (RAG-POWERED)**
+**Duration**: 4-6 days (**reduced due to RAG semantic indexing**)  
 **Status**: ⏳ **AWAITING C.1, C.2**  
-**Documentation**: `PHASE_C3_PERMISSION_AWARE_AI_ARCHITECTURE.md`
+**Documentation**: `PHASE_C3_AI_CONTENT_IMPORT_ANALYSIS.md`
 
-Foundation AI infrastructure with permission integration:
-- 📋 **Permission-aware AI task routing** and classification system
-- 📋 **Privacy-filtered model orchestration** and load balancing
-- 📋 **AI security framework integration** with content isolation
-- 📋 **Multi-scope AI service abstraction** (user/universe/book/public)
-- 📋 **Performance monitoring** with privacy-preserving analytics
+**RAG-powered content analysis and semantic indexing**:
+- 📋 **Semantic Content Indexing**: Use RAG for automatic content categorization and relationship detection
+- 📋 **Knowledge Graph Integration**: Automatically populate RAG with imported content relationships
+- 📋 **Plugin-Specific Analysis**: Universe-aware content analysis using plugin-seeded knowledge
+- 📋 **Timeline Integration**: Automatic temporal relationship detection and mapping
 
-### **C.4: Privacy-Preserving AI Context Management** 🧠 FOURTH
+### **C.4: AI Testing & Integration** 🧪 **FOURTH (RAG-INTEGRATED)**
+**Duration**: 4-6 days (**reduced due to A.2.6 testing framework + RAG integration**)  
+**Status**: ⏳ **AWAITING C.1, C.2, C.3**  
+**Documentation**: `PHASE_C4_AI_TESTING_INTEGRATION.md`
+
+**Comprehensive AI testing with RAG validation**:
+- 📋 **RAG Integration Testing**: End-to-end knowledge graph AI workflows
+- 📋 **Context Assembly Validation**: Multi-layer context system testing
+- 📋 **Multimodal Routing Testing**: Intelligent task classification and routing validation
+- 📋 **Plugin Integration Testing**: Universe-specific AI behavior validation
+
+### **C.5: Advanced AI Features** ✨ **FIFTH (RAG-NATIVE)**
 **Duration**: 6-8 days  
-**Status**: ⏳ **AWAITING C.3**  
-**Documentation**: `PHASE_C4_PRIVACY_AI_CONTEXT.md`
+**Status**: ⏳ **AWAITING C.1-C.4**  
+**Documentation**: `PHASE_C5_ADVANCED_AI_FEATURES.md`
 
-Intelligent context handling with privacy protection:
-- 📋 **Permission-filtered dynamic token estimation** and optimization
-- 📋 **Privacy-aware context chunking** and summarization
-- 📋 **Encrypted AI memory** and conversation history
-- 📋 **Spoiler-protected context-aware task execution**
-- 📋 **Multi-turn conversation support** with content isolation
-
-### **C.5: AI-Enhanced Story Creation with Universe Integration** 🎭 FIFTH (Parallel with C.6)
-**Duration**: 8-10 days  
-**Status**: ⏳ **AWAITING C.3, C.4**  
-**Documentation**: `PHASE_C5_AI_STORY_CREATION.md`
-
-AI-powered writing assistance with advanced privacy and universe integration:
-- 📋 **Universe-aware content generation** respecting plugin-specific rules and lore
-- 📋 **Privacy-aware real-time writing assistance** and suggestions
-- 📋 **Isolated character and plot development AI** per private book
-- 📋 **AI-driven dynamic content generation** for spoiler protection
-- 📋 **Cross-plugin knowledge integration** for crossover universe support
-- 📋 **Spoiler-protected AI editing** and proofreading
-
-### **C.6: Multi-Format AI Content Import & Analysis** 📚 SIXTH (Parallel with C.5)
-**Duration**: 8-10 days  
-**Status**: ⏳ **AWAITING C.3, C.4**  
-**Documentation**: `PHASE_C6_AI_CONTENT_IMPORT.md`
-
-Multi-format content analysis with privacy controls:
-- 📋 **Permission-validated document format support** (PDF, Word, TXT, etc.)
-- 📋 **Privacy-aware content structure analysis** and extraction
-- 📋 **Isolated character and location identification** per privacy scope
-- 📋 **Universe-specific content categorization** using plugin knowledge
-- 📋 **AI-powered content migration** between universe formats
-
-### **C.7: Advanced AI Testing & Security Validation** ⚡ FINAL
-**Duration**: 5-6 days  
-**Status**: ⏳ **AWAITING ALL SUBPHASES**  
-**Documentation**: `PHASE_C7_AI_TESTING_SECURITY.md`
-
-Comprehensive AI system validation with security focus:
-- 📋 AI universe generation accuracy and coherence testing
-- 📋 Plugin security analysis effectiveness validation
-- 📋 AI performance and accuracy testing across all features
-- 📋 AI security and abuse prevention validation
-- 📋 Integration testing with universe and story systems
-- 📋 User experience testing for all AI features
+**RAG-powered advanced multimodal features**:
+- 📋 **Advanced Content Type Detection**: AI-generated UI components, custom widgets, interactive visualizations
+- 📋 **Cross-Modal Optimization**: Combine text, code, and visual outputs intelligently
+- 📋 **Plugin-Generated Content Routing**: Route plugin-specific content to specialized handlers
+- 📋 **Real-Time Adaptation**: Learn from user preferences and adjust routing patterns
+- 📋 **AI Memory Traces**: RAG-powered context layering and multimodal UI generation
 
 ## Technical Architecture
 
@@ -425,7 +538,7 @@ interface EntityExtractor {
 - [ ] Cross-plugin knowledge integration enables coherent crossover content
 - [ ] AI integration feels natural and non-intrusive
 
-### **C.6 Completion Criteria - Content Import**
+### **C.6 Completion Criteria - Content Import & Advanced RAG**
 - [ ] Content import supports all planned document formats (PDF, Word, TXT, etc.)
 - [ ] Entity extraction accuracy >85% for characters and locations
 - [ ] Universe-specific categorization uses plugin knowledge effectively
@@ -621,6 +734,28 @@ interface InputValidator {
 - **Content Creation**: Increased content volume and quality
 - **User Retention**: AI features improve user retention rates
 
+
+## AI Server Enhancement Roadmap & Plugin System Preview
+
+The following foundational enhancements, plugin system, and extensibility roadmap are enabled by the work in Phase C and will be implemented and expanded in Phase D:
+
+### Foundational Enhancements & Cross-Cutting Concerns
+- Security & Access Control: All new APIs and features will use the existing authentication/authorization layer and enforce role-based access control.
+- Data Validation & Integrity: Validation schemas (e.g., Zod/Joi) and optimistic concurrency/versioning for graph edits.
+- Performance & Scalability: Plan for sharding/partitioning large graphs in MongoDB and add caching for frequent queries.
+- Observability & Monitoring: Integrate metrics (e.g., Prometheus), health checks, and alerting for orchestrator/model failures.
+- Extensibility & Plugin Hooks: Design plugin hooks for custom node/edge types, orchestrator strategies, and UI extensions. Allow user-defined tags and metadata. (See Phase D for implementation.)
+- Usability & Developer Experience: CLI tools for graph/orchestrator management, API versioning from the start.
+- Data Privacy & Compliance: Support data anonymization and export/delete requests for compliance (e.g., GDPR).
+- Collaboration: Real-time collaborative editing, locking, and merge conflict resolution.
+- Testing & Quality: Contract tests for API endpoints, load and stress tests for graph/orchestrator APIs.
+
+### Plugin System & Vibe Coder Preview
+- The extensible plugin system and the Vibe Coder plugin (a code-centric creative/collaborative environment) will be implemented in Phase D, leveraging the security and extensibility work in Phase C.
+- See the Phase D documentation for the full implementation plan and checklist.
+
+---
+
 ## Integration with Future Phases
 
 ### **Phase D Dependencies**
@@ -662,7 +797,7 @@ Phase C provides these foundations for Phase E:
 - **Days 15-17**: AI-enhanced story creation (C.5)
   - Universe-aware content generation
   - Real-time writing assistance with cross-plugin knowledge
-- **Days 15-17**: Multi-format content import and analysis (C.6)
+- **Days 15-17**: Multi-format content import, analysis, and advanced RAG features (C.6)
   - Document parsing and entity extraction
   - Universe-specific content categorization
 - **Days 18-21**: Feature integration and user experience optimization
@@ -719,3 +854,203 @@ With robust foundation from A.2.5, Phase C can focus purely on AI features:
 - Plugin security analysis
 - Permission-aware AI interactions
 - Universe generation algorithms
+
+---
+
+## 🔧 **DEFERRED FROM PHASE A.2.6 - ADVANCED AI ORCHESTRATION & MULTIMODAL FEATURES**
+
+> **Moved from Phase A.2.6**: These advanced features were deferred to focus on essential RAG functionality. These represent the "nice to have" features that will enhance the platform but are not blockers for RAG implementation.
+
+### **🤖 UNIFIED AI ORCHESTRATION LAYER (MULTI-PROVIDER SUPPORT)**
+
+#### **Provider Abstraction Framework**
+- [ ] Abstract base classes for different AI providers (OpenAI, Ollama, Anthropic, Auto1111, etc.)
+  - **Base Provider Interface**: Common methods for health checks, model discovery, request handling
+  - **Auto1111Provider Class**: Specialized provider for Stable Diffusion image generation
+  - **Provider Registry**: Dynamic registration and discovery of available providers
+  - **Capability Detection**: Automatic detection of provider capabilities (text, chat, embeddings, images)
+
+- [ ] Unified request/response translation layer
+  - **Request Translation**: Convert OpenAI format to provider-specific formats
+  - **Response Translation**: Normalize provider responses to OpenAI-compatible format
+  - **Auto1111 Translation**: Handle Auto1111's unique request/response structure
+  - **Error Normalization**: Convert provider-specific errors to OpenAI error format
+
+- [ ] Provider-specific authentication handling
+  - **Auto1111 Authentication**: Support API key authentication if enabled
+  - **Multi-Auth Support**: Handle different authentication methods per provider
+  - **Security Context**: Secure credential storage and rotation
+
+- [ ] Load balancing across multiple providers
+  - **Round-Robin**: Distribute requests evenly across healthy providers
+  - **Capability-Based**: Route to providers that support requested functionality
+  - **Performance-Based**: Prefer faster providers for latency-sensitive requests
+
+- [ ] Failover and retry logic for provider outages
+  - **Health Monitoring**: Continuous health checks for all providers
+  - **Circuit Breaker**: Temporarily disable unhealthy providers
+  - **Retry Strategy**: Exponential backoff with jitter for failed requests
+  - **Graceful Degradation**: Inform users when specific capabilities unavailable
+
+#### **Model Mapping & Discovery**
+- [ ] Cross-provider model name mapping (gpt-4 → claude-3, llama2 → mistral, dall-e-3 → stable-diffusion, etc.)
+  - **Text Models**: Map between OpenAI, Anthropic, and Ollama text models
+  - **Image Models**: Map OpenAI image models to Auto1111 Stable Diffusion models
+  - **Model Aliases**: Support user-friendly names for complex model identifiers
+  - **Capability Matrix**: Track which providers support which model types
+
+- [ ] Automatic model capability detection (text, chat, embeddings, images)
+  - **Dynamic Discovery**: Query providers for available models and capabilities
+  - **Capability Caching**: Cache model capabilities to reduce discovery overhead
+  - **Real-time Updates**: Update capabilities when providers come online/offline
+
+- [ ] Model performance benchmarking and selection
+  - **Performance Metrics**: Track response time, quality scores, error rates per model
+  - **Auto-Selection**: Choose best model based on request type and performance
+  - **A/B Testing**: Support model comparison and performance validation
+
+- [ ] Cost-aware model routing for optimization
+  - **Cost Tracking**: Monitor usage costs per provider and model
+  - **Budget Controls**: Route to cost-effective models when budget constraints exist
+  - **Cost Estimation**: Provide cost estimates before expensive operations
+
+- [ ] Real-time model availability monitoring
+  - **Health Dashboards**: Real-time status of all providers and models
+  - **Availability Alerts**: Notify when critical models become unavailable
+  - **Fallback Planning**: Automatic fallback to alternative models when primary unavailable
+
+#### **Request Routing Intelligence**
+- [ ] Capability-based routing (embeddings to embedding-capable models, images to Auto1111)
+  - **Request Analysis**: Automatically detect request type and required capabilities
+  - **Provider Selection**: Route to providers that support the requested capability
+  - **Multi-Provider Requests**: Handle requests that require multiple providers (text + images)
+  - **Fallback Routing**: Graceful degradation when preferred providers unavailable
+
+- [ ] Load-based routing with server health monitoring
+  - **Real-time Load Monitoring**: Track CPU, memory, and request queue depth per provider
+  - **Dynamic Load Balancing**: Route requests to least-loaded healthy providers
+  - **Provider Scaling**: Detect when providers are overloaded and need scaling
+
+- [ ] Cost optimization routing for budget-conscious usage
+  - **Budget-Aware Routing**: Choose cost-effective providers within quality constraints
+  - **Spending Limits**: Enforce budget limits and route to free/cheaper alternatives
+  - **Cost Prediction**: Estimate request costs before routing to expensive providers
+
+- [ ] Latency optimization for real-time applications
+  - **Response Time Monitoring**: Track and optimize for lowest latency providers
+  - **Geographic Routing**: Route to geographically closest providers when available
+  - **Connection Pooling**: Maintain persistent connections to reduce latency
+
+- [ ] Context-aware routing based on conversation history
+  - **Session Affinity**: Route follow-up requests to same provider for consistency
+  - **Context Preservation**: Maintain conversation context across provider switches
+  - **Quality Consistency**: Ensure consistent response quality within conversations
+
+### **🎨 MULTIMODAL AI SUPPORT (FUTURE-READY ARCHITECTURE)**
+
+#### **Vision Integration**
+- [ ] Image analysis and description generation
+  - **Auto1111 Integration**: Connect to Auto1111 for image generation capabilities
+  - **Image-to-Text**: Use vision models to describe generated or uploaded images
+  - **Character Recognition**: Extract text from images for story content
+
+- [ ] Character and location image association
+  - **Auto1111 Character Generation**: Generate consistent character portraits using Auto1111
+  - **Style Consistency**: Maintain consistent art style across universe images
+  - **Image Cataloging**: Associate generated images with story elements
+
+- [ ] Visual timeline creation and management
+  - **Timeline Visualization**: Generate images for key story events
+  - **Historical Progression**: Show character/location changes over time through images
+
+- [ ] Image-based story inspiration and prompts
+  - **Prompt Engineering**: Convert story descriptions to effective Auto1111 prompts
+  - **Creative Prompts**: Generate image prompts to inspire new story directions
+
+#### **Auto1111 Specific Integration**
+- [ ] **Connection Management**:
+  - **Health Monitoring**: Continuous health checks for Auto1111 server availability
+  - **Connection Pooling**: Manage persistent connections to Auto1111 instances
+  - **Load Balancing**: Support multiple Auto1111 servers for high availability
+  - **Configuration Management**: Dynamic configuration of Auto1111 endpoints and settings
+
+- [ ] **Model Management**:
+  - **Model Discovery**: Automatically detect available Stable Diffusion models
+  - **Model Switching**: Support switching between different SD models per request
+  - **LoRA Support**: Integration with LoRA models for specific art styles/characters
+  - **Checkpoint Management**: Handle different checkpoint formats and versions
+
+- [ ] **Generation Pipeline**:
+  - **Prompt Engineering**: Translate story descriptions to effective SD prompts
+  - **Parameter Optimization**: Optimize generation parameters for story content
+  - **Batch Generation**: Support batch image generation for efficiency
+  - **Progress Tracking**: Real-time progress updates for long-running generations
+
+- [ ] **Quality Control**:
+  - **NSFW Filtering**: Optional content filtering for appropriate story images
+  - **Quality Assessment**: Automatic quality scoring of generated images
+  - **Retry Logic**: Retry failed generations with adjusted parameters
+  - **Resolution Upscaling**: Post-process images for higher resolution if needed
+
+- [ ] **Graceful Fallback Handling**:
+  - **Service Unavailable**: Clear error messages when Auto1111 is offline
+  - **Model Not Found**: Fallback to default model when requested model unavailable
+  - **Generation Failure**: Retry with simpler prompts when complex generations fail
+  - **Timeout Handling**: Graceful handling of long-running generation timeouts
+  - **Quota Management**: Handle generation limits and provide clear feedback
+
+#### **Audio Integration**
+- [ ] Voice-to-text for story dictation
+- [ ] Text-to-speech for story reading
+- [ ] Character voice generation and consistency
+- [ ] Audio timeline synchronization
+
+#### **Document Processing**
+- [ ] PDF/Word document import and parsing
+- [ ] Structured content extraction (characters, locations, events)
+- [ ] Bibliography and reference management
+- [ ] Citation tracking and consistency
+
+### **🧪 ADVANCED API TESTING & VALIDATION**
+
+#### **OpenAI Compatibility Testing**
+- [ ] Test suite using official OpenAI client libraries
+- [ ] Compatibility verification with popular OpenAI tools (LangChain, etc.)
+- [ ] Response format validation against OpenAI specification
+- [ ] Error handling and edge case testing
+
+#### **Auto1111 Integration Testing**
+- [ ] Test Auto1111 connection establishment and health monitoring
+- [ ] Validate Auto1111 request/response translation to OpenAI format
+- [ ] Test graceful fallback when Auto1111 server is unavailable
+- [ ] Verify error handling for Auto1111-specific failures (out of memory, model loading, etc.)
+- [ ] Test image generation parameter validation and optimization
+- [ ] Validate batch generation and progress tracking functionality
+
+#### **Ollama Compatibility Testing**
+- [ ] Test suite using official Ollama client libraries
+- [ ] Compatibility verification with Ollama-based tools
+- [ ] NDJSON streaming validation
+- [ ] Model management operation testing
+
+#### **Performance & Load Testing**
+- [ ] Concurrent request handling (100+ simultaneous connections)
+- [ ] Large context window handling (32k+ tokens)
+- [ ] Streaming response performance optimization
+- [ ] Memory usage optimization for long-running sessions
+
+#### **Integration Testing**
+- [ ] End-to-end RAG workflow testing
+- [ ] Multi-provider failover testing
+- [ ] Authentication and authorization testing
+- [ ] API rate limiting and quota testing
+
+#### **Auto1111 Integration Testing**
+- [ ] End-to-end image generation workflow testing
+- [ ] Auto1111 server failover and recovery testing
+- [ ] Image generation parameter optimization testing
+- [ ] NSFW filtering and quality control validation
+- [ ] Multi-model switching and LoRA integration testing
+- [ ] Performance testing under high concurrent image generation loads
+
+---

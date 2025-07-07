@@ -1,5 +1,5 @@
 /**
- * Main App Component - Universe Book Writer
+ * Main App Component - VerseForge
  * Root component with routing, authentication, and theme providers
  */
 
@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-universe-background text-universe-text flex items-center justify-center">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-universe-primary mb-2">Universe Book Writer</h1>
+          <h1 className="text-3xl font-bold text-universe-primary mb-2">VerseForge</h1>
           <p className="text-universe-text-secondary">Sign in to access your writing universe</p>
         </div>
         <LoginForm />

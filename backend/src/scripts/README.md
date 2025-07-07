@@ -16,7 +16,7 @@ For complete details, see [`docs/SEED_SCRIPT_DEPRECATION_STRATEGY.md`](../../../
 
 ## Overview
 
-The seeding script (`seed-road-to-stars.ts`) extracts comprehensive data from all 5 chapters of the book and structures it according to the database schema and validation rules defined in the Universe Book Writer application.
+The seeding script (`seed-road-to-stars.ts`) extracts comprehensive data from all 5 chapters of the book and structures it according to the database schema and validation rules defined in the VerseForge application.
 
 ## What Gets Seeded
 
@@ -73,7 +73,7 @@ Before running the seeding script, ensure you have:
 ### Required Environment Variables
 
 ```bash
-MONGODB_URI=mongodb://localhost:27017/universe-book-writer
+MONGODB_URI=mongodb://localhost:27017/verseforge
 ```
 
 ## Running the Seed Script
@@ -145,7 +145,7 @@ After running the script, verify the data was inserted correctly:
 
 ```javascript
 // Connect to your MongoDB instance and check collections
-use universe-book-writer
+use verseforge
 
 // Check character count
 db.characters.countDocuments()  // Should return 11

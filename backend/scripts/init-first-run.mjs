@@ -16,8 +16,8 @@ const __dirname = dirname(__filename);
 // Load environment variables
 config({ path: join(__dirname, '..', '.env') });
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/universe-book-writer';
-const DB_NAME = process.env.MONGODB_DB_NAME || 'universe-book-writer';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/verseforge';
+const DB_NAME = process.env.MONGODB_DB_NAME || 'verseforge';
 
 // Witty default admin credentials
 const DEFAULT_ADMIN = {
@@ -46,7 +46,7 @@ function generateSecureId(length = 24) {
  */
 async function adminUserExists(db) {
   const users = db.collection('users');
-  const adminUser = await users.findOne({ 
+  const adminUser = await users.findOne({
     $or: [
       { role: 'admin' },
       { email: DEFAULT_ADMIN.email }
@@ -60,11 +60,11 @@ async function adminUserExists(db) {
  */
 async function createAdminUser(db) {
   const users = db.collection('users');
-  
+
   // Hash the password
   const saltRounds = 12;
   const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN.password, saltRounds);
-  
+
   // Create admin user
   const adminUser = {
     id: generateSecureId(),
@@ -100,7 +100,7 @@ async function createAdminUser(db) {
   };
 
   await users.insertOne(adminUser);
-  
+
   console.log('🎉 Default admin user created successfully!');
   console.log('');
   console.log('📧 Email:', DEFAULT_ADMIN.email);
@@ -108,7 +108,7 @@ async function createAdminUser(db) {
   console.log('');
   console.log('⚠️  Please change the password after first login!');
   console.log('');
-  
+
   return adminUser;
 }
 
@@ -117,41 +117,41 @@ async function createAdminUser(db) {
  */
 async function initFirstRun() {
   let client;
-  
+
   try {
     console.log('🚀 Starting first-run initialization...');
     console.log('');
-    
+
     // Connect to MongoDB
     console.log('📡 Connecting to MongoDB...');
     client = new MongoClient(MONGODB_URI);
     await client.connect();
-    
+
     const db = client.db(DB_NAME);
     console.log('✅ Connected to database:', DB_NAME);
     console.log('');
-    
+
     // Check if admin user already exists
     console.log('🔍 Checking for existing admin users...');
     const adminExists = await adminUserExists(db);
-    
+
     if (adminExists) {
       console.log('✅ Admin user already exists. No action needed.');
       console.log('');
       return;
     }
-    
+
     console.log('👤 No admin user found. Creating default admin user...');
     console.log('');
-    
+
     // Create admin user
     await createAdminUser(db);
-    
+
     console.log('✨ First-run initialization completed successfully!');
     console.log('');
-    console.log('🌟 Welcome to Universe Book Writer!');
+    console.log('🌟 Welcome to VerseForge!');
     console.log('💫 Your multiverse awaits...');
-    
+
   } catch (error) {
     console.error('❌ First-run initialization failed:');
     console.error(error.message);

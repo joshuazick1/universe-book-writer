@@ -48,8 +48,8 @@ export class JwtTokenService implements TokenService {
     const secret = this.getSecretForType(claims.tokenType);
 
     return jwt.sign(tokenPayload, secret, {
-      issuer: 'universe-book-writer',
-      audience: 'universe-book-writer-app',
+      issuer: 'verseforge',
+      audience: 'verseforge-app',
     });
   }
 
@@ -64,8 +64,8 @@ export class JwtTokenService implements TokenService {
 
     try {
       const verified = jwt.verify(token, secret, {
-        issuer: 'universe-book-writer',
-        audience: 'universe-book-writer-app',
+        issuer: 'verseforge',
+        audience: 'verseforge-app',
       }) as TokenClaims;
 
       return verified;

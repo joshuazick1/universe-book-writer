@@ -9,7 +9,7 @@ import {
   type PluginRegistryEntry,
   PluginState,
   type PluginType,
-} from '@universe-book-writer/core';
+} from '@verseforge/core';
 import type { PluginRepository } from '../../core/interfaces/plugin.repository.interface.js';
 import type { PluginDomainService } from '../../core/services/plugin.domain.service.js';
 import type { PluginLoader } from '../../infrastructure/loaders/plugin.loader.js';

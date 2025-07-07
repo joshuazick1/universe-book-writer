@@ -1,26 +1,28 @@
 # Phase D: Advanced Features
 
-**Duration**: 1.5-2 weeks (reduced from 2-3 weeks due to A.2.5 foundation)  
+> **This file is the canonical source for requirements, status, and planning for this phase.**
+
+**Duration**: 1 week (**reduced from 1.5-2 weeks due to RAG knowledge graph acceleration**)  
 **Status**: ⏳ **AWAITING PHASE C**  
-**Priority**: MEDIUM-HIGH - Enhanced capabilities and user experience  
-**Dependencies**: Phase C AI Foundation ✅ Required (A.2.5 Enhanced Foundation accelerates development)
+**Priority**: MEDIUM-HIGH - Advanced capabilities leveraging RAG knowledge graph  
+**Dependencies**: Phase C AI Foundation ✅ Required (RAG knowledge graph accelerates advanced features)
 
-## ✨ **A.2.5 DEVELOPMENT ACCELERATION BENEFITS**
+## ✨ **RAG KNOWLEDGE GRAPH ACCELERATION BENEFITS**
 
-**Rapid Feature Development**: The comprehensive foundation from A.2.5 dramatically accelerates advanced feature implementation:
+**Knowledge-Powered Advanced Features**: The RAG knowledge graph from A.2.6 and AI integration from Phase C provide powerful capabilities:
 
-### **🎯 Advanced Development Infrastructure Ready**
-- **✅ Complete Testing Framework**: Automated testing for complex features and edge cases
-- **✅ Performance Monitoring**: Real-time tracking ensures advanced features maintain performance targets
-- **✅ Developer Experience Tools**: Interactive documentation and debugging tools accelerate feature development
-- **✅ Mobile-Optimized Base**: All advanced features automatically inherit responsive design
-- **✅ Accessibility Compliance**: WCAG 2.1 AA compliance built into all new features
+### **🎯 RAG-Enhanced Feature Development**
+- **✅ Knowledge Graph Analytics**: Rich relationship data enables sophisticated content analysis
+- **✅ Semantic Content Understanding**: RAG provides deep context for advanced AI analysis
+- **✅ Timeline-Aware Processing**: Temporal relationships enable advanced character development tracking
+- **✅ Plugin-Specific Intelligence**: Universe-specific analysis using plugin-seeded knowledge
+- **✅ Cross-Modal Content Analysis**: RAG enables analysis across text, code, and multimedia content
 
-### **🚀 Feature Development Velocity Multipliers**
-- **Comprehensive API Documentation**: Interactive examples accelerate integration work
-- **Automated Error Handling**: Robust error recovery systems reduce debugging time
-- **Production-Ready Infrastructure**: Features can be deployed immediately without additional hardening
-- **Cross-Platform Testing**: Automated validation across all supported platforms and devices
+### **🚀 Advanced Feature Velocity Multipliers**
+- **Knowledge Graph Query Engine**: Complex content analysis built on RAG foundation
+- **Semantic Relationship Mapping**: Advanced features leverage existing relationship detection
+- **Context-Aware AI Models**: Specialized models can use RAG context for enhanced performance
+- **Plugin-Enhanced Analytics**: Universe-specific advanced features using plugin knowledge base
 
 ## 🧭 Navigation Links
 
@@ -59,7 +61,64 @@ Phase D builds on the AI foundation to deliver advanced content analysis, specia
 - Theme system supports full universe customization
 - Performance remains optimal with advanced features enabled
 
+
 ## Subphase Breakdown
+
+### D.5: Plugin System Expansion & Vibe Coder Coding Environment
+**Duration**: 8-10 days  
+**Status**: ⏳ **AWAITING PHASE C EXTENSIBILITY**  
+**Documentation**: `ai-server-semantic-graph-orchestrator-enhancements.md`
+
+This subphase delivers the extensible plugin system and the Vibe Coder plugin, transforming the book writing app into a code-centric creative/collaborative environment. It builds directly on the security, plugin, and extensibility work in Phase C.
+
+#### Foundational Enhancements & Plugin System
+- Integrate all new APIs and features with the existing authentication/authorization layer.
+- Enforce role-based access control for plugin endpoints using the project’s auth system.
+- Add audit logging for sensitive plugin actions.
+- Add validation schemas for all plugin API payloads.
+- Plan for sharding/partitioning plugin data in MongoDB.
+- Integrate metrics collection and health checks for plugin APIs.
+- Provide CLI tools for plugin management and diagnostics.
+- Support data anonymization and export/delete for plugin data.
+- Add support for collaborative plugin development and real-time editing.
+- Set up contract, load, and stress tests for plugin APIs.
+
+#### Vibe Coder Plugin: Coding Environment Plugin for Book Writer
+
+**Phase 1: Proof of Concept (MVP)**
+- Implement a minimal plugin that hijacks the book writing app UI for code editing:
+  - Replace or augment the main editor with a Monaco/CodeMirror-based code editor.
+  - Enable syntax highlighting for major languages (JS/TS, Python, Markdown, etc.).
+  - Add basic file open/save (to local or project workspace).
+  - Integrate with the AI server for code completion and inline suggestions.
+  - Allow toggling between book writing and coding modes.
+  - Document plugin structure and extension points.
+
+**Phase 2: Core Coding Features**
+- Add multi-file/project navigation (file tree sidebar).
+- Implement code linting and error highlighting (using ESLint, etc.).
+- Add code formatting (Prettier, Black, etc.).
+- Enable AI-powered code refactoring and documentation generation.
+- Support code snippet management and insertion.
+- Add basic terminal/REPL integration (for running code snippets or scripts).
+- Integrate with version control (Git basics: status, commit, diff).
+
+**Phase 3: Collaboration & Advanced AI**
+- Enable real-time collaborative coding (using the existing collaboration server).
+- Add AI-powered code review and inline commenting.
+- Support pair programming with AI (AI as a coding partner or reviewer).
+- Implement context-aware code search and navigation (semantic graph integration).
+- Allow plugin-based extension of coding features (e.g., language packs, linters, formatters).
+- Add support for live coding sessions and code streaming.
+
+**Phase 4: Full Integration & UX Polish**
+- Seamlessly switch between book writing and coding environments.
+- Share code snippets or projects directly into book content (and vice versa).
+- Add onboarding/tutorial for new users.
+- Ensure accessibility and keyboard navigation throughout the coding UI.
+- Polish UI/UX for a modern, distraction-free coding experience.
+
+---
 
 ### **D.1: Advanced AI Content Analysis** 📋 FIRST (Parallel with D.2)
 **Duration**: 6-8 days  

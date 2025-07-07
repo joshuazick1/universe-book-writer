@@ -1,6 +1,6 @@
 # Star Trek Universe Plugin
 
-Official Star Trek Universe plugin for Universe Book Writer with LCARS theme and Starfleet protocols.
+Official Star Trek Universe plugin for VerseForge with LCARS theme and Starfleet protocols.
 
 ## Features
 

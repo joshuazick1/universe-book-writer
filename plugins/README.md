@@ -1,6 +1,6 @@
 # Plugins Directory
 
-This directory contains all plugins for the Universe Book Writer application. Plugins extend the core functionality by adding support for specific fictional universes, themes, and features.
+This directory contains all plugins for the VerseForge application. Plugins extend the core functionality by adding support for specific fictional universes, themes, and features.
 
 ## Plugin Structure
 
@@ -97,10 +97,10 @@ For plugin development guidelines, see the main project documentation in `/docs/
 
 ## Plugin API
 
-Plugins implement the `Plugin` interface from `@universe-book-writer/core`:
+Plugins implement the `Plugin` interface from `@verseforge/core`:
 
 ```typescript
-import { Plugin, PluginState, PluginType } from '@universe-book-writer/core';
+import { Plugin, PluginState, PluginType } from '@verseforge/core';
 
 export default class MyPlugin implements Plugin {
   // Plugin implementation

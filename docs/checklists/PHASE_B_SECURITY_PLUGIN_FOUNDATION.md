@@ -1,26 +1,28 @@
 # Phase B: Security & Plugin Foundation
 
-**Duration**: 3-5 days (significantly reduced from 1-2 weeks due to A.2.5 security infrastructure)  
+> **This file is the canonical source for requirements, status, and planning for this phase.**
+
+**Duration**: 2-3 days (**dramatically reduced from 3-5 days due to A.2.6 security + RAG foundation**)  
 **Status**: ⏳ **AWAITING PHASE A COMPLETION**  
-**Priority**: HIGH - Enhanced security features and real-time infrastructure  
-**Dependencies**: Phase A Complete (including A.2.5 Enhanced Foundation) ✅ Required
+**Priority**: HIGH - Enhanced security for RAG + Plugin System v2  
+**Dependencies**: Phase A Complete (including A.2.6 RAG Architecture & Plugin System v2) ✅ Required
 
-## ✨ **A.2.5 SECURITY FOUNDATION BENEFITS**
+## ✨ **A.2.6 SECURITY + RAG FOUNDATION BENEFITS**
 
-**Dramatically Accelerated Security Implementation**: The comprehensive security infrastructure built in Phase A.2.5 provides a head start:
+**Plugin v2 Clean Redesign Advantage**: The complete plugin system redesign in A.2.6 and RAG-native architecture eliminates legacy security concerns:
 
 ### **🎯 Security Infrastructure Already Implemented**
-- **✅ Two-Factor Authentication (2FA)**: TOTP-based enhanced security system
-- **✅ Enhanced Session Management**: Automatic timeout, renewal, and security monitoring
-- **✅ Plugin Security Sandbox**: Secure execution environment with code validation
-- **✅ Comprehensive Audit Logging**: All authentication, authorization, and plugin activities
-- **✅ Security Headers & Protection**: CSP, HSTS, and comprehensive security hardening
+- **✅ Plugin System v2**: Clean redesign with RAG-native security from ground up
+- **✅ Encryption System Redesign**: Fresh encryption optimized for RAG + plugin integration
+- **✅ RAG Security Framework**: Field-level encryption with content-aware privacy classifications
+- **✅ Plugin Security Sandbox**: Redesigned for RAG-aware plugin validation and execution
+- **✅ API Security Hardening**: OpenAPI docs, validation, rate limiting for RAG + encryption APIs
 
-### **🚀 Reduced Scope for Phase B**
-- **Focus on Advanced Features**: Multi-scope encryption, key management, and real-time security
-- **Build on Solid Foundation**: Extend existing security rather than building from scratch
-- **Validated Security Model**: All basic security patterns already tested and validated
-- **Production-Ready Base**: Security monitoring and incident response already operational
+### **🚀 Simplified Security Implementation**
+- **No Legacy Security Debt**: Clean slate approach eliminates complex migration security
+- **RAG-Native Security**: Security designed for knowledge graph from day one
+- **Plugin v2 Security**: Modern security patterns without backward compatibility constraints
+- **Validated Architecture**: All security patterns tested during A.2.6 implementation
 
 ## 🧭 Navigation Links
 
@@ -29,7 +31,8 @@
 
 ### **🔄 Phase Dependencies**
 - **[Phase A: Essential Foundation](./PHASE_A_ESSENTIAL_FOUNDATION_V2.md)** ✅ **PREREQUISITE**
-  - **[A.2.5: Plugin Override & Foundation Hardening](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** - Security hardening complete
+  - **[A.2.5: Plugin Override & Foundation Hardening](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** - Plugin infrastructure complete
+  - **[A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md)** - Security hardening & RAG foundation complete
   - **[A.3: Story Management](./PHASE_A3_STORY_MANAGEMENT_V2.md)** - Content foundation
   - **[A.4: Integration Testing](./PHASE_A4_INTEGRATION_TESTING_V2.md)** - Validated foundation
 
@@ -320,11 +323,11 @@ Phase B provides these foundations for Phase E:
 - **Day 16**: Security testing complete with all vulnerabilities addressed
 - **Day 17**: Phase B complete and Phase C ready to begin
 
-## 🎯 **SCOPE REDUCTION DUE TO A.2.5 SECURITY HARDENING**
+## 🎯 **SCOPE REDUCTION DUE TO A.2.6 SECURITY HARDENING**
 
-Phase B scope is significantly reduced due to comprehensive security framework from A.2.5:
+Phase B scope is significantly reduced due to comprehensive security framework from A.2.6:
 
-### **✅ Already Complete from A.2.5** (No longer needed in Phase B)
+### **✅ Already Complete from A.2.6** (No longer needed in Phase B)
 - **Basic Security Framework**: Authentication, authorization, session management hardened
 - **Plugin Security Sandbox**: Secure plugin execution environment implemented
 - **API Security**: Rate limiting, input validation, security headers complete
@@ -333,7 +336,7 @@ Phase B scope is significantly reduced due to comprehensive security framework f
 - **Password Security**: Strength requirements and breach checking implemented
 
 ### **🎯 Refined Phase B Focus** (Advanced Features Only)
-With core security hardening complete in A.2.5, Phase B focuses on:
+With core security hardening complete in A.2.6, Phase B focuses on:
 - **Advanced Multi-Scope Encryption**: Complex encryption for collaborative features
 - **Real-Time Collaboration Infrastructure**: WebSocket security and concurrent editing
 - **Advanced Permission Workflows**: Spoiler protection and embargo systems
@@ -342,7 +345,7 @@ With core security hardening complete in A.2.5, Phase B focuses on:
 
 ### **⚡ Significant Time Savings**
 - **Reduced Duration**: 1-2 weeks instead of 2-3 weeks
-- **50% Scope Reduction**: Core security already implemented in A.2.5
+- **50% Scope Reduction**: Core security already implemented in A.2.6
 - **Focus on Innovation**: Time for advanced features instead of basic security
 
 ---

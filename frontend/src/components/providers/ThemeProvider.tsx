@@ -1,5 +1,5 @@
 /**
- * Theme Provider - Universe Book Writer
+ * Theme Provider - VerseForge
  * Manages theme state and provides context for components
  */
 

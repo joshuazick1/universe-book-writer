@@ -1,10 +1,10 @@
 {
     "name": "star-wars-universe-plugin",
-    "version": "1.0.0",
+    "version": "0.0.1-dev",
     "description": "Official Star Wars Universe plugin with Imperial/Rebel themes and galactic politics",
     "main": "index.ts",
     "type": "module",
-    "author": "Universe Book Writer Team",
+    "author": "VerseForge Team",
     "license": "MIT",
     "keywords": [
         "star-wars",

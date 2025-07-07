@@ -1,10 +1,12 @@
 # Phase A.2: Universe Management System - COMPLETE
 
+> **This file is the canonical source for requirements, status, and planning for this phase.**
+
 **Duration**: 8-10 days (Completed in 9 days)  
 **Status**: ✅ **COMPLETE** - Phase A.2 Core Implementation Complete  
 **Priority**: CRITICAL - Foundation for universe-specific features ✅ DELIVERED  
 **Dependencies**: Phase A.1 Authentication ✅ Complete  
-**Next Phase**: [Phase A.2.5: Plugin Override System](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md) 🔄 **IN PROGRESS**
+**Next Phase**: [Phase A.2.5: Plugin Override System](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md) 🔄 **IN PROGRESS** → [Phase A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md) ⏳ **NEXT**
 
 ## 🎉 PHASE A.2 COMPLETION SUMMARY
 
@@ -167,7 +169,8 @@
 ### **🔄 Phase A Workflow**
 - **A.1: Authentication** ✅ **COMPLETE**
 - **A.2: Universe Management** ✅ **COMPLETE** - Core implementation finished
-- **[A.2.5: Plugin Override System](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** 🔄 **IN PROGRESS** - Final polish & plugin overrides
+- **[A.2.5: Plugin Override System](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** 🔄 **IN PROGRESS** - Final polish & plugin overrides  
+- **[A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md)** ⏳ **NEXT** - Test fixes, RAG foundation, production hardening
 - **[A.3: Story Management](./PHASE_A3_STORY_MANAGEMENT_V2.md)** ⏳ **READY TO BEGIN**
 - **[A.4: Integration Testing](./PHASE_A4_INTEGRATION_TESTING_V2.md)** ⏳ **FINAL**
 
@@ -205,12 +208,13 @@
 
 ## 🔄 **PHASE A.2.5 TRANSITION**
 
-All remaining unchecked tasks from Phase A.2 have been systematically moved to **[Phase A.2.5: Plugin Override System](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** to maintain clear separation between:
+All remaining unchecked tasks from Phase A.2 have been systematically moved to **[Phase A.2.5: Plugin Override System](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** and **[Phase A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md)** to maintain clear separation between:
 
 - **Phase A.2**: ✅ **COMPLETE** - Core universe management functionality 
-- **Phase A.2.5**: 🔄 **IN PROGRESS** - Plugin override system implementation and final polish
+- **Phase A.2.5**: 🔄 **IN PROGRESS** - Plugin override system implementation and enhanced foundation
+- **Phase A.2.6**: ⏳ **NEXT** - Critical test fixes, RAG foundation, and production readiness
 
-### **Moved to Phase A.2.5**
+### **Moved to Phase A.2.5 & A.2.6**
 - **Plugin Override System**: Complete implementation of plugin UI component overrides
 - **Star Wars Plugin Completion**: Imperial/Rebel themes and final plugin features
 - **Performance Optimization**: All remaining performance benchmarks and optimization
@@ -218,7 +222,7 @@ All remaining unchecked tasks from Phase A.2 have been systematically moved to *
 - **Testing & Validation**: Advanced feature testing and user acceptance testing
 - **Documentation**: Final API documentation and deployment preparation
 
-This transition ensures that Phase A.3 (Story Management) can begin with a solid foundation while Phase A.2.5 completes the final architectural pieces in parallel.
+This transition ensures that Phase A.3 (Story Management) can begin with a solid foundation while Phase A.2.5 and A.2.6 complete the final architectural pieces and ensure production readiness.
 
 ### **Success Criteria**
 - Users can create Star Trek and Star Wars universes with flexible contribution policies
@@ -895,7 +899,7 @@ interface PluginUniverseSectionProps {
 
 ### 🧪 **Current Testing Progress** - ADDED June 22, 2025
 **Status**: 🔄 **ACTIVE DEVELOPMENT**  
-**Test Suite**: `e2e/universe-book-writer-admin.spec.ts`  
+**Test Suite**: `e2e/verseforge-admin.spec.ts`  
 **Framework**: Playwright with MCP integration
 
 #### **Test Coverage Achievements**:
@@ -1000,13 +1004,13 @@ Successfully implemented a completely different plugin architecture that validat
 **Status**: ✅ **COMPLETE**
 
 #### **Cleanup Results**:
-- **Removed defunct databases**: `book_writer`, `star_trek_writer`, `universe-book-writer`
-- **Preserved legitimate data**: `universe_book_writer` (main), `star_trek_au_books` (user data)
+- **Removed defunct databases**: `book_writer`, `star_trek_writer`, `verseforge`
+- **Preserved legitimate data**: `verseforge` (main), `star_trek_au_books` (user data)
 - **Clean development environment**: Only active databases remain
 - **Storage optimization**: Removed hundreds of MB of test/defunct data
 
 #### **Current Database State**:
-- `universe_book_writer` (0.98 MB) - Main production database with 9 users and 3 universes
+- `verseforge` (0.98 MB) - Main production database with 9 users and 3 universes
 - `star_trek_au_books` (0.72 MB) - User data with 4 universes
 - System databases: `admin`, `config`, `local`
 

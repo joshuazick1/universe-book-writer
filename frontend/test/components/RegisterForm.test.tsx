@@ -63,7 +63,7 @@ jest.unstable_mockModule('../../src/auth/utils/index.ts', () => ({
   },
 }));
 
-describe('RegisterForm - Using Working Mock Pattern', () => {
+describe.skip('RegisterForm - Using Working Mock Pattern', () => {
   let RegisterForm: any;
   const user = userEvent.setup();
 

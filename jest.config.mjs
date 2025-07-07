@@ -1,13 +1,13 @@
 /**
  * Root Jest Configuration
- * Multi-project Jest configuration for the Universe Book Writer monorepo
+ * Multi-project Jest configuration for the VerseForge monorepo
  */
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
   // Global teardown
   globalTeardown: '<rootDir>/jest.teardown.global.mjs',
-  
+
   // Project-specific configurations
   projects: [
     // Frontend project with jsdom environment
@@ -27,7 +27,7 @@ export default {
           'ts-jest',
           {
             useESM: true,
-            tsconfig: '<rootDir>/frontend/tsconfig.json',
+            tsconfig: '<rootDir>/frontend/test/tsconfig.json',
             jsx: 'react-jsx',
             isolatedModules: true,
           },
@@ -52,11 +52,11 @@ export default {
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/backend/src/$1',
         '^(\\.{1,2}/.*)\\.js$': '$1',
-        '^(\\.{1,2}/.*)\\.m?js$': '$1',
         '^(\\.{1,2}/.*)\\.ts$': '$1',
         '^src/(.*)$': '<rootDir>/backend/src/$1',
         '^tests/(.*)$': '<rootDir>/backend/tests/$1',
         '^backend/(.*)$': '<rootDir>/backend/$1',
+        '^\\.\\./(.*)\\.js$': '<rootDir>/backend/tests/$1',
       },
       transform: {
         '^.+\\.(ts)$': [
@@ -141,7 +141,7 @@ export default {
       transformIgnorePatterns: ['/node_modules/(?!(@?mongodb.*|bson)/)'],
     }
   ],
-  
+
   // Global configuration for all projects - these apply to all projects
   passWithNoTests: true,
   verbose: true,
@@ -149,7 +149,7 @@ export default {
   forceExit: true,
   maxWorkers: 1,
   testTimeout: 15000,
-  
+
   // Global coverage configuration
   collectCoverageFrom: [
     'packages/**/*.{ts,tsx}',

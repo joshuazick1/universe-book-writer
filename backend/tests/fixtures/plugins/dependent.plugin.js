@@ -7,7 +7,7 @@
     }
   }; Example implementation
  */
-import { PluginState, PluginType, } from '@universe-book-writer/core';
+import { PluginState, PluginType, } from '@verseforge/core';
 export const metadata = {
     name: 'dependent-plugin',
     version: '1.0.0',

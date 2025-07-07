@@ -2,7 +2,7 @@
  * Tests for the PluginEntity class
  */
 
-import { PluginState, PluginType } from '@universe-book-writer/core';
+import { PluginState, PluginType } from '@verseforge/core';
 import { PluginEntity } from '../../../src/core/entities/plugin.entity.js';
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 
@@ -93,16 +93,16 @@ describe('PluginEntity', () => {
       await plugin.initialize();
       await plugin.activate();
       const deactivateSpy = jest.spyOn(plugin, 'deactivate');
-      
+
       await plugin.destroy();
-      
+
       expect(deactivateSpy).toHaveBeenCalled();
       expect(plugin.state).toBe(PluginState.UNLOADED);
     });
 
     it('should throw error when activating a non-initialized plugin', async () => {
       await expect(plugin.activate()).rejects.toThrow(/Cannot activate plugin in state/);
-    });    it('should throw error when deactivating a non-active plugin', async () => {
+    }); it('should throw error when deactivating a non-active plugin', async () => {
       await plugin.initialize();
       // Now the plugin is in INITIALIZED state, not ACTIVE
       await expect(plugin.deactivate()).rejects.toThrow(/Cannot deactivate plugin in state/);
@@ -156,7 +156,7 @@ describe('PluginEntity', () => {
         enabled: false,
         settings: { newKey: 'newValue' },
       };
-      
+
       await plugin.updateConfig(newConfig);
       expect(plugin.config).toEqual(newConfig);
     });
@@ -174,7 +174,7 @@ describe('PluginEntity', () => {
     it('should call onConfigUpdate when updating config', async () => {
       const updatePlugin = new class extends PluginEntity {
         configUpdated = false;
-        
+
         protected override async onConfigUpdate(): Promise<void> {
           this.configUpdated = true;
         }
@@ -190,7 +190,7 @@ describe('PluginEntity', () => {
       expect(plugin.canActivate()).toBe(false);
       await plugin.initialize();
       expect(plugin.canActivate()).toBe(true);
-      
+
       // Disabled plugins can't activate
       await plugin.updateConfig({ enabled: false });
       expect(plugin.canActivate()).toBe(false);

@@ -7,7 +7,7 @@ export const RegisterPage: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-universe-primary mb-2">Create Account</h1>
-          <p className="text-universe-text-secondary">Join Universe Book Writer</p>
+          <p className="text-universe-text-secondary">Join VerseForge</p>
         </div>
         <RegisterForm />
       </div>

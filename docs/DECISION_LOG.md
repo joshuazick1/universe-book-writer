@@ -249,3 +249,11 @@ This document maintains a record of architectural decisions made during the deve
   - Users receive clear feedback and retry guidance if the system is saturated.
   - System is resilient to bursts and adapts to real-time server/model performance.
   - Slightly increased memory usage for request queues, but bounded by configuration.
+
+## 2025-06-29: Planned Addition – Dynamic RAG with Real-Time Knowledge Graph
+
+- **Context:** To support both advanced writing and code generation, the project will add a dynamic Retrieval-Augmented Generation (RAG) system with a real-time knowledge graph.
+- **Phase:** Scheduled for Phase C (AI Foundation).
+- **Rationale:** This will enable context-aware, up-to-date assistance for both creative and technical domains, leveraging structured and unstructured data in real time.
+- **Impacts:** Affects AI server, plugin SDK, and user-facing features for both writing and coding modes. Will require new infrastructure for knowledge ingestion, graph updates, and query APIs.
+- **Related:** See PHASE_MASTER_PLAN.md (Phase C) and future architecture docs.

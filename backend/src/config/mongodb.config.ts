@@ -2,7 +2,7 @@ import { MongoClient, type MongoClientOptions } from 'mongodb';
 
 export const MONGODB_CONFIG = {
   uri: process.env.MONGODB_URI || 'mongodb://localhost:27017',
-  dbName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
+  dbName: process.env.MONGODB_DB_NAME || 'verseforge',
   options: {
     maxPoolSize: 10,
     minPoolSize: 2,
@@ -16,7 +16,7 @@ class MongoDBConnection {
   private static instance: MongoDBConnection;
   private client: MongoClient | null = null;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): MongoDBConnection {
     if (!MongoDBConnection.instance) {

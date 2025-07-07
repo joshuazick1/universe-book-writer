@@ -48,7 +48,7 @@ async function cleanupDatabases() {
             db.name.includes('dev') ||
             db.name.includes('backup') ||
             db.name.endsWith('-old') ||
-            db.name.startsWith('universe-book-writer-')
+            db.name.startsWith('verseforge-')
         );
 
         if (testDatabases.length > 0) {

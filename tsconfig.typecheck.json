@@ -24,14 +24,26 @@
     "isolatedModules": true,
     "useDefineForClassFields": true,
     "resolveJsonModule": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "jsx": "react-jsx",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./packages/*"],
-      "@universe-book-writer/core": ["./packages/core/src/index.ts"],
-      "@universe-book-writer/core/*": ["./packages/core/src/*"]
+      "@/*": [
+        "./packages/*"
+      ],
+      "@verseforge/core": [
+        "./packages/core/src/index.ts"
+      ],
+      "@verseforge/core/*": [
+        "./packages/core/src/*"
+      ]
     }
   },
   "references": [],

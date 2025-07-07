@@ -27,7 +27,7 @@ import { PluginAnimationShowcase } from './PluginAnimationShowcase';
  * Animation Framework Showcase
  *
  * This component serves as a comprehensive demonstration and testing ground
- * for the Universe Book Writer Animation Framework. It's designed for:
+ * for the VerseForge Animation Framework. It's designed for:
  *
  * - Plugin developers to understand available animations
  * - Testing animation components during development
@@ -96,7 +96,7 @@ export const AnimationShowcase: React.FC = () => {
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-neutral-900 mb-4">Animation Framework Showcase</h1>
           <p className="text-lg text-neutral-600">
-            Comprehensive demonstration of the Universe Book Writer animation system
+            Comprehensive demonstration of the VerseForge animation system
           </p>
         </header>
 

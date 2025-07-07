@@ -1,5 +1,7 @@
 # Phase A: Essential Foundation
 
+> **This file is the canonical source for requirements, status, and planning for this phase.**
+
 **Duration**: 3-4 weeks (4 subphases)  
 **Status**: 🔄 **IN PROGRESS** (A.1 Complete, A.2 Current)  
 **Priority**: CRITICAL - Foundation for all subsequent phases  
@@ -11,8 +13,10 @@
 - **[📚 Master Phase Plan](./PHASE_MASTER_PLAN.md)** - Complete project roadmap
 
 ### **📘 Phase A Subphases**
-- **[A.2: Universe Management](./PHASE_A2_UNIVERSE_MANAGEMENT_V2.md)** 🔄 **IN PROGRESS**
-- **[A.3: Story Management](./PHASE_A3_STORY_MANAGEMENT_V2.md)** ⏳ **NEXT**
+- **[A.2: Universe Management](./PHASE_A2_UNIVERSE_MANAGEMENT_V2.md)** ✅ **COMPLETE**
+- **[A.2.5: Plugin Override & Enhanced Foundation](./PHASE_A2_5_PLUGIN_OVERRIDE_SYSTEM.md)** 🔄 **IN PROGRESS**
+- **[A.2.6: Final Polish & Production Readiness](./PHASE_A2_6_FINAL_POLISH_AND_DEFERRED_TASKS.md)** ⏳ **NEXT**
+- **[A.3: Story Management](./PHASE_A3_STORY_MANAGEMENT_V2.md)** ⏳ **WAITING A.2.6**
 - **[A.4: Integration Testing](./PHASE_A4_INTEGRATION_TESTING_V2.md)** ⏳ **FINAL**
 
 ### **🔄 Adjacent Phases**
@@ -455,27 +459,6 @@ interface CloneUniverseModalProps {
 
 ## Quality Gates
 
-### **A.2 Completion Criteria**
-- [ ] Users can create universes with Star Trek plugin
-- [ ] Users can create universes with Star Wars plugin
-- [ ] Plugin universes display with expandable carrot (>) interface
-- [ ] Sub-universe options accessible from expanded plugin universes
-- [ ] Clone-to-custom functionality works from plugin universe templates
-- [ ] Clone functionality copies books and text content (characters/locations reserved for Phase C AI)
-- [ ] Plugin themes (LCARS, Imperial, Rebel) appear in theme selection menu
-- [ ] Themes work independently of which plugin universes are active
-- [ ] Plugin data preservation works when plugins change
-- [ ] Canon strictness controls available in edit universe interface
-- [ ] Basic real-time infrastructure handles universe updates
-- [ ] Performance targets met (universe creation < 2s, expansion < 500ms)
-
-**Universe Management UI Requirements**:
-- [ ] Plugin universes (Star Trek, Star Wars) appear alongside user-created universes
-- [ ] Expandable interface reveals sub-universe options (Prime/Kelvin/Mirror/Custom for Star Trek)
-- [ ] Clone options available from expanded sub-universe selections
-- [ ] Edit interface removes "Universe Type and Configuration" section for existing universes
-- [ ] "Make universe private & encrypted" only appears for public universes with no content
-- [ ] Canon strictness controls remain accessible in edit interface for all universe types
 
 ### **A.3 Completion Criteria**
 - [ ] Users can create and edit books/chapters
