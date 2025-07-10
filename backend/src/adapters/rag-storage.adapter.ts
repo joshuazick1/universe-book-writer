@@ -32,7 +32,7 @@ export class RAGStorageAdapter {
 
     constructor(
         private connectionString: string,
-        private databaseName: string = 'universe_book_writer'
+        private databaseName: string = 'verseforge_rag_dev'
     ) {
         this.client = new MongoClient(connectionString);
     }
@@ -89,8 +89,11 @@ export class RAGStorageAdapter {
     private async createIndexes(): Promise<void> {
         // RAG Nodes indexes
         const ragNodesCollection = this.db.collection(COLLECTIONS.RAG_NODES);
+        const existingIndexes = await ragNodesCollection.indexes();
+        console.log('Existing indexes for rag_nodes:', existingIndexes);
         for (const indexSpec of RAGNodeValidation.indexes) {
             try {
+                console.log('Attempting to create index on rag_nodes:', indexSpec);
                 await ragNodesCollection.createIndex(indexSpec as any);
             } catch (error) {
                 console.warn(`Failed to create RAG nodes index:`, indexSpec, error);
@@ -521,6 +524,18 @@ export class RAGStorageAdapter {
     }
 
     /**
+     * Clear all RAG data: universes, nodes, and relationships
+     * DANGER: This wipes the entire RAG database.
+     */
+    async clearAll(): Promise<void> {
+        await Promise.all([
+            this.db.collection(COLLECTIONS.UNIVERSES).deleteMany({}),
+            this.db.collection(COLLECTIONS.RAG_NODES).deleteMany({}),
+            this.db.collection(COLLECTIONS.RAG_RELATIONSHIPS).deleteMany({})
+        ]);
+    }
+
+    /**
      * Get database statistics
      */
     async getStats(): Promise<{
@@ -558,7 +573,7 @@ export class RAGStorageAdapter {
  */
 export function createRAGStorageAdapter(
     connectionString: string = 'mongodb://localhost:27017',
-    databaseName: string = 'universe_book_writer'
+    databaseName: string = 'verseforge_rag_dev'
 ): RAGStorageAdapter {
     return new RAGStorageAdapter(connectionString, databaseName);
 }

@@ -32,41 +32,78 @@ export class RAGSystemFactory {
     /**
      * Create a complete RAG system configuration
      */
-    static async createRAGSystem(config: {
-        /** MongoDB connection string or database instance */
-        database: any;
 
-        /** Vector database configuration */
+    static async createRAGSystem(config: {
+        database: any;
         vectorDb?: {
             type: 'faiss' | 'pinecone' | 'weaviate';
             config: Record<string, any>;
         };
-
-        /** Encryption configuration */
         encryption?: {
             enabled: boolean;
             masterKey?: string;
             keyDerivationSalt?: string;
         };
-
-        /** Plugin system hooks */
         plugins?: any[];
     }) {
-        // TODO: Implement RAG system factory
-        // This will be implemented in the next phase once we have:
-        // 1. Database adapters for MongoDB and vector databases
-        // 2. Complete storage backend implementations
-        // 3. Plugin system integration
-
-        throw new Error('RAG System Factory not yet implemented - awaiting storage backend completion');
+        // Example: Compose all services and return a configured RAG system object
+        // You must provide both ragBackend and dbIndex to RAGStorageService
+        const { ragBackend, dbIndex, updateStorage, updateEncryption, nodeEncryptionService, relationshipEncryptionService } = config.database;
+        const storageService = new (await import('./services/storage.service.js')).RAGStorageService(
+            ragBackend,
+            dbIndex,
+            updateStorage,
+            updateEncryption
+        );
+        const contextService = new (await import('./services/context-assembly.service.js')).RAGContextAssemblyService(
+            storageService,
+            nodeEncryptionService,
+            relationshipEncryptionService
+        );
+        const updateService = new (await import('./services/update-storage.service.js')).RAGUpdateStorageService(
+            updateStorage,
+            dbIndex,
+            updateEncryption
+        );
+        // Optionally configure vector DB, encryption, plugins, etc.
+        // ...
+        return {
+            storageService,
+            contextService,
+            updateService,
+            plugins: config.plugins || [],
+            version: RAG_SYSTEM_VERSION,
+            metadata: RAG_SYSTEM_METADATA,
+        };
     }
 
     /**
      * Create development/testing RAG system with mock backends
      */
     static createMockRAGSystem() {
-        // TODO: Implement mock RAG system for testing
-        throw new Error('Mock RAG System not yet implemented');
+        // Simple in-memory mock for testing/CI
+        const storageService = {
+            // Implement minimal mock methods as needed for tests
+            get: async () => ({}),
+            put: async () => ({}),
+            delete: async () => ({}),
+        };
+        const contextService = {
+            // Mock context assembly
+            assemble: async () => ({}),
+        };
+        const updateService = {
+            // Mock update logic
+            update: async () => ({}),
+        };
+        return {
+            storageService,
+            contextService,
+            updateService,
+            plugins: [],
+            version: RAG_SYSTEM_VERSION,
+            metadata: RAG_SYSTEM_METADATA,
+        };
     }
 }
 

@@ -136,6 +136,9 @@ export class DatabaseManager {
      */
     async getCharacterMemories(characterId: string): Promise<CharacterMemory[]> {
         const charGenMemories = await mongoGeneratorService.getCharacterMemories(characterId);
+        if (!Array.isArray(charGenMemories)) {
+            return [];
+        }
         return charGenMemories.map(m => this.convertFromCharGenMemory(m));
     }
 

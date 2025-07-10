@@ -8,11 +8,56 @@ import { SecurityService } from '../../core/interfaces/auth.service.js';
 import { AuthRequest } from '../middleware/auth.middleware.js';
 import { UserRole } from '../../core/entities/user.entity.js';
 
+import { RAGIntegrationService } from '../../services/rag-integration.service.js';
+
 export class AdminController {
   constructor(
     private adminUseCase: AdminUseCase,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    public ragIntegrationService: RAGIntegrationService
   ) { }
+  /**
+   * Clear all RAG database content (universes, nodes, relationships)
+   * POST /api/admin/clear-rag-db
+   * Admin only
+   */
+  async clearRAGDatabase(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const currentUserId = req.user?.id;
+      const userRole = req.user?.role;
+      const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
+      const userAgent = req.get('User-Agent') || 'unknown';
+
+      // Allow with admin JWT or with correct API key
+      const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+      const apiKey = process.env.AI_SERVER_API_KEY;
+      let isApiKeyValid = false;
+      if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        if (apiKey && token === apiKey) {
+          isApiKeyValid = true;
+        }
+      }
+
+      if (userRole !== UserRole.ADMIN && !isApiKeyValid) {
+        res.status(403).json({ success: false, message: 'Admin access or valid API key required' });
+        return;
+      }
+
+      await this.ragIntegrationService.storageAdapter.clearAll();
+
+      // Log admin action
+      await this.securityService.logSecurityEvent(
+        currentUserId || (isApiKeyValid ? 'api_key' : 'unknown'),
+        'admin_rag_db_cleared',
+        { ipAddress, userAgent, usedApiKey: isApiKeyValid }
+      );
+
+      res.json({ success: true, message: 'RAG database cleared.' });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   /**
    * Get all users with filtering and pagination

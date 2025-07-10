@@ -5,25 +5,66 @@
 import { EntityType, RelationshipType } from './entityTypes.js';
 
 // Alias for backward compatibility
-export interface ParsedEntity extends EnhancedParsedEntity {}
+export interface ParsedEntity extends EnhancedParsedEntity { }
 
+/**
+ * Canonical enhanced entity structure for Text-to-RAG pipeline.
+ * Extensible for advanced AI-powered deduplication, traceability, and future entity types.
+ */
 export interface EnhancedParsedEntity {
+    /** Unique entity ID (canonical, stable across deduplication) */
     id: string;
-    type: EntityType;
+    /** Canonical entity type (e.g., 'character', 'location', etc.) */
+    type: EntityType | 'character';
+    /** Canonical name/title of the entity */
     name: string;
+    /** Optional display title */
+    title?: string;
+    /** Description or summary */
     description: string;
+    /** Confidence score (0.0-1.0) */
     confidence: number;
+    /** Relationships to other entities */
     relationships?: EntityRelationship[];
+    /** All available metadata and references */
     metadata?: Record<string, any>;
+    /** Source chunk information (for traceability) */
     sourceChunk?: {
         index: number;
         text: string;
-        startPosition: number;
-        endPosition: number;
+        startOffset: number;
+        endOffset: number;
     };
+    /** Full source text for this entity (optional) */
     sourceText?: string;
+    /** Last update timestamp */
     updatedAt: Date;
+    /** Creation timestamp */
     createdAt: Date;
+    // --- Canonical/character-specific fields ---
+    /** Aliases or alternate names */
+    aliases?: string[];
+    /** Universe ID for canonical linkage */
+    universeId?: string;
+    /** Book IDs where this entity appears */
+    appearanceBookIds?: string[];
+    /** Chapter IDs where this entity appears */
+    appearanceChapterIds?: string[];
+    /** Section IDs where this entity appears */
+    appearanceSectionIds?: string[];
+    // --- Extensible fields for advanced deduplication and traceability ---
+    /** Pronoun/ambiguous reference links for advanced AI deduplication */
+    pronounLinks?: string[];
+    /** Context window (textual context for this entity, for AI-powered deduplication) */
+    contextWindow?: string;
+    /** Source references for traceability and provenance */
+    sourceReferences?: Array<{
+        documentId?: string;
+        sectionId?: string;
+        offset?: number;
+        context?: string;
+        extractor?: string;
+    }>;
 }
 
 export interface EntityRelationship {
@@ -238,17 +279,17 @@ export interface DualAiProcessingOptions {
     // Primary parsing options
     primaryModel: string;
     primaryTemperature?: number;
-    
+
     // Contextual processing options
     contextualModel: string;
     contextualTemperature?: number;
-    
+
     // Processing control
     enableRelationshipExtraction: boolean;
     enableEntityRefinement?: boolean;
     enableContextualUpdates?: boolean;
     crossValidation?: boolean;
-    
+
     // Relationship extraction
     relationshipConfidenceThreshold?: number;
     maxRelationshipsPerEntity?: number;
@@ -268,11 +309,11 @@ export interface CharacterMemory {
     lastAccessed: Date;
     createdAt: Date;
     updatedAt: Date;
-    
+
     // Memory source distinction
     memorySource: 'book_extraction' | 'user_interaction' | 'ai_gap_filling';
     canonStatus: 'canon' | 'non_canon' | 'gap_filling';
-    
+
     // For AI gap-filling memories ("What was Dan doing while this was going on?")
     gapFillingContext?: {
         triggerQuery: string;         // The original "what was X doing" question
@@ -287,7 +328,7 @@ export interface CharacterMemory {
         approvalDate?: Date;         // When user approved/rejected this
         reviewNotes?: string;        // User's notes on why they approved/rejected
     };
-    
+
     // User interaction context (when source is 'user_interaction')
     conversationId?: string;          // Link to the conversation that created this
     affectsTimeline?: boolean;        // Whether this should impact story events (always false for gap-filling)

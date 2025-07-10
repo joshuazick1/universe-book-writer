@@ -4,10 +4,10 @@
  */
 
 import { EventEmitter } from 'events';
-import { 
-    ProcessingJob, 
-    ProcessingResult, 
-    ParsingOptions, 
+import {
+    ProcessingJob,
+    ProcessingResult,
+    ParsingOptions,
     ParsingContext,
     EnhancedParsedEntity,
     ChunkAnalysis,
@@ -16,7 +16,8 @@ import {
     ConfidenceThresholds,
     FilteringOptions
 } from '../core/interfaces.js';
-import { EntityType } from '../core/entityTypes.js';
+import { EntityType, EntityCandidate } from '../core/entityTypes.js';
+import { deduplicateCharacterCandidates, enforceCanonicalCharacterNode } from '../utils/aiDeduplicationHelper.js';
 import { TextChunker } from '../utils/textChunker.js';
 import { PrimaryParser, PrimaryParseResult } from '../parsers/primaryParser.js';
 import { DualAiProcessor, DualAiResult } from '../processors/dualAiProcessor.js';
@@ -66,35 +67,112 @@ export class ParserEngine extends EventEmitter {
     /**
      * Process a text parsing job with Phase 2 enhancements
      */
+    /**
+     * Process a text parsing job with in-memory character aggregation and deduplication
+     */
     async processJob(job: ProcessingJob): Promise<ProcessingResult> {
         const startTime = Date.now();
-        
+
         logInfo(`Starting enhanced text parsing job ${job.id}`);
         this.emit('jobProgress', job.id, { phase: 'initialization', progress: 0 });
 
         try {
             // Extract enhanced parsing options from job
             const options = this.extractEnhancedOptionsFromJob(job);
-            
-            // Update job status
             job.status = 'processing';
             job.progress = { currentChunk: 0, totalChunks: 0, currentPhase: 'chunking' };
 
             let result: ProcessingResult;
-
-            // Choose processing pipeline based on options
+            // --- Step 1: Parse and aggregate all entities in memory ---
             if (options.enableDualAiProcessing) {
                 result = await this.processWithDualAi(job, options);
             } else {
                 result = await this.processWithPrimaryParser(job, options);
             }
 
-            // Apply confidence filtering if enabled
+
+
+            /**
+             * --- Step 2: In-memory candidate aggregation using EntityCandidate<T> ---
+             * Aggregates all entity candidates in memory by type, collecting all metadata and references.
+             * This structure is extensible for future deduplication/review of other entity types.
+             */
+            const aggregatedCandidates: Record<string, EntityCandidate[]> = {};
+            for (const entity of result.entities) {
+                const type = entity.type;
+                if (!aggregatedCandidates[type]) {
+                    aggregatedCandidates[type] = [];
+                }
+                // Convert to EntityCandidate structure (future: add more fields as needed)
+                const candidate: EntityCandidate = {
+                    ...entity,
+                    // Optionally map/normalize fields here
+                };
+                aggregatedCandidates[type].push(candidate);
+            }
+
+
+            // --- Step 3: Deduplicate character candidates (two-stage: heuristic + AI) ---
+            let canonicalCharacters: EnhancedParsedEntity[] = [];
+            const bookId = (job as any).bookId || (job.options && job.options.bookId);
+            const chapterId = (job as any).chapterId || (job.options && job.options.chapterId);
+            if (aggregatedCandidates['character'] && aggregatedCandidates['character'].length > 0) {
+                // Map EntityCandidate to EnhancedParsedEntity for deduplication
+                const characterEntities: EnhancedParsedEntity[] = aggregatedCandidates['character'].map((c) => ({
+                    ...c,
+                    type: 'character' as const,
+                    id: typeof c.id === 'string' && c.id.length > 0 ? c.id : `${job.universeId || 'universe'}-character-${(c.name || c.title || '').toLowerCase().replace(/\s+/g, '-')}`,
+                    createdAt: c.createdAt instanceof Date ? c.createdAt : (typeof c.createdAt === 'string' && c.createdAt.length > 0 ? new Date(c.createdAt) : new Date()),
+                    updatedAt: c.updatedAt instanceof Date ? c.updatedAt : (typeof c.updatedAt === 'string' && c.updatedAt.length > 0 ? new Date(c.updatedAt) : new Date()),
+                    description: typeof c.description === 'string' ? c.description : '',
+                    confidence: typeof c.confidence === 'number' ? c.confidence : 0,
+                    metadata: c.metadata && typeof c.metadata === 'object' && !Array.isArray(c.metadata) ? c.metadata as Record<string, any> : undefined,
+                }));
+                // Deduplicate and enforce canonical node structure
+                const dedupedCandidates = await deduplicateCharacterCandidates(characterEntities, {
+                    universeId: job.universeId,
+                    bookId,
+                    chapterId
+                });
+                canonicalCharacters = dedupedCandidates.map((c) => {
+                    const node = enforceCanonicalCharacterNode(c, {
+                        universeId: job.universeId,
+                        bookId,
+                        chapterId
+                    });
+                    return {
+                        ...node,
+                        id: node.id || `${job.universeId || 'universe'}-character-${(node.name || node.title || '').toLowerCase().replace(/\s+/g, '-')}`,
+                        createdAt: node.createdAt || new Date().toISOString(),
+                        updatedAt: node.updatedAt || new Date().toISOString(),
+                    };
+                });
+            }
+
+            // --- Step 5: Merge canonical character nodes with other entities (future: deduplicate other types) ---
+            // For now, only deduplicate characters; other types are aggregated as-is
+            const nonCharacterEntities: EnhancedParsedEntity[] = Object.entries(aggregatedCandidates)
+                .filter(([type]) => type !== 'character')
+                .flatMap(([, entities]) =>
+                    (entities as EntityCandidate[]).map((e) => ({
+                        ...e,
+                        type: e.type as EntityType,
+                        id: typeof e.id === 'string' && e.id.length > 0 ? e.id : `${job.universeId || 'universe'}-${e.type}-${(e.name || e.title || '').toLowerCase().replace(/\s+/g, '-')}`,
+                        createdAt: e.createdAt instanceof Date ? e.createdAt : (typeof e.createdAt === 'string' && e.createdAt.length > 0 ? new Date(e.createdAt) : new Date()),
+                        updatedAt: e.updatedAt instanceof Date ? e.updatedAt : (typeof e.updatedAt === 'string' && e.updatedAt.length > 0 ? new Date(e.updatedAt) : new Date()),
+                        description: typeof e.description === 'string' ? e.description : '',
+                        confidence: typeof e.confidence === 'number' ? e.confidence : 0,
+                        metadata: e.metadata && typeof e.metadata === 'object' && !Array.isArray(e.metadata) ? e.metadata as Record<string, any> : undefined,
+                    }))
+                );
+            result.entities = [...nonCharacterEntities, ...canonicalCharacters];
+
+            // --- Step 6: Apply confidence filtering if enabled ---
             if (options.confidenceFiltering?.enabled) {
                 result = await this.applyConfidenceFiltering(result, options);
             }
 
-            // Create RAG nodes if requested
+            // --- Step 7: Create RAG nodes if requested ---
             if (options.autoCreateRAGNodes) {
                 result = await this.createRAGNodesForResult(result, job.universeId, job.userId);
             }
@@ -104,9 +182,7 @@ export class ParserEngine extends EventEmitter {
 
             logInfo(`Enhanced text parsing job ${job.id} completed: ${result.entities.length} entities in ${processingTime}ms`);
             this.emit('jobProgress', job.id, { phase: 'completed', progress: 100 });
-
             return result;
-
         } catch (error) {
             logError(`Enhanced text parsing job ${job.id} failed: ${error}`);
             throw error;
@@ -169,7 +245,7 @@ export class ParserEngine extends EventEmitter {
      */
     private async processWithDualAi(job: ProcessingJob, options: EnhancedParsingOptions): Promise<ProcessingResult> {
         const startTime = Date.now();
-        
+
         // Initialize progress tracking
         if (!job.progress) {
             job.progress = {
@@ -178,7 +254,7 @@ export class ParserEngine extends EventEmitter {
                 currentPhase: 'initializing'
             };
         }
-        
+
         // Step 1: Chunk the text
         job.progress.currentPhase = 'chunking';
         this.emit('jobProgress', job.id, { phase: 'chunking', progress: 10 });
@@ -199,13 +275,14 @@ export class ParserEngine extends EventEmitter {
         const allEntities: EnhancedParsedEntity[] = [];
         const chunkAnalyses: ChunkAnalysis[] = [];
 
+
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
             job.progress.currentChunk = i + 1;
-            
-            this.emit('jobProgress', job.id, { 
-                phase: 'dual_ai_processing', 
-                progress: 20 + (70 * (i / chunks.length)) 
+
+            this.emit('jobProgress', job.id, {
+                phase: 'dual_ai_processing',
+                progress: 20 + (70 * (i / chunks.length))
             });
 
             try {
@@ -233,8 +310,8 @@ export class ParserEngine extends EventEmitter {
                     entity.sourceChunk = {
                         index: i,
                         text: chunk.text.substring(0, 200) + '...',
-                        startPosition: chunk.startPosition,
-                        endPosition: chunk.endPosition
+                        startOffset: chunk.startOffset,
+                        endOffset: chunk.endOffset
                     };
                     allEntities.push(entity);
                 }
@@ -306,7 +383,7 @@ export class ParserEngine extends EventEmitter {
      */
     private async processWithPrimaryParser(job: ProcessingJob, options: EnhancedParsingOptions): Promise<ProcessingResult> {
         const startTime = Date.now();
-        
+
         // Initialize progress tracking
         if (!job.progress) {
             job.progress = {
@@ -315,7 +392,7 @@ export class ParserEngine extends EventEmitter {
                 currentPhase: 'initializing'
             };
         }
-        
+
         // Step 1: Chunk the text
         job.progress.currentPhase = 'chunking';
         this.emit('jobProgress', job.id, { phase: 'chunking', progress: 10 });
@@ -330,13 +407,14 @@ export class ParserEngine extends EventEmitter {
         const allEntities: EnhancedParsedEntity[] = [];
         const chunkAnalyses: ChunkAnalysis[] = [];
 
+
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
             job.progress.currentChunk = i + 1;
-            
-            this.emit('jobProgress', job.id, { 
-                phase: 'parsing', 
-                progress: 20 + (60 * (i / chunks.length)) 
+
+            this.emit('jobProgress', job.id, {
+                phase: 'parsing',
+                progress: 20 + (60 * (i / chunks.length))
             });
 
             try {
@@ -350,13 +428,13 @@ export class ParserEngine extends EventEmitter {
                     options.model
                 );
 
-                // Add source chunk information to entities
+                // Add source section information to entities
                 for (const entity of parseResult.entities) {
                     entity.sourceChunk = {
                         index: i,
                         text: chunk.text.substring(0, 200) + '...',
-                        startPosition: chunk.startPosition,
-                        endPosition: chunk.endPosition
+                        startOffset: chunk.startOffset,
+                        endOffset: chunk.endOffset
                     };
                     allEntities.push(entity);
                 }
@@ -410,7 +488,7 @@ export class ParserEngine extends EventEmitter {
      * Apply confidence filtering to processing results
      */
     private async applyConfidenceFiltering(
-        result: ProcessingResult, 
+        result: ProcessingResult,
         options: EnhancedParsingOptions
     ): Promise<ProcessingResult> {
         if (!options.confidenceFiltering?.enabled) {
@@ -467,7 +545,7 @@ export class ParserEngine extends EventEmitter {
     ): Promise<ProcessingResult> {
         try {
             const ragNodesCreated = await this.createRAGNodes(result.entities, universeId, userId);
-            
+
             return {
                 ...result,
                 ragNodesCreated: ragNodesCreated.length > 0 ? ragNodesCreated : undefined,
@@ -483,21 +561,20 @@ export class ParserEngine extends EventEmitter {
     }
 
     /**
-     * Chunk text based on options
+     * Split text into canonical sections based on options
      */
     private chunkText(text: string, options: ParsingOptions) {
         if (!options.useChunking || text.length <= options.chunkSize) {
             return [{
-                index: 0,
+                sectionIndex: 0,
                 text: text,
-                startPosition: 0,
-                endPosition: text.length,
+                startOffset: 0,
+                endOffset: text.length,
                 wordCount: text.split(/\s+/).length
             }];
         }
-
-        return TextChunker.chunkText(text, {
-            maxChunkSize: options.chunkSize,
+        return TextChunker.sectionText(text, {
+            maxSectionSize: options.chunkSize,
             overlapSize: Math.min(200, options.chunkSize * 0.1),
             respectSentences: true,
             respectParagraphs: true
@@ -508,16 +585,16 @@ export class ParserEngine extends EventEmitter {
      * Post-process entities for deduplication and enhancement
      */
     private async postProcessEntities(
-        entities: EnhancedParsedEntity[], 
+        entities: EnhancedParsedEntity[],
         universeId: string
     ): Promise<EnhancedParsedEntity[]> {
         // Basic deduplication by name and type
         const entityMap = new Map<string, EnhancedParsedEntity>();
-        
+
         for (const entity of entities) {
             const key = `${entity.type}:${entity.name.toLowerCase()}`;
             const existing = entityMap.get(key);
-            
+
             if (existing) {
                 // Merge entities - keep the one with higher confidence
                 if (entity.confidence > existing.confidence) {
@@ -546,7 +623,7 @@ export class ParserEngine extends EventEmitter {
         const filtered = Array.from(entityMap.values()).filter(entity => entity.confidence >= 0.6);
 
         logDebug(`Post-processing: ${entities.length} -> ${filtered.length} entities after deduplication and filtering`);
-        
+
         return filtered;
     }
 
@@ -556,7 +633,7 @@ export class ParserEngine extends EventEmitter {
     private mergeDescriptions(desc1: string, desc2: string): string {
         if (!desc1) return desc2;
         if (!desc2) return desc1;
-        
+
         // Simple merge - in a real implementation, this would be more sophisticated
         if (desc1.length >= desc2.length) {
             return desc1;
@@ -570,18 +647,18 @@ export class ParserEngine extends EventEmitter {
      */
     private mergeRelationships(rels1: any[], rels2: any[]): any[] {
         const merged = [...rels1];
-        
+
         for (const rel2 of rels2) {
-            const exists = merged.some(rel1 => 
-                rel1.targetEntityName === rel2.targetEntityName && 
+            const exists = merged.some(rel1 =>
+                rel1.targetEntityName === rel2.targetEntityName &&
                 rel1.relationshipType === rel2.relationshipType
             );
-            
+
             if (!exists) {
                 merged.push(rel2);
             }
         }
-        
+
         return merged;
     }
 
@@ -589,8 +666,8 @@ export class ParserEngine extends EventEmitter {
      * Create RAG nodes from entities
      */
     private async createRAGNodes(
-        entities: EnhancedParsedEntity[], 
-        universeId: string, 
+        entities: EnhancedParsedEntity[],
+        universeId: string,
         userId: string
     ): Promise<string[]> {
         const createdNodeIds: string[] = [];
@@ -623,9 +700,9 @@ export class ParserEngine extends EventEmitter {
 
                 const createdNode = await this.ragService.createNode(nodeData);
                 createdNodeIds.push(createdNode.id);
-                
+
                 logDebug(`Created RAG node ${createdNode.id} for entity ${entity.name}`);
-                
+
             } catch (error) {
                 logError(`Failed to create RAG node for entity ${entity.name}: ${error}`);
                 // Continue with other entities
@@ -639,8 +716,8 @@ export class ParserEngine extends EventEmitter {
      * Generate processing statistics
      */
     private generateStatistics(
-        entities: EnhancedParsedEntity[], 
-        processingTime: number, 
+        entities: EnhancedParsedEntity[],
+        processingTime: number,
         chunksProcessed: number
     ) {
         const entityTypes: Record<string, number> = {};

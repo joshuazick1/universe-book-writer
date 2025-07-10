@@ -3,7 +3,7 @@
  * Implements OpenAI v1 API endpoints for compatibility with OpenAI client libraries
  */
 
-import { Router, json, urlencoded } from 'express';
+import { Router, json, urlencoded, Request, Response, NextFunction } from 'express';
 import { OpenAI } from '../compat/index.js';
 
 const router = Router();
@@ -25,26 +25,11 @@ router.use((req, res, next) => {
     next();
 });
 
-// Authentication middleware (placeholder)
-router.use((req, res, next) => {
-    // TODO: Implement proper API key validation
-    const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        res.status(401).json({
-            error: {
-                message: 'Invalid API key provided',
-                type: 'invalid_request_error',
-                code: 'invalid_api_key'
-            }
-        });
-        return;
-    }
 
-    // For now, accept any Bearer token
-    // TODO: Validate against actual API key database
-    next();
-});
+// Accept either a valid backend JWT or a valid API key for OpenAI endpoints
+import { authMiddleware } from '../middleware/auth.js';
+router.use(authMiddleware);
 
 // Models endpoints
 router.get('/models', OpenAI.handleListModels);

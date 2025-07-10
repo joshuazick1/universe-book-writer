@@ -1,4 +1,86 @@
 /**
+ * Generic in-memory entity candidate for aggregation and deduplication.
+ * Extensible for all entity types (character, location, item, lore, etc.).
+ *
+ * @template T - Additional metadata or references for the entity type
+ */
+export interface EntityCandidate<T = unknown> {
+    /** Canonical node type (e.g., 'character', 'location', etc.) */
+    type: CanonicalNodeType | string;
+    /** Canonical name/title of the entity */
+    name: string;
+    /** Optional display title */
+    title?: string;
+    /** Description or summary */
+    description?: string;
+    /** Confidence score (0.0-1.0) */
+    confidence?: number;
+    /** Aliases or alternate names */
+    aliases?: string[];
+    /** All available metadata and references (IDs, context, etc.) */
+    metadata?: T;
+    /** Source references (section/chunk index, offsets, etc.) */
+    sourceSectionIndex?: number;
+    sourceSectionText?: string;
+    startOffset?: number;
+    endOffset?: number;
+    /** Canonical parent/relationship fields */
+    universeId?: string;
+    bookId?: string;
+    chapterId?: string;
+    documentId?: string;
+    sectionId?: string;
+    /** Appearance references for character/entity */
+    appearanceBookIds?: string[];
+    appearanceChapterIds?: string[];
+    appearanceSectionIds?: string[];
+    /** Source references for deduplication and traceability */
+    sourceReferences?: Array<{
+        documentId?: string;
+        sectionId?: string;
+        offset?: number;
+        context?: string;
+        extractor?: string;
+    }>;
+    /** Entity-specific context for AI-powered deduplication */
+    contextWindow?: string;
+    /** Pronoun/ambiguous reference links for advanced AI deduplication */
+    pronounLinks?: string[];
+    /** Any additional extensible fields for future types */
+    [key: string]: unknown;
+}
+/**
+ * Canonical node type string literals for strict validation and type safety.
+ */
+export type CanonicalNodeType =
+    | 'universe'
+    | 'book'
+    | 'chapter'
+    | 'document'
+    | 'section'
+    | 'character'
+    | 'note';
+
+/**
+ * Canonical node type constants for reference and validation.
+ */
+export const CANONICAL_NODE_TYPES: CanonicalNodeType[] = [
+    'universe',
+    'book',
+    'chapter',
+    'document',
+    'section',
+    'character',
+    'note',
+];
+
+/**
+ * Utility: Check if a string is a canonical node type.
+ */
+export function isCanonicalNodeType(type: string): type is CanonicalNodeType {
+    return CANONICAL_NODE_TYPES.includes(type as CanonicalNodeType);
+}
+/**
  * Enhanced entity types for the Text-to-RAG Parser backend service
  */
 
@@ -13,7 +95,7 @@ export enum EntityType {
     OBJECT = 'object',
     DIALOGUE = 'dialogue',
     SOURCE_TEXT = 'source_text',
-    
+
     // Enhanced entity types
     ARTIFACT = 'artifact',
     TECHNOLOGY = 'technology',
@@ -47,7 +129,7 @@ export enum RelationshipType {
     RIVAL = 'rival',
     SUBORDINATE = 'subordinate',
     SUPERIOR = 'superior',
-    
+
     // Object relationships  
     OWNS = 'owns',
     SEEKS = 'seeks',
@@ -57,7 +139,7 @@ export enum RelationshipType {
     USES = 'uses',
     GUARDS = 'guards',
     CONTAINS = 'contains',
-    
+
     // Location relationships
     RULES = 'rules',
     LIVES_IN = 'lives_in',
@@ -67,7 +149,7 @@ export enum RelationshipType {
     ADJACENT_TO = 'adjacent_to',
     CONTROLS = 'controls',
     VISITS = 'visits',
-    
+
     // Knowledge relationships
     CITES = 'cites',
     BELIEVES = 'believes',
@@ -76,7 +158,7 @@ export enum RelationshipType {
     TEACHES = 'teaches',
     LEARNS = 'learns',
     DISCOVERS = 'discovers',
-    
+
     // Event relationships
     PARTICIPATES_IN = 'participates_in',
     WITNESSED = 'witnessed',
@@ -84,13 +166,13 @@ export enum RelationshipType {
     PREVENTED = 'prevented',
     INFLUENCED = 'influenced',
     RESULTED_FROM = 'resulted_from',
-    
+
     // Temporal relationships
     BEFORE = 'before',
     AFTER = 'after',
     DURING = 'during',
     CONCURRENT = 'concurrent',
-    
+
     // Generic
     ASSOCIATED_WITH = 'associated_with',
     PART_OF = 'part_of',
@@ -213,7 +295,7 @@ export class EntityTypeUtils {
 
         const key = `${type1}-${type2}`;
         const reverseKey = `${type2}-${type1}`;
-        
+
         return compatibilityMap[key] || compatibilityMap[reverseKey] || [RelationshipType.RELATED_TO];
     }
 

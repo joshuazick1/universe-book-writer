@@ -70,7 +70,7 @@ export const CharacterChatSetup: React.FC<CharacterChatSetupProps> = ({
             setIsLoadingUniverses(true);
             setError('');
 
-            const response = await fetch('/api/chat/universes');
+            const response = await fetch('/api/chat/universe/universes');
             const data = await response.json();
 
             if (data.success) {
@@ -91,7 +91,7 @@ export const CharacterChatSetup: React.FC<CharacterChatSetupProps> = ({
             setIsLoadingCharacters(true);
             setError('');
 
-            const response = await fetch(`/api/chat/universes/${universeId}/characters`);
+            const response = await fetch(`/api/chat/universe/universes/${universeId}/characters`);
             const data = await response.json();
 
             if (data.success) {
@@ -112,7 +112,7 @@ export const CharacterChatSetup: React.FC<CharacterChatSetupProps> = ({
             setIsPopulatingSampleData(true);
             setError('');
 
-            const response = await fetch('/api/chat/populate-sample-data', {
+            const response = await fetch('/api/sample/populate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -251,8 +251,8 @@ export const CharacterChatSetup: React.FC<CharacterChatSetupProps> = ({
                                     key={universe.id}
                                     onClick={() => handleUniverseSelect(universe.id)}
                                     className={`w-full text-left p-4 rounded-lg border transition-colors ${selectedUniverseId === universe.id
-                                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-                                            : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
+                                        : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                                         }`}
                                 >
                                     <div className="flex items-start justify-between">

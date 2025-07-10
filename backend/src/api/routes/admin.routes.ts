@@ -24,6 +24,9 @@ export function createAdminRoutes(
   router.post('/users', adminController.createUser.bind(adminController));
   router.delete('/users/:id', adminController.deleteUser.bind(adminController));
 
+  // RAG DB admin route
+  router.post('/clear-rag-db', adminController.clearRAGDatabase.bind(adminController));
+
   // Settings routes
   router.get('/settings', adminController.getAdminSettings.bind(adminController));
   router.put('/settings', adminController.updateAdminSettings.bind(adminController));

@@ -204,7 +204,8 @@ export class ModelPerformanceRAGService {
             timestamps: {
                 created: new Date(),
                 modified: new Date()
-            }
+            },
+            active: true // Ensure all model nodes are created as active
         };
 
         // Upsert pattern: check if node exists, update if yes, create if no
@@ -277,7 +278,8 @@ export class ModelPerformanceRAGService {
             timestamps: {
                 created: new Date(),
                 modified: new Date()
-            }
+            },
+            active: true // Ensure all server nodes are created as active
         };
 
         // Upsert pattern for server node
@@ -357,7 +359,8 @@ export class ModelPerformanceRAGService {
             timestamps: {
                 created: new Date(),
                 modified: new Date()
-            }
+            },
+            active: true // Ensure all model-performance nodes are created as active
         };
 
         // Upsert pattern for performance node
@@ -1116,7 +1119,8 @@ export class ModelPerformanceRAGService {
                     timestamps: {
                         created: timestamp,
                         modified: timestamp
-                    }
+                    },
+                    active: true // Ensure all model-performance nodes are created as active
                 };
                 const { timestamps, ...nodeData } = newPerformanceNode;
                 //

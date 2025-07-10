@@ -204,16 +204,28 @@ export class RAGRelationshipFactory {
      */
     static getInverseType(type: RAGRelationshipType): RAGRelationshipType {
         const inverseMap: Record<RAGRelationshipType, RAGRelationshipType> = {
+            // General/Book domain
             'semantic': 'semantic',
-            'causal': 'causal', // Note: this might need directional handling
+            'causal': 'causal',
             'temporal': 'temporal',
-            'hierarchical': 'hierarchical', // Note: child would point to parent
+            'hierarchical': 'hierarchical',
             'character_interaction': 'character_interaction',
-            'location_contains': 'hierarchical', // Contained in
+            'location_contains': 'hierarchical',
             'plot_dependency': 'causal',
             'reference': 'reference',
+            'spoken_by': 'addressed_to',
+            'addressed_to': 'spoken_by',
             'conflict': 'conflict',
             'alliance': 'alliance',
+            // Coding/Software domain
+            'implements': 'implements',
+            'calls': 'calls',
+            'tests': 'tests',
+            'documents': 'documents',
+            'fixes': 'fixes',
+            'relates_to': 'relates_to',
+            'depends_on': 'depends_on',
+            // Extensibility
             'custom': 'custom'
         };
 
@@ -245,17 +257,29 @@ export class RAGRelationshipFactory {
 
         // Adjust based on relationship type importance
         const typeMultipliers: Record<RAGRelationshipType, number> = {
-            'hierarchical': 1.2, // Strong structural relationships
-            'causal': 1.1, // Important for plot understanding
-            'character_interaction': 1.0, // Standard strength
-            'temporal': 0.9, // Somewhat important
-            'semantic': 0.8, // General connections
-            'location_contains': 1.1, // Structural importance
-            'plot_dependency': 1.2, // Critical for story flow
-            'reference': 0.7, // Weaker connections
-            'conflict': 1.0, // Balanced importance
-            'alliance': 1.0, // Balanced importance
-            'custom': 1.0 // Default for plugin types
+            // General/Book domain
+            'semantic': 0.8,
+            'causal': 1.1,
+            'temporal': 0.9,
+            'hierarchical': 1.2,
+            'character_interaction': 1.0,
+            'location_contains': 1.1,
+            'plot_dependency': 1.2,
+            'reference': 0.7,
+            'spoken_by': 1.0,
+            'addressed_to': 1.0,
+            'conflict': 1.0,
+            'alliance': 1.0,
+            // Coding/Software domain
+            'implements': 1.0,
+            'calls': 1.0,
+            'tests': 1.0,
+            'documents': 0.8,
+            'fixes': 1.0,
+            'relates_to': 0.9,
+            'depends_on': 1.0,
+            // Extensibility
+            'custom': 1.0
         };
 
         strength *= typeMultipliers[relationship.type] || 1.0;

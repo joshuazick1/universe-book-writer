@@ -805,6 +805,74 @@ export class AIOrchestrator {
 
         console.log('[orchestrator] Shutdown complete');
     }
+
+    /**
+     * Load all active servers/models from the RAG into orchestrator in-memory cache (hybrid sync)
+     */
+    async loadActiveServersFromRAG() {
+        const ragService = await this.getRAGService();
+        if (!ragService) {
+            logError('[orchestrator] Cannot load active servers from RAG: RAG service unavailable');
+            return;
+        }
+        // Assumes RAG nodes of type 'ai-server' and 'active: true'
+        const activeServerNodes = await ragService.findNodes({ type: 'ai-server', active: true });
+        this.servers = activeServerNodes.map((node: any) => ({
+            id: node.id.replace(/^server:/, ''),
+            url: node.content?.attributes?.url || '',
+            type: node.content?.attributes?.type || 'ollama',
+            healthy: node.content?.attributes?.healthy ?? false,
+            lastResponseTime: node.content?.attributes?.lastResponseTime ?? Infinity,
+            models: node.content?.attributes?.models || [],
+            maxConcurrency: node.content?.attributes?.maxConcurrency
+        }));
+        logInfo(`[orchestrator] Loaded ${this.servers.length} active servers from RAG`);
+    }
+
+    /**
+     * Add a new AI server to the registry and RAG (hybrid sync)
+     */
+    async addServerHybrid(server: Omit<AIServer, 'healthy' | 'lastResponseTime' | 'models'>) {
+        // Prevent duplicate by id or url
+        if (this.servers.some(s => s.id === server.id || s.url === server.url)) {
+            return;
+        }
+        // Add to in-memory cache
+        this.servers.push({ ...server, healthy: false, lastResponseTime: Infinity, models: [] });
+        // Add to RAG as active
+        const ragService = await this.getRAGService();
+        if (ragService) {
+            const nodeId = `server:${server.id}`;
+            await ragService.upsertNode(nodeId, {
+                id: nodeId,
+                type: 'ai-server',
+                content: { attributes: { ...server, active: true } },
+                active: true
+            });
+        }
+        setTimeout(() => { this.maybeRunBenchmarks(true); }, 1000);
+        this.modelMapCache.updated = 0;
+        this.tagsCache.updated = 0;
+    }
+
+    /**
+     * Remove a server by ID and mark as inactive in RAG (hybrid sync)
+     */
+    async removeServerHybrid(id: string) {
+        this.servers = this.servers.filter(s => s.id !== id);
+        const ragService = await this.getRAGService();
+        if (ragService) {
+            const nodeId = `server:${id}`;
+            await ragService.updateNode(nodeId, { active: false });
+        }
+    }
+
+    /**
+     * Resync orchestrator cache with RAG (hybrid sync)
+     */
+    async resyncFromRAG() {
+        await this.loadActiveServersFromRAG();
+    }
 }
 
 // Export BenchmarkManager for use in other services

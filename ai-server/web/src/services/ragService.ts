@@ -1,3 +1,40 @@
+// --- Universe/Book/Chapter/Character API ---
+export interface Universe {
+    id: string;
+    title: string;
+    type: 'universe';
+    metadata?: Record<string, unknown>;
+}
+
+export interface Book {
+    id: string;
+    universeId: string;
+    title: string;
+    type: 'book';
+    metadata?: Record<string, unknown>;
+}
+
+export interface Chapter {
+    id: string;
+    bookId: string;
+    title: string;
+    type: 'chapter';
+    metadata?: Record<string, unknown>;
+}
+
+export interface Character {
+    id: string;
+    universeId?: string;
+    bookId?: string;
+    chapterId?: string;
+    name: string;
+    type: 'character';
+    aliases?: string[];
+    metadata?: Record<string, unknown>;
+}
+// ...existing code...
+// ...existing code...
+// ...existing code...
 /**
  * RAG Service for AI Server Web UI
  * 
@@ -31,9 +68,13 @@ export interface RAGNode {
         sourcePlugin?: string;
         version: number;
         importance?: number;
+        bookId?: string;
+        chapterId?: string;
     };
     // Direct fields that might come from API
     universeId?: string;
+    bookId?: string;
+    chapterId?: string;
     tags?: string[];
     properties?: {
         name?: string;
@@ -101,18 +142,86 @@ export interface RAGSearchResult {
     };
 }
 
+const API_KEY = import.meta.env.VITE_RAG_API_KEY;
+
+function withAuth(headers: HeadersInit = {}): HeadersInit {
+    if (API_KEY) {
+        return { ...headers, Authorization: `Bearer ${API_KEY}` };
+    }
+    return headers;
+}
+
 export class RAGService {
+    /**
+     * Upload a canonical book/chapter file (for file-backed ingestion)
+     * Returns version info and metadata
+     */
+    async uploadCanonicalFile(formData: FormData): Promise<{ versions: any[] }> {
+        const response = await fetch(`${this.baseUrl}/api/rag/files/upload`, {
+            method: 'POST',
+            body: formData,
+            headers: withAuth(),
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to upload file: ${response.statusText}`);
+        }
+        return response.json();
+    }
+
+    /**
+     * Get a diff preview for a file version (added/removed/changed chunks)
+     */
+    async getFileDiffPreview(versionId: string): Promise<any> {
+        const response = await fetch(`${this.baseUrl}/api/rag/files/diff-preview/${versionId}`, {
+            headers: withAuth(),
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to get diff preview: ${response.statusText}`);
+        }
+        return response.json();
+    }
     private baseUrl: string;
+
 
     constructor(baseUrl: string = 'http://localhost:5100') {
         this.baseUrl = baseUrl;
+    }
+
+    // --- Universes ---
+    public getUniverses(): Promise<Universe[]> {
+        return fetch(`${this.baseUrl}/api/universes`, { headers: withAuth() })
+            .then(r => { if (!r.ok) throw new Error('Failed to fetch universes'); return r.json(); });
+    }
+
+    // --- Books ---
+    public getBooks(universeId: string): Promise<Book[]> {
+        return fetch(`${this.baseUrl}/api/books?universeId=${encodeURIComponent(universeId)}`, { headers: withAuth() })
+            .then(r => { if (!r.ok) throw new Error('Failed to fetch books'); return r.json(); });
+    }
+
+    // --- Chapters ---
+    public getChapters(bookId: string): Promise<Chapter[]> {
+        return fetch(`${this.baseUrl}/api/chapters?bookId=${encodeURIComponent(bookId)}`, { headers: withAuth() })
+            .then(r => { if (!r.ok) throw new Error('Failed to fetch chapters'); return r.json(); });
+    }
+
+    // --- Characters ---
+    public getCharacters(params: { universeId?: string; bookId?: string; chapterId?: string } = {}): Promise<Character[]> {
+        const search = new URLSearchParams();
+        if (params.universeId) search.append('universeId', params.universeId);
+        if (params.bookId) search.append('bookId', params.bookId);
+        if (params.chapterId) search.append('chapterId', params.chapterId);
+        return fetch(`${this.baseUrl}/api/characters?${search.toString()}`, { headers: withAuth() })
+            .then(r => { if (!r.ok) throw new Error('Failed to fetch characters'); return r.json(); });
     }
 
     /**
      * Health check for RAG system
      */
     async healthCheck(): Promise<{ healthy: boolean; details?: any }> {
-        const response = await fetch(`${this.baseUrl}/api/rag/health`);
+        const response = await fetch(`${this.baseUrl}/api/rag/health`, {
+            headers: withAuth(),
+        });
         if (!response.ok) {
             throw new Error(`RAG health check failed: ${response.statusText}`);
         }
@@ -125,9 +234,7 @@ export class RAGService {
     async createNode(nodeData: Omit<RAGNode, 'id' | 'timestamps'>): Promise<RAGNode> {
         const response = await fetch(`${this.baseUrl}/api/rag/nodes`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: withAuth({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(nodeData),
         });
 
@@ -143,7 +250,9 @@ export class RAGService {
      * Get a RAG node by ID
      */
     async getNode(nodeId: string): Promise<RAGNode | null> {
-        const response = await fetch(`${this.baseUrl}/api/rag/nodes/${nodeId}`);
+        const response = await fetch(`${this.baseUrl}/api/rag/nodes/${nodeId}`, {
+            headers: withAuth(),
+        });
 
         if (response.status === 404) {
             return null;
@@ -162,9 +271,7 @@ export class RAGService {
     async updateNode(nodeId: string, updates: Partial<RAGNode>): Promise<RAGNode> {
         const response = await fetch(`${this.baseUrl}/api/rag/nodes/${nodeId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: withAuth({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(updates),
         });
 
@@ -181,6 +288,7 @@ export class RAGService {
     async deleteNode(nodeId: string): Promise<void> {
         const response = await fetch(`${this.baseUrl}/api/rag/nodes/${nodeId}`, {
             method: 'DELETE',
+            headers: withAuth(),
         });
 
         if (!response.ok) {
@@ -214,7 +322,9 @@ export class RAGService {
             params.append('nodeType', options.nodeType);
         }
 
-        const response = await fetch(`${this.baseUrl}/api/rag/search?${params}`);
+        const response = await fetch(`${this.baseUrl}/api/rag/search?${params}`, {
+            headers: withAuth(),
+        });
 
         if (!response.ok) {
             throw new Error(`Failed to search nodes: ${response.statusText}`);
@@ -227,7 +337,9 @@ export class RAGService {
      * Get all nodes (for development/testing)
      */
     async getAllNodes(limit: number = 50): Promise<RAGNode[]> {
-        const response = await fetch(`${this.baseUrl}/api/rag/nodes?limit=${limit}`);
+        const response = await fetch(`${this.baseUrl}/api/rag/nodes?limit=${limit}`, {
+            headers: withAuth(),
+        });
 
         if (!response.ok) {
             throw new Error(`Failed to get all nodes: ${response.statusText}`);
@@ -244,9 +356,7 @@ export class RAGService {
     async createRelationship(relationshipData: Omit<RAGRelationship, 'id'>): Promise<RAGRelationship> {
         const response = await fetch(`${this.baseUrl}/api/rag/relationships`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: withAuth({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(relationshipData),
         });
 
@@ -261,7 +371,9 @@ export class RAGService {
      * Get system statistics
      */
     async getStats(): Promise<any> {
-        const response = await fetch(`${this.baseUrl}/api/rag/stats`);
+        const response = await fetch(`${this.baseUrl}/api/rag/stats`, {
+            headers: withAuth(),
+        });
 
         if (!response.ok) {
             throw new Error(`Failed to get stats: ${response.statusText}`);
@@ -271,5 +383,5 @@ export class RAGService {
     }
 }
 
-// Export singleton instance
+// Extend RAGService prototype with file storage methods
 export const ragService = new RAGService();

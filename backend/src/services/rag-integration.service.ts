@@ -5,6 +5,7 @@
  * backend database storage. Implements the hybrid RAG+DB architecture
  * where RAG is authoritative and database provides performance indexes.
  */
+import { logInfo, logError, logDebug } from '../infrastructure/logger.js';
 
 import axios, { AxiosInstance } from 'axios';
 import { RAGStorageAdapter } from '../adapters/rag-storage.adapter.js';
@@ -156,11 +157,9 @@ export class RAGIntegrationService {
     // SYNC OPERATIONS
     // ========================================
 
-    /**
-     * Sync all data from RAG system to database
-     */
+
     async syncFromRAG(): Promise<{ nodes: number; relationships: number; universes: number }> {
-        console.log('Starting RAG sync...');
+        logInfo('Starting RAG sync...');
 
         const results = {
             nodes: 0,
@@ -178,11 +177,11 @@ export class RAGIntegrationService {
             // Sync relationships
             results.relationships = await this.syncRelationshipsFromRAG();
 
-            console.log(`RAG sync completed:`, results);
+            logInfo(`RAG sync completed: ${JSON.stringify(results)}`);
             return results;
 
-        } catch (error) {
-            console.error('RAG sync failed:', error);
+        } catch (error: any) {
+            logError('RAG sync failed: ' + (error instanceof Error ? error.stack || error.message : String(error)));
             throw error;
         }
     }
@@ -191,9 +190,12 @@ export class RAGIntegrationService {
      * Sync universe data from RAG system
      */
     private async syncUniversesFromRAG(): Promise<number> {
+        // logger already imported at top
         try {
             const response = await this.aiServerClient.get('/api/rag/universes');
             const universes: any[] = response.data;
+            logInfo(`[syncUniversesFromRAG] Received ${universes.length} universes from AI server.`);
+            logDebug(`[syncUniversesFromRAG] Raw universes: ${JSON.stringify(universes)}`);
 
             let synced = 0;
             for (const ragUniverse of universes) {
@@ -216,14 +218,19 @@ export class RAGIntegrationService {
                     relationshipCount: ragUniverse.stats?.relationshipCount || 0,
                     lastActivityAt: ragUniverse.lastActivityAt ? new Date(ragUniverse.lastActivityAt) : new Date()
                 };
-
-                await this.storageAdapter.upsertUniverse(universeDoc);
-                synced++;
+                try {
+                    await this.storageAdapter.upsertUniverse(universeDoc);
+                    logInfo(`[syncUniversesFromRAG] Upserted universe: ${universeDoc.universeId} (${universeDoc.name})`);
+                    synced++;
+                } catch (err: any) {
+                    logError(`[syncUniversesFromRAG] Validation or upsert failed for universe ${universeDoc.universeId || ragUniverse.id}: ${err instanceof Error ? err.stack || err.message : String(err)}`);
+                }
             }
 
+            logInfo(`[syncUniversesFromRAG] Successfully synced ${synced} universes.`);
             return synced;
-        } catch (error) {
-            console.error('Failed to sync universes:', error);
+        } catch (error: any) {
+            logError('[syncUniversesFromRAG] Failed to sync universes: ' + (error instanceof Error ? error.stack || error.message : String(error)));
             return 0;
         }
     }

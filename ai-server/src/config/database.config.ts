@@ -25,7 +25,7 @@ class SharedDatabaseConnection {
     private client: MongoClient | null = null;
     private db: Db | null = null;
 
-    private constructor() {}
+    private constructor() { }
 
     public static getInstance(): SharedDatabaseConnection {
         if (!SharedDatabaseConnection.instance) {
@@ -116,6 +116,7 @@ class SharedDatabaseConnection {
 export const sharedDatabaseConnection = SharedDatabaseConnection.getInstance();
 
 // Collection type helpers
+
 export interface DatabaseCollections {
     characters: Collection;
     generated_characters: Collection;
@@ -123,11 +124,12 @@ export interface DatabaseCollections {
     generated_universes: Collection;
     character_memories: Collection;
     users: Collection;
+    api_keys: Collection;
 }
+
 
 export const getCollections = async (): Promise<DatabaseCollections> => {
     const db = await sharedDatabaseConnection.connect();
-    
     return {
         characters: db.collection('characters'),
         generated_characters: db.collection('generated_characters'),
@@ -135,5 +137,6 @@ export const getCollections = async (): Promise<DatabaseCollections> => {
         generated_universes: db.collection('generated_universes'),
         character_memories: db.collection('character_memories'),
         users: db.collection('users'),
+        api_keys: db.collection('api_keys'),
     };
 };

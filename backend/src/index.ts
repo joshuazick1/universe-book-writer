@@ -32,6 +32,7 @@ import type { SecurityAuditController } from './api/controllers/security-audit.c
 import type { RAGController } from './controllers/rag.controller.js';
 import { AuthMiddleware } from './api/middleware/auth.middleware.js';
 import { ValidationMiddleware } from './api/middleware/validation.middleware.js';
+import userApiKeyRouter from './routes/userApiKey.routes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -160,10 +161,27 @@ export async function initializeApp() {
 
     // Try to resolve admin controller, but handle gracefully if not available
     let adminController: AdminController | null = null;
+    let ragIntegrationService: any = null;
     try {
       // Check if admin tokens are available in the container
       if ('ADMIN_CONTROLLER' in TOKENS && TOKENS.ADMIN_CONTROLLER) {
+        // RAG integration service setup (must match below)
+        const ragConfig = {
+          aiServerUrl: process.env.AI_SERVER_URL || 'http://localhost:5100',
+          databaseUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017',
+          databaseName: process.env.MONGODB_DB_NAME || 'verseforge_rag_dev',
+          syncInterval: 300000, // 5 minutes
+          batchSize: 100,
+          aiServerApiKey: process.env.AI_SERVER_API_KEY
+        };
+        const { RAGIntegrationService } = await import('./services/rag-integration.service.js');
+        ragIntegrationService = new RAGIntegrationService(ragConfig);
+        await ragIntegrationService.initialize();
         adminController = authContainer.resolve<AdminController>(TOKENS.ADMIN_CONTROLLER);
+        // Patch in ragIntegrationService if not injected by DI
+        if (adminController && 'ragIntegrationService' in adminController) {
+          adminController.ragIntegrationService = ragIntegrationService;
+        }
         console.log('✅ Admin controller resolved successfully');
       } else {
         console.warn('⚠️ ADMIN_CONTROLLER token not available, admin routes will be disabled');
@@ -271,11 +289,11 @@ export async function initializeApp() {
     app.use('/api/users', createUserRoutes(userController, authMiddleware, validationMiddleware));
 
     // Admin routes (only if admin controller is available)
-    if (adminController) {
+    if (adminController && ragIntegrationService) {
       app.use('/api/admin', createAdminRoutes(adminController, authMiddleware));
       console.log('✅ Admin routes enabled');
     } else {
-      console.log('⚠️ Admin routes disabled - AdminController not available');
+      console.log('⚠️ Admin routes disabled - AdminController or RAGIntegrationService not available');
     }
 
     // Universe management routes
@@ -318,7 +336,7 @@ export async function initializeApp() {
       const ragConfig = {
         aiServerUrl: process.env.AI_SERVER_URL || 'http://localhost:5100',
         databaseUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017',
-        databaseName: process.env.MONGODB_DB_NAME || 'universe_book_writer',
+        databaseName: process.env.MONGODB_DB_NAME || 'verseforge_rag_dev',
         syncInterval: 300000, // 5 minutes
         batchSize: 100,
         aiServerApiKey: process.env.AI_SERVER_API_KEY
@@ -397,6 +415,9 @@ export async function initializeApp() {
     } catch (error) {
       console.warn('⚠️ Failed to resolve SecurityAuditController:', error instanceof Error ? error.message : String(error));
     }
+
+    // API Key management routes (shared with ai-server)
+    app.use('/api/user/api-keys', userApiKeyRouter);
 
     // Global error handling middleware (must be last)
     app.use(errorHandler);

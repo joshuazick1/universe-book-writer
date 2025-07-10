@@ -97,8 +97,7 @@ export const RAGNodeValidation = {
         { ragId: 1 },                               // Unique index
         { universeId: 1 },                          // Universe filtering
         { nodeType: 1 },                            // Type filtering
-        { title: 'text' },                         // Text search
-        { searchableText: 'text' },                 // Full text search
+        { searchableText: 'text', title: 'text' },  // Combined text index for search
         { tags: 1 },                                // Tag filtering
         { categories: 1 },                          // Category filtering
         { encryptionLevel: 1 },                     // Encryption filtering
@@ -285,8 +284,7 @@ export const UniverseValidation = {
 
     indexes: [
         { universeId: 1 },                          // Unique index
-        { name: 'text' },                           // Text search
-        { description: 'text' },                    // Description search
+        { name: 'text', description: 'text' },      // Combined text search
         { pluginType: 1 },                          // Plugin filtering
         { ownerId: 1 },                             // Owner filtering
         { visibility: 1 },                          // Visibility filtering

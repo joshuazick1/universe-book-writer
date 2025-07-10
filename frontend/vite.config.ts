@@ -12,6 +12,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      '/ai-server': {
+        target: 'http://localhost:5100',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/ai-server/, '/api'),
+      },
     },
   },
   build: {

@@ -123,6 +123,9 @@ export function createRAGRouter(
             }
 
             // Create the node
+            // Get ownerId from auth context (middleware should set req.user)
+            // Fallback to 'api-user' if not present
+            const ownerId = (req as any).user?.id || 'api-user';
             const node: RAGNode = {
                 id: nodeData.id || crypto.randomUUID(),
                 type: nodeData.type,
@@ -141,7 +144,7 @@ export function createRAGRouter(
                 embeddings: [],
                 metadata: {
                     universeId: nodeData.metadata.universeId,
-                    ownerId: 'api-user', // TODO: Get from auth context
+                    ownerId,
                     sensitivity: nodeData.metadata.sensitivity === 'low' ? 'public' :
                         nodeData.metadata.sensitivity === 'medium' ? 'private' :
                             nodeData.metadata.sensitivity === 'high' ? 'sensitive' : 'public',
@@ -162,13 +165,15 @@ export function createRAGRouter(
                     sequence: nodeData.timeline.sequence
                 } : undefined,
                 pluginData: nodeData.metadata.pluginData,
+
                 timestamps: {
                     created: new Date(),
                     modified: new Date()
-                }
+                },
+                active: true
             };
 
-            await storageService.storeNode(node);
+            await storageService.storeNode(node, ownerId);
             res.status(201).json(node);
         } catch (error) {
             console.error('Error creating node:', error);
@@ -226,6 +231,7 @@ export function createRAGRouter(
         try {
             const { id } = req.params;
             const updateData: Partial<RAGNode> = req.body;
+            const ownerId = (req as any).user?.id || 'api-user';
 
             const existingNode = await storageService.retrieveNode(id);
             if (!existingNode) {
@@ -240,7 +246,8 @@ export function createRAGRouter(
                 metadata: {
                     ...existingNode.metadata,
                     ...updateData.metadata,
-                    version: (existingNode.metadata?.version || 1) + 1
+                    version: (existingNode.metadata?.version || 1) + 1,
+                    ownerId
                 },
                 timestamps: {
                     ...existingNode.timestamps,
@@ -248,7 +255,7 @@ export function createRAGRouter(
                 }
             };
 
-            await storageService.updateNode(updatedNode);
+            await storageService.updateNode(updatedNode, ownerId);
             res.json(updatedNode);
         } catch (error) {
             console.error('Error updating node:', error);
@@ -263,7 +270,8 @@ export function createRAGRouter(
     router.delete('/nodes/:id', (async (req: Request, res: Response) => {
         try {
             const { id } = req.params;
-            await storageService.deleteNode(id);
+            const ownerId = (req as any).user?.id || 'api-user';
+            await storageService.deleteNode(id, ownerId);
             res.status(204).send();
         } catch (error) {
             console.error('Error deleting node:', error);
@@ -353,8 +361,10 @@ export function createRAGRouter(
     router.post('/search', (async (req: Request, res: Response) => {
         try {
             const searchRequest: SearchRequest = req.body;
+            // Get userId from auth context if not provided
+            const userId = searchRequest.userId || (req as any).user?.id || 'api-user';
 
-            if (!searchRequest.query || !searchRequest.userId) {
+            if (!searchRequest.query || !userId) {
                 return res.status(400).json({
                     error: 'Missing required fields: query and userId are required'
                 });
@@ -365,7 +375,7 @@ export function createRAGRouter(
                 mode: searchRequest.mode || 'hybrid',
                 filters: searchRequest.filters,
                 limit: searchRequest.limit || 50,
-                userId: searchRequest.userId,
+                userId,
                 universeId: searchRequest.filters?.universeId
             };
 

@@ -467,16 +467,58 @@ export class RAGUpdateStorageService {
         await this.updateIndex.removeUpdateIndex(updateId);
     }
 
+    /**
+     * Reconstruct a node by applying updates in sequence up to the target version
+     */
     private async reconstructNodeAtVersion(nodeId: string, version: number): Promise<RAGNode | EncryptedRAGNode> {
-        // This would reconstruct a node by applying updates in sequence up to the target version
-        // Implementation depends on how nodes are stored and updated
-        throw new Error('Node reconstruction not yet implemented');
+        // Get all updates for the node, sorted by version ascending
+        const history = await this.getNodeHistory(nodeId);
+        const sorted = history.filter(u => u.version <= version).sort((a, b) => a.version - b.version);
+        if (sorted.length === 0) throw new Error(`No updates found for node ${nodeId}`);
+
+        // Start from the first version and apply changes up to the target version
+        let node: RAGNode | EncryptedRAGNode | null = null;
+        for (const update of sorted) {
+            if (update.operation === 'create' || update.operation === 'restore') {
+                // For create/restore, the new node state is in changes.newValues['*']
+                node = update.changes?.newValues['*'] as RAGNode | EncryptedRAGNode;
+            } else if (update.operation === 'update' && node) {
+                // For update, apply each changed field
+                for (const field of update.changes?.modifiedFields || []) {
+                    if (field === '*') continue; // skip meta marker
+                    (node as any)[field] = update.changes?.newValues[field];
+                }
+            } else if (update.operation === 'delete') {
+                node = null;
+            }
+        }
+        if (!node) throw new Error(`Node could not be reconstructed at version ${version}`);
+        return node;
     }
 
+    /**
+     * Get the current version of a node from the latest update
+     */
     private async getCurrentNode(nodeId: string): Promise<RAGNode | EncryptedRAGNode | null> {
-        // This would get the current version of a node from the main storage
-        // Implementation depends on integration with main RAG storage
-        throw new Error('Current node retrieval not yet implemented');
+        const history = await this.getNodeHistory(nodeId);
+        if (!history.length) return null;
+        // Find the update with the highest version
+        const latest = history.reduce((a, b) => (a.version > b.version ? a : b));
+        // For current node, use the same logic as reconstructNodeAtVersion
+        let node: RAGNode | EncryptedRAGNode | null = null;
+        for (const update of history.sort((a, b) => a.version - b.version)) {
+            if (update.operation === 'create' || update.operation === 'restore') {
+                node = update.changes?.newValues['*'] as RAGNode | EncryptedRAGNode;
+            } else if (update.operation === 'update' && node) {
+                for (const field of update.changes?.modifiedFields || []) {
+                    if (field === '*') continue;
+                    (node as any)[field] = update.changes?.newValues[field];
+                }
+            } else if (update.operation === 'delete') {
+                node = null;
+            }
+        }
+        return node;
     }
 
     private async calculateStorageStats(universeId: string): Promise<{

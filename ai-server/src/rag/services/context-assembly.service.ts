@@ -560,10 +560,16 @@ export class RAGContextAssemblyService {
     /**
      * Check if user has access to encrypted node
      */
+    /**
+     * Check if user has access to encrypted node
+     * Implements RBAC: owner, shareable, or explicit access list
+     */
     private hasAccess(encryptedNode: EncryptedRAGNode, userId: string): boolean {
-        // Basic access check - TODO: Implement proper access control
-        return encryptedNode.metadata?.ownerId === userId ||
-            encryptedNode.privacy?.shareable === true;
+        if (encryptedNode.metadata?.ownerId === userId) return true;
+        if (encryptedNode.privacy?.shareable === true) return true;
+        if (Array.isArray(encryptedNode.privacy?.accessList) && encryptedNode.privacy.accessList.includes(userId)) return true;
+        // Add more RBAC/permission logic as needed (e.g., universe roles)
+        return false;
     }
 
     /**

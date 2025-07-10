@@ -66,7 +66,8 @@ export class RAGNodeFactory {
                 created: now,
                 modified: now,
                 contentHash: this.generateContentHash(params.content)
-            }
+            },
+            active: true // Hybrid orchestrator: all new nodes are active by default
         };
 
         return node;

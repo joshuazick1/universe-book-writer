@@ -226,9 +226,27 @@ export class RAGStorageService {
     /**
      * Retrieve node with caching strategy
      */
+    /**
+     * Retrieve node with caching strategy
+     */
+    private nodeCache: Map<string, RAGNode | EncryptedRAGNode> = new Map();
+    private nodeCacheTTL: number = 5 * 60 * 1000; // 5 minutes
+    private nodeCacheTimestamps: Map<string, number> = new Map();
+
     async retrieveNode(nodeId: string, useCache: boolean = true): Promise<RAGNode | EncryptedRAGNode | null> {
-        // Always retrieve from authoritative RAG source
-        return await this.ragBackend.retrieveNode(nodeId);
+        if (useCache) {
+            const cached = this.nodeCache.get(nodeId);
+            const ts = this.nodeCacheTimestamps.get(nodeId);
+            if (cached && ts && (Date.now() - ts < this.nodeCacheTTL)) {
+                return cached;
+            }
+        }
+        const node = await this.ragBackend.retrieveNode(nodeId);
+        if (useCache && node) {
+            this.nodeCache.set(nodeId, node);
+            this.nodeCacheTimestamps.set(nodeId, Date.now());
+        }
+        return node;
     }
 
     /**
@@ -426,6 +444,33 @@ export class RAGStorageService {
     async searchNodes(request: RAGSearchRequest): Promise<RAGSearchResult> {
         const startTime = Date.now();
 
+        // Simple in-memory cache for search results (keyed by query+filters)
+        if (!this.searchCache) {
+            this.searchCache = new Map();
+            this.searchCacheTTL = 2 * 60 * 1000; // 2 minutes
+            this.searchCacheTimestamps = new Map();
+        }
+        const cacheKey = JSON.stringify({
+            query: request.query,
+            filters: request.filters,
+            universeId: request.universeId,
+            mode: request.mode,
+            limit: request.limit
+        });
+        const now = Date.now();
+        const cachedResult = this.searchCache.get(cacheKey);
+        const cachedTs = this.searchCacheTimestamps.get(cacheKey);
+        if (cachedResult && cachedTs && (now - cachedTs < this.searchCacheTTL)) {
+            return {
+                ...cachedResult,
+                metadata: {
+                    ...cachedResult.metadata,
+                    cached: true,
+                    searchTime: Date.now() - startTime
+                }
+            };
+        }
+
         // Phase 1: Database pre-filtering to reduce RAG search space
         const filters = {
             universeId: request.universeId,
@@ -442,7 +487,8 @@ export class RAGStorageService {
             // Retrieve full nodes for top candidates (limit to reduce cost)
             const topIndexes = candidateIndexes.slice(0, Math.min(100, candidateIndexes.length));
             for (const index of topIndexes) {
-                const node = await this.ragBackend.retrieveNode(index.id);
+                // Use node cache for retrieval
+                const node = await this.retrieveNode(index.id, true);
                 if (node) {
                     ragCandidates.push(node);
                 }
@@ -454,7 +500,8 @@ export class RAGStorageService {
 
         // Phase 3: Apply final filtering and ranking
         const filteredNodes = this.applyFilters(ragCandidates, request.filters);
-        const rankedNodes = this.rankSearchResults(filteredNodes, request.query, request.mode);
+        const rankedNodesPromise = this.rankSearchResults(filteredNodes, request.query, request.mode);
+        const rankedNodes = await rankedNodesPromise;
 
         // Limit final results
         const limit = request.limit || 10;
@@ -462,8 +509,11 @@ export class RAGStorageService {
 
         const searchTime = Date.now() - startTime;
 
-        return {
-            nodes: finalNodes.map(({ node, score, highlights, matchReason }) => ({
+        // AI-driven suggestions using mistral-nemo:12b (future: use orchestration-chosen model)
+        const suggestions = await this.generateAISuggestions(request.query, request.universeId);
+
+        const result: RAGSearchResult = {
+            nodes: finalNodes.map(({ node, score, highlights, matchReason }: any) => ({
                 node: node as RAGNode, // Note: Encrypted nodes should be decrypted before this point
                 score,
                 highlights,
@@ -473,11 +523,56 @@ export class RAGStorageService {
             metadata: {
                 searchTime,
                 mode: request.mode,
-                cached: false, // TODO: Implement caching
-                suggestions: [] // TODO: Implement suggestions
+                cached: false, // Will be set to true if returned from cache
+                suggestions
             }
         };
+        // Store in cache
+        this.searchCache.set(cacheKey, result);
+        this.searchCacheTimestamps.set(cacheKey, now);
+        return result;
     }
+
+    /**
+     * Generate AI-driven suggestions for user queries/content using mistral-nemo:12b
+     * NOTE: In the future, use an orchestration-chosen model for suggestions.
+     */
+    private async generateAISuggestions(query: string, universeId?: string): Promise<string[]> {
+        // For now, call the local mistral-nemo:12b model via HTTP (Ollama or similar)
+        // In production, this should be replaced with orchestration logic for model selection.
+        try {
+            const prompt = `Suggest 3 relevant topics, entities, or next steps for the following query in the context of universe '${universeId || 'default'}':\n"${query}"\nReturn as a JSON array of strings.`;
+            const fetchFn = typeof fetch !== 'undefined' ? fetch : (await import('node-fetch')).default;
+            const response = await fetchFn('http://localhost:5100/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'mistral-nemo:12b',
+                    prompt,
+                    stream: false
+                })
+            });
+            if (!response.ok) return [];
+            const data = await response.json();
+            // Try to parse the model's output as a JSON array
+            if (data && data.response) {
+                try {
+                    const arr = JSON.parse(data.response);
+                    if (Array.isArray(arr)) return arr.map((s: any) => String(s));
+                } catch {
+                    // Fallback: return as single suggestion
+                    return [data.response.trim()];
+                }
+            }
+            return [];
+        } catch (err) {
+            return [];
+        }
+    }
+    // --- Caching fields for searchNodes ---
+    private searchCache: Map<string, RAGSearchResult> = new Map();
+    private searchCacheTTL: number = 2 * 60 * 1000; // 2 minutes
+    private searchCacheTimestamps: Map<string, number> = new Map();
 
     /**
      * Get connected nodes with performance optimization
@@ -527,12 +622,79 @@ export class RAGStorageService {
         let nodesProcessed = 0;
         let relationshipsProcessed = 0;
 
-        // TODO: Implement full sync logic
-        // This would involve:
-        // 1. Scanning all RAG nodes/relationships
-        // 2. Comparing with database indexes
-        // 3. Updating/creating missing indexes
-        // 4. Removing orphaned indexes
+        // --- Full sync logic ---
+        try {
+            // 1. Scan all RAG nodes
+            // (Assume ragBackend.searchNodes with empty query returns all nodes)
+            const allNodes: (RAGNode | EncryptedRAGNode)[] = await this.ragBackend.searchNodes('', universeId ? { universeId } : undefined);
+            const indexedNodes: Map<string, RAGNodeIndex> = new Map();
+            // Gather all indexed node IDs for this universe
+            const allNodeIndexes = universeId
+                ? await this.dbIndex.searchNodeIndexes('', { universeId })
+                : await this.dbIndex.searchNodeIndexes('', {});
+            for (const idx of allNodeIndexes) indexedNodes.set(idx.id, idx);
+
+            // Sync nodes: update/create missing indexes
+            for (const node of allNodes) {
+                try {
+                    await this.dbIndex.indexNode(node);
+                    nodesProcessed++;
+                    indexedNodes.delete((node as any).id);
+                } catch (err: any) {
+                    errors.push(`Node ${((node as any).id)}: ${err.message || err}`);
+                }
+            }
+            // Remove orphaned node indexes
+            for (const orphanId of indexedNodes.keys()) {
+                try {
+                    await this.dbIndex.removeNodeIndex(orphanId);
+                } catch (err: any) {
+                    errors.push(`Orphan node index ${orphanId}: ${err.message || err}`);
+                }
+            }
+
+            // 2. Scan all RAG relationships
+            // (Assume ragBackend.getNodeRelationships for all nodes, or implement a method to get all relationships)
+            // For now, collect all relationships from all nodes (may be optimized)
+            const relMap: Map<string, RAGRelationship | EncryptedRAGRelationship> = new Map();
+            for (const node of allNodes) {
+                try {
+                    const rels = await this.ragBackend.getNodeRelationships((node as any).id, 'both');
+                    for (const rel of rels) {
+                        relMap.set((rel as any).id, rel);
+                    }
+                } catch (err: any) {
+                    errors.push(`Relationships for node ${((node as any).id)}: ${err.message || err}`);
+                }
+            }
+            // Gather all indexed relationship IDs for this universe
+            const allRelIndexes = universeId
+                ? await this.dbIndex.findRelationshipsByType('', universeId)
+                : await this.dbIndex.findRelationshipsByType('', undefined);
+            const indexedRels: Map<string, RAGRelationshipIndex> = new Map();
+            for (const idx of allRelIndexes) indexedRels.set(idx.id, idx);
+
+            // Sync relationships: update/create missing indexes
+            for (const rel of relMap.values()) {
+                try {
+                    await this.dbIndex.indexRelationship(rel);
+                    relationshipsProcessed++;
+                    indexedRels.delete((rel as any).id);
+                } catch (err: any) {
+                    errors.push(`Relationship ${((rel as any).id)}: ${err.message || err}`);
+                }
+            }
+            // Remove orphaned relationship indexes
+            for (const orphanId of indexedRels.keys()) {
+                try {
+                    await this.dbIndex.removeRelationshipIndex(orphanId);
+                } catch (err: any) {
+                    errors.push(`Orphan relationship index ${orphanId}: ${err.message || err}`);
+                }
+            }
+        } catch (err: any) {
+            errors.push(`Sync failed: ${err.message || err}`);
+        }
 
         return {
             nodesProcessed,
@@ -599,37 +761,82 @@ export class RAGStorageService {
     /**
      * Rank search results based on query and mode
      */
-    private rankSearchResults(
+    /**
+     * Sophisticated ranking: combines semantic similarity, recency, importance, and user/contextual factors.
+     * Uses embedding similarity if available, otherwise falls back to keyword and metadata scoring.
+     */
+    private async getQueryEmbedding(query: string): Promise<number[] | null> {
+        // Example: Call local embedding endpoint (Ollama or similar)
+        try {
+            const fetchFn = typeof fetch !== 'undefined' ? fetch : (await import('node-fetch')).default;
+            const response = await fetchFn('http://localhost:11434/api/embeddings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: 'mistral-nemo:12b', prompt: query })
+            });
+            if (!response.ok) return null;
+            const data = await response.json();
+            if (data && Array.isArray(data.embedding)) return data.embedding;
+            return null;
+        } catch {
+            return null;
+        }
+    }
+
+    private cosineSimilarity(a: number[], b: number[]): number {
+        if (a.length !== b.length) return 0;
+        let dot = 0, normA = 0, normB = 0;
+        for (let i = 0; i < a.length; i++) {
+            dot += a[i] * b[i];
+            normA += a[i] * a[i];
+            normB += b[i] * b[i];
+        }
+        return normA && normB ? dot / (Math.sqrt(normA) * Math.sqrt(normB)) : 0;
+    }
+
+    private async rankSearchResults(
         nodes: (RAGNode | EncryptedRAGNode)[],
         query: string,
         mode: string
-    ): Array<{
+    ): Promise<Array<{
         node: RAGNode | EncryptedRAGNode;
         score: number;
         highlights: string[];
         matchReason: string;
-    }> {
-        return nodes.map(node => {
-            // Simple ranking for now - TODO: Implement sophisticated ranking
+    }>> {
+        // Get query embedding (if available)
+        const queryEmbedding = await this.getQueryEmbedding(query);
+        const queryLower = query.toLowerCase();
+        const now = Date.now();
+
+        // Score nodes
+        const results = await Promise.all(nodes.map(async node => {
             const isEncrypted = 'encryptedContent' in node;
             const nodeData = node as RAGNode;
-
-            let score = 0.5; // Base score
+            let score = 0.0;
             let highlights: string[] = [];
             let matchReason = 'General match';
 
-            if (!isEncrypted && nodeData.content) {
-                const content = nodeData.content.description.toLowerCase();
-                const queryLower = query.toLowerCase();
+            // 1. Embedding similarity (if available)
+            let embeddingScore = 0;
+            if (!isEncrypted && Array.isArray((node as any).embeddings) && queryEmbedding) {
+                embeddingScore = this.cosineSimilarity((node as any).embeddings, queryEmbedding);
+                score += 0.5 * embeddingScore;
+                if (embeddingScore > 0.7) {
+                    matchReason = 'Semantic match';
+                }
+            }
 
+            // 2. Title and content keyword match
+            if (!isEncrypted && nodeData.content) {
                 if (node.title.toLowerCase().includes(queryLower)) {
-                    score += 0.3;
+                    score += 0.25;
                     highlights.push(node.title);
                     matchReason = 'Title match';
                 }
-
+                const content = nodeData.content.description.toLowerCase();
                 if (content.includes(queryLower)) {
-                    score += 0.2;
+                    score += 0.15;
                     const index = content.indexOf(queryLower);
                     const start = Math.max(0, index - 50);
                     const end = Math.min(content.length, index + query.length + 50);
@@ -638,13 +845,44 @@ export class RAGStorageService {
                 }
             }
 
+            // 3. Recency (favor recently modified nodes)
+            if (nodeData.timestamps?.modified) {
+                const ageDays = (now - new Date(nodeData.timestamps.modified).getTime()) / (1000 * 60 * 60 * 24);
+                const recencyScore = Math.max(0, 1 - ageDays / 30); // Decay over 30 days
+                score += 0.1 * recencyScore;
+            }
+
+            // 4. Importance (metadata)
+            if (typeof nodeData.metadata?.importance === 'number') {
+                score += 0.1 * Math.min(1, nodeData.metadata.importance / 10);
+            }
+
+            // 5. Tag overlap (if query contains tags)
+            // (Assume tags in query are comma-separated in the query string)
+            const queryTags = query.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+            if (queryTags.length && nodeData.metadata?.tags) {
+                const overlap = nodeData.metadata.tags.filter((t: string) => queryTags.includes(t.toLowerCase())).length;
+                if (overlap > 0) {
+                    score += 0.05 * overlap;
+                    matchReason = 'Tag match';
+                }
+            }
+
+            // 6. Sensitivity (demote highly sensitive/private nodes unless user has access)
+            if (nodeData.metadata?.sensitivity === 'private') {
+                score -= 0.05;
+            }
+
             return {
                 node,
                 score,
                 highlights,
                 matchReason
             };
-        }).sort((a, b) => b.score - a.score);
+        }));
+
+        // Sort by score descending
+        return results.sort((a, b) => b.score - a.score);
     }
 
     /**

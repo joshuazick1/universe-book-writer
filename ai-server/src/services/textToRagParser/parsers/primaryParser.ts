@@ -65,16 +65,16 @@ export class PrimaryParser {
         model: string = 'llama3.1:8b'
     ): Promise<PrimaryParseResult> {
         const startTime = Date.now();
-        
+
         logDebug(`Primary parsing chunk ${chunkIndex} (${chunkText.length} chars)`);
 
         try {
             // Generate the parsing prompt
             const prompt = this.buildParsingPrompt(chunkText, context);
-            
+
             // Call AI model for parsing
             const aiResponse = await this.callAIModel(prompt, model);
-            
+
             // Parse and validate the response
             const parseResult = JSONParser.parseAIResponse<AIResponse>(aiResponse);
             if (!parseResult.success) {
@@ -82,7 +82,7 @@ export class PrimaryParser {
             }
 
             const data = parseResult.data!;
-            
+
             // Convert to enhanced entities
             const entities = this.convertToEnhancedEntities(
                 data.entities || [],
@@ -114,7 +114,7 @@ export class PrimaryParser {
             };
 
             const processingTime = Date.now() - startTime;
-            const avgConfidence = entities.length > 0 
+            const avgConfidence = entities.length > 0
                 ? entities.reduce((sum, e) => sum + e.confidence, 0) / entities.length
                 : 0;
 
@@ -240,55 +240,130 @@ Be thorough but precise. Focus on entities that are clearly described and relati
         }
     }
 
+
     /**
-     * Convert AI response entities to enhanced entities
+     * Convert AI response entities to enhanced entities, enforcing canonical structure and validation.
+     *
+     * Extensibility: To support new entity types or additional reference fields, extend the canonical enforcement
+     * logic below. Always include all available metadata and source references for each candidate.
+     *
+     * This method is ready for future fields such as pronounLinks, contextWindow, and sourceReferences,
+     * which are important for advanced AI-powered deduplication and traceability.
+     *
+     * @param aiEntities - Array of raw entities from AI response
+     * @param sectionIndex - Index of the section/chunk being parsed
+     * @param sourceText - The text of the section/chunk
+     * @returns Array of validated, canonical EnhancedParsedEntity objects
      */
     private convertToEnhancedEntities(
         aiEntities: any[],
-        chunkIndex: number,
+        sectionIndex: number,
         sourceText: string
     ): EnhancedParsedEntity[] {
         const now = new Date();
-        
-        return aiEntities.map((entity, index) => {
-            // Validate and convert entity type
+        const validEntities: EnhancedParsedEntity[] = [];
+
+        for (let index = 0; index < aiEntities.length; index++) {
+            const entity = aiEntities[index];
             const entityType = this.validateEntityType(entity.type);
-            
             // Convert relationships
             const relationships = (entity.relationships || []).map((rel: any, relIndex: number) => ({
-                id: `rel_${chunkIndex}_${index}_${relIndex}`,
-                targetEntityId: `${chunkIndex}_${rel.target}`, // Temporary ID
+                id: `rel_${sectionIndex}_${index}_${relIndex}`,
+                targetEntityId: `${sectionIndex}_${rel.target}`,
                 targetEntityName: rel.target,
                 relationshipType: this.validateRelationshipType(rel.type),
                 description: rel.description || '',
-                confidence: entity.confidence * 0.9, // Slightly lower confidence for relationships
-                sourceContext: sourceText.slice(0, 200), // First 200 chars as context
+                confidence: entity.confidence * 0.9,
+                sourceContext: sourceText.slice(0, 200),
                 bidirectional: false
             }));
 
-            return {
-                id: `entity_${chunkIndex}_${index}`,
-                type: entityType,
-                name: entity.name || 'Unknown',
-                description: entity.description || '',
-                confidence: Math.max(0, Math.min(1, entity.confidence || 0.5)),
-                relationships,
-                metadata: {
-                    ...entity.metadata,
-                    sourceChunkIndex: chunkIndex,
-                    importance: entity.metadata?.importance || 0.5
-                },
-                sourceChunk: {
-                    index: chunkIndex,
-                    text: sourceText,
-                    startPosition: 0,
-                    endPosition: sourceText.length
-                },
-                sourceText: sourceText,
-                updatedAt: now,
-                createdAt: now
-            };
-        });
+            // Canonical node enforcement for character nodes
+            // Common extensible fields for all entities
+            const pronounLinks = entity.pronounLinks || (entity.metadata && entity.metadata.pronounLinks) || [];
+            const contextWindow = entity.contextWindow || (entity.metadata && entity.metadata.contextWindow) || '';
+            const sourceReferences = entity.sourceReferences || (entity.metadata && entity.metadata.sourceReferences) || [];
+
+            if (entityType === 'character') {
+                // Canonical fields
+                const universeId = entity.universeId || (entity.metadata && entity.metadata.universeId);
+                const title = entity.title || entity.name;
+                const appearanceBookIds = entity.appearanceBookIds || (entity.metadata && entity.metadata.appearanceBookIds) || [];
+                const appearanceChapterIds = entity.appearanceChapterIds || (entity.metadata && entity.metadata.appearanceChapterIds) || [];
+                const appearanceSectionIds = entity.appearanceSectionIds || (entity.metadata && entity.metadata.appearanceSectionIds) || [`section_${sectionIndex}`];
+                // Validation: must have universeId, id, type, title
+                if (!universeId || !entity.name) {
+                    logError(`Skipping invalid character node: missing universeId or name. Entity: ${JSON.stringify(entity)}`);
+                    continue;
+                }
+                validEntities.push({
+                    id: entity.id || `character_${universeId}_${entity.name}`,
+                    type: 'character',
+                    name: entity.name,
+                    title,
+                    description: entity.description || '',
+                    confidence: Math.max(0, Math.min(1, entity.confidence || 0.5)),
+                    relationships,
+                    aliases: entity.aliases || [],
+                    universeId,
+                    appearanceBookIds,
+                    appearanceChapterIds,
+                    appearanceSectionIds,
+                    pronounLinks,
+                    contextWindow,
+                    sourceReferences,
+                    metadata: {
+                        ...entity.metadata,
+                        sourceSectionIndex: sectionIndex,
+                        sectionText: sourceText,
+                        startOffset: 0,
+                        endOffset: sourceText.length,
+                        importance: entity.metadata?.importance || 0.5
+                    },
+                    sourceChunk: {
+                        index: sectionIndex,
+                        text: sourceText,
+                        startOffset: 0,
+                        endOffset: sourceText.length
+                    },
+                    sourceText: sourceText,
+                    updatedAt: now,
+                    createdAt: now
+                });
+            } else {
+                // Non-character nodes: enforce canonical fields and extensible metadata
+                validEntities.push({
+                    id: entity.id || `${entityType}_${sectionIndex}_${index}`,
+                    type: entityType,
+                    name: entity.name || 'Unknown',
+                    title: entity.title || entity.name || 'Unknown',
+                    description: entity.description || '',
+                    confidence: Math.max(0, Math.min(1, entity.confidence || 0.5)),
+                    relationships,
+                    pronounLinks,
+                    contextWindow,
+                    sourceReferences,
+                    metadata: {
+                        ...entity.metadata,
+                        sourceSectionIndex: sectionIndex,
+                        sectionText: sourceText,
+                        startOffset: 0,
+                        endOffset: sourceText.length,
+                        importance: entity.metadata?.importance || 0.5
+                    },
+                    sourceChunk: {
+                        index: sectionIndex,
+                        text: sourceText,
+                        startOffset: 0,
+                        endOffset: sourceText.length
+                    },
+                    sourceText: sourceText,
+                    updatedAt: now,
+                    createdAt: now
+                });
+            }
+        }
+        return validEntities;
     }
 
     /**
@@ -296,7 +371,7 @@ Be thorough but precise. Focus on entities that are clearly described and relati
      */
     private validateEntityType(type: string): EntityType {
         const normalizedType = type.toLowerCase().replace(/[^a-z_]/g, '_');
-        
+
         // Try to match to known entity types
         for (const entityType of Object.values(EntityType)) {
             if (entityType === normalizedType || entityType.includes(normalizedType)) {
@@ -313,7 +388,7 @@ Be thorough but precise. Focus on entities that are clearly described and relati
      */
     private validateRelationshipType(type: string): RelationshipType {
         const normalizedType = type.toLowerCase().replace(/[^a-z_]/g, '_');
-        
+
         // Try to match to known relationship types
         for (const relationshipType of Object.values(RelationshipType)) {
             if (relationshipType === normalizedType || relationshipType.includes(normalizedType)) {
@@ -355,7 +430,7 @@ Be thorough but precise. Focus on entities that are clearly described and relati
         }
 
         // Update if there are complex relationships
-        const hasComplexRelationships = entities.some(e => 
+        const hasComplexRelationships = entities.some(e =>
             e.relationships && e.relationships.length > 2
         );
         if (hasComplexRelationships) {

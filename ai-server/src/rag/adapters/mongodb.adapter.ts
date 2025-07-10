@@ -264,6 +264,9 @@ export class MongoDBRagAdapter implements RAGStorageBackend {
             Object.assign(searchFilter, filters);
         }
 
+        // Always filter for active nodes
+        searchFilter.active = true;
+
         // Execute search with pagination
         let queryBuilder = this.nodesCollection.find(searchFilter);
 
@@ -289,7 +292,7 @@ export class MongoDBRagAdapter implements RAGStorageBackend {
         // Note: This is a basic implementation using cosine similarity
         // For production, consider using MongoDB Vector Search or a dedicated vector database
 
-        const searchFilter = filters || {};
+        const searchFilter = { ...(filters || {}), active: true };
         const allNodes = await this.nodesCollection.find(searchFilter).toArray();
 
         // Calculate cosine similarity
@@ -315,7 +318,7 @@ export class MongoDBRagAdapter implements RAGStorageBackend {
     async getNodesByType(type: RAGNodeType, universeId?: string): Promise<any[]> {
         if (!this.nodesCollection) throw new Error('MongoDB adapter not initialized');
 
-        const filter: any = { type };
+        const filter: any = { type, active: true };
         if (universeId) {
             filter['metadata.universeId'] = universeId;
         }
@@ -327,7 +330,7 @@ export class MongoDBRagAdapter implements RAGStorageBackend {
     async getNodesByUniverse(universeId: string): Promise<any[]> {
         if (!this.nodesCollection) throw new Error('MongoDB adapter not initialized');
 
-        const nodes = await this.nodesCollection.find({ 'metadata.universeId': universeId }).toArray();
+        const nodes = await this.nodesCollection.find({ 'metadata.universeId': universeId, active: true }).toArray();
         return nodes;
     }
 
@@ -443,6 +446,7 @@ export class MongoDBRagAdapter implements RAGStorageBackend {
             await this.nodesCollection.createIndex({ type: 1 });
             await this.nodesCollection.createIndex({ 'metadata.tags': 1 });
             await this.nodesCollection.createIndex({ 'timestamps.created': 1 });
+            await this.nodesCollection.createIndex({ active: 1 }); // Index for efficient active/inactive queries
 
             // Text search index for nodes
             await this.nodesCollection.createIndex({

@@ -9,6 +9,7 @@ import { AnimationShowcase } from '../../animation/AnimationShowcase';
 import { TransitionTester } from '../../animation/TransitionTester';
 import { PluginTestingTool } from '../../developer/PluginTestingTool';
 import { useTheme } from '../../providers/ThemeProvider';
+import { apiKeyService, ApiKey } from '../../../services/apiKey.service';
 
 // Simple SVG icon component to replace Heroicons
 const SwatchIcon = ({ className }: { className?: string }) => (
@@ -177,6 +178,59 @@ export const UserSettingsPage: React.FC = () => {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+
+  // API Key Management State
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const [isApiKeyLoading, setIsApiKeyLoading] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+  const [newApiKey, setNewApiKey] = useState<ApiKey | null>(null);
+
+  const fetchApiKeys = async () => {
+    setIsApiKeyLoading(true);
+    setApiKeyError(null);
+    try {
+      // Use the backend /api/user/api-keys endpoint for API key management
+      const keys = await apiKeyService.listApiKeys();
+      setApiKeys(keys);
+    } catch (err) {
+      setApiKeyError('Failed to load API keys');
+    } finally {
+      setIsApiKeyLoading(false);
+    }
+  };
+
+  const handleCreateApiKey = async () => {
+    setIsApiKeyLoading(true);
+    setApiKeyError(null);
+    try {
+      // Use the backend /api/user/api-keys endpoint for API key creation
+      const key = await apiKeyService.createApiKey();
+      setNewApiKey(key);
+      await fetchApiKeys();
+    } catch (err) {
+      setApiKeyError('Failed to create API key');
+    } finally {
+      setIsApiKeyLoading(false);
+    }
+  };
+
+  const handleRevokeApiKey = async (key: string) => {
+    setIsApiKeyLoading(true);
+    setApiKeyError(null);
+    try {
+      // Use the backend /api/user/api-keys endpoint for API key revocation
+      await apiKeyService.revokeApiKey(key);
+      await fetchApiKeys();
+    } catch (err) {
+      setApiKeyError('Failed to revoke API key');
+    } finally {
+      setIsApiKeyLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchApiKeys();
+  }, []);
 
   const handleSaveSettings = async () => {
     setIsSaving(true);
@@ -806,6 +860,73 @@ export const UserSettingsPage: React.FC = () => {
                         <button className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700">
                           + Add Server
                         </button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <h2 className="text-xl font-semibold">API Key Management</h2>
+                      <p className="text-gray-600 text-sm mt-1">
+                        Manage your API keys for AI server access
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      {apiKeyError && (
+                        <div className="text-red-600 mb-2">{apiKeyError}</div>
+                      )}
+                      <button
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mb-4"
+                        onClick={handleCreateApiKey}
+                        disabled={isApiKeyLoading}
+                      >
+                        Generate New API Key
+                      </button>
+                      {newApiKey && (
+                        <div className="mb-4 p-2 bg-green-100 border border-green-400 rounded">
+                          <div className="font-mono break-all">{newApiKey.key}</div>
+                          <div className="text-xs text-gray-600">Copy and store this key securely. It will not be shown again.</div>
+                        </div>
+                      )}
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                          <thead>
+                            <tr>
+                              <th className="px-2 py-1 text-left">Key</th>
+                              <th className="px-2 py-1 text-left">Created</th>
+                              <th className="px-2 py-1 text-left">Last Used</th>
+                              <th className="px-2 py-1 text-left">Status</th>
+                              <th className="px-2 py-1 text-left">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {isApiKeyLoading ? (
+                              <tr><td colSpan={5}>Loading...</td></tr>
+                            ) : apiKeys.length === 0 ? (
+                              <tr><td colSpan={5}>No API keys found.</td></tr>
+                            ) : (
+                              apiKeys.map((k) => (
+                                <tr key={k.key} className={k.revoked ? 'opacity-50' : ''}>
+                                  <td className="font-mono break-all max-w-xs">{k.key}</td>
+                                  <td>{new Date(k.createdAt).toLocaleString()}</td>
+                                  <td>{k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleString() : '-'}</td>
+                                  <td>{k.revoked ? 'Revoked' : 'Active'}</td>
+                                  <td>
+                                    {!k.revoked && (
+                                      <button
+                                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                        onClick={() => handleRevokeApiKey(k.key)}
+                                        disabled={isApiKeyLoading}
+                                      >
+                                        Revoke
+                                      </button>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
                       </div>
                     </CardContent>
                   </Card>

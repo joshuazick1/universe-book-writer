@@ -6,6 +6,36 @@
  * context, temporal relationships, and plugin-extensible content types.
  */
 
+
+/**
+ * File version metadata for canonical text files
+ */
+export interface FileVersionMeta {
+    id: string;
+    fileId: string;
+    name: string;
+    createdAt: string;
+    size: number;
+    path: string;
+    parentVersionId?: string;
+    provenance?: string;
+    migration?: any;
+}
+
+/**
+ * Chunk metadata for stable, versioned chunks
+ */
+export interface ChunkMeta {
+    id: string; // stable hash
+    fileId: string;
+    versionId: string;
+    parentBookId?: string;
+    parentChapterId?: string;
+    parentUniverseId?: string;
+    createdAt: string;
+    provenance?: string;
+}
+
 /**
  * Core RAG node interface supporting multiple content types
  */
@@ -42,12 +72,16 @@ export interface RAGNode {
 
     /** Creation and modification timestamps */
     timestamps: RAGTimestamps;
+
+    /** Node active status for orchestrator sync (hybrid approach) */
+    active: boolean;
 }
 
 /**
  * Node types supported by the RAG system
  */
 export type RAGNodeType =
+    // Book/Narrative domain
     | 'character'
     | 'location'
     | 'plot_point'
@@ -61,9 +95,24 @@ export type RAGNodeType =
     | 'species'
     | 'technology'
     | 'organization'
+    // AI/Technical domain
     | 'ai-model'          // AI language models
     | 'ai-server'         // AI inference servers
     | 'model-performance' // Performance data nodes
+    // RAG pipeline
+    | 'source_chunk'      // For RAG pipeline chunk nodes
+    // Coding/Software domain
+    | 'code_snippet'      // Code block or snippet
+    | 'code_file'         // Source file or script
+    | 'test_case'         // Unit or integration test
+    | 'api_endpoint'      // API endpoint definition
+    | 'requirement'       // User story, requirement, or spec
+    | 'task'              // Project management or TODO
+    | 'comment'           // Code or document comment
+    | 'issue'             // Bug report or feature request
+    | 'commit'            // Version control commit
+    | 'reference'         // External doc, link, or citation
+    // Extensibility
     | 'custom';           // For plugin-defined types
 
 /**
@@ -127,6 +176,12 @@ export interface RAGNodeMetadata {
 
     /** Importance/relevance scoring */
     importance?: number;
+
+    /** Book node parent (optional, for hierarchical structure) */
+    bookId?: string;
+
+    /** Chapter node parent (optional, for hierarchical structure) */
+    chapterId?: string;
 }
 
 /**
@@ -215,6 +270,7 @@ export interface RAGRelationship {
  * Types of relationships between nodes
  */
 export type RAGRelationshipType =
+    // General/Book domain
     | 'semantic' // General semantic connection
     | 'causal' // Cause and effect
     | 'temporal' // Time-based connection
@@ -223,8 +279,19 @@ export type RAGRelationshipType =
     | 'location_contains' // Location contains another element
     | 'plot_dependency' // Plot point depends on another
     | 'reference' // References or mentions
+    | 'spoken_by' // Dialogue spoken by character
+    | 'addressed_to' // Dialogue addressed to character
     | 'conflict' // Opposing or conflicting elements
     | 'alliance' // Cooperative relationship
+    // Coding/Software domain
+    | 'implements' // Class implements interface or requirement
+    | 'calls' // Function or endpoint calls another
+    | 'tests' // Test case tests code
+    | 'documents' // Documentation for code
+    | 'fixes' // Commit or code fixes an issue
+    | 'relates_to' // General association
+    | 'depends_on' // Dependency relationship (code, requirements, etc.)
+    // Extensibility
     | 'custom'; // Plugin-defined relationship types
 
 /**
