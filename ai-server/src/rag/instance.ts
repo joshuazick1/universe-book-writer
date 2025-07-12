@@ -1,6 +1,6 @@
 import { RAGServiceManager, type RAGServiceConfig } from './manager.js';
 import { DEFAULT_CONFIGS } from './adapters/index.js';
-import { logInfo, logError } from '../logger.js';
+import { logger } from '../../../shared/logging/logger.js';
 
 /**
  * Singleton RAG service manager instance
@@ -22,7 +22,7 @@ export async function getRAGServiceManager(): Promise<RAGServiceManager> {
  */
 async function createRAGServiceManager(): Promise<RAGServiceManager> {
     try {
-        logInfo('Creating RAG Service Manager');
+        logger.info('Creating RAG Service Manager');
 
         // Determine configuration based on environment
         const environment = process.env.NODE_ENV || 'development';
@@ -35,10 +35,10 @@ async function createRAGServiceManager(): Promise<RAGServiceManager> {
         const manager = new RAGServiceManager(config);
         await manager.initialize();
 
-        logInfo('RAG Service Manager created and initialized');
+        logger.info('RAG Service Manager created and initialized');
         return manager;
     } catch (error) {
-        logError(`Failed to create RAG Service Manager: ${error instanceof Error ? error.message : String(error)}`);
+        logger.error(`Failed to create RAG Service Manager: ${error instanceof Error ? error.message : String(error)}`);
         throw error;
     }
 }
@@ -50,7 +50,7 @@ export async function cleanupRAGServiceManager(): Promise<void> {
     if (ragServiceManager) {
         await ragServiceManager.disconnect();
         ragServiceManager = null;
-        logInfo('RAG Service Manager cleaned up');
+        logger.info('RAG Service Manager cleaned up');
     }
 }
 

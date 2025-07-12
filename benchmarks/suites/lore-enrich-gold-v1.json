@@ -1,0 +1,12 @@
+[
+    {
+        "id": "lore-001",
+        "input": "The city of Eldermoor is known for its ancient magical library.",
+        "reference_lore": "Eldermoor's library was founded by the first archmage and contains spells lost to the rest of the world."
+    },
+    {
+        "id": "lore-002",
+        "input": "The Millennium Falcon is a Corellian YT-1300 light freighter.",
+        "reference_lore": "The Millennium Falcon, once owned by Lando Calrissian, became famous for making the Kessel Run in less than twelve parsecs."
+    }
+]

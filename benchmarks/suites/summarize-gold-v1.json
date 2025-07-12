@@ -1,0 +1,17 @@
+[
+    {
+        "id": "sum-001",
+        "input": "The Federation starship Enterprise embarks on a diplomatic mission to Vulcan, encountering unexpected resistance from a rogue Romulan vessel.",
+        "reference_summary": "The Enterprise faces Romulan resistance during a diplomatic mission to Vulcan."
+    },
+    {
+        "id": "sum-002",
+        "input": "Leia Organa leads a covert Rebel operation to sabotage an Imperial supply depot on Corellia, risking exposure to Darth Vader's forces.",
+        "reference_summary": "Leia's Rebel team attempts to sabotage an Imperial depot on Corellia, risking Vader's wrath."
+    },
+    {
+        "id": "sum-003",
+        "input": "A wizard's apprentice in the city of Eldermoor discovers a forbidden spell that could change the fate of the kingdom.",
+        "reference_summary": "An apprentice in Eldermoor finds a forbidden spell that could alter the kingdom's fate."
+    }
+]

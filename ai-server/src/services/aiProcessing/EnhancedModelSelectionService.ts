@@ -7,7 +7,7 @@
 
 import { QualityBenchmarkManager, ModelQualityProfile } from '../benchmarking/QualityBenchmarkManager.js';
 import { BenchmarkManager } from '../../orchestrator.js';
-import { logInfo, logError, logWarn } from '../../logger.js';
+import { logger } from '../../../../shared/logging/logger.js';
 
 export interface ModelSelectionCriteria {
     taskType: 'chat' | 'writing' | 'character-generation' | 'world-building' | 'analysis' | 'editing' | 'json-generation' | 'rag-processing';
@@ -77,7 +77,7 @@ export class EnhancedModelSelectionService {
      * Select the best model based on comprehensive criteria
      */
     async selectModel(criteria: ModelSelectionCriteria): Promise<ModelSelectionResult> {
-        logInfo(`Selecting model for ${criteria.taskType} (${criteria.complexityLevel}, ${criteria.qualityRequirement})`);
+        logger.info(`Selecting model for ${criteria.taskType} (${criteria.complexityLevel}, ${criteria.qualityRequirement})`);
 
         // Get available models
         const availableModels = await this.getAvailableModels();
@@ -131,7 +131,7 @@ export class EnhancedModelSelectionService {
         // Record selection for learning
         this.recordSelection(criteria, result);
 
-        logInfo(`Selected ${result.selectedModel} (confidence: ${result.confidence.toFixed(2)}): ${result.reasoning}`);
+        logger.info(`Selected ${result.selectedModel} (confidence: ${result.confidence.toFixed(2)}): ${result.reasoning}`);
         return result;
     }
 
@@ -542,7 +542,7 @@ export class EnhancedModelSelectionService {
     private initializeModelCapabilities(): void {
         // This would be populated from configuration or discovery
         // For now, adding some example capabilities
-        logInfo('Model capabilities initialized');
+        logger.info('Model capabilities initialized');
     }
 
     /**
@@ -554,7 +554,7 @@ export class EnhancedModelSelectionService {
             const serverMetrics = this.getServerPerformanceMetrics();
             return Object.keys(serverMetrics);
         } catch (error) {
-            logError(`Failed to get available models: ${error}`);
+            logger.error(`Failed to get available models: ${error}`);
             return [];
         }
     }

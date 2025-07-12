@@ -1,4 +1,11 @@
 import type { Request, Response, NextFunction } from 'express';
+// NOTE: This import assumes the backend is built and linked as a workspace dependency (see monorepo setup)
+import { addEnrichmentJob } from '@verseforge/backend/infrastructure/queue/bullmqQueue.js';
+import { storeRawText } from '../pipeline/storeRawText.js';
+import { generateId } from '../../../shared/utils/generateId.js';
+import { pipelineTasks, PIPELINE_TASKS } from '../../../shared/utils/pipelineTasks.js';
+// PIPELINE_TASKS now exported from shared/utils/pipelineTasks.ts
+import { selectBestModel } from '../../orchestrator/ModelSelector.js';
 
 // Helper: send SSE event
 function sendSSE(res: Response, event: string, data: any) {
@@ -19,10 +26,10 @@ import { aiSummarizeChunk } from '../services/aiSummarizer.js';
 import { aiExtractEntitiesFromChunk, extractEntitiesFromSummary } from '../services/entityExtractor.js';
 import { aiExtractRelationshipsFromChunk } from '../services/relationshipExtractor.js';
 import { aiExtractLoreFromChunk } from '../services/loreExtractor.js';
-
 import { aiExtractDialogueFromChunk } from '../services/dialogueExtractor.js';
 import { aiClassifyMoodAndThemeFromChunk } from '../services/moodThemeClassifier.js';
 import { aiGenerateCharacterMemories } from '../services/aiGenerateCharacterMemories.js';
+// ...existing code...
 
 /**
  * Controller for RAG text ingestion and file/chunk versioning
@@ -102,43 +109,500 @@ export const ragTextController = {
             res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
         }
     },
-    ingestText: async (req: Request, res: Response) => {
-        const { content, chunkSize = 1000, metadata, type } = req.body;
-        let chunks: string[];
-        if (type === 'markdown') {
-            const blocks = parseMarkdownBlocks(content);
-            chunks = groupChunks(blocks, chunkSize);
-        } else {
-            chunks = chunkTextByParagraph(content, chunkSize);
-        }
 
-        // 1. Write chunks to RAG nodes in the selected universe
-        const universeId = metadata?.universeId || 'default-universe';
-        const model = metadata?.model || 'default-model';
-        const userId = metadata?.userId || 'unknown-user';
-        const chunkNodeIds: string[] = [];
-        for (let i = 0; i < chunks.length; i++) {
-            const chunkContent = chunks[i];
-            // Provide all required RAGNode fields except 'id'
-            const now = new Date();
-            const node = await ragNodeService.createNode({
-                type: 'source_chunk',
-                title: `Chunk ${i + 1}`,
-                content: { description: chunkContent },
-                summaries: { brief: '', medium: '', detailed: '' },
-                embeddings: [],
+    /**
+     * Controller Entry & Initial Validation for distributed pipeline
+     * POST /api/rag/ingest/text (or SSE endpoint)
+     * Step 1 of distributed pipeline: Accept, validate, and prepare metadata/context
+     */
+
+    ingestText: async (req: Request, res: Response) => {
+        try {
+            // Accept both JSON and form-data
+            const isPost = req.method === 'POST';
+            let content: string | undefined;
+            let metadata: any = {};
+            let chunkSize: number = 1000;
+            let type: string | undefined;
+            if (isPost) {
+                content = req.body.content;
+                metadata = req.body.metadata || {};
+                chunkSize = req.body.chunkSize || 1000;
+                type = req.body.type;
+            } else {
+                // For GET/SSE endpoints (future-proof)
+                content = typeof req.query.content === 'string' ? req.query.content : undefined;
+                chunkSize = req.query.chunkSize ? Number(req.query.chunkSize) : 1000;
+                type = typeof req.query.type === 'string' ? req.query.type : undefined;
+                if (typeof req.query.metadata === 'string') {
+                    try {
+                        metadata = JSON.parse(req.query.metadata);
+                    } catch {
+                        metadata = {};
+                    }
+                } else {
+                    metadata = {
+                        universeId: req.query.universeId,
+                        userId: req.query.userId,
+                        model: req.query.model
+                    };
+                }
+            }
+
+            // --- Validation ---
+            if (!content || typeof content !== 'string' || !content.trim()) {
+                return res.status(400).json({ error: 'Missing or empty content' });
+            }
+            if (!metadata.universeId) {
+                return res.status(400).json({ error: 'Missing universeId in metadata' });
+            }
+            if (!metadata.userId) {
+                return res.status(400).json({ error: 'Missing userId in metadata' });
+            }
+            // Optionally validate bookId/chapterId/model if required
+
+            // --- API/Event Versioning ---
+            const API_VERSION = 'v1';
+            const EVENT_VERSION = 'v1';
+
+            // --- Pipeline Session/Run ID ---
+            const pipelineSessionId = generateId();
+
+            // --- Orchestrator Model Selection ---
+            if (!metadata.model) {
+                // Select best model for this pipeline (task: 'rag_ingest')
+                metadata.model = await selectBestModel({
+                    task: 'rag_ingest',
+                    universeId: metadata.universeId,
+                    userId: metadata.userId,
+                });
+            }
+
+            // --- Prepare pipeline context (step 1 only) ---
+            const pipelineContext = {
+                sessionId: pipelineSessionId,
+                content,
+                metadata,
+                chunkSize,
+                type,
+                receivedAt: new Date().toISOString(),
+                apiVersion: API_VERSION,
+                eventVersion: EVENT_VERSION,
+            };
+
+            // --- Enhanced Streaming: Emit pipeline_overview ---
+            // (If this is an SSE request, emit overview of all tasks with friendly names)
+            // Always emit pipeline_overview (SSE context)
+            const overview = {
+                tasks: PIPELINE_TASKS.map((t) => ({
+                    task: t.key,
+                    status: 'not_queued',
+                    friendlyName: t.friendlyName
+                }))
+            };
+            sendSSE(res, 'pipeline_overview', overview);
+
+            // --- Enqueue storeRawText job in BullMQ ---
+            const jobId = generateId();
+            const jobPayload = {
+                universeId: metadata.universeId,
+                bookId: metadata.bookId,
+                chapterId: metadata.chapterId,
+                text: content,
+                submittedBy: metadata.userId,
+                timestamp: new Date(),
+                sessionId: pipelineSessionId,
+                apiVersion: API_VERSION,
+                eventVersion: EVENT_VERSION
+            };
+            // Version is always 1 for initial job
+            const job = {
+                id: jobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'storeRawText',
+                payload: jobPayload,
+                version: 1,
                 metadata: {
-                    universeId,
-                    ownerId: userId,
-                    tags: ['story', 'chunk'],
-                    sensitivity: 'public',
-                    version: 1
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
                 },
-                privacy: { encrypted: false, shareable: true },
-                timestamps: { created: now, modified: now },
-                active: true
+                dependencies: []
+            };
+            await addEnrichmentJob('storeRawText', job);
+
+            // --- Enqueue chunkText job in BullMQ, dependent on storeRawText completion ---
+            const chunkJobId = generateId();
+            const chunkJobPayload = {
+                universeId: metadata.universeId,
+                bookId: metadata.bookId,
+                chapterId: metadata.chapterId,
+                text: content,
+                submittedBy: metadata.userId,
+                parentVersion: 1,
+                sessionId: pipelineSessionId,
+                apiVersion: API_VERSION,
+                eventVersion: EVENT_VERSION
+            };
+            const chunkJob = {
+                id: chunkJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'chunkText',
+                payload: chunkJobPayload,
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [jobId]
+            };
+            await addEnrichmentJob('chunkText', chunkJob);
+
+            // --- Enqueue summarizeChunk jobs (parallel), dependent on chunkText completion ---
+            // We enqueue a meta-job for orchestrator, as before
+            const summarizeMetaJobId = generateId();
+            const summarizeMetaJobPayload = {
+                universeId: metadata.universeId,
+                bookId: metadata.bookId,
+                chapterId: metadata.chapterId,
+                submittedBy: metadata.userId,
+                sessionId: pipelineSessionId,
+                apiVersion: API_VERSION,
+                eventVersion: EVENT_VERSION,
+            };
+            const summarizeMetaJob = {
+                id: summarizeMetaJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'summarizeChunkMeta',
+                payload: summarizeMetaJobPayload,
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [chunkJobId]
+            };
+            await addEnrichmentJob('summarizeChunkMeta', summarizeMetaJob);
+
+            // --- Enqueue groupChunks meta-job, dependent on all summarizeChunk jobs ---
+            const groupChunksMetaJobId = generateId();
+            const groupChunksMetaJobPayload = {
+                universeId: metadata.universeId,
+                bookId: metadata.bookId,
+                chapterId: metadata.chapterId,
+                submittedBy: metadata.userId,
+                sessionId: pipelineSessionId,
+                apiVersion: API_VERSION,
+                eventVersion: EVENT_VERSION,
+            };
+            const groupChunksMetaJob = {
+                id: groupChunksMetaJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'groupChunksMeta',
+                payload: groupChunksMetaJobPayload,
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [summarizeMetaJobId]
+            };
+            await addEnrichmentJob('groupChunksMeta', groupChunksMetaJob);
+
+            // --- Enqueue summarizeSuperChunk meta-job, dependent on groupChunksMeta completion ---
+            const summarizeSuperChunkMetaJobId = generateId();
+            const summarizeSuperChunkMetaJobPayload = {
+                universeId: metadata.universeId,
+                bookId: metadata.bookId,
+                chapterId: metadata.chapterId,
+                submittedBy: metadata.userId,
+                sessionId: pipelineSessionId,
+                apiVersion: API_VERSION,
+                eventVersion: EVENT_VERSION,
+            };
+            const summarizeSuperChunkMetaJob = {
+                id: summarizeSuperChunkMetaJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'summarizeSuperChunkMeta',
+                payload: summarizeSuperChunkMetaJobPayload,
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [groupChunksMetaJobId]
+            };
+            await addEnrichmentJob('summarizeSuperChunkMeta', summarizeSuperChunkMetaJob);
+
+            // --- Enqueue downstream AI task jobs (entity, relationship, lore, dialogue, mood/theme, timeline, character memory) ---
+            // All downstream jobs depend on summarizeSuperChunkMeta
+            const aiEntityExtractionJobId = generateId();
+            const aiEntityExtractionJob = {
+                id: aiEntityExtractionJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'aiEntityExtraction',
+                payload: {
+                    universeId: metadata.universeId,
+                    bookId: metadata.bookId,
+                    chapterId: metadata.chapterId,
+                    submittedBy: metadata.userId,
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [summarizeSuperChunkMetaJobId]
+            };
+            await addEnrichmentJob('aiEntityExtraction', aiEntityExtractionJob);
+
+            const aiRelationshipExtractionJobId = generateId();
+            const aiRelationshipExtractionJob = {
+                id: aiRelationshipExtractionJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'aiRelationshipExtraction',
+                payload: {
+                    universeId: metadata.universeId,
+                    bookId: metadata.bookId,
+                    chapterId: metadata.chapterId,
+                    submittedBy: metadata.userId,
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [aiEntityExtractionJobId]
+            };
+            await addEnrichmentJob('aiRelationshipExtraction', aiRelationshipExtractionJob);
+
+            const aiLoreExtractionJobId = generateId();
+            const aiLoreExtractionJob = {
+                id: aiLoreExtractionJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'aiLoreExtraction',
+                payload: {
+                    universeId: metadata.universeId,
+                    bookId: metadata.bookId,
+                    chapterId: metadata.chapterId,
+                    submittedBy: metadata.userId,
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [aiRelationshipExtractionJobId]
+            };
+            await addEnrichmentJob('aiLoreExtraction', aiLoreExtractionJob);
+
+            const aiDialogueExtractionJobId = generateId();
+            const aiDialogueExtractionJob = {
+                id: aiDialogueExtractionJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'aiDialogueExtraction',
+                payload: {
+                    universeId: metadata.universeId,
+                    bookId: metadata.bookId,
+                    chapterId: metadata.chapterId,
+                    submittedBy: metadata.userId,
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [aiLoreExtractionJobId]
+            };
+            await addEnrichmentJob('aiDialogueExtraction', aiDialogueExtractionJob);
+
+            const aiMoodThemeClassificationJobId = generateId();
+            const aiMoodThemeClassificationJob = {
+                id: aiMoodThemeClassificationJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'aiMoodThemeClassification',
+                payload: {
+                    universeId: metadata.universeId,
+                    bookId: metadata.bookId,
+                    chapterId: metadata.chapterId,
+                    submittedBy: metadata.userId,
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [aiDialogueExtractionJobId]
+            };
+            await addEnrichmentJob('aiMoodThemeClassification', aiMoodThemeClassificationJob);
+
+            const aiTimelineExtractionJobId = generateId();
+            const aiTimelineExtractionJob = {
+                id: aiTimelineExtractionJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'aiTimelineExtraction',
+                payload: {
+                    universeId: metadata.universeId,
+                    bookId: metadata.bookId,
+                    chapterId: metadata.chapterId,
+                    submittedBy: metadata.userId,
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [aiMoodThemeClassificationJobId]
+            };
+            await addEnrichmentJob('aiTimelineExtraction', aiTimelineExtractionJob);
+
+            const characterMemoryGenerationJobId = generateId();
+            const characterMemoryGenerationJob = {
+                id: characterMemoryGenerationJobId,
+                chunkId: metadata.chapterId || metadata.bookId,
+                type: 'characterMemoryGeneration',
+                payload: {
+                    universeId: metadata.universeId,
+                    bookId: metadata.bookId,
+                    chapterId: metadata.chapterId,
+                    submittedBy: metadata.userId,
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                version: 1,
+                metadata: {
+                    sessionId: pipelineSessionId,
+                    apiVersion: API_VERSION,
+                    eventVersion: EVENT_VERSION
+                },
+                dependencies: [aiTimelineExtractionJobId]
+            };
+            await addEnrichmentJob('characterMemoryGeneration', characterMemoryGenerationJob);
+
+            // --- Respond with initial pipeline context, session ID, and job info ---
+            return res.status(200).json({
+                message: 'Pipeline request accepted',
+                sessionId: pipelineSessionId,
+                apiVersion: API_VERSION,
+                eventVersion: EVENT_VERSION,
+                context: pipelineContext,
+                initialJobs: [
+                    {
+                        jobId,
+                        type: 'storeRawText',
+                        payload: jobPayload,
+                        version: 1
+                    },
+                    {
+                        jobId: chunkJobId,
+                        type: 'chunkText',
+                        payload: chunkJobPayload,
+                        version: 1,
+                        dependsOn: [jobId]
+                    },
+                    {
+                        jobId: summarizeMetaJobId,
+                        type: 'summarizeChunkMeta',
+                        payload: summarizeMetaJobPayload,
+                        version: 1,
+                        dependsOn: [chunkJobId]
+                    },
+                    {
+                        jobId: groupChunksMetaJobId,
+                        type: 'groupChunksMeta',
+                        payload: groupChunksMetaJobPayload,
+                        version: 1,
+                        dependsOn: [summarizeMetaJobId]
+                    },
+                    {
+                        jobId: summarizeSuperChunkMetaJobId,
+                        type: 'summarizeSuperChunkMeta',
+                        payload: summarizeSuperChunkMetaJobPayload,
+                        version: 1,
+                        dependsOn: [groupChunksMetaJobId]
+                    },
+                    {
+                        jobId: aiEntityExtractionJobId,
+                        type: 'aiEntityExtraction',
+                        payload: aiEntityExtractionJob.payload,
+                        version: 1,
+                        dependsOn: [summarizeSuperChunkMetaJobId]
+                    },
+                    {
+                        jobId: aiRelationshipExtractionJobId,
+                        type: 'aiRelationshipExtraction',
+                        payload: aiRelationshipExtractionJob.payload,
+                        version: 1,
+                        dependsOn: [aiEntityExtractionJobId]
+                    },
+                    {
+                        jobId: aiLoreExtractionJobId,
+                        type: 'aiLoreExtraction',
+                        payload: aiLoreExtractionJob.payload,
+                        version: 1,
+                        dependsOn: [aiRelationshipExtractionJobId]
+                    },
+                    {
+                        jobId: aiDialogueExtractionJobId,
+                        type: 'aiDialogueExtraction',
+                        payload: aiDialogueExtractionJob.payload,
+                        version: 1,
+                        dependsOn: [aiLoreExtractionJobId]
+                    },
+                    {
+                        jobId: aiMoodThemeClassificationJobId,
+                        type: 'aiMoodThemeClassification',
+                        payload: aiMoodThemeClassificationJob.payload,
+                        version: 1,
+                        dependsOn: [aiDialogueExtractionJobId]
+                    },
+                    {
+                        jobId: aiTimelineExtractionJobId,
+                        type: 'aiTimelineExtraction',
+                        payload: aiTimelineExtractionJob.payload,
+                        version: 1,
+                        dependsOn: [aiMoodThemeClassificationJobId]
+                    },
+                    {
+                        jobId: characterMemoryGenerationJobId,
+                        type: 'characterMemoryGeneration',
+                        payload: characterMemoryGenerationJob.payload,
+                        version: 1,
+                        dependsOn: [aiTimelineExtractionJobId]
+                    }
+                ]
             });
-            chunkNodeIds.push(node.id);
+        } catch (err) {
+            return res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
         }
     },
     /**
@@ -181,6 +645,25 @@ export const ragTextController = {
                 type = req.body.type;
             }
             if (!content) throw new Error('Missing content');
+
+            // --- Orchestrator Model Selection ---
+            if (!metadata.model) {
+                metadata.model = await selectBestModel({
+                    task: 'rag_ingest',
+                    universeId: metadata.universeId,
+                    userId: metadata.userId,
+                });
+            }
+
+            // --- Enhanced Streaming: Emit pipeline_overview ---
+            sendSSE(res, 'pipeline_overview', {
+                tasks: PIPELINE_TASKS.map(t => ({
+                    task: t.key,
+                    status: 'not_queued',
+                    friendlyName: t.friendlyName
+                }))
+            });
+
             let chunks: string[];
             if (type === 'markdown') {
                 const blocks = parseMarkdownBlocks(content);
@@ -556,6 +1039,82 @@ export const ragTextController = {
         }
     },
 
+
+    /**
+     * Entity Deduplication & Cross-Chunk Linking
+     * Called after all entity extraction jobs complete.
+     * Deduplicates entities by name, alias, and key attributes, merges or links duplicates, and persists unique entities.
+     * Also links entities, dialogue, lore, and timeline markers across chunks.
+     */
+    async deduplicateAndLinkEntities(sessionId: string, universeId: string) {
+        // 1. Fetch all entity nodes for this session/universe
+        const allEntities = await ragNodeService.getAllEntitiesForSession(sessionId, universeId);
+        // 2. Deduplicate by name, alias, and type
+        const uniqueEntities: any[] = [];
+        const seenKeys = new Set<string>();
+        for (const entity of allEntities) {
+            const key = `${entity.type}|${entity.title.toLowerCase()}`;
+            const aliases: string[] = Array.isArray(entity.content?.attributes?.aliases)
+                ? entity.content.attributes.aliases.map((a: string) => a.toLowerCase())
+                : [];
+            if (seenKeys.has(key) || aliases.some(a => seenKeys.has(`${entity.type}|${a}`))) {
+                // Find the canonical entity and link this duplicate to it
+                const canonical = uniqueEntities.find(e =>
+                    e.type === entity.type &&
+                    (e.title.toLowerCase() === entity.title.toLowerCase() ||
+                        (Array.isArray(e.content?.attributes?.aliases) &&
+                            e.content.attributes.aliases.map((a: string) => a.toLowerCase()).some((a: string) => aliases.includes(a)))
+                    )
+                );
+                if (canonical) {
+                    await ragNodeService.createRelationship({
+                        fromNodeId: entity.id,
+                        toNodeId: canonical.id,
+                        type: 'duplicate_of',
+                        weight: 1,
+                        metadata: { description: 'Deduplicated entity', universeId, attributes: {} },
+                        privacy: { encrypted: false, visibility: 'public' },
+                        timestamps: { created: new Date(), modified: new Date() }
+                    });
+                }
+                continue;
+            }
+            seenKeys.add(key);
+            for (const a of aliases) seenKeys.add(`${entity.type}|${a}`);
+            uniqueEntities.push(entity);
+        }
+        // 3. Persist unique entities (if not already persisted)
+        for (const entity of uniqueEntities) {
+            await ragNodeService.updateNode(entity.id, { metadata: { ...entity.metadata, deduplicated: true } });
+        }
+        // 4. Cross-chunk linking: link entities with the same name/alias across chunks
+        for (const entity of uniqueEntities) {
+            for (const other of uniqueEntities) {
+                if (entity.id !== other.id && entity.type === other.type) {
+                    const nameMatch = entity.title.toLowerCase() === other.title.toLowerCase();
+                    const aliasMatch = Array.isArray(entity.content?.attributes?.aliases) &&
+                        Array.isArray(other.content?.attributes?.aliases) &&
+                        entity.content.attributes.aliases.map((a: string) => a.toLowerCase()).some((a: string) =>
+                            other.content.attributes.aliases.map((b: string) => b.toLowerCase()).includes(a)
+                        );
+                    if (nameMatch || aliasMatch) {
+                        await ragNodeService.createRelationship({
+                            fromNodeId: entity.id,
+                            toNodeId: other.id,
+                            type: 'cross_chunk_link',
+                            weight: 1,
+                            metadata: { description: 'Cross-chunk entity link', universeId, attributes: {} },
+                            privacy: { encrypted: false, visibility: 'public' },
+                            timestamps: { created: new Date(), modified: new Date() }
+                        });
+                    }
+                }
+            }
+        }
+        // 5. Optionally, emit SSE events for deduplication and linking
+        // (Assume you have access to a response object or event emitter)
+        // sendSSE(res, 'entity_deduplication_complete', { sessionId, universeId, uniqueEntities });
+    },
 
     // (removed duplicate pipeline code)
 

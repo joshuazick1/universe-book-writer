@@ -7,7 +7,7 @@ import { aiExtractLoreFromChunk } from '../../services/loreExtractor.js';
 import { aiExtractDialogueFromChunk } from '../../services/dialogueExtractor.js';
 import { aiClassifyMoodAndThemeFromChunk } from '../../services/moodThemeClassifier.js';
 import { aiGenerateCharacterMemories } from '../../services/aiGenerateCharacterMemories.js';
-import type { RAGNode } from '../../../rag/core/types.js';
+import type { RAGNode } from '../../rag/core/types.js';
 
 /**
  * Run all post-chunking pipeline steps on a set of chunk nodes.
@@ -44,11 +44,14 @@ export async function runPostChunkingPipeline(
             summaries: { ...chunk.summaries, brief: summary.summary },
             content: {
                 ...chunk.content,
-                entities,
-                relationships,
-                lore,
-                dialogue,
-                moodTheme
+                attributes: {
+                    ...(chunk.content?.attributes ?? {}),
+                    entities,
+                    relationships,
+                    lore,
+                    dialogue,
+                    moodTheme
+                }
             }
         });
         processed++;

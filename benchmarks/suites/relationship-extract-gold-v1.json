@@ -1,0 +1,34 @@
+[
+    {
+        "id": "rel-001",
+        "input": "Spock is the son of Sarek and serves as science officer under Captain Kirk.",
+        "reference_relationships": [
+            {
+                "source": "Spock",
+                "relation": "child_of",
+                "target": "Sarek"
+            },
+            {
+                "source": "Spock",
+                "relation": "serves_under",
+                "target": "James T. Kirk"
+            }
+        ]
+    },
+    {
+        "id": "rel-002",
+        "input": "Vader is Luke's father and once trained Obi-Wan Kenobi.",
+        "reference_relationships": [
+            {
+                "source": "Darth Vader",
+                "relation": "parent_of",
+                "target": "Luke Skywalker"
+            },
+            {
+                "source": "Darth Vader",
+                "relation": "trained",
+                "target": "Obi-Wan Kenobi"
+            }
+        ]
+    }
+]

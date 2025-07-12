@@ -256,13 +256,14 @@ const BenchmarksTab: React.FC = () => {
                                                 <th className="px-3 py-2 text-right">Usage (Total)</th>
                                                 <th className="px-3 py-2 text-right">Usage (24h)</th>
                                                 <th className="px-3 py-2 text-right">Stability Score</th>
+                                                <th className="px-3 py-2 text-right">Quality Score</th>
                                                 <th className="px-3 py-2 text-left">Last Used</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {ragPerformanceData.length === 0 ? (
                                                 <tr>
-                                                    <td colSpan={8} className="text-center py-4 text-gray-400">
+                                                    <td colSpan={9} className="text-center py-4 text-gray-400">
                                                         No RAG performance data available.
                                                     </td>
                                                 </tr>
@@ -285,6 +286,11 @@ const BenchmarksTab: React.FC = () => {
                                                             <td className="px-3 py-2 text-right">
                                                                 {data.performanceMetrics?.stabilityScore ?
                                                                     (data.performanceMetrics.stabilityScore * 100).toFixed(1) + '%' : '-'}
+                                                            </td>
+                                                            <td className="px-3 py-2 text-right">
+                                                                {data.performanceMetrics?.qualityScore != null
+                                                                    ? (data.performanceMetrics.qualityScore * 100).toFixed(1) + '%'
+                                                                    : '-'}
                                                             </td>
                                                             <td className="px-3 py-2 text-xs">
                                                                 {data.lastUsed ? new Date(data.lastUsed).toLocaleDateString() : '-'}
@@ -371,8 +377,8 @@ const BenchmarksTab: React.FC = () => {
                                                     <td className="px-3 py-2 font-mono text-xs">{model.serverId}</td>
                                                     <td className="px-3 py-2 text-right">
                                                         <span className={`px-2 py-1 rounded text-xs ${model.score > 0.8 ? 'bg-green-100 text-green-800' :
-                                                                model.score > 0.6 ? 'bg-yellow-100 text-yellow-800' :
-                                                                    'bg-red-100 text-red-800'
+                                                            model.score > 0.6 ? 'bg-yellow-100 text-yellow-800' :
+                                                                'bg-red-100 text-red-800'
                                                             }`}>
                                                             {(model.score * 100).toFixed(1)}%
                                                         </span>

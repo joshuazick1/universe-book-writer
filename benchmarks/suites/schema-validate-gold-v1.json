@@ -1,0 +1,44 @@
+[
+    {
+        "id": "schema-001",
+        "input": "{\"name\":\"Spock\",\"species\":\"Vulcan\",\"rank\":\"Commander\"}",
+        "reference_schema": {
+            "type": "object",
+            "required": [
+                "name",
+                "species",
+                "rank"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "species": {
+                    "type": "string"
+                },
+                "rank": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    {
+        "id": "schema-002",
+        "input": "{\"name\":\"Leia Organa\",\"title\":\"Princess\"}",
+        "reference_schema": {
+            "type": "object",
+            "required": [
+                "name",
+                "title"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+]

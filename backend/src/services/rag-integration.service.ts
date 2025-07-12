@@ -16,6 +16,7 @@ import {
     RAGNodeQuery,
     RAGRelationshipQuery
 } from '../schemas/rag-storage.schema.js';
+import type { Node, NodeRelationship } from '../../../shared/types/nodeTypes.js';
 
 /**
  * Configuration for RAG integration
@@ -29,47 +30,7 @@ export interface RAGIntegrationConfig {
     batchSize: number;                // Batch size for bulk operations
 }
 
-/**
- * RAG node data from AI server
- */
-export interface RAGNodeData {
-    id: string;
-    type: string;
-    title: string;
-    content: any;
-    summaries: {
-        brief: string;
-        medium: string;
-        detailed: string;
-    };
-    embeddings: number[];
-    metadata: any;
-    privacy: any;
-    temporal?: any;
-    pluginData?: any;
-    timestamps: {
-        createdAt: string;
-        updatedAt: string;
-    };
-}
-
-/**
- * RAG relationship data from AI server
- */
-export interface RAGRelationshipData {
-    id: string;
-    sourceNodeId: string;
-    targetNodeId: string;
-    relationshipType: string;
-    strength: number;
-    bidirectional: boolean;
-    temporal?: any;
-    metadata: any;
-    timestamps: {
-        createdAt: string;
-        updatedAt: string;
-    };
-}
+// Use Node and NodeRelationship from shared/types/nodeTypes
 
 /**
  * Service for integrating RAG system with database storage
@@ -241,7 +202,7 @@ export class RAGIntegrationService {
     private async syncNodesFromRAG(): Promise<number> {
         try {
             const response = await this.aiServerClient.get('/api/rag/nodes');
-            const nodes: RAGNodeData[] = response.data;
+            const nodes: Node[] = response.data;
 
             let synced = 0;
             const batchSize = this.config.batchSize;
@@ -250,31 +211,49 @@ export class RAGIntegrationService {
                 const batch = nodes.slice(i, i + batchSize);
 
                 await Promise.all(batch.map(async (ragNode) => {
+                    const universeId = typeof ragNode.metadata?.universeId === 'string' ? ragNode.metadata.universeId : '';
+                    const tags = Array.isArray(ragNode.metadata?.tags) ? ragNode.metadata.tags.filter((t): t is string => typeof t === 'string') : [];
+                    const categories = Array.isArray(ragNode.metadata?.categories) ? ragNode.metadata.categories.filter((c): c is string => typeof c === 'string') : [];
+                    const pluginType = typeof ragNode.metadata?.pluginType === 'string' ? ragNode.metadata.pluginType : undefined;
+                    const authorId = typeof ragNode.metadata?.authorId === 'string' ? ragNode.metadata.authorId : '';
+                    const collaborators = Array.isArray(ragNode.metadata?.collaborators) ? ragNode.metadata.collaborators.filter((c): c is string => typeof c === 'string') : [];
+                    const versionHash = typeof ragNode.metadata?.versionHash === 'string' ? ragNode.metadata.versionHash : '';
+                    // Only allow valid encryptionLevel values
+                    const validEncryptionLevels = ['none', 'partial', 'full'] as const;
+                    let encryptionLevel: 'none' | 'partial' | 'full' = 'none';
+                    if (typeof ragNode.privacy?.level === 'string' && validEncryptionLevels.includes(ragNode.privacy.level as any)) {
+                        encryptionLevel = ragNode.privacy.level as 'none' | 'partial' | 'full';
+                    }
+                    const encryptedFields = Array.isArray(ragNode.privacy?.encryptedFields) ? ragNode.privacy.encryptedFields.filter((f): f is string => typeof f === 'string') : [];
+                    const keyHierarchy = typeof ragNode.privacy?.keyHierarchy === 'string' ? ragNode.privacy.keyHierarchy : '';
+                    const timelinePosition = typeof ragNode.temporal?.position === 'number' ? ragNode.temporal.position : undefined;
+                    const stardateEquivalent = typeof ragNode.temporal?.stardateEquivalent === 'number' ? ragNode.temporal.stardateEquivalent : undefined;
+                    const temporalRelations = Array.isArray(ragNode.temporal?.relations) ? ragNode.temporal.relations.filter((r): r is string => typeof r === 'string') : [];
                     const nodeDoc: Omit<IRAGNodeDocument, '_id' | 'createdAt' | 'updatedAt'> = {
                         ragId: ragNode.id,
-                        universeId: ragNode.metadata?.universeId || '',
+                        universeId,
                         nodeType: ragNode.type,
                         title: ragNode.title,
                         searchableText: this.extractSearchableText(ragNode),
-                        tags: ragNode.metadata?.tags || [],
-                        categories: ragNode.metadata?.categories || [],
-                        encryptionLevel: ragNode.privacy?.level || 'none',
-                        encryptedFields: ragNode.privacy?.encryptedFields || [],
-                        keyHierarchy: ragNode.privacy?.keyHierarchy || '',
-                        timelinePosition: ragNode.temporal?.position,
-                        stardateEquivalent: ragNode.temporal?.stardateEquivalent,
-                        temporalRelations: ragNode.temporal?.relations || [],
+                        tags,
+                        categories,
+                        encryptionLevel,
+                        encryptedFields,
+                        keyHierarchy,
+                        timelinePosition,
+                        stardateEquivalent,
+                        temporalRelations,
                         directConnections: [], // Will be populated by relationship sync
                         relationshipTypes: [],
                         connectionStrengths: [],
                         briefSummary: ragNode.summaries?.brief || '',
                         mediumSummary: ragNode.summaries?.medium || '',
                         detailedSummary: ragNode.summaries?.detailed || '',
-                        pluginType: ragNode.metadata?.pluginType,
+                        pluginType,
                         pluginMetadata: ragNode.pluginData || {},
-                        authorId: ragNode.metadata?.authorId || '',
-                        collaborators: ragNode.metadata?.collaborators || [],
-                        versionHash: ragNode.metadata?.versionHash || '',
+                        authorId,
+                        collaborators,
+                        versionHash,
                         lastSyncedAt: new Date(),
                         accessCount: 0,
                         lastAccessedAt: new Date()
@@ -299,7 +278,7 @@ export class RAGIntegrationService {
     private async syncRelationshipsFromRAG(): Promise<number> {
         try {
             const response = await this.aiServerClient.get('/api/rag/relationships');
-            const relationships: RAGRelationshipData[] = response.data;
+            const relationships: NodeRelationship[] = response.data;
 
             let synced = 0;
             const batchSize = this.config.batchSize;
@@ -308,24 +287,44 @@ export class RAGIntegrationService {
                 const batch = relationships.slice(i, i + batchSize);
 
                 await Promise.all(batch.map(async (ragRelationship) => {
+                    const universeId = typeof ragRelationship.metadata?.universeId === 'string' ? ragRelationship.metadata.universeId : '';
+                    const pluginType = typeof ragRelationship.metadata?.pluginType === 'string' ? ragRelationship.metadata.pluginType : undefined;
+                    const authorId = typeof ragRelationship.metadata?.authorId === 'string' ? ragRelationship.metadata.authorId : '';
+                    const versionHash = typeof ragRelationship.metadata?.versionHash === 'string' ? ragRelationship.metadata.versionHash : '';
+                    const pluginMetadata = typeof ragRelationship.metadata?.pluginData === 'object' && ragRelationship.metadata?.pluginData !== null ? ragRelationship.metadata.pluginData : {};
+                    const validEncryptionLevels = ['none', 'partial', 'full'] as const;
+                    let encryptionLevel: 'none' | 'partial' | 'full' = 'none';
+                    if (typeof ragRelationship.metadata?.privacy?.level === 'string' && validEncryptionLevels.includes(ragRelationship.metadata.privacy.level as any)) {
+                        encryptionLevel = ragRelationship.metadata.privacy.level as 'none' | 'partial' | 'full';
+                    }
+                    const encryptedProperties = Array.isArray(ragRelationship.metadata?.privacy?.encryptedFields) ? ragRelationship.metadata.privacy.encryptedFields.filter((f): f is string => typeof f === 'string') : [];
+                    // Only allow valid temporalScope values
+                    const validTemporalScopes = ['event', 'always', 'period'] as const;
+                    let temporalScope: 'event' | 'always' | 'period' = 'always';
+                    if (typeof ragRelationship.temporal?.scope === 'string' && validTemporalScopes.includes(ragRelationship.temporal.scope as any)) {
+                        temporalScope = ragRelationship.temporal.scope as 'event' | 'always' | 'period';
+                    }
+                    const validFrom = typeof ragRelationship.temporal?.validFrom === 'number' ? ragRelationship.temporal.validFrom : undefined;
+                    const validUntil = typeof ragRelationship.temporal?.validUntil === 'number' ? ragRelationship.temporal.validUntil : undefined;
+                    const temporalContext = Array.isArray(ragRelationship.temporal?.context) ? ragRelationship.temporal.context.filter((c): c is string => typeof c === 'string') : [];
                     const relationshipDoc: Omit<IRAGRelationshipDocument, '_id' | 'createdAt' | 'updatedAt'> = {
-                        relationshipId: ragRelationship.id,
-                        universeId: ragRelationship.metadata?.universeId || '',
-                        sourceNodeId: ragRelationship.sourceNodeId,
-                        targetNodeId: ragRelationship.targetNodeId,
-                        relationshipType: ragRelationship.relationshipType,
-                        strength: ragRelationship.strength,
-                        bidirectional: ragRelationship.bidirectional,
-                        temporalScope: ragRelationship.temporal?.scope || 'always',
-                        validFrom: ragRelationship.temporal?.validFrom,
-                        validUntil: ragRelationship.temporal?.validUntil,
-                        temporalContext: ragRelationship.temporal?.context || [],
-                        encryptionLevel: ragRelationship.metadata?.privacy?.level || 'none',
-                        encryptedProperties: ragRelationship.metadata?.privacy?.encryptedFields || [],
-                        pluginType: ragRelationship.metadata?.pluginType,
-                        pluginMetadata: ragRelationship.metadata?.pluginData || {},
-                        authorId: ragRelationship.metadata?.authorId || '',
-                        versionHash: ragRelationship.metadata?.versionHash || '',
+                        relationshipId: ragRelationship.id || '',
+                        universeId,
+                        sourceNodeId: ragRelationship.sourceNodeId || '',
+                        targetNodeId: ragRelationship.targetNodeId || '',
+                        relationshipType: ragRelationship.relationshipType || '',
+                        strength: ragRelationship.strength ?? 0,
+                        bidirectional: ragRelationship.bidirectional ?? false,
+                        temporalScope,
+                        validFrom,
+                        validUntil,
+                        temporalContext,
+                        encryptionLevel,
+                        encryptedProperties,
+                        pluginType,
+                        pluginMetadata,
+                        authorId,
+                        versionHash,
                         lastSyncedAt: new Date()
                     };
 
@@ -345,7 +344,7 @@ export class RAGIntegrationService {
     /**
      * Extract searchable text from RAG node content
      */
-    private extractSearchableText(node: RAGNodeData): string {
+    private extractSearchableText(node: Node): string {
         const searchableFields = [
             node.title,
             node.summaries?.brief || '',
@@ -357,10 +356,14 @@ export class RAGIntegrationService {
         if (node.content) {
             if (typeof node.content === 'string') {
                 searchableFields.push(node.content);
-            } else if (node.content.description) {
-                searchableFields.push(node.content.description);
-            } else if (node.content.text) {
-                searchableFields.push(node.content.text);
+            } else if (typeof node.content === 'object' && node.content !== null) {
+                if ('description' in node.content && typeof node.content.description === 'string') {
+                    searchableFields.push(node.content.description);
+                }
+                // Only push text if it exists and is a string
+                if ('text' in node.content && typeof (node.content as any).text === 'string') {
+                    searchableFields.push((node.content as any).text);
+                }
             }
         }
 
@@ -489,33 +492,50 @@ export class RAGIntegrationService {
     private async syncSingleNode(ragId: string): Promise<void> {
         try {
             const response = await this.aiServerClient.get(`/api/rag/nodes/${ragId}`);
-            const ragNode: RAGNodeData = response.data;
+            const ragNode: Node = response.data;
 
+            const universeId = typeof ragNode.metadata?.universeId === 'string' ? ragNode.metadata.universeId : '';
+            const tags = Array.isArray(ragNode.metadata?.tags) ? ragNode.metadata.tags.filter((t): t is string => typeof t === 'string') : [];
+            const categories = Array.isArray(ragNode.metadata?.categories) ? ragNode.metadata.categories.filter((c): c is string => typeof c === 'string') : [];
+            const pluginType = typeof ragNode.metadata?.pluginType === 'string' ? ragNode.metadata.pluginType : undefined;
+            const authorId = typeof ragNode.metadata?.authorId === 'string' ? ragNode.metadata.authorId : '';
+            const collaborators = Array.isArray(ragNode.metadata?.collaborators) ? ragNode.metadata.collaborators.filter((c): c is string => typeof c === 'string') : [];
+            const versionHash = typeof ragNode.metadata?.versionHash === 'string' ? ragNode.metadata.versionHash : '';
+            const validEncryptionLevels = ['none', 'partial', 'full'] as const;
+            let encryptionLevel: 'none' | 'partial' | 'full' = 'none';
+            if (typeof ragNode.privacy?.level === 'string' && validEncryptionLevels.includes(ragNode.privacy.level as any)) {
+                encryptionLevel = ragNode.privacy.level as 'none' | 'partial' | 'full';
+            }
+            const encryptedFields = Array.isArray(ragNode.privacy?.encryptedFields) ? ragNode.privacy.encryptedFields.filter((f): f is string => typeof f === 'string') : [];
+            const keyHierarchy = typeof ragNode.privacy?.keyHierarchy === 'string' ? ragNode.privacy.keyHierarchy : '';
+            const timelinePosition = typeof ragNode.temporal?.position === 'number' ? ragNode.temporal.position : undefined;
+            const stardateEquivalent = typeof ragNode.temporal?.stardateEquivalent === 'number' ? ragNode.temporal.stardateEquivalent : undefined;
+            const temporalRelations = Array.isArray(ragNode.temporal?.relations) ? ragNode.temporal.relations.filter((r): r is string => typeof r === 'string') : [];
             const nodeDoc: Omit<IRAGNodeDocument, '_id' | 'createdAt' | 'updatedAt'> = {
                 ragId: ragNode.id,
-                universeId: ragNode.metadata?.universeId || '',
+                universeId,
                 nodeType: ragNode.type,
                 title: ragNode.title,
                 searchableText: this.extractSearchableText(ragNode),
-                tags: ragNode.metadata?.tags || [],
-                categories: ragNode.metadata?.categories || [],
-                encryptionLevel: ragNode.privacy?.level || 'none',
-                encryptedFields: ragNode.privacy?.encryptedFields || [],
-                keyHierarchy: ragNode.privacy?.keyHierarchy || '',
-                timelinePosition: ragNode.temporal?.position,
-                stardateEquivalent: ragNode.temporal?.stardateEquivalent,
-                temporalRelations: ragNode.temporal?.relations || [],
+                tags,
+                categories,
+                encryptionLevel,
+                encryptedFields,
+                keyHierarchy,
+                timelinePosition,
+                stardateEquivalent,
+                temporalRelations,
                 directConnections: [],
                 relationshipTypes: [],
                 connectionStrengths: [],
                 briefSummary: ragNode.summaries?.brief || '',
                 mediumSummary: ragNode.summaries?.medium || '',
                 detailedSummary: ragNode.summaries?.detailed || '',
-                pluginType: ragNode.metadata?.pluginType,
+                pluginType,
                 pluginMetadata: ragNode.pluginData || {},
-                authorId: ragNode.metadata?.authorId || '',
-                collaborators: ragNode.metadata?.collaborators || [],
-                versionHash: ragNode.metadata?.versionHash || '',
+                authorId,
+                collaborators,
+                versionHash,
                 lastSyncedAt: new Date(),
                 accessCount: 0,
                 lastAccessedAt: new Date()
@@ -533,26 +553,45 @@ export class RAGIntegrationService {
     private async syncSingleRelationship(relationshipId: string): Promise<void> {
         try {
             const response = await this.aiServerClient.get(`/api/rag/relationships/${relationshipId}`);
-            const ragRelationship: RAGRelationshipData = response.data;
+            const ragRelationship: NodeRelationship = response.data;
 
+            const universeId = typeof ragRelationship.metadata?.universeId === 'string' ? ragRelationship.metadata.universeId : '';
+            const pluginType = typeof ragRelationship.metadata?.pluginType === 'string' ? ragRelationship.metadata.pluginType : undefined;
+            const authorId = typeof ragRelationship.metadata?.authorId === 'string' ? ragRelationship.metadata.authorId : '';
+            const versionHash = typeof ragRelationship.metadata?.versionHash === 'string' ? ragRelationship.metadata.versionHash : '';
+            const pluginMetadata = typeof ragRelationship.metadata?.pluginData === 'object' && ragRelationship.metadata?.pluginData !== null ? ragRelationship.metadata.pluginData : {};
+            const validEncryptionLevels = ['none', 'partial', 'full'] as const;
+            let encryptionLevel: 'none' | 'partial' | 'full' = 'none';
+            if (typeof ragRelationship.metadata?.privacy?.level === 'string' && validEncryptionLevels.includes(ragRelationship.metadata.privacy.level as any)) {
+                encryptionLevel = ragRelationship.metadata.privacy.level as 'none' | 'partial' | 'full';
+            }
+            const encryptedProperties = Array.isArray(ragRelationship.metadata?.privacy?.encryptedFields) ? ragRelationship.metadata.privacy.encryptedFields.filter((f): f is string => typeof f === 'string') : [];
+            const validTemporalScopes = ['event', 'always', 'period'] as const;
+            let temporalScope: 'event' | 'always' | 'period' = 'always';
+            if (typeof ragRelationship.temporal?.scope === 'string' && validTemporalScopes.includes(ragRelationship.temporal.scope as any)) {
+                temporalScope = ragRelationship.temporal.scope as 'event' | 'always' | 'period';
+            }
+            const validFrom = typeof ragRelationship.temporal?.validFrom === 'number' ? ragRelationship.temporal.validFrom : undefined;
+            const validUntil = typeof ragRelationship.temporal?.validUntil === 'number' ? ragRelationship.temporal.validUntil : undefined;
+            const temporalContext = Array.isArray(ragRelationship.temporal?.context) ? ragRelationship.temporal.context.filter((c): c is string => typeof c === 'string') : [];
             const relationshipDoc: Omit<IRAGRelationshipDocument, '_id' | 'createdAt' | 'updatedAt'> = {
-                relationshipId: ragRelationship.id,
-                universeId: ragRelationship.metadata?.universeId || '',
-                sourceNodeId: ragRelationship.sourceNodeId,
-                targetNodeId: ragRelationship.targetNodeId,
-                relationshipType: ragRelationship.relationshipType,
-                strength: ragRelationship.strength,
-                bidirectional: ragRelationship.bidirectional,
-                temporalScope: ragRelationship.temporal?.scope || 'always',
-                validFrom: ragRelationship.temporal?.validFrom,
-                validUntil: ragRelationship.temporal?.validUntil,
-                temporalContext: ragRelationship.temporal?.context || [],
-                encryptionLevel: ragRelationship.metadata?.privacy?.level || 'none',
-                encryptedProperties: ragRelationship.metadata?.privacy?.encryptedFields || [],
-                pluginType: ragRelationship.metadata?.pluginType,
-                pluginMetadata: ragRelationship.metadata?.pluginData || {},
-                authorId: ragRelationship.metadata?.authorId || '',
-                versionHash: ragRelationship.metadata?.versionHash || '',
+                relationshipId: ragRelationship.id || '',
+                universeId,
+                sourceNodeId: ragRelationship.sourceNodeId || '',
+                targetNodeId: ragRelationship.targetNodeId || '',
+                relationshipType: ragRelationship.relationshipType || '',
+                strength: ragRelationship.strength ?? 0,
+                bidirectional: ragRelationship.bidirectional ?? false,
+                temporalScope,
+                validFrom,
+                validUntil,
+                temporalContext,
+                encryptionLevel,
+                encryptedProperties,
+                pluginType,
+                pluginMetadata,
+                authorId,
+                versionHash,
                 lastSyncedAt: new Date()
             };
 

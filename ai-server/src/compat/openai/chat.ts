@@ -144,6 +144,7 @@ export async function handleChatCompletions(req: Request, res: Response, next: N
 
             const id = generateChatCompletionId();
             const created = Math.floor(Date.now() / 1000);
+            let usageTracked = false;
 
             if (stream) {
                 setupSSEHeaders(res);
@@ -169,6 +170,20 @@ export async function handleChatCompletions(req: Request, res: Response, next: N
                     };
 
                     writeSSEChunk(res, chunk);
+
+                    // Track usage after first successful chunk
+                    if (!usageTracked && typeof orchestrator.trackUsageWithRAG === 'function') {
+                        try {
+                            orchestrator.trackUsageWithRAG(server.id, model, { source: 'direct' });
+                            usageTracked = true;
+                        } catch (usageErr) {
+                            if (typeof orchestrator.logger?.error === 'function') {
+                                orchestrator.logger.error(`[chat] Failed to track usage: ${usageErr}`);
+                            } else {
+                                console.error('[chat] Failed to track usage:', usageErr);
+                            }
+                        }
+                    }
 
                     if (obj.done) {
                         writeSSEChunk(res, '[DONE]');
@@ -203,6 +218,19 @@ export async function handleChatCompletions(req: Request, res: Response, next: N
                 }],
                 usage
             };
+
+            // Track usage after successful completion
+            if (typeof orchestrator.trackUsageWithRAG === 'function') {
+                try {
+                    orchestrator.trackUsageWithRAG(server.id, model, { source: 'direct' });
+                } catch (usageErr) {
+                    if (typeof orchestrator.logger?.error === 'function') {
+                        orchestrator.logger.error(`[chat] Failed to track usage: ${usageErr}`);
+                    } else {
+                        console.error('[chat] Failed to track usage:', usageErr);
+                    }
+                }
+            }
 
             res.status(200).json(completion);
 
@@ -325,6 +353,7 @@ export async function handleCompletions(req: Request, res: Response, next: NextF
 
             const id = generateCompletionId();
             const created = Math.floor(Date.now() / 1000);
+            let usageTracked = false;
 
             if (stream) {
                 setupSSEHeaders(res);
@@ -347,6 +376,20 @@ export async function handleCompletions(req: Request, res: Response, next: NextF
                     };
 
                     writeSSEChunk(res, chunk);
+
+                    // Track usage after first successful chunk
+                    if (!usageTracked && typeof orchestrator.trackUsageWithRAG === 'function') {
+                        try {
+                            orchestrator.trackUsageWithRAG(server.id, model, { source: 'direct' });
+                            usageTracked = true;
+                        } catch (usageErr) {
+                            if (typeof orchestrator.logger?.error === 'function') {
+                                orchestrator.logger.error(`[completions] Failed to track usage: ${usageErr}`);
+                            } else {
+                                console.error('[completions] Failed to track usage:', usageErr);
+                            }
+                        }
+                    }
 
                     if (obj.done) {
                         writeSSEChunk(res, '[DONE]');
@@ -374,6 +417,19 @@ export async function handleCompletions(req: Request, res: Response, next: NextF
                 }],
                 usage
             };
+
+            // Track usage after successful completion
+            if (typeof orchestrator.trackUsageWithRAG === 'function') {
+                try {
+                    orchestrator.trackUsageWithRAG(server.id, model, { source: 'direct' });
+                } catch (usageErr) {
+                    if (typeof orchestrator.logger?.error === 'function') {
+                        orchestrator.logger.error(`[completions] Failed to track usage: ${usageErr}`);
+                    } else {
+                        console.error('[completions] Failed to track usage:', usageErr);
+                    }
+                }
+            }
 
             res.status(200).json(completion);
 

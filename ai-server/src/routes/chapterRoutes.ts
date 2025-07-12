@@ -25,18 +25,21 @@ const router = Router();
  *       200:
  *         description: Array of chapters
  */
-router.get('/', async (req, res) => {
-    const { bookId } = req.query;
-    if (!bookId) {
-        return res.status(400).json({ error: 'bookId is required' });
-    }
-    try {
-        const chapters = await getChapters(bookId as string);
-        res.json(chapters);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch chapters' });
-    }
+router.get('/', (req, res, next) => {
+    (async () => {
+        const { bookId } = req.query;
+        if (!bookId) {
+            return res.status(400).json({ error: 'bookId is required' });
+        }
+        try {
+            const chapters = await getChapters(bookId as string);
+            res.json(chapters);
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to fetch chapters' });
+        }
+    })().catch(next);
 });
+
 
 /**
  * @swagger
@@ -61,18 +64,21 @@ router.get('/', async (req, res) => {
  *       201:
  *         description: Chapter created
  */
-router.post('/', async (req, res) => {
-    const { bookId } = req.query;
-    if (!bookId) {
-        return res.status(400).json({ error: 'bookId is required' });
-    }
-    try {
-        const created = await createChapterAndInvalidate(bookId as string, req.body);
-        res.status(201).json(created);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to create chapter' });
-    }
+router.post('/', (req, res, next) => {
+    (async () => {
+        const { bookId } = req.query;
+        if (!bookId) {
+            return res.status(400).json({ error: 'bookId is required' });
+        }
+        try {
+            const created = await createChapterAndInvalidate(bookId as string, req.body);
+            res.status(201).json(created);
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to create chapter' });
+        }
+    })().catch(next);
 });
+
 
 /**
  * @swagger
@@ -103,19 +109,22 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Chapter updated
  */
-router.put('/', async (req, res) => {
-    const { bookId, chapterId } = req.query;
-    if (!bookId || !chapterId) {
-        return res.status(400).json({ error: 'bookId and chapterId are required' });
-    }
-    try {
-        const ok = await updateChapterAndInvalidate(bookId as string, chapterId as string, req.body);
-        if (ok) res.json({ success: true });
-        else res.status(404).json({ error: 'Chapter not found' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to update chapter' });
-    }
+router.put('/', (req, res, next) => {
+    (async () => {
+        const { bookId, chapterId } = req.query;
+        if (!bookId || !chapterId) {
+            return res.status(400).json({ error: 'bookId and chapterId are required' });
+        }
+        try {
+            const ok = await updateChapterAndInvalidate(bookId as string, chapterId as string, req.body);
+            if (ok) res.json({ success: true });
+            else res.status(404).json({ error: 'Chapter not found' });
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to update chapter' });
+        }
+    })().catch(next);
 });
+
 
 /**
  * @swagger
@@ -140,18 +149,21 @@ router.put('/', async (req, res) => {
  *       200:
  *         description: Chapter deleted
  */
-router.delete('/', async (req, res) => {
-    const { bookId, chapterId } = req.query;
-    if (!bookId || !chapterId) {
-        return res.status(400).json({ error: 'bookId and chapterId are required' });
-    }
-    try {
-        const ok = await deleteChapterAndInvalidate(bookId as string, chapterId as string);
-        if (ok) res.json({ success: true });
-        else res.status(404).json({ error: 'Chapter not found' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to delete chapter' });
-    }
+router.delete('/', (req, res, next) => {
+    (async () => {
+        const { bookId, chapterId } = req.query;
+        if (!bookId || !chapterId) {
+            return res.status(400).json({ error: 'bookId and chapterId are required' });
+        }
+        try {
+            const ok = await deleteChapterAndInvalidate(bookId as string, chapterId as string);
+            if (ok) res.json({ success: true });
+            else res.status(404).json({ error: 'Chapter not found' });
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to delete chapter' });
+        }
+    })().catch(next);
 });
+
 
 export default router;

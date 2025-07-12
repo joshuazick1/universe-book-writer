@@ -1,0 +1,18 @@
+[
+    {
+        "id": "len-001",
+        "input": "The Enterprise is the flagship of Starfleet.",
+        "reference_length": {
+            "min": 5,
+            "max": 10
+        }
+    },
+    {
+        "id": "len-002",
+        "input": "Yoda trained many Jedi.",
+        "reference_length": {
+            "min": 4,
+            "max": 6
+        }
+    }
+]

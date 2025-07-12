@@ -8,7 +8,7 @@
 import { Router } from 'express';
 import { getOrchestratorInstance } from '../orchestrator-instance.js';
 import { getModelPerformanceRAGService } from '../services/modelPerformanceRAG.service.js';
-import { logInfo, logError, logDebug } from '../logger.js';
+import { logger } from '../../../shared/logging/logger.js';
 
 const router = Router();
 
@@ -89,7 +89,7 @@ router.get('/models', async (req, res) => {
         });
 
     } catch (error) {
-        logError(`Error getting model performance: ${error}`);
+        logger.error(`Error getting model performance: ${error}`);
         res.status(500).json({
             success: false,
             error: 'Failed to get model performance data',
@@ -155,7 +155,7 @@ router.get('/models/:modelName', async (req, res) => {
         });
 
     } catch (error) {
-        logError(`Error getting model ${req.params.modelName} performance: ${error}`);
+        logger.error(`Error getting model ${req.params.modelName} performance: ${error}`);
         res.status(500).json({
             success: false,
             error: 'Failed to get model performance details',
@@ -212,7 +212,7 @@ router.post('/query', async (req, res) => {
         });
 
     } catch (error) {
-        logError(`Error processing performance query: ${error}`);
+        logger.error(`Error processing performance query: ${error}`);
         res.status(500).json({
             success: false,
             error: 'Failed to process performance query',
@@ -264,7 +264,7 @@ router.get('/recommendations/:taskType', async (req, res) => {
         });
 
     } catch (error) {
-        logError(`Error getting recommendations for ${req.params.taskType}: ${error}`);
+        logger.error(`Error getting recommendations for ${req.params.taskType}: ${error}`);
         res.status(500).json({
             success: false,
             error: 'Failed to get model recommendations',
@@ -291,7 +291,7 @@ router.post('/sync', async (req, res) => {
         });
 
     } catch (error) {
-        logError(`Error syncing benchmark data to RAG: ${error}`);
+        logger.error(`Error syncing benchmark data to RAG: ${error}`);
         res.status(500).json({
             success: false,
             error: 'Failed to sync benchmark data to RAG',
@@ -353,7 +353,7 @@ router.get('/health', async (req, res) => {
         });
 
     } catch (error) {
-        logError(`Error getting performance health: ${error}`);
+        logger.error(`Error getting performance health: ${error}`);
         res.status(500).json({
             success: false,
             error: 'Failed to get performance health status',

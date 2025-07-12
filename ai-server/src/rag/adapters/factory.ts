@@ -1,7 +1,7 @@
 import type { RAGStorageBackend } from '../services/storage.service.js';
 import { InMemoryRagAdapter } from './memory.adapter.js';
 import { MongoDBRagAdapter, MongoDBStorageConfig } from './mongodb.adapter.js';
-import { logInfo, logError } from '../../logger.js';
+import { logger } from '../../../../shared/logging/logger.js';
 
 /**
  * Storage adapter types
@@ -29,7 +29,7 @@ export class StorageAdapterFactory {
      * Create a storage adapter based on configuration
      */
     static async createAdapter(config: StorageAdapterConfig): Promise<RAGStorageBackend> {
-        logInfo(`Creating storage adapter of type: ${config.type}`);
+        logger.info(`Creating storage adapter of type: ${config.type}`);
 
         switch (config.type) {
             case 'memory':
@@ -79,7 +79,7 @@ export class StorageAdapterFactory {
     }): Promise<RAGStorageBackend> {
         // For now, just return the primary adapter
         // In the future, we can implement a true hybrid adapter that uses cache for reads
-        logInfo('Creating hybrid adapter - using primary storage for now');
+        logger.info('Creating hybrid adapter - using primary storage for now');
         return this.createAdapter(config.primary);
     }
 
@@ -129,14 +129,14 @@ export class StorageAdapterFactory {
 
         try {
             const adapter = await this.createAdapter(config);
-            logInfo(`Successfully created ${adapterType} storage adapter`);
+            logger.info(`Successfully created ${adapterType} storage adapter`);
             return adapter;
         } catch (error) {
-            logError(`Failed to create ${adapterType} adapter: ${error instanceof Error ? error.message : String(error)}`);
+            logger.error(`Failed to create ${adapterType} adapter: ${error instanceof Error ? error.message : String(error)}`);
 
             // Fallback to memory adapter if primary fails
             if (adapterType !== 'memory') {
-                logInfo('Falling back to memory storage adapter');
+                logger.info('Falling back to memory storage adapter');
                 return this.createMemoryAdapter();
             }
 

@@ -24,7 +24,7 @@ import { DualAiProcessor, DualAiResult } from '../processors/dualAiProcessor.js'
 import { ConfidenceFilter } from '../processors/confidenceFilter.js';
 import { RelationshipExtractor } from '../parsers/relationshipExtractor.js';
 import { getRAGServiceManager } from '../../../rag/instance.js';
-import { logInfo, logError, logDebug } from '../../../logger.js';
+import { logger } from '../../../../../shared/logging/logger.js';
 
 export class ParserEngine extends EventEmitter {
     private primaryParser: PrimaryParser;
@@ -57,9 +57,9 @@ export class ParserEngine extends EventEmitter {
     async initialize(): Promise<void> {
         try {
             this.ragService = await getRAGServiceManager();
-            logInfo('Enhanced parser engine initialized successfully');
+            logger.info('Enhanced parser engine initialized successfully');
         } catch (error) {
-            logError(`Failed to initialize parser engine: ${error}`);
+            logger.error(`Failed to initialize parser engine: ${error}`);
             throw error;
         }
     }
@@ -73,7 +73,7 @@ export class ParserEngine extends EventEmitter {
     async processJob(job: ProcessingJob): Promise<ProcessingResult> {
         const startTime = Date.now();
 
-        logInfo(`Starting enhanced text parsing job ${job.id}`);
+        logger.info(`Starting enhanced text parsing job ${job.id}`);
         this.emit('jobProgress', job.id, { phase: 'initialization', progress: 0 });
 
         try {
@@ -180,11 +180,11 @@ export class ParserEngine extends EventEmitter {
             const processingTime = Date.now() - startTime;
             result.processingTime = processingTime;
 
-            logInfo(`Enhanced text parsing job ${job.id} completed: ${result.entities.length} entities in ${processingTime}ms`);
+            logger.info(`Enhanced text parsing job ${job.id} completed: ${result.entities.length} entities in ${processingTime}ms`);
             this.emit('jobProgress', job.id, { phase: 'completed', progress: 100 });
             return result;
         } catch (error) {
-            logError(`Enhanced text parsing job ${job.id} failed: ${error}`);
+            logger.error(`Enhanced text parsing job ${job.id} failed: ${error}`);
             throw error;
         }
     }
@@ -264,7 +264,7 @@ export class ParserEngine extends EventEmitter {
             job.progress.totalChunks = chunks.length;
         }
 
-        logInfo(`Processing ${chunks.length} chunks with dual-AI pipeline`);
+        logger.info(`Processing ${chunks.length} chunks with dual-AI pipeline`);
 
         // Step 2: Process chunks with dual-AI
         if (job.progress) {
@@ -340,10 +340,10 @@ export class ParserEngine extends EventEmitter {
                     confidence: dualAiResult.confidence ?? 0
                 });
 
-                logDebug(`Chunk ${i + 1}/${chunks.length}: ${dualAiResult.entities.length} entities, ${dualAiResult.relationships?.length || 0} relationships`);
+                logger.debug(`Chunk ${i + 1}/${chunks.length}: ${dualAiResult.entities.length} entities, ${dualAiResult.relationships?.length || 0} relationships`);
 
             } catch (error) {
-                logError(`Failed to process chunk ${i + 1}: ${error}`);
+                logger.error(`Failed to process chunk ${i + 1}: ${error}`);
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 // Continue with other chunks
                 chunkAnalyses.push({
@@ -358,7 +358,7 @@ export class ParserEngine extends EventEmitter {
             }
         }
 
-        logInfo(`Dual-AI processing completed: ${allEntities.length} entities from ${chunks.length} chunks`);
+        logger.info(`Dual-AI processing completed: ${allEntities.length} entities from ${chunks.length} chunks`);
 
         // Step 3: Post-process entities
         job.progress.currentPhase = 'post_processing';
@@ -450,7 +450,7 @@ export class ParserEngine extends EventEmitter {
                 });
 
             } catch (error) {
-                logError(`Failed to parse chunk ${i + 1}: ${error}`);
+                logger.error(`Failed to parse chunk ${i + 1}: ${error}`);
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 chunkAnalyses.push({
                     chunkIndex: i,
@@ -464,7 +464,7 @@ export class ParserEngine extends EventEmitter {
             }
         }
 
-        logInfo(`Primary parsing completed: ${allEntities.length} entities from ${chunks.length} chunks`);
+        logger.info(`Primary parsing completed: ${allEntities.length} entities from ${chunks.length} chunks`);
 
         // Step 3: Post-process entities
         job.progress.currentPhase = 'post_processing';
@@ -495,7 +495,7 @@ export class ParserEngine extends EventEmitter {
             return result;
         }
 
-        logInfo(`Applying confidence filtering to ${result.entities.length} entities`);
+        logger.info(`Applying confidence filtering to ${result.entities.length} entities`);
 
         const filteringOptions = {
             strictMode: false,
@@ -518,7 +518,7 @@ export class ParserEngine extends EventEmitter {
             filteringOptions
         );
 
-        logInfo(`Confidence filtering: ${result.entities.length} -> ${filteringResult.entities.length} entities`);
+        logger.info(`Confidence filtering: ${result.entities.length} -> ${filteringResult.entities.length} entities`);
 
         return {
             ...result,
@@ -555,7 +555,7 @@ export class ParserEngine extends EventEmitter {
                 }
             };
         } catch (error) {
-            logError(`Failed to create RAG nodes: ${error}`);
+            logger.error(`Failed to create RAG nodes: ${error}`);
             return result;
         }
     }
@@ -622,7 +622,7 @@ export class ParserEngine extends EventEmitter {
         // Filter by confidence threshold
         const filtered = Array.from(entityMap.values()).filter(entity => entity.confidence >= 0.6);
 
-        logDebug(`Post-processing: ${entities.length} -> ${filtered.length} entities after deduplication and filtering`);
+        logger.debug(`Post-processing: ${entities.length} -> ${filtered.length} entities after deduplication and filtering`);
 
         return filtered;
     }
@@ -673,7 +673,7 @@ export class ParserEngine extends EventEmitter {
         const createdNodeIds: string[] = [];
 
         if (!this.ragService) {
-            logError('RAG service not available for node creation');
+            logger.error('RAG service not available for node creation');
             return createdNodeIds;
         }
 
@@ -701,10 +701,10 @@ export class ParserEngine extends EventEmitter {
                 const createdNode = await this.ragService.createNode(nodeData);
                 createdNodeIds.push(createdNode.id);
 
-                logDebug(`Created RAG node ${createdNode.id} for entity ${entity.name}`);
+                logger.debug(`Created RAG node ${createdNode.id} for entity ${entity.name}`);
 
             } catch (error) {
-                logError(`Failed to create RAG node for entity ${entity.name}: ${error}`);
+                logger.error(`Failed to create RAG node for entity ${entity.name}: ${error}`);
                 // Continue with other entities
             }
         }

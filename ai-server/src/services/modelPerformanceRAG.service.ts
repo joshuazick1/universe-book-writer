@@ -7,9 +7,10 @@
 
 import { RAGServiceManager } from '../rag/manager.js';
 import { getRAGServiceManager } from '../rag/instance.js';
+import { ensureNode } from '../../../shared/node/nodeService.js';
 import { BenchmarkManager } from '../benchmarkManager.js';
 import { AIOrchestrator } from '../orchestrator.js';
-import { logInfo, logError } from '../logger.js';
+import { logger } from '../../../shared/logging/logger.js';
 import type {
     RAGNode,
     RAGRelationship,
@@ -68,7 +69,7 @@ export class ModelPerformanceRAGService {
             console.log('[RAG] ModelPerformanceRAGService: Starting initialization...');
             this.ragManager = await getRAGServiceManager();
             console.log('[RAG] ModelPerformanceRAGService: RAG manager obtained successfully');
-            logInfo('Model Performance RAG Service initialized');
+            logger.info('Model Performance RAG Service initialized');
 
             // Perform initial sync
             console.log('[RAG] ModelPerformanceRAGService: Starting initial benchmark sync...');
@@ -80,12 +81,12 @@ export class ModelPerformanceRAGService {
                 try {
                     await this.syncBenchmarkDataToRAG();
                 } catch (error) {
-                    logError(`Periodic benchmark sync failed: ${error}`);
+                    logger.error(`Periodic benchmark sync failed: ${error}`);
                 }
             }, 30 * 60 * 1000);
 
         } catch (error) {
-            logError(`Failed to initialize Model Performance RAG Service: ${error}`);
+            logger.error(`Failed to initialize Model Performance RAG Service: ${error}`);
             throw error;
         }
     }
@@ -98,7 +99,7 @@ export class ModelPerformanceRAGService {
             clearInterval(this.syncInterval);
             this.syncInterval = null;
         }
-        logInfo('Model Performance RAG Service shut down');
+        logger.info('Model Performance RAG Service shut down');
     }
 
     /**
@@ -140,10 +141,10 @@ export class ModelPerformanceRAGService {
                 }
             }
 
-            logInfo(`Synced ${synced.modelNodes} model nodes, ${synced.serverNodes} server nodes, ${synced.performanceNodes} performance nodes, and ${synced.relationships} relationships to RAG`);
+            logger.info(`Synced ${synced.modelNodes} model nodes, ${synced.serverNodes} server nodes, ${synced.performanceNodes} performance nodes, and ${synced.relationships} relationships to RAG`);
 
         } catch (error) {
-            logError(`Failed to sync benchmark data to RAG: ${error}`);
+            logger.error(`Failed to sync benchmark data to RAG: ${error}`);
             throw error;
         }
     }
@@ -152,146 +153,35 @@ export class ModelPerformanceRAGService {
      * Create or update a model node with capability information
      */
     private async syncModelNode(modelName: string): Promise<void> {
-        const nodeId = `model:${modelName}`;
-
-        // Gather capability information from all servers running this model
-        const capabilities = this.gatherModelCapabilities(modelName);
-
-        const modelNode: RAGNode = {
-            id: nodeId,
-            type: 'ai-model' as RAGNodeType,
-            title: `AI Model: ${modelName}`,
-            content: {
-                description: `AI language model ${modelName} with multi-server deployment capabilities`,
-                attributes: {
-                    modelName,
-                    modelType: this.inferModelType(modelName),
-                    capabilities: capabilities,
-                    averagePerformance: this.calculateAverageModelPerformance(modelName),
-                    deploymentCount: this.getModelDeploymentCount(modelName),
-                    parameterSize: this.estimateParameterSize(modelName),
-                    contextWindow: this.estimateContextWindow(modelName)
-                }
-            },
-            summaries: {
-                brief: `${modelName}: ${capabilities.primaryCapabilities.join(', ')}`,
-                medium: `AI model ${modelName} specializing in ${capabilities.primaryCapabilities.join(', ')}. Deployed on ${this.getModelDeploymentCount(modelName)} server(s) with average performance metrics.`,
-                detailed: `${modelName} is an AI language model with capabilities including ${capabilities.allCapabilities.join(', ')}. Currently deployed on ${this.getModelDeploymentCount(modelName)} server(s). Performance characteristics: ${capabilities.performanceSummary}. Best suited for: ${capabilities.recommendedUseCases.join(', ')}.`
-            },
-            embeddings: await this.generateModelEmbeddings(modelName, capabilities),
+        // Use shared ensureNode utility for ai-model
+        await ensureNode({
+            type: 'ai-model',
+            title: modelName,
             metadata: {
+                // Add any additional metadata as needed
                 universeId: 'system',
                 ownerId: 'system',
-                sensitivity: 'public' as const,
-                tags: [
-                    'ai-model',
-                    'language-model',
-                    modelName.toLowerCase(),
-                    ...capabilities.primaryCapabilities.map(c => c.toLowerCase().replace(/\s+/g, '-')),
-                    `deployments-${this.getModelDeploymentCount(modelName)}`,
-                    capabilities.performanceClass
-                ],
-                version: 1,
-                sourcePlugin: 'ai-orchestrator'
-            },
-            privacy: {
-                encrypted: false,
-                shareable: true
-            },
-            temporal: {
-                startDate: new Date()
-            },
-            timestamps: {
-                created: new Date(),
-                modified: new Date()
-            },
-            active: true // Ensure all model nodes are created as active
-        };
-
-        // Upsert pattern: check if node exists, update if yes, create if no
-        const existingNode = await this.ragManager.getNode(nodeId);
-        if (existingNode) {
-            const { id, timestamps, ...updateData } = modelNode;
-            await this.ragManager.updateNode(nodeId, updateData);
-        } else {
-            const { timestamps, ...nodeData } = modelNode;
-            await this.ragManager.createNode(nodeData);
-        }
-        //
+                sourcePlugin: 'ai-orchestrator',
+                // Optionally add more fields from capabilities, etc.
+            }
+        });
     }
 
     /**
      * Create or update a server node with hardware and deployment information
      */
     private async syncServerNode(server: any): Promise<void> {
-        const nodeId = `server:${server.id}`;
-
-        const serverInfo = this.gatherServerInformation(server);
-
-        const serverNode: RAGNode = {
-            id: nodeId,
-            type: 'ai-server' as RAGNodeType,
-            title: `AI Server: ${server.id}`,
-            content: {
-                description: `AI inference server hosting multiple language models`,
-                attributes: {
-                    serverId: server.id,
-                    serverUrl: server.url || 'Unknown',
-                    hostedModels: server.models || [],
-                    modelCount: server.models?.length || 0,
-                    serverCapabilities: serverInfo.capabilities,
-                    hardwareProfile: serverInfo.hardwareProfile,
-                    performanceProfile: serverInfo.performanceProfile,
-                    status: server.status || 'unknown',
-                    lastHealthCheck: serverInfo.lastHealthCheck
-                }
-            },
-            summaries: {
-                brief: `Server ${server.id}: ${server.models?.length || 0} models, ${serverInfo.performanceProfile.overallRating} performance`,
-                medium: `AI server ${server.id} hosting ${server.models?.length || 0} models including ${(server.models || []).slice(0, 3).join(', ')}. Performance rating: ${serverInfo.performanceProfile.overallRating}.`,
-                detailed: `AI inference server ${server.id} at ${server.url || 'unknown location'} hosting ${server.models?.length || 0} models: ${(server.models || []).join(', ')}. Hardware profile: ${serverInfo.hardwareProfile.description}. Performance characteristics: ${serverInfo.performanceProfile.description}. Server status: ${server.status || 'unknown'}.`
-            },
-            embeddings: await this.generateServerEmbeddings(server, serverInfo),
+        // Use shared ensureNode utility for ai-server
+        await ensureNode({
+            type: 'ai-server',
+            title: server.id,
             metadata: {
                 universeId: 'system',
                 ownerId: 'system',
-                sensitivity: 'public' as const,
-                tags: [
-                    'ai-server',
-                    'inference-server',
-                    server.id.toLowerCase(),
-                    `models-${server.models?.length || 0}`,
-                    serverInfo.performanceProfile.overallRating,
-                    serverInfo.hardwareProfile.category,
-                    server.status || 'unknown'
-                ],
-                version: 1,
-                sourcePlugin: 'ai-orchestrator'
-            },
-            privacy: {
-                encrypted: false,
-                shareable: true
-            },
-            temporal: {
-                startDate: new Date()
-            },
-            timestamps: {
-                created: new Date(),
-                modified: new Date()
-            },
-            active: true // Ensure all server nodes are created as active
-        };
-
-        // Upsert pattern for server node
-        const existingServerNode = await this.ragManager.getNode(nodeId);
-        if (existingServerNode) {
-            const { id, timestamps, ...updateData } = serverNode;
-            await this.ragManager.updateNode(nodeId, updateData);
-        } else {
-            const { timestamps, ...nodeData } = serverNode;
-            await this.ragManager.createNode(nodeData);
-        }
-        //
+                sourcePlugin: 'ai-orchestrator',
+                // Optionally add more fields from serverInfo, etc.
+            }
+        });
     }
 
     /**
@@ -303,76 +193,19 @@ export class ModelPerformanceRAGService {
         benchmark: ServerModelBenchmark
     ): Promise<void> {
 
-        const nodeId = `performance:${serverId}:${modelName}`;
-
-        // Calculate additional metrics
-        const trends = this.calculatePerformanceTrends(serverId, modelName);
-        const contextualMetrics = this.inferContextualPerformance(benchmark);
-
-        const performanceNode: RAGNode = {
-            id: nodeId,
-            type: 'model-performance' as RAGNodeType,
+        // Use shared ensureNode utility for model-performance
+        await ensureNode({
+            type: 'model-performance',
             title: `${modelName} Performance on ${serverId}`,
-            content: {
-                description: `Performance metrics for ${modelName} on server ${serverId}`,
-                attributes: {
-                    serverId,
-                    modelName,
-                    performanceMetrics: {
-                        ...benchmark,
-                        averageLatency: this.benchmarkManager.getServerAvgLatency({ id: serverId, models: [modelName] } as any),
-                        stabilityScore: this.calculateStabilityScore(serverId, modelName),
-                        qualityScore: this.estimateQualityScore(benchmark)
-                    },
-                    contextualPerformance: contextualMetrics,
-                    trends
-                }
-            },
-            summaries: {
-                brief: `${modelName}: ${benchmark.latencyMs.toFixed(1)}ms avg latency, ${benchmark.throughput.toFixed(1)} req/s`,
-                medium: `Model ${modelName} on server ${serverId} shows ${benchmark.latencyMs.toFixed(1)}ms average latency with ${benchmark.throughput.toFixed(1)} requests per second throughput. ${trends.improvingLatency ? 'Performance improving.' : 'Performance stable.'}`,
-                detailed: `Comprehensive performance analysis for model ${modelName} on server ${serverId}: Average latency of ${benchmark.latencyMs.toFixed(1)}ms, throughput of ${benchmark.throughput.toFixed(1)} requests per second. Last tested: ${new Date(benchmark.lastTested).toISOString()}. Performance trends: ${trends.improvingLatency ? 'improving latency' : 'stable latency'}, ${trends.consistentThroughput ? 'consistent throughput' : 'variable throughput'}. Recent failures: ${trends.recentFailures}.`
-            },
-            embeddings: await this.generatePerformanceEmbeddings(modelName, benchmark),
             metadata: {
                 universeId: 'system',
                 ownerId: 'system',
-                sensitivity: 'public' as const,
-                tags: [
-                    'model-performance',
-                    'benchmarks',
-                    serverId,
-                    modelName,
-                    `latency-${this.categorizeLatency(benchmark.latencyMs)}`,
-                    `throughput-${this.categorizeThroughput(benchmark.throughput)}`
-                ],
-                version: 1,
-                sourcePlugin: 'ai-orchestrator'
-            },
-            privacy: {
-                encrypted: false,
-                shareable: true
-            },
-            temporal: {
-                startDate: new Date(benchmark.lastTested)
-            },
-            timestamps: {
-                created: new Date(),
-                modified: new Date()
-            },
-            active: true // Ensure all model-performance nodes are created as active
-        };
-
-        // Upsert pattern for performance node
-        const existingPerfNode = await this.ragManager.getNode(nodeId);
-        if (existingPerfNode) {
-            const { id, timestamps, ...updateData } = performanceNode;
-            await this.ragManager.updateNode(nodeId, updateData);
-        } else {
-            const { timestamps, ...nodeData } = performanceNode;
-            await this.ragManager.createNode(nodeData);
-        }
-        //
+                sourcePlugin: 'ai-orchestrator',
+                serverId,
+                modelName,
+                // Optionally add more fields from benchmark, etc.
+            }
+        });
     }
 
     /**
@@ -654,7 +487,7 @@ export class ModelPerformanceRAGService {
             );
             return searchResults || [];
         } catch (error) {
-            logError(`Failed to query model performance: ${error}`);
+            logger.error(`Failed to query model performance: ${error}`);
             return [];
         }
     }
@@ -708,7 +541,7 @@ export class ModelPerformanceRAGService {
             return candidates.slice(0, 5); // Top 5 models
 
         } catch (error) {
-            logError(`Failed to get best models for task: ${error}`);
+            logger.error(`Failed to get best models for task: ${error}`);
             return [];
         }
     }
@@ -809,14 +642,14 @@ export class ModelPerformanceRAGService {
                     return result;
                 });
 
-            logInfo(`[RAG USAGE] Frequent model/server combinations with real usage:`);
+            logger.info(`[RAG USAGE] Frequent model/server combinations with real usage:`);
             for (const combo of results) {
-                logInfo(`[RAG USAGE] Model: ${combo.modelName} | Server: ${combo.serverId} | Usage: ${combo.usageCount}`);
+                logger.info(`[RAG USAGE] Model: ${combo.modelName} | Server: ${combo.serverId} | Usage: ${combo.usageCount}`);
             }
             return results;
 
         } catch (error) {
-            logError(`Failed to get frequent model/server combinations: ${error}`);
+            logger.error(`Failed to get frequent model/server combinations: ${error}`);
             return [];
         }
     }
@@ -885,7 +718,7 @@ export class ModelPerformanceRAGService {
             };
 
         } catch (error) {
-            logError(`Failed to get deployment stats: ${error}`);
+            logger.error(`Failed to get deployment stats: ${error}`);
             return {
                 totalCombinations: 0,
                 uniqueModels: 0,
@@ -949,7 +782,7 @@ export class ModelPerformanceRAGService {
             }
 
         } catch (error) {
-            logError(`Failed to track model usage: ${error}`);
+            logger.error(`Failed to track model usage: ${error}`);
         }
     }
 
@@ -971,7 +804,7 @@ export class ModelPerformanceRAGService {
     ): Promise<void> {
         try {
             // Targeted debug for usage tally
-            logInfo(`[RAG USAGE] incrementUsageTally CALLED for ${modelName} on ${serverId}` + (requestMetadata ? ` | metadata: ${JSON.stringify(requestMetadata)}` : ''));
+            logger.info(`[RAG USAGE] incrementUsageTally CALLED for ${modelName} on ${serverId}` + (requestMetadata ? ` | metadata: ${JSON.stringify(requestMetadata)}` : ''));
             const nodeId = `performance:${serverId}:${modelName}`;
             const timestamp = new Date();
             //
@@ -1048,7 +881,7 @@ export class ModelPerformanceRAGService {
                         modified: timestamp
                     }
                 });
-                logInfo(`[RAG USAGE] incrementUsageTally UPDATED node for ${modelName} on ${serverId} | totalUsageCount: ${totalUsageCount}`);
+                logger.info(`[RAG USAGE] incrementUsageTally UPDATED node for ${modelName} on ${serverId} | totalUsageCount: ${totalUsageCount}`);
             } else {
                 //
                 const newPerformanceNode: RAGNode = {
@@ -1125,10 +958,10 @@ export class ModelPerformanceRAGService {
                 const { timestamps, ...nodeData } = newPerformanceNode;
                 //
                 await this.ragManager.createNode(nodeData);
-                logInfo(`[RAG USAGE] incrementUsageTally CREATED node for ${modelName} on ${serverId} | totalUsageCount: 1`);
+                logger.info(`[RAG USAGE] incrementUsageTally CREATED node for ${modelName} on ${serverId} | totalUsageCount: 1`);
             }
         } catch (error) {
-            logError(`[RAG] Failed to increment usage tally for ${modelName} on ${serverId}: ${error}`);
+            logger.error(`[RAG] Failed to increment usage tally for ${modelName} on ${serverId}: ${error}`);
         }
     }
 
@@ -1282,7 +1115,7 @@ export class ModelPerformanceRAGService {
             };
 
         } catch (error) {
-            logError(`Failed to get usage stats by time range: ${error}`);
+            logger.error(`Failed to get usage stats by time range: ${error}`);
             throw error;
         }
     }

@@ -5,7 +5,7 @@
 import { EnhancedParsedEntity, ParsingContext, ChunkAnalysis } from '../core/interfaces.js';
 import { EntityType, RelationshipType } from '../core/entityTypes.js';
 import { JSONParser } from '../utils/jsonParser.js';
-import { logInfo, logError, logDebug } from '../../../logger.js';
+import { logger } from '../../../../../shared/logging/logger.js';
 
 export interface PrimaryParseResult {
     entities: EnhancedParsedEntity[];
@@ -66,7 +66,7 @@ export class PrimaryParser {
     ): Promise<PrimaryParseResult> {
         const startTime = Date.now();
 
-        logDebug(`Primary parsing chunk ${chunkIndex} (${chunkText.length} chars)`);
+        logger.debug(`Primary parsing chunk ${chunkIndex} (${chunkText.length} chars)`);
 
         try {
             // Generate the parsing prompt
@@ -118,7 +118,7 @@ export class PrimaryParser {
                 ? entities.reduce((sum, e) => sum + e.confidence, 0) / entities.length
                 : 0;
 
-            logInfo(`Primary parsing completed for chunk ${chunkIndex}: ${entities.length} entities, ${processingTime}ms`);
+            logger.info(`Primary parsing completed for chunk ${chunkIndex}: ${entities.length} entities, ${processingTime}ms`);
 
             return {
                 entities,
@@ -129,7 +129,7 @@ export class PrimaryParser {
             };
 
         } catch (error) {
-            logError(`Primary parsing failed for chunk ${chunkIndex}: ${error}`);
+            logger.error(`Primary parsing failed for chunk ${chunkIndex}: ${error}`);
             throw error;
         }
     }
@@ -235,7 +235,7 @@ Be thorough but precise. Focus on entities that are clearly described and relati
             return data.response || data.text || '';
 
         } catch (error) {
-            logError(`AI model call failed: ${error}`);
+            logger.error(`AI model call failed: ${error}`);
             throw error;
         }
     }
@@ -293,7 +293,7 @@ Be thorough but precise. Focus on entities that are clearly described and relati
                 const appearanceSectionIds = entity.appearanceSectionIds || (entity.metadata && entity.metadata.appearanceSectionIds) || [`section_${sectionIndex}`];
                 // Validation: must have universeId, id, type, title
                 if (!universeId || !entity.name) {
-                    logError(`Skipping invalid character node: missing universeId or name. Entity: ${JSON.stringify(entity)}`);
+                    logger.error(`Skipping invalid character node: missing universeId or name. Entity: ${JSON.stringify(entity)}`);
                     continue;
                 }
                 validEntities.push({

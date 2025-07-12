@@ -112,6 +112,9 @@ export type RAGNodeType =
     | 'issue'             // Bug report or feature request
     | 'commit'            // Version control commit
     | 'reference'         // External doc, link, or citation
+    // Memory/Story domain
+    | 'shared_memory'     // Shared memory node for multi-character events
+    | 'character_memory'  // Personalized character memory node
     // Extensibility
     | 'custom';           // For plugin-defined types
 
@@ -159,6 +162,9 @@ export interface RAGNodeMetadata {
     /** Universe this node belongs to */
     universeId: string;
 
+    /** Pipeline session this node belongs to (for deduplication/cross-chunk ops) */
+    sessionId?: string;
+
     /** User who created/owns this node */
     ownerId: string;
 
@@ -182,6 +188,15 @@ export interface RAGNodeMetadata {
 
     /** Chapter node parent (optional, for hierarchical structure) */
     chapterId?: string;
+
+    /** Mood classification for narrative analysis */
+    mood?: string;
+
+    /** Theme classification for narrative analysis */
+    theme?: string;
+
+    /** Timeline markers for narrative structure */
+    timelineMarkers?: string[];
 }
 
 /**
@@ -291,6 +306,9 @@ export type RAGRelationshipType =
     | 'fixes' // Commit or code fixes an issue
     | 'relates_to' // General association
     | 'depends_on' // Dependency relationship (code, requirements, etc.)
+    // RAG pipeline deduplication/cross-chunk
+    | 'duplicate_of' // Entity deduplication link
+    | 'cross_chunk_link' // Cross-chunk entity link
     // Extensibility
     | 'custom'; // Plugin-defined relationship types
 

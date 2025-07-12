@@ -1,64 +1,62 @@
-# GitHub Copilot Custom Instructions
+# Copilot Instructions for Universe Book Writer (VerseForge)
 
-This project is a **Multi-Universe Book Series Writing Assistant**, designed to help writers craft series of books set in various fictional universes.
+## Project Overview
 
-T- **Testing**:
+- **Monorepo** for a multi-universe book writing assistant: backend (Node.js/Express), frontend (React/Vite), AI server (Ollama), collaboration server, plugins, and shared utilities.
+- **Plugin-first**: All universe-specific logic is implemented as plugins. Core system remains agnostic.
+- **Layered backend**: Follows strict Clean Architecture (`backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md`): Core → Application → Infrastructure → API.
+- **Shared code**: All cross-cutting logic (node creation, types, logging, encryption, validation, etc.) is centralized in `shared/` and imported by all packages.
 
-- Write unit tests for all functions and components.
-- Achieve and maintain a test coverage of at least 80%.
-- Utilize testing libraries consistent with the project's tech stack (e.g., Jest for React).
-- Use the enhanced TypeScript test runner with organized output management:
-  - `npm test` - Run all tests with enhanced output
-  - `npm run test:backend` - Backend tests with file logging
-  - `npm run test:frontend` - Frontend tests with file logging
-  - `npm run test:coverage` - Coverage reports with enhanced output
-  - `npm run test:ai-server` - AI server tests with file logging
-  - `npm run test:collaboration-server` - Collaboration server tests with file logging
-  - `npm run test:packages` - Package tests with file logging
-- Add issue tracking comments when testing specific bugs or features:
-  - `npx tsx scripts/run-tests-with-output.ts --comment "Fixing auth bug" backend`
-  - `npx tsx scripts/run-tests-with-output.ts -c "Testing new feature" frontend`
-- Use pattern matching to run specific test categories:
-  - `npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth system"`
-  - `npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" -c "UI component tests"`
-- Enhanced test runner features:
+## Key Patterns & Conventions
 
-  - Console shows real-time ✅ checkmarks, ❌ for failures, ⏭️ for skipped tests
-  - Each test suite gets its own dedicated log file in timestamped directories under `test-results/`
-  - ANSI codes stripped from saved output for clean, readable logs
-  - Automatic log rotation (keeps last 10 test runs) to prevent disk space accumulation
-  - Accurate test result counting with Jest summary parsing
-  - File headers include execution metadata, issue comments, and debugging context
-  - Complete Jest output preserved alongside suite-specific files
-  - TypeScript-powered with full type safety and ES module compatibilityplication provides a framework for world-building and storytelling, with franchise-specific features implemented through plugins (such as Star Trek, Star Wars, or custom universes). The application provides tools for:
+- **Strict TypeScript**: Use interfaces, readonly, and strict typing everywhere. No `any` unless unavoidable.
+- **ES Modules only**: All code uses `import`/`export`.
+- **Barrel files**: Each directory (especially in `shared/`) should have an `index.ts` for exports.
+- **File size**: Backend files <200 lines, frontend <500 lines. Decompose logic aggressively.
+- **Testing**: All logic must be unit tested. Use the enhanced TypeScript runner (`scripts/run-tests-with-output.ts`) for all test execution. See below for commands.
+- **Documentation**: Every module and shared utility must have JSDoc and a local README with usage and edge cases.
+- **No duplication**: All shared logic (node services, types, helpers) must exist in `shared/` and be imported everywhere. Remove old copies after migration.
+- **Plugin SDK**: All plugin development must follow the SDK in `packages/plugin-sdk/`.
 
-- **World-Building**: Comprehensive creation of locations, vessels, factions, lore, etc., adaptable to any fictional universe through plugins.
-- **Character Development**: Tools for developing and managing characters across multiple books.
-- **Consistency Maintenance**: Ensuring continuity and coherence throughout the series.
-- **AI-Assisted Writing**: Utilizing Ollama for intelligent writing assistance.
-- **Visual Planning**: Timelines, relationship maps, and other planning tools.
-- **Real-Time Collaboration**: Features enabling multiple users to work together seamlessly.
+## Developer Workflows
 
-The project adopts a **monorepo structure** comprising:
+- **Build/Dev**: Use `npm run dev` (all services), or `npm run dev:backend`, `npm run dev:frontend`, etc.
+- **Testing**: Use `npm test` for all tests, or `npm run test:backend`, `npm run test:frontend`, etc. For targeted runs:
+  - `npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth"`
+  - `npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" --coverage`
+  - All test logs and summaries are in `test-results/` (rotated, per-suite, with metadata).
+- **CI/CD**: All merges require passing tests and >80% coverage. CI runs must use `--ci` or `--json` for machine-readable output.
+- **PowerShell**: Use `;` to chain commands. See `docs/POWERSHELL_GUIDE.md` for Windows-specific tips.
 
-- **Frontend**: React, TypeScript, Vite
-- **Backend**: Node.js, Express
-- **AI Server**: Ollama
-- **Collaboration Server**: Real-time collaboration functionalities
-- **Database**: MongoDB for data storage
+## Architecture & Data Flow
 
-## Development Guidelines
+- **Node creation**: Use `ensureNode` from `shared/node/nodeService.ts` everywhere. Example:
+  ```ts
+  import { ensureNode } from 'shared/node/nodeService';
+  const universeNode = await ensureNode({ type: 'universe', title: universeId, metadata: { universeId } });
+  ```
+- **Types**: All shared types/interfaces are in `shared/types/`. Never redefine in backend, ai-server, or plugins.
+- **Logging, encryption, validation, deduplication**: Always import from `shared/` (see `shared/README.md` for structure).
+- **API**: REST endpoints are versioned and documented in OpenAPI. See `backend/docs/API_DOCUMENTATION.md`.
+- **Collaboration**: Real-time sync via WebSocket (`collaboration-server/`).
+- **AI**: All AI orchestration and prompt logic is in `ai-server/`, with shared types in `shared/`.
 
-### Code Style
+## Examples & References
 
-- **TypeScript Practices**:
+- **Directory structure**: See `MODULAR_DIRECTORY_STRUCTURE.md` and `shared/README.md` for canonical layouts.
+- **Backend layering**: See `backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md`.
+- **Plugin development**: See `packages/plugin-sdk/README.md` and `plugins/` for real-world examples.
+- **Test runner**: See `scripts/run-tests-with-output.ts` for advanced test/CI features.
 
-  - Use **ES Modules** (`import`/`export`) exclusively.
-  - Enforce **strict typing**; avoid the `any` type unless absolutely necessary.
-  - Prefer `interface` over `type` for defining object shapes, unless specific use cases dictate otherwise.
-  - Utilize `readonly` for immutable properties to enhance code reliability.
+## Special Notes
 
-- **React Components**:
+- **All migrations**: When moving code to `shared/`, update all imports, remove old files, and update `tsconfig.json` includes.
+- **Architectural decisions**: All major changes must be logged in `docs/DECISION_LOG.md`.
+- **Documentation**: Update module and root READMEs, and architectural diagrams, after any structural change.
+
+---
+
+For more, see: `README.md`, `shared/README.md`, `backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md`, `MODULAR_DIRECTORY_STRUCTURE.md`, and `docs/DECISION_LOG.md`.
 
   - Employ **functional components** with hooks; avoid class components.
   - Use `PascalCase` for component names and filenames to maintain consistency.

@@ -11,7 +11,11 @@
 import { createServer } from 'http';
 import app from './app.js';
 import { setupSocketIO } from './socket/socket-setup.js';
-import { logInfo } from './logger.js';
+
+import { logger } from '../../shared/logging/logger.js';
+import { BenchmarkManager } from './benchmarkManager.js';
+import { QualityBenchmarkManager } from './services/benchmarking/QualityBenchmarkManager.js';
+import { getOrchestratorInstance } from './orchestrator-instance.js';
 
 const port = process.env.PORT || 5100;
 
@@ -35,17 +39,31 @@ export function startServer(customPort?: number | string, logger: (msg: string) 
   });
 }
 
+
 if (process.env.NODE_ENV !== 'test') {
   const server = startServer();
 
+  // --- Quality Benchmark Automation Bootstrap ---
+  try {
+    const orchestrator = getOrchestratorInstance();
+    const benchmarkManager = new BenchmarkManager();
+    // Pass orchestrator to QualityBenchmarkManager for model/server discovery
+    const qualityBenchmarkManager = new QualityBenchmarkManager(benchmarkManager, orchestrator);
+    // Optionally, set orchestrator again if needed (for hot reloads)
+    qualityBenchmarkManager.setOrchestrator(orchestrator);
+    logger.info('QualityBenchmarkManager initialized with orchestrator for automated benchmark scheduling.');
+  } catch (err) {
+    logger.error('Failed to initialize QualityBenchmarkManager for automated benchmarks: ' + (err instanceof Error ? err.message : String(err)));
+  }
+
   // Graceful shutdown handling
   async function gracefulShutdown(signal: string) {
-    logInfo(`Received ${signal}. Starting graceful shutdown...`);
+    logger.info(`Received ${signal}. Starting graceful shutdown...`);
 
     try {
       // Close the HTTP server
       server.close(() => {
-        logInfo('HTTP server closed');
+        logger.info('HTTP server closed');
       });
 
       // Shutdown orchestrator and its services
@@ -56,9 +74,9 @@ if (process.env.NODE_ENV !== 'test') {
       // Shutdown database connection
       const { sharedDatabaseConnection } = await import('./config/database.config.js');
       await sharedDatabaseConnection.disconnect();
-      logInfo('Database connection closed');
+      logger.info('Database connection closed');
 
-      logInfo('Graceful shutdown completed');
+      logger.info('Graceful shutdown completed');
       process.exit(0);
     } catch (error) {
       console.error('Error during graceful shutdown:', error);

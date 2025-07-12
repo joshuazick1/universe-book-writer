@@ -6,12 +6,12 @@
 import { EventEmitter } from 'events';
 import { ProcessingQueue, QueueConfig, QueueStats } from './processors/processingQueue.js';
 import { ParserEngine } from './core/parserEngine.js';
-import { 
-    ProcessingJob, 
-    ProcessingResult, 
+import {
+    ProcessingJob,
+    ProcessingResult,
     ParsingOptions
 } from './core/interfaces.js';
-import { logInfo, logError, logDebug } from '../../logger.js';
+import { logger } from '../../../../shared/logging/logger.js';
 
 export interface TextToRAGServiceConfig {
     aiServerUrl?: string;
@@ -26,9 +26,9 @@ export class TextToRAGParserService extends EventEmitter {
 
     constructor(config: TextToRAGServiceConfig = {}) {
         super();
-        
+
         const aiServerUrl = config.aiServerUrl || 'http://localhost:5100';
-        
+
         this.processingQueue = new ProcessingQueue(config.queueConfig);
         this.parserEngine = new ParserEngine(aiServerUrl);
 
@@ -45,16 +45,16 @@ export class TextToRAGParserService extends EventEmitter {
         }
 
         try {
-            logInfo('Initializing Text-to-RAG Parser Service...');
-            
+            logger.info('Initializing Text-to-RAG Parser Service...');
+
             // Initialize parser engine (which will initialize RAG service)
             await this.parserEngine.initialize();
-            
+
             this.isInitialized = true;
-            logInfo('Text-to-RAG Parser Service initialized successfully');
-            
+            logger.info('Text-to-RAG Parser Service initialized successfully');
+
         } catch (error) {
-            logError(`Failed to initialize Text-to-RAG Parser Service: ${error}`);
+            logger.error(`Failed to initialize Text-to-RAG Parser Service: ${error}`);
             throw error;
         }
     }
@@ -74,7 +74,7 @@ export class TextToRAGParserService extends EventEmitter {
             throw new Error('Source text cannot be empty');
         }
 
-        logInfo(`Starting text parsing: ${sourceText.length} characters, universe: ${options.universeId}`);
+        logger.info(`Starting text parsing: ${sourceText.length} characters, universe: ${options.universeId}`);
 
         // Add job to processing queue
         const jobId = await this.processingQueue.addJob(
@@ -83,7 +83,7 @@ export class TextToRAGParserService extends EventEmitter {
             (job: ProcessingJob) => this.parserEngine.processJob(job)
         );
 
-        logInfo(`Text parsing job created: ${jobId}`);
+        logger.info(`Text parsing job created: ${jobId}`);
         return jobId;
     }
 
@@ -126,7 +126,7 @@ export class TextToRAGParserService extends EventEmitter {
             throw new Error('Service not initialized. Call initialize() first.');
         }
 
-        logInfo(`Starting synchronous text parsing: ${sourceText.length} characters`);
+        logger.info(`Starting synchronous text parsing: ${sourceText.length} characters`);
 
         // Create a temporary job
         const job: ProcessingJob = {
@@ -156,15 +156,15 @@ export class TextToRAGParserService extends EventEmitter {
         };
     }> {
         const queueStats = this.getQueueStats();
-        
+
         // Service is healthy if:
         // 1. It's initialized
         // 2. Either no jobs have been processed yet, OR failure rate is less than 10%
         const isHealthy = this.isInitialized && (
-            queueStats.totalJobs === 0 || 
+            queueStats.totalJobs === 0 ||
             queueStats.failedJobs < queueStats.totalJobs * 0.1
         );
-        
+
         return {
             healthy: isHealthy,
             details: {
@@ -178,16 +178,16 @@ export class TextToRAGParserService extends EventEmitter {
      * Shutdown the service gracefully
      */
     async shutdown(): Promise<void> {
-        logInfo('Shutting down Text-to-RAG Parser Service...');
-        
+        logger.info('Shutting down Text-to-RAG Parser Service...');
+
         // Stop the processing queue
         this.processingQueue.stop();
-        
+
         // Remove event listeners
         this.removeAllListeners();
-        
+
         this.isInitialized = false;
-        logInfo('Text-to-RAG Parser Service shut down');
+        logger.info('Text-to-RAG Parser Service shut down');
     }
 
     /**

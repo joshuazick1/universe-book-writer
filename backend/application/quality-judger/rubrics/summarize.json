@@ -1,0 +1,47 @@
+{
+    "taskType": "summarize",
+    "metrics": [
+        {
+            "name": "length",
+            "description": "Summary is within the expected length range.",
+            "weight": 0.2,
+            "validator": "length",
+            "params": {
+                "min": 30,
+                "max": 200
+            }
+        },
+        {
+            "name": "coverage",
+            "description": "Summary covers all key points from the source.",
+            "weight": 0.3,
+            "validator": "llm",
+            "params": {
+                "prompt": "Does the summary cover all main ideas?",
+                "model": "smollm2:135m"
+            }
+        },
+        {
+            "name": "factuality",
+            "description": "Summary is factually accurate.",
+            "weight": 0.3,
+            "validator": "llm",
+            "params": {
+                "prompt": "Is the summary factually correct?",
+                "model": "smollm2:135m"
+            }
+        },
+        {
+            "name": "schema",
+            "description": "Summary output matches expected schema.",
+            "weight": 0.2,
+            "validator": "schema",
+            "params": {
+                "type": "object",
+                "required": [
+                    "summary"
+                ]
+            }
+        }
+    ]
+}

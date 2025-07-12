@@ -32,7 +32,7 @@
  */
 import { Request, Response, RequestHandler } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { logDebug, logError } from '../../logger.js';
+import { logger } from '../../../../shared/logging/logger.js';
 
 // In-memory assistant store (in production, use a database)
 interface AssistantRecord {
@@ -96,7 +96,7 @@ export const openaiListAssistantsHandler: RequestHandler = async (req, res): Pro
             has_more: false, // Simple implementation - always false
         });
     } catch (error) {
-        logError(`Error listing assistants: ${error}`);
+        logger.error(`Error listing assistants: ${error}`);
         res.status(500).json({
             error: {
                 message: 'Internal server error',
@@ -176,7 +176,7 @@ export const openaiCreateAssistantHandler: RequestHandler = async (req, res): Pr
 
         res.json(assistant);
     } catch (error) {
-        logError(`Error creating assistant: ${error}`);
+        logger.error(`Error creating assistant: ${error}`);
         res.status(500).json({
             error: {
                 message: 'Internal server error',
@@ -217,7 +217,7 @@ export const openaiRetrieveAssistantHandler: RequestHandler = async (req, res): 
 
         res.json(assistant);
     } catch (error) {
-        logError(`Error retrieving assistant: ${error}`);
+        logger.error(`Error retrieving assistant: ${error}`);
         res.status(500).json({
             error: {
                 message: 'Internal server error',
@@ -264,7 +264,7 @@ export const openaiDeleteAssistantHandler: RequestHandler = async (req, res): Pr
             deleted: true,
         });
     } catch (error) {
-        logError(`Error deleting assistant: ${error}`);
+        logger.error(`Error deleting assistant: ${error}`);
         res.status(500).json({
             error: {
                 message: 'Internal server error',

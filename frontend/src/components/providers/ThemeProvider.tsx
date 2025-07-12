@@ -4,7 +4,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { logger } from '../../utils/logger';
+import { logger } from 'shared/logging';
 import { useAuth } from '../../auth/hooks';
 
 /* === TYPES === */
@@ -116,7 +116,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
           });
           logger.info(`Theme preference saved to user profile: ${themeName}`);
         } catch (error) {
-          logger.warn('Failed to save theme preference to user profile, falling back to localStorage', error);
+          logger.warn(`Failed to save theme preference to user profile, falling back to localStorage: ${error}`);
         }
       }
 
@@ -251,7 +251,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const handleChange = (e: MediaQueryListEvent) => {
       if (currentTheme === 'default' || currentTheme === 'dark') {
         setTheme(e.matches ? 'dark' : 'default').catch(error => {
-          logger.warn('Failed to update theme based on system preference', error);
+          logger.warn(`Failed to update theme based on system preference: ${error}`);
         });
       }
     };

@@ -8,13 +8,13 @@
 import { Router, Request, Response, RequestHandler } from 'express';
 import { RAGServiceManager } from '../manager.js';
 import { RAGNodeType, RAGRelationshipType } from '../core/types.js';
-import { logInfo, logError, logDebug } from '../../logger.js';
+import { logger } from '../../../../shared/logging/logger.js';
 
 export function createSimpleRAGRouter(manager: RAGServiceManager): Router {
     const router = Router();
 
     // Log route creation
-    logInfo('Creating simple RAG router with all endpoints');
+    logger.info('Creating simple RAG router with all endpoints');
 
     /**
      * Health check
@@ -51,12 +51,12 @@ export function createSimpleRAGRouter(manager: RAGServiceManager): Router {
     router.post('/nodes', (async (req: Request, res: Response) => {
         try {
             const nodeData = req.body;
-            logDebug(`Creating node: ${JSON.stringify(nodeData)}`);
+            logger.debug(`Creating node: ${JSON.stringify(nodeData)}`);
 
             const node = await manager.createNode(nodeData);
             res.status(201).json(node);
         } catch (error) {
-            logError(`Error creating node: ${error instanceof Error ? error.message : String(error)}`);
+            logger.error(`Error creating node: ${error instanceof Error ? error.message : String(error)}`);
             res.status(500).json({
                 error: error instanceof Error ? error.message : 'Failed to create node'
             });
@@ -355,6 +355,6 @@ export function createSimpleRAGRouter(manager: RAGServiceManager): Router {
         }
     }) as RequestHandler);
 
-    logInfo(`RAG router created with ${router.stack?.length || 'multiple'} endpoints`);
+    logger.info(`RAG router created with ${router.stack?.length || 'multiple'} endpoints`);
     return router;
 }

@@ -53,6 +53,7 @@ import { UniverseCollaborationUseCase } from '../../application/use-cases/univer
 import { AuthController as AuthControllerImpl } from '../../api/controllers/auth.controller.js';
 import { UserController as UserControllerImpl } from '../../api/controllers/user.controller.js';
 import { AdminController as AdminControllerImpl } from '../../api/controllers/admin.controller.js';
+import { RAGIntegrationService, createRAGIntegrationService, RAGIntegrationConfig } from '../../services/rag-integration.service.js';
 import { UniverseController, UniverseValidationController } from '../../api/controllers/universe.controller.js';
 import { CollaborationInvitationController } from '../../api/controllers/collaboration-invitation.controller.js';
 import { UniverseCollaborationController } from '../../api/controllers/universe-collaboration.controller.js';
@@ -426,7 +427,18 @@ export class Container {
     this.register<AdminController>(TOKENS.ADMIN_CONTROLLER, container => {
       const adminUseCase = container.resolve<AdminUseCase>(TOKENS.ADMIN_USE_CASE);
       const securityService = container.resolve<SecurityService>(TOKENS.SECURITY_SERVICE);
-      return new AdminControllerImpl(adminUseCase, securityService);
+      // Create RAGIntegrationService instance
+      // You may want to move this config to your ContainerConfig or env
+      const ragIntegrationConfig: RAGIntegrationConfig = {
+        aiServerUrl: process.env.AI_SERVER_URL || 'http://localhost:8000',
+        aiServerApiKey: process.env.AI_SERVER_API_KEY,
+        databaseUrl: process.env.MONGO_URL || 'mongodb://localhost:27017',
+        databaseName: process.env.MONGO_DB_NAME || 'universe',
+        syncInterval: 60000,
+        batchSize: 100
+      };
+      const ragIntegrationService = createRAGIntegrationService(ragIntegrationConfig);
+      return new AdminControllerImpl(adminUseCase, securityService, ragIntegrationService);
     });
 
     // Universe controllers

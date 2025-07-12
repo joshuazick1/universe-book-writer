@@ -11,7 +11,7 @@ interface Server {
 import getOrchestratorInstance from '../orchestrator-instance.js';
 import { Router } from 'express';
 import fetch from 'node-fetch';
-import { logDebug, logError } from '../logger.js';
+import { logger } from '../../../shared/logging/logger.js';
 
 
 const router = Router();
@@ -19,23 +19,18 @@ const router = Router();
 // POST /api/generate
 router.post('/', (async (req: any, res: any) => {
     // --- DEBUG LOGGER TEST ---
-    try {
-        const { logInfo } = await import('../logger.js');
-        logInfo('[LOGGER TEST] /generate endpoint hit');
-    } catch (e) {
-        // ignore
-    }
+    logger.info('[LOGGER TEST] /generate endpoint hit');
     // Cleaned up debug output. Add targeted debug for usage tracking only.
     const orchestrator = req.app?.locals?.orchestrator || getOrchestratorInstance();
     const { model, prompt, stream, conversation } = req.body as { model: string; prompt: string; stream?: boolean; conversation?: any[] };
     // Only log errors and usage tracking
     if (!model || !prompt) {
-        logError('[generate] Missing model or prompt');
+        logger.error('[generate] Missing model or prompt');
         return res.status(400).json({ error: 'Model and prompt are required.' });
     }
     const healthyServers = orchestrator.getServers().filter((s: Server) => s.healthy && s.models.includes(model));
     if (healthyServers.length === 0) {
-        logError(`[generate] No healthy servers found for model '${model}'`);
+        logger.error(`[generate] No healthy servers found for model '${model}'`);
         return res.status(404).json({ error: `model '${model}' not found` });
     }
     try {
@@ -53,7 +48,7 @@ router.post('/', (async (req: any, res: any) => {
                     body: JSON.stringify({ model, prompt, stream })
                 });
             } catch (fetchErr) {
-                logError(`[generate] fetch threw error: ${fetchErr}`);
+                logger.error(`[generate] fetch threw error: ${fetchErr}`);
                 throw fetchErr;
             }
             const contentType = resp.headers.get('content-type') || '';
@@ -155,12 +150,12 @@ router.post('/', (async (req: any, res: any) => {
         // After inference, if successful, track usage as direct
         if (inferenceSuccess && usedServerId && usedModel) {
             try {
-                logError(`[generate] Calling trackUsageWithRAG for ${usedModel} on ${usedServerId}`);
+                logger.error(`[generate] Calling trackUsageWithRAG for ${usedModel} on ${usedServerId}`);
                 if (typeof orchestrator.trackUsageWithRAG === 'function') {
                     orchestrator.trackUsageWithRAG(usedServerId, usedModel, { source: 'direct' });
                 }
             } catch (usageErr) {
-                logError(`[generate] Failed to track usage: ${usageErr}`);
+                logger.error(`[generate] Failed to track usage: ${usageErr}`);
             }
         }
 
@@ -170,7 +165,7 @@ router.post('/', (async (req: any, res: any) => {
         }
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        logError(`[generate] Error: ${msg}`);
+        logger.error(`[generate] Error: ${msg}`);
         console.log('[DEBUG/generate] tryRequestWithFailover threw:', err);
         if (/model not found/i.test(msg)) return res.status(404).json({ error: `model '${model}' not found` });
         else return res.status(502).json({ error: 'All servers failed', message: msg, model });

@@ -91,6 +91,17 @@ class SharedDatabaseConnection {
             { key: { characterId: 1, canonStatus: 1 } },
         ]);
 
+        // Shared memories collection indexes (for shared_memory nodes)
+        await this.db.collection('shared_memories').createIndexes([
+            { key: { type: 1 } },
+            { key: { 'metadata.eventId': 1 } },
+            { key: { 'content.attributes.eventId': 1 } },
+            { key: { 'content.attributes.involved_entities': 1 } },
+            { key: { 'temporal.startDate': 1 } },
+            { key: { 'temporal.endDate': 1 } },
+            { key: { 'timestamps.created': 1 } },
+        ]);
+
         // Generated universes collection indexes
         await this.db.collection('generated_universes').createIndexes([
             { key: { name: 1 }, unique: true },
@@ -123,6 +134,7 @@ export interface DatabaseCollections {
     universes: Collection;
     generated_universes: Collection;
     character_memories: Collection;
+    shared_memories: Collection;
     users: Collection;
     api_keys: Collection;
 }
@@ -136,6 +148,7 @@ export const getCollections = async (): Promise<DatabaseCollections> => {
         universes: db.collection('universes'),
         generated_universes: db.collection('generated_universes'),
         character_memories: db.collection('character_memories'),
+        shared_memories: db.collection('shared_memories'),
         users: db.collection('users'),
         api_keys: db.collection('api_keys'),
     };

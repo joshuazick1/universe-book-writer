@@ -15,7 +15,9 @@
 
 import fetch from 'node-fetch';
 import { BenchmarkManager } from './benchmarkManager.js';
-import { logInfo, logError } from './logger.js';
+import { logger } from '../../shared/logging/logger.js';
+import { withJobErrorHandling } from './pipeline/utils/jobErrorHandler.js';
+import { emitJobSSEEvent } from './pipeline/utils/sseEvents.js';
 
 // Forward declaration to avoid circular dependency
 let ModelPerformanceRAGService: any = null;
@@ -51,6 +53,31 @@ interface RequestQueueEntry<T> {
 }
 
 export class AIOrchestrator {
+
+    /**
+     * Wrap a job handler with error handling, retry, and job stealing for distributed jobs.
+     * Use this for all distributed pipeline jobs.
+     * @param handler The job handler function (server: AIServer) => Promise<T>
+     * @param opts Options: model, version, sessionId, jobId
+     */
+    wrapDistributedJobHandler<T>(
+        handler: (server: AIServer) => Promise<T>,
+        opts: { model: string; version: string; sessionId: string; jobId: string }
+    ): (server: AIServer) => Promise<T> {
+        return async (server: AIServer) => {
+            const wrapped = withJobErrorHandling<{ jobId: string }, T>(
+                async () => handler(server),
+                {
+                    version: opts.version,
+                    sessionId: opts.sessionId,
+                    maxRetries: 3,
+                    retryDelayMs: 2000,
+                    jobStealTimeoutMs: 30000,
+                }
+            );
+            return wrapped({ jobId: opts.jobId });
+        };
+    }
     private servers: AIServer[] = [];
     /** Track in-flight requests per server/model: { '<serverId>:<model>': count } */
     private inFlight: Map<string, number> = new Map();
@@ -91,35 +118,20 @@ export class AIOrchestrator {
     async getRAGService(): Promise<any> {
         // Don't initialize if shut down
         if (this.isShutdown) {
-            console.log('[orchestrator] getRAGService: Orchestrator is shut down, returning null');
             return null;
         }
 
         if (this.performanceRAGService || this.ragServiceFailed) {
-            console.log('[orchestrator] getRAGService: Returning cached service or failed state:', {
-                hasService: !!this.performanceRAGService,
-                hasFailed: this.ragServiceFailed
-            });
             return this.performanceRAGService;
         }
 
         try {
-            console.log('[orchestrator] getRAGService: Initializing RAG service...');
-
             if (!ModelPerformanceRAGService) {
-                console.log('[orchestrator] getRAGService: Loading ModelPerformanceRAGService module...');
                 const module = await import('./services/modelPerformanceRAG.service.js');
                 ModelPerformanceRAGService = module.ModelPerformanceRAGService;
-                console.log('[orchestrator] getRAGService: Module loaded successfully');
             }
-
-            console.log('[orchestrator] getRAGService: Creating service instance...');
             this.performanceRAGService = new ModelPerformanceRAGService(this);
-
-            console.log('[orchestrator] getRAGService: Initializing service...');
             await this.performanceRAGService.initialize();
-
-            console.log('[orchestrator] Model Performance RAG Service initialized successfully');
             return this.performanceRAGService;
         } catch (error) {
             console.error('[orchestrator] Failed to initialize RAG service:', error);
@@ -146,21 +158,21 @@ export class AIOrchestrator {
         // Use setImmediate to make this completely non-blocking
         setImmediate(async () => {
             try {
-                logInfo(`[orchestrator] trackUsageWithRAG CALLED for ${modelName} on ${serverId}` + (requestMetadata ? ` | metadata: ${JSON.stringify(requestMetadata)}` : ''));
+                logger.info(`[orchestrator] trackUsageWithRAG CALLED for ${modelName} on ${serverId}` + (requestMetadata ? ` | metadata: ${JSON.stringify(requestMetadata)}` : ''));
                 if (requestMetadata && requestMetadata.source) {
-                    logInfo(`[orchestrator] trackUsageWithRAG source: ${requestMetadata.source}`);
+                    logger.info(`[orchestrator] trackUsageWithRAG source: ${requestMetadata.source}`);
                 }
                 const ragService = await this.getRAGService();
                 if (ragService) {
-                    logInfo(`[orchestrator] Calling incrementUsageTally for ${modelName} on ${serverId}`);
+                    logger.info(`[orchestrator] Calling incrementUsageTally for ${modelName} on ${serverId}`);
                     await ragService.incrementUsageTally(serverId, modelName, requestMetadata);
-                    logInfo(`[orchestrator] incrementUsageTally completed for ${modelName} on ${serverId}`);
+                    logger.info(`[orchestrator] incrementUsageTally completed for ${modelName} on ${serverId}`);
                 } else {
-                    logError(`[orchestrator] RAG service is null, cannot track usage for ${modelName} on ${serverId}`);
+                    logger.error(`[orchestrator] RAG service is null, cannot track usage for ${modelName} on ${serverId}`);
                 }
             } catch (error) {
                 // Log error but don't throw - this should not impact orchestration
-                logError(`[orchestrator] RAG usage tracking failed for ${modelName} on ${serverId}: ${error}`);
+                logger.error(`[orchestrator] RAG usage tracking failed for ${modelName} on ${serverId}: ${error}`);
             }
         });
     }
@@ -479,7 +491,7 @@ export class AIOrchestrator {
      * @returns The result or throws if all fail or all at max concurrency/queue
      */
     async tryRequestWithFailover<T>(model: string, fn: (server: AIServer) => Promise<T>): Promise<T> {
-        console.log('[orchestrator] tryRequestWithFailover called for model:', model);
+        // ...existing code...
 
         const tried: { server: string; error: string }[] = [];
         const candidates = this.servers
@@ -501,76 +513,58 @@ export class AIOrchestrator {
                 return ba - bb;
             });
 
-        console.log('[orchestrator] Found', candidates.length, 'candidate servers for model', model);
-        console.log('[orchestrator] Candidates:', candidates.map(s => ({
-            id: s.id,
-            healthy: s.healthy,
-            hasModel: s.models.includes(model),
-            inFlight: this.getInFlight(s.id, model),
-            maxConcurrency: s.maxConcurrency
-        })));
+        // ...removed debug logs...
 
         if (candidates.length === 0) {
-            console.log('[orchestrator] No candidates found. Total servers:', this.servers.length);
-            console.log('[orchestrator] Server states:', this.servers.map(s => ({
-                id: s.id,
-                healthy: s.healthy,
-                models: s.models,
-                hasModel: s.models.includes(model),
-                inCooldown: this.isInCooldown(s.id, model),
-                permanentBan: this.permanentBan.has(`${s.id}:${model}`)
-            })));
             throw new Error(`No healthy servers available for model '${model}'.`);
         }
         // Try all candidates for immediate execution (least-connections first)
         for (const server of candidates) {
             const max = server.maxConcurrency ?? 4;
             const currentInFlight = this.getInFlight(server.id, model);
-            console.log('[orchestrator] Trying server', server.id, 'with', currentInFlight, '/', max, 'in-flight requests');
-
             if (currentInFlight < max) {
                 this.incrementInFlight(server.id, model);
-                console.log('[orchestrator] Executing request on server', server.id);
                 try {
-                    const result = await fn(server);
-                    console.log('[orchestrator] Request succeeded on server', server.id);
-
+                    // Wrap the job handler for error handling, retry, and job stealing
+                    const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                    const version = 'v1'; // TODO: Pass actual version if available
+                    const sessionId = 'unknown'; // TODO: Pass actual sessionId if available
+                    const wrappedHandler = this.wrapDistributedJobHandler(fn, { model, version, sessionId, jobId });
+                    const result = await wrappedHandler(server);
                     // Only track usage here if not a direct request (i.e., orchestrated)
-                    // If fn sets a flag on itself (fn.__source), skip if 'direct'
                     if (!(fn as any).__source || (fn as any).__source !== 'direct') {
                         this.trackUsageWithRAG(server.id, model, {
-                            requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                            taskType: 'general', // Could be enhanced to extract from context
+                            requestId: jobId,
+                            taskType: 'general',
                             priority: 'normal',
                             source: 'orchestrated'
                         });
                     }
-
                     this.decrementInFlight(server.id, model);
                     this.processNextInQueue(server.id, model);
                     return result;
                 } catch (err) {
                     const msg = err instanceof Error ? err.message : String(err);
-                    console.log('[orchestrator] Request failed on server', server.id, 'with error:', msg);
                     this.decrementInFlight(server.id, model);
                     this.processNextInQueue(server.id, model);
                     if (/not enough ram|model not supported|out of memory|permanent/i.test(msg)) {
-                        console.log('[orchestrator] Permanently banning server', server.id, 'for model', model);
                         this.permanentBan.add(`${server.id}:${model}`);
                     } else {
-                        console.log('[orchestrator] Marking failure for server', server.id, 'model', model);
                         this.markFailure(server.id, model);
                     }
+                    emitJobSSEEvent({
+                        jobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                        sessionId: 'unknown',
+                        version: 'v1',
+                        state: 'fail',
+                        error: msg,
+                    });
                     tried.push({ server: server.id, error: msg });
                 }
-            } else {
-                console.log('[orchestrator] Server', server.id, 'at max concurrency, skipping');
             }
         }
         // If all are at max concurrency, try to enqueue on the best candidate (least-connections)
-        console.log('[orchestrator] All servers at max concurrency or failed, queueing on best candidate');
         const best = candidates[0];
-        console.log('[orchestrator] Best candidate for queueing:', best.id);
         return new Promise<T>((resolve, reject) => {
             this.enqueueRequest<T>(best.id, model, {
                 resolve,
@@ -621,48 +615,22 @@ export class AIOrchestrator {
 
     /** Get cached tags aggregation, refresh if expired or forced */
     async getCachedTags(force = false): Promise<any> {
-        // eslint-disable-next-line no-console
-        console.log('[getCachedTags] Called with force:', force);
-        // eslint-disable-next-line no-console
-        console.log('[getCachedTags] Cache age:', Date.now() - this.tagsCache.updated, 'ms, TTL:', this.cacheTtlMs);
-
         if (force || Date.now() - this.tagsCache.updated > this.cacheTtlMs) {
-            // eslint-disable-next-line no-console
-            console.log('[getCachedTags] Cache expired/forced, refreshing...');
             await this.refreshTagsCache();
-        } else {
-            // eslint-disable-next-line no-console
-            console.log('[getCachedTags] Using cached data');
         }
-
-        // eslint-disable-next-line no-console
-        console.log('[getCachedTags] Returning tags:', this.tagsCache.tags);
         return this.tagsCache.tags;
     }
     /** Refresh tags cache (aggregates tags from all servers, skips only bad responses) */
     async refreshTagsCache() {
-        // eslint-disable-next-line no-console
-        console.log('[refreshTagsCache] Starting refresh...');
         await this.updateAllStatus();
         // PATCH: Aggregate tags from all servers, not just healthy ones, for robustness
         const servers = this.getServers();
-        // eslint-disable-next-line no-console
-        console.log('[refreshTagsCache] Available servers:', servers.length);
-        // eslint-disable-next-line no-console
-        console.log('[refreshTagsCache] Servers detail:', JSON.stringify(servers, null, 2));
-
         const allTags: Record<string, any[]> = {};
         for (const server of servers) {
-            // eslint-disable-next-line no-console
-            console.log(`[refreshTagsCache] Fetching from server ${server.id} at ${server.url}`);
             try {
                 const resp = await fetch(`${server.url}/api/tags`);
-                // eslint-disable-next-line no-console
-                console.log(`[refreshTagsCache] Server ${server.id} response: status=${resp.status}, ok=${resp.ok}`);
                 if (!resp.ok) continue;
                 const data = (await resp.json()) as any;
-                // eslint-disable-next-line no-console
-                console.log(`[refreshTagsCache] Server ${server.id} data:`, JSON.stringify(data, null, 2));
                 if (!data || !Array.isArray(data.models)) continue;
                 for (const tag of data.models) {
                     if (!tag || typeof tag !== 'object') continue;
@@ -672,14 +640,9 @@ export class AIOrchestrator {
                     allTags[modelKey].push({ ...tag, server: server.id });
                 }
             } catch (err) {
-                // eslint-disable-next-line no-console
-                console.log(`[refreshTagsCache] Server ${server.id} failed:`, err);
-                // Skip this server, but continue aggregating from others
                 continue;
             }
         }
-        // eslint-disable-next-line no-console
-        console.log('[refreshTagsCache] Final aggregated tags:', JSON.stringify(allTags, null, 2));
         this.tagsCache.tags = allTags;
         this.tagsCache.updated = Date.now();
     }
@@ -690,16 +653,10 @@ export class AIOrchestrator {
      * Production code should NEVER call this method.
      */
     refreshTagsCacheFromServerData() {
-        // eslint-disable-next-line no-console
-        console.log('[refreshTagsCacheFromServerData] Using server tags directly (test mode)');
         const servers = this.getServers();
         const allTags: Record<string, any[]> = {};
-
         for (const server of servers) {
             const serverTags = (server as any).tags;
-            // eslint-disable-next-line no-console
-            console.log(`[refreshTagsCacheFromServerData] Server ${server.id} has tags:`, JSON.stringify(serverTags, null, 2));
-
             if (Array.isArray(serverTags)) {
                 for (const tag of serverTags) {
                     if (!tag || typeof tag !== 'object') continue;
@@ -709,9 +666,6 @@ export class AIOrchestrator {
                 }
             }
         }
-
-        // eslint-disable-next-line no-console
-        console.log('[refreshTagsCacheFromServerData] Final aggregated tags:', JSON.stringify(allTags, null, 2));
         this.tagsCache.tags = allTags;
         this.tagsCache.updated = Date.now();
     }
@@ -812,7 +766,7 @@ export class AIOrchestrator {
     async loadActiveServersFromRAG() {
         const ragService = await this.getRAGService();
         if (!ragService) {
-            logError('[orchestrator] Cannot load active servers from RAG: RAG service unavailable');
+            logger.error('[orchestrator] Cannot load active servers from RAG: RAG service unavailable');
             return;
         }
         // Assumes RAG nodes of type 'ai-server' and 'active: true'
@@ -826,7 +780,7 @@ export class AIOrchestrator {
             models: node.content?.attributes?.models || [],
             maxConcurrency: node.content?.attributes?.maxConcurrency
         }));
-        logInfo(`[orchestrator] Loaded ${this.servers.length} active servers from RAG`);
+        logger.info(`[orchestrator] Loaded ${this.servers.length} active servers from RAG`);
     }
 
     /**

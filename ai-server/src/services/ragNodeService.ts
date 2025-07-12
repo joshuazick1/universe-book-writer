@@ -1,4 +1,64 @@
 /**
+ * Returns all entity nodes for a given pipeline session and universe.
+ * Used for deduplication and cross-chunk linking after entity extraction.
+ * @param sessionId - The pipeline session ID
+ * @param universeId - The universe ID
+ * @returns Array of entity nodes
+ */
+
+
+export async function getAllEntitiesForSession(sessionId: string, universeId: string): Promise<RAGNode[]> {
+    const manager = ensureManager();
+    // Search for all nodes of type 'character', 'organization', 'species', etc. that are considered entities
+    // and have the correct universeId and sessionId in metadata.
+    const entityTypes = [
+        'character', 'organization', 'species', 'technology', 'location', 'event', 'lore', 'dialogue', 'custom'
+    ];
+    const nodes = await manager.searchNodes('', { universeId });
+    return nodes.filter(
+        n => entityTypes.includes(n.type) &&
+            n.metadata?.universeId === universeId &&
+            n.metadata?.sessionId === sessionId
+    );
+}
+/**
+ * Returns all entities linked to a given chunk node.
+ * @param chunkNodeId - The chunk node ID
+ * @returns Array of entity nodes (stub implementation)
+ */
+export async function getEntitiesByChunkId(chunkNodeId: string): Promise<any[]> {
+    // Real MongoDB implementation
+    // This assumes a 'ragNodes' collection and that entity nodes have a 'chunkNodeId' field
+    const { sharedDatabaseConnection } = await import('../config/database.config.js');
+    const db = await sharedDatabaseConnection.connect();
+    return db.collection('ragNodes').find({ type: 'entity', chunkNodeId }).toArray();
+}
+
+/**
+ * Creates a relationship node between entities (stub implementation).
+ * @param rel - Relationship data
+ * @returns The created relationship node
+ */
+export async function createRelationshipNode(rel: any): Promise<any> {
+    // Real MongoDB implementation
+    const { sharedDatabaseConnection } = await import('../config/database.config.js');
+    const db = await sharedDatabaseConnection.connect();
+    const result = await db.collection('ragRelationships').insertOne({ ...rel, createdAt: new Date() });
+    return { ...rel, id: result.insertedId };
+}
+
+/**
+ * Returns all events for a given character node (stub implementation).
+ * @param characterNodeId - The character node ID
+ * @returns Array of event nodes
+ */
+export async function getEventsByCharacterId(characterNodeId: string): Promise<any[]> {
+    // Real MongoDB implementation
+    const { sharedDatabaseConnection } = await import('../config/database.config.js');
+    const db = await sharedDatabaseConnection.connect();
+    return db.collection('ragNodes').find({ type: 'event', characterNodeId }).toArray();
+}
+/**
  * Get all chunk nodes for a given universe and book.
  * @param universeId string
  * @param bookId string

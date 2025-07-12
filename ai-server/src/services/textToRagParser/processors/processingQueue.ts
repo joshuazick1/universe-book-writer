@@ -4,7 +4,7 @@
 
 import { EventEmitter } from 'events';
 import { ProcessingJob, QueuedJob, ParsingOptions, ProcessingResult } from '../core/interfaces.js';
-import { logInfo, logError, logDebug } from '../../../logger.js';
+import { logger } from '../../../../../shared/logging/logger.js';
 
 export interface QueueConfig {
     maxConcurrentJobs: number;
@@ -36,7 +36,7 @@ export class ProcessingQueue extends EventEmitter {
 
     constructor(config: Partial<QueueConfig> = {}) {
         super();
-        
+
         this.config = {
             maxConcurrentJobs: 3,
             jobTimeout: 300000, // 5 minutes
@@ -81,11 +81,11 @@ export class ProcessingQueue extends EventEmitter {
 
         // Insert job in priority order
         this.insertByPriority(queuedJob);
-        
-        logInfo(`Job ${job.id} added to queue (priority: ${queuedJob.priority})`);
-        
+
+        logger.info(`Job ${job.id} added to queue (priority: ${queuedJob.priority})`);
+
         this.emit('jobAdded', job);
-        
+
         // Start processing if not already running
         if (!this.isRunning) {
             this.startProcessing();
@@ -135,7 +135,7 @@ export class ProcessingQueue extends EventEmitter {
             queuedJob.job.error = 'Cancelled by user';
             this.failedJobs.set(jobId, queuedJob.job);
             this.emit('jobCancelled', queuedJob.job);
-            logInfo(`Job ${jobId} cancelled (was pending)`);
+            logger.info(`Job ${jobId} cancelled (was pending)`);
             return true;
         }
 
@@ -148,7 +148,7 @@ export class ProcessingQueue extends EventEmitter {
             this.activeJobs.delete(jobId);
             this.failedJobs.set(jobId, activeJob);
             this.emit('jobCancelled', activeJob);
-            logInfo(`Job ${jobId} cancelled (was active)`);
+            logger.info(`Job ${jobId} cancelled (was active)`);
             return true;
         }
 
@@ -191,9 +191,9 @@ export class ProcessingQueue extends EventEmitter {
      */
     private startProcessing(): void {
         if (this.isRunning) return;
-        
+
         this.isRunning = true;
-        logInfo('Processing queue started');
+        logger.info('Processing queue started');
         this.processNext();
     }
 
@@ -202,8 +202,8 @@ export class ProcessingQueue extends EventEmitter {
      */
     stop(): void {
         this.isRunning = false;
-        logInfo('Processing queue stopped');
-        
+        logger.info('Processing queue stopped');
+
         if (this.cleanupTimer) {
             clearInterval(this.cleanupTimer);
         }
@@ -238,7 +238,7 @@ export class ProcessingQueue extends EventEmitter {
         job.startedAt = new Date();
         this.activeJobs.set(job.id, job);
 
-        logInfo(`Processing job ${job.id} (attempt ${queuedJob.retryCount + 1})`);
+        logger.info(`Processing job ${job.id} (attempt ${queuedJob.retryCount + 1})`);
         this.emit('jobStarted', job);
 
         try {
@@ -257,17 +257,17 @@ export class ProcessingQueue extends EventEmitter {
             job.status = 'completed';
             job.results = results;
             job.completedAt = new Date();
-            
+
             this.activeJobs.delete(job.id);
             this.completedJobs.set(job.id, job);
-            
-            logInfo(`Job ${job.id} completed successfully`);
+
+            logger.info(`Job ${job.id} completed successfully`);
             this.emit('jobCompleted', job, results);
 
         } catch (error) {
             // Job failed
             const errorMessage = error instanceof Error ? error.message : String(error);
-            logError(`Job ${job.id} failed: ${errorMessage}`);
+            logger.error(`Job ${job.id} failed: ${errorMessage}`);
 
             job.error = errorMessage;
             this.activeJobs.delete(job.id);
@@ -277,21 +277,21 @@ export class ProcessingQueue extends EventEmitter {
                 queuedJob.retryCount++;
                 job.status = 'pending';
                 delete job.error;
-                
-                logInfo(`Retrying job ${job.id} (attempt ${queuedJob.retryCount + 1}/${queuedJob.maxRetries + 1})`);
-                
+
+                logger.info(`Retrying job ${job.id} (attempt ${queuedJob.retryCount + 1}/${queuedJob.maxRetries + 1})`);
+
                 // Add back to queue with delay
                 setTimeout(() => {
                     this.insertByPriority(queuedJob);
                 }, this.config.retryDelay);
-                
+
             } else {
                 // Max retries exceeded
                 job.status = 'failed';
                 job.completedAt = new Date();
                 this.failedJobs.set(job.id, job);
-                
-                logError(`Job ${job.id} failed permanently after ${queuedJob.retryCount + 1} attempts`);
+
+                logger.error(`Job ${job.id} failed permanently after ${queuedJob.retryCount + 1} attempts`);
                 this.emit('jobFailed', job, errorMessage);
             }
         }
@@ -305,7 +305,7 @@ export class ProcessingQueue extends EventEmitter {
      */
     private insertByPriority(queuedJob: QueuedJob): void {
         const insertIndex = this.queue.findIndex(existing => existing.priority < queuedJob.priority);
-        
+
         if (insertIndex === -1) {
             this.queue.push(queuedJob);
         } else {
@@ -375,7 +375,7 @@ export class ProcessingQueue extends EventEmitter {
         }
 
         if (cleanedCount > 0) {
-            logDebug(`Cleaned up ${cleanedCount} old jobs from queue`);
+            logger.debug(`Cleaned up ${cleanedCount} old jobs from queue`);
         }
     }
 }

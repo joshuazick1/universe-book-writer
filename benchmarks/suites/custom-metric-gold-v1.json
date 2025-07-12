@@ -1,0 +1,18 @@
+[
+    {
+        "id": "custom-001",
+        "input": "The wizard cast three spells in the battle.",
+        "reference_custom": {
+            "entity_count": 1,
+            "spell_count": 3
+        }
+    },
+    {
+        "id": "custom-002",
+        "input": "Han Solo and Chewbacca piloted the Millennium Falcon through the asteroid field.",
+        "reference_custom": {
+            "entity_count": 3,
+            "ship_count": 1
+        }
+    }
+]

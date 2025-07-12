@@ -5,20 +5,20 @@
 
 import { ParsedEntity, EntityRelationship, EnhancedParsedEntity, FilteringResult } from '../core/interfaces.js';
 import { EntityType, ConfidenceLevel, EntityTypeUtils } from '../core/entityTypes.js';
-import { logInfo, logError, logDebug } from '../../../logger.js';
+import { logger } from '../../../../../shared/logging/logger.js';
 
 export interface ConfidenceThresholds {
     // Global thresholds
     globalMinimum: number;
     globalMaximum: number;
-    
+
     // Per-entity-type thresholds
     entityTypeThresholds: Partial<Record<EntityType, number>>;
-    
+
     // Relationship thresholds
     relationshipMinimum: number;
     relationshipTypeThresholds: Partial<Record<string, number>>;
-    
+
     // Auto-processing thresholds
     autoCreateRAGNodes: number;
     autoMergeEntities: number;
@@ -61,8 +61,8 @@ export class ConfidenceFilter {
         customThresholds?: Partial<ConfidenceThresholds>
     ): Promise<FilteringResult> {
         const startTime = Date.now();
-        
-        logInfo(`Filtering ${entities.length} entities with confidence thresholds`);
+
+        logger.info(`Filtering ${entities.length} entities with confidence thresholds`);
 
         // Merge custom thresholds with defaults
         const thresholds = this.mergeThresholds(this.defaultThresholds, customThresholds);
@@ -75,7 +75,7 @@ export class ConfidenceFilter {
         // Apply contextual confidence adjustments if enabled
         let adjustedEntities = entities;
         const adjustedConfidences: Array<{ entityId: string; oldConfidence: number; newConfidence: number; reason: string }> = [];
-        
+
         if (options.contextualAdjustment) {
             const { entities: adjusted, adjustments } = this.applyContextualAdjustments(entities, relationships);
             adjustedEntities = adjusted;
@@ -89,7 +89,7 @@ export class ConfidenceFilter {
 
         for (const entity of adjustedEntities) {
             const filterDecision = this.evaluateEntity(entity, thresholds, options);
-            
+
             switch (filterDecision.action) {
                 case 'accept':
                     accepted.push(entity);
@@ -116,7 +116,7 @@ export class ConfidenceFilter {
             processingTime: Date.now() - startTime
         });
 
-        logInfo(`Filtering completed: ${accepted.length} accepted, ${rejected.length} rejected, ${flaggedForReview.length} flagged for review`);
+        logger.info(`Filtering completed: ${accepted.length} accepted, ${rejected.length} rejected, ${flaggedForReview.length} flagged for review`);
 
         return {
             entities: accepted as EnhancedParsedEntity[],
@@ -204,7 +204,7 @@ export class ConfidenceFilter {
             const reasons: string[] = [];
 
             // Boost confidence for entities with multiple relationships
-            const entityRelationships = relationships.filter(rel => 
+            const entityRelationships = relationships.filter(rel =>
                 rel.sourceEntityId === entity.id || rel.targetEntityId === entity.id
             );
 
@@ -265,7 +265,7 @@ export class ConfidenceFilter {
         if (entity.description.length > 100) score += 0.2;
 
         // Certain entity types are inherently more unique
-        if ([EntityType.CHARACTER, EntityType.ARTIFACT, EntityType.PROPHECY].includes(entity.type)) {
+        if ([EntityType.CHARACTER, EntityType.ARTIFACT, EntityType.PROPHECY].includes(entity.type as EntityType)) {
             score += 0.1;
         }
 
@@ -312,7 +312,7 @@ export class ConfidenceFilter {
         flagged: ParsedEntity[]
     ): FilteringStatistics {
         const total = original.length;
-        
+
         // Calculate confidence distribution
         const confidenceDistribution: Record<ConfidenceLevel, number> = {
             [ConfidenceLevel.VERY_LOW]: 0,
@@ -330,7 +330,7 @@ export class ConfidenceFilter {
         }
 
         // Calculate type breakdown
-        const typeBreakdown: Record<EntityType, { accepted: number; rejected: number; reviewed: number }> = 
+        const typeBreakdown: Record<EntityType, { accepted: number; rejected: number; reviewed: number }> =
             {} as Record<EntityType, { accepted: number; rejected: number; reviewed: number }>;
 
         for (const type of Object.values(EntityType)) {
@@ -347,8 +347,8 @@ export class ConfidenceFilter {
             typeBreakdown[entity.type].reviewed++;
         }
 
-        const averageConfidence = total > 0 
-            ? original.reduce((sum, e) => sum + e.confidence, 0) / total 
+        const averageConfidence = total > 0
+            ? original.reduce((sum, e) => sum + e.confidence, 0) / total
             : 0;
 
         return {
@@ -434,13 +434,13 @@ export class ConfidenceFilter {
         if (avgAcceptanceRate < 0.6) {
             thresholds.globalMinimum = Math.max(0.2, thresholds.globalMinimum - 0.05);
             thresholds.requireHumanReview = Math.max(0.4, thresholds.requireHumanReview - 0.05);
-            logDebug('Lowered thresholds due to low acceptance rate');
+            logger.debug('Lowered thresholds due to low acceptance rate');
         }
         // If acceptance rate is too high, raise thresholds slightly
         else if (avgAcceptanceRate > 0.9) {
             thresholds.globalMinimum = Math.min(0.5, thresholds.globalMinimum + 0.02);
             thresholds.requireHumanReview = Math.min(0.8, thresholds.requireHumanReview + 0.02);
-            logDebug('Raised thresholds due to high acceptance rate');
+            logger.debug('Raised thresholds due to high acceptance rate');
         }
     }
 
@@ -449,7 +449,7 @@ export class ConfidenceFilter {
      */
     private recordPerformance(metric: PerformanceMetric): void {
         this.performanceHistory.push(metric);
-        
+
         // Keep only last 50 metrics
         if (this.performanceHistory.length > 50) {
             this.performanceHistory = this.performanceHistory.slice(-50);
@@ -483,10 +483,10 @@ export class ConfidenceFilter {
         if (recent.length >= 5) {
             const firstHalf = recent.slice(0, Math.floor(recent.length / 2));
             const secondHalf = recent.slice(Math.floor(recent.length / 2));
-            
+
             const firstAvg = firstHalf.reduce((sum, m) => sum + m.acceptanceRate, 0) / firstHalf.length;
             const secondAvg = secondHalf.reduce((sum, m) => sum + m.acceptanceRate, 0) / secondHalf.length;
-            
+
             if (secondAvg > firstAvg + 0.05) {
                 trends.push('Increasing acceptance rate');
             } else if (secondAvg < firstAvg - 0.05) {

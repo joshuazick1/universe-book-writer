@@ -5,7 +5,7 @@
 
 import { ParsedEntity, EntityRelationship, ParsingOptions } from '../core/interfaces.js';
 import { RelationshipType, EntityType, EntityTypeUtils } from '../core/entityTypes.js';
-import { logInfo, logError, logDebug } from '../../../logger.js';
+import { logger } from '../../../../../shared/logging/logger.js';
 
 export interface RelationshipExtractionResult {
     relationships: EntityRelationship[];
@@ -39,13 +39,13 @@ export class RelationshipExtractor {
         options: RelationshipExtractionOptions
     ): Promise<RelationshipExtractionResult> {
         const startTime = Date.now();
-        
-        logInfo(`Extracting relationships for ${entities.length} entities`);
+
+        logger.info(`Extracting relationships for ${entities.length} entities`);
 
         try {
             // Group entities by type for more efficient processing
             const entityGroups = this.groupEntitiesByType(entities);
-            
+
             // Extract direct relationships from text
             const directRelationships = await this.extractDirectRelationships(
                 entities, sourceText, options
@@ -66,8 +66,8 @@ export class RelationshipExtractor {
             );
 
             const processingTime = Date.now() - startTime;
-            
-            logInfo(`Extracted ${filteredRelationships.length} relationships in ${processingTime}ms`);
+
+            logger.info(`Extracted ${filteredRelationships.length} relationships in ${processingTime}ms`);
 
             return {
                 relationships: filteredRelationships,
@@ -77,7 +77,7 @@ export class RelationshipExtractor {
             };
 
         } catch (error) {
-            logError(`Relationship extraction failed: ${error}`);
+            logger.error(`Relationship extraction failed: ${error}`);
             throw error;
         }
     }
@@ -94,8 +94,8 @@ export class RelationshipExtractor {
 
         // Create entity pairs for relationship analysis
         const entityPairs = this.generateEntityPairs(entities);
-        
-        logDebug(`Analyzing ${entityPairs.length} entity pairs for relationships`);
+
+        logger.debug(`Analyzing ${entityPairs.length} entity pairs for relationships`);
 
         // Process pairs in batches to avoid overwhelming the AI
         const batchSize = 10;
@@ -144,7 +144,7 @@ export class RelationshipExtractor {
             return this.parseRelationshipResponse(aiResponse, entityPairs);
 
         } catch (error) {
-            logError(`Batch relationship processing failed: ${error}`);
+            logger.error(`Batch relationship processing failed: ${error}`);
             return [];
         }
     }
@@ -156,7 +156,7 @@ export class RelationshipExtractor {
         entityPairs: Array<{ source: ParsedEntity; target: ParsedEntity }>,
         sourceText: string
     ): string {
-        const pairDescriptions = entityPairs.map((pair, index) => 
+        const pairDescriptions = entityPairs.map((pair, index) =>
             `${index + 1}. "${pair.source.name}" (${pair.source.type}) → "${pair.target.name}" (${pair.target.type})`
         ).join('\n');
 
@@ -215,9 +215,9 @@ JSON array:`;
                 .replace(/```json|```/g, ''); // Remove markdown
 
             const relationshipData = JSON.parse(cleanResponse);
-            
+
             if (!Array.isArray(relationshipData)) {
-                logError('AI response is not an array');
+                logger.error('AI response is not an array');
                 return [];
             }
 
@@ -225,25 +225,25 @@ JSON array:`;
 
             for (const relData of relationshipData) {
                 // Find the corresponding entity pair
-                const pair = entityPairs.find(p => 
-                    p.source.name === relData.sourceEntity && 
+                const pair = entityPairs.find(p =>
+                    p.source.name === relData.sourceEntity &&
                     p.target.name === relData.targetEntity
                 );
 
                 if (!pair) {
-                    logDebug(`Entity pair not found for relationship: ${relData.sourceEntity} → ${relData.targetEntity}`);
+                    logger.debug(`Entity pair not found for relationship: ${relData.sourceEntity} -> ${relData.targetEntity}`);
                     continue;
                 }
 
                 // Validate relationship type
                 const relationshipType = this.validateRelationshipType(
                     relData.relationshipType,
-                    pair.source.type,
-                    pair.target.type
+                    pair.source.type as EntityType,
+                    pair.target.type as EntityType
                 );
 
                 if (!relationshipType) {
-                    logDebug(`Invalid relationship type: ${relData.relationshipType}`);
+                    logger.debug(`Invalid relationship type: ${relData.relationshipType}`);
                     continue;
                 }
 
@@ -278,7 +278,7 @@ JSON array:`;
             return relationships;
 
         } catch (error) {
-            logError(`Failed to parse relationship response: ${error}`);
+            logger.error(`Failed to parse relationship response: ${error}`);
             return [];
         }
     }
@@ -301,12 +301,12 @@ JSON array:`;
      */
     private generateEntityPairs(entities: ParsedEntity[]): Array<{ source: ParsedEntity; target: ParsedEntity }> {
         const pairs: Array<{ source: ParsedEntity; target: ParsedEntity }> = [];
-        
+
         for (let i = 0; i < entities.length; i++) {
             for (let j = i + 1; j < entities.length; j++) {
                 const source = entities[i];
                 const target = entities[j];
-                
+
                 // Check if this entity pair combination makes sense
                 if (this.isValidEntityPair(source, target)) {
                     pairs.push({ source, target });
@@ -334,8 +334,11 @@ JSON array:`;
         }
 
         // Get compatible relationships for this pair
-        const compatibleRels = EntityTypeUtils.getCompatibleRelationships(entity1.type, entity2.type);
-        
+        const compatibleRels = EntityTypeUtils.getCompatibleRelationships(
+            entity1.type as EntityType,
+            entity2.type as EntityType
+        );
+
         // Valid if there are compatible relationship types
         return compatibleRels.length > 0;
     }
@@ -350,7 +353,7 @@ JSON array:`;
     ): RelationshipType | null {
         // Normalize the relationship type string
         const normalizedType = relationshipType.toLowerCase().replace(/\s+/g, '_');
-        
+
         // Check if it's a valid relationship type
         if (!Object.values(RelationshipType).includes(normalizedType as RelationshipType)) {
             return null;
@@ -360,7 +363,7 @@ JSON array:`;
 
         // Check if this relationship type is compatible with the entity types
         const compatibleTypes = EntityTypeUtils.getCompatibleRelationships(sourceType, targetType);
-        
+
         if (compatibleTypes.includes(relType)) {
             return relType;
         }
@@ -378,7 +381,7 @@ JSON array:`;
 
         for (const rel of relationships) {
             const key = `${rel.sourceEntityId}-${rel.targetEntityId}-${rel.type}`;
-            
+
             if (!seen.has(key)) {
                 seen.add(key);
                 deduplicated.push(rel);
@@ -393,7 +396,7 @@ JSON array:`;
      */
     private groupEntitiesByType(entities: ParsedEntity[]): Record<EntityType, ParsedEntity[]> {
         const groups: Record<EntityType, ParsedEntity[]> = {} as Record<EntityType, ParsedEntity[]>;
-        
+
         for (const entity of entities) {
             if (!groups[entity.type]) {
                 groups[entity.type] = [];
@@ -416,7 +419,7 @@ JSON array:`;
      */
     private calculateOverallConfidence(relationships: EntityRelationship[]): number {
         if (relationships.length === 0) return 0;
-        
+
         const totalConfidence = relationships.reduce((sum, rel) => sum + rel.confidence, 0);
         return totalConfidence / relationships.length;
     }

@@ -2,7 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "composite": true,
     "declarationMap": true,
     "incremental": true,
@@ -29,10 +28,11 @@
     },
     {
       "path": "../packages/plugin-sdk"
-    }
+    },
   ],
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "../shared/**/*"
   ],
   "exclude": [
     "dist",

@@ -1,0 +1,12 @@
+[
+    {
+        "id": "cons-001",
+        "input": "In chapter 1, the wizard's staff is described as oak. In chapter 5, it is described as ebony.",
+        "reference_consistency": "Inconsistent: staff material changes from oak to ebony."
+    },
+    {
+        "id": "cons-002",
+        "input": "Leia is said to be an only child, but later her brother Luke appears.",
+        "reference_consistency": "Inconsistent: Leia is not an only child; Luke is her brother."
+    }
+]

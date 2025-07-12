@@ -1,0 +1,32 @@
+[
+    {
+        "id": "ent-001",
+        "input": "Captain Picard and Data beam down to the surface of Risa to negotiate with the Ferengi DaiMon Bok.",
+        "reference_entities": [
+            "Jean-Luc Picard",
+            "Data",
+            "Risa",
+            "Ferengi",
+            "DaiMon Bok"
+        ]
+    },
+    {
+        "id": "ent-002",
+        "input": "Luke Skywalker and Han Solo escape from Jabba the Hutt's palace on Tatooine.",
+        "reference_entities": [
+            "Luke Skywalker",
+            "Han Solo",
+            "Jabba the Hutt",
+            "Tatooine"
+        ]
+    },
+    {
+        "id": "ent-003",
+        "input": "Queen Mirabel of Eldermoor consults the Oracle of the North to avert a magical disaster.",
+        "reference_entities": [
+            "Queen Mirabel",
+            "Eldermoor",
+            "Oracle of the North"
+        ]
+    }
+]

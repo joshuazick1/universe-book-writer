@@ -302,6 +302,7 @@ Targets:
   ai-server             Run AI server tests only
   collaboration-server  Run collaboration server tests only
   packages              Run package tests only
+  shared                Run shared utilities/types tests only
   e2e                   Run end-to-end tests only
 
 Options:
@@ -679,12 +680,13 @@ Examples:
    */
   private getProjectTestPattern(target: string): string {
     const patterns: Record<string, string> = {
-      'backend': 'backend/.*\\.test\\.(ts|js)$',
-      'frontend': 'frontend/.*\\.test\\.(ts|tsx)$',
-      'ai-server': 'ai-server/.*\\.test\\.(ts|js)$',
-      'collaboration-server': 'collaboration-server/.*\\.test\\.(ts|js)$',
-      'packages': 'packages/.*\\.test\\.(ts|tsx)$',
-      'e2e': 'e2e/.*\\.test\\.(ts|js)$'
+      'backend': 'backend/.*\.test\.(ts|js)$',
+      'frontend': 'frontend/.*\.test\.(ts|tsx)$',
+      'ai-server': 'ai-server/.*\.test\.(ts|js)$',
+      'collaboration-server': 'collaboration-server/.*\.test\.(ts|js)$',
+      'packages': 'packages/.*\.test\.(ts|tsx)$',
+      'shared': 'shared/.*\.test\.ts$',
+      'e2e': 'e2e/.*\.test\.(ts|js)$'
     };
 
     return patterns[target] || `${target}/.*\\.test\\.(ts|tsx?)$`;
@@ -1145,7 +1147,7 @@ Examples:
    * Get all available test targets that exist in the project
    */
   private getAvailableTargets(): string[] {
-    const possibleTargets = ['backend', 'frontend', 'ai-server', 'collaboration-server', 'packages', 'e2e'];
+    const possibleTargets = ['backend', 'frontend', 'ai-server', 'collaboration-server', 'packages', 'shared', 'e2e'];
     const availableTargets: string[] = [];
 
     for (const target of possibleTargets) {
@@ -1280,14 +1282,9 @@ Examples:
 
     console.log('🚀 Starting Enhanced Test Runner...');
 
-    if (options.comment) {
-      console.log(`📝 Comment: ${options.comment}`);
-    }
-
     if (options.pattern) {
       console.log(`🎯 Test name pattern: "${options.pattern}"`);
     }
-
     if (options.testPathPattern) {
       console.log(`📁 Test path pattern: "${options.testPathPattern}"`);
     }
@@ -1301,205 +1298,213 @@ Examples:
     let combinedOutput = '';
     const targetSummaries: TestSummary[] = [];
 
+    // Only apply testNamePattern if explicitly set by user
+    if (!options.pattern && options.target !== 'all') {
+      options.pattern = null;
+    }
+
     if (options.target === 'all') {
-      // Run each target sequentially from their own directory
-      const availableTargets = this.getAvailableTargets();
+      const targetSummaries: TestSummary[] = [];
 
-      if (availableTargets.length === 0) {
-        console.warn('⚠️  No test targets found in the project');
-        return 1;
-      }
+      if (options.target === 'all') {
+        // Run each target sequentially from their own directory
+        const availableTargets = this.getAvailableTargets();
 
-      console.log(`📂 Found ${availableTargets.length} test targets: ${availableTargets.join(', ')}\n`);
-
-      for (let i = 0; i < availableTargets.length; i++) {
-        const target = availableTargets[i];
-        const targetStartTime = Date.now();
-
-        console.log('='.repeat(80));
-        console.log(`🎯 Running tests for: ${target.toUpperCase()} (${i + 1}/${availableTargets.length})`);
-        console.log('='.repeat(80));
-
-        // Create target-specific options
-        const targetOptions: TestRunOptions = {
-          ...options,
-          target,
-        };
-
-        // Reset test suite tracking for this target
-        this.currentTestSuite = null;
-        this.testSuiteOutputs.clear();
-        this.startedSuites.clear();
-        this.completedSuites.clear();
-        this.suiteLogPaths.clear();
-        this.suiteStartTimes.clear();
-        this.suiteFailedTests.clear();
-
-        const { exitCode, allOutput, summary } = await this.runSingleTarget(targetOptions);
-
-        const targetDuration = Date.now() - targetStartTime;
-        summary.duration = targetDuration;
-
-        combinedOutput += `\n${'='.repeat(80)}\n`;
-        combinedOutput += `TARGET: ${target.toUpperCase()}\n`;
-        combinedOutput += `${'='.repeat(80)}\n`;
-        combinedOutput += allOutput;
-
-        targetSummaries.push(summary);
-
-        if (exitCode !== 0) {
-          finalExitCode = exitCode;
+        if (availableTargets.length === 0) {
+          console.warn('⚠️  No test targets found in the project');
+          return 1;
         }
 
-        console.log(`\n✅ Completed ${target} in ${Math.round(targetDuration / 1000)}s`);
-        console.log(`   📊 ${summary.results.passed} passed, ${summary.results.failed} failed, ${summary.results.skipped} skipped\n`);
+        console.log(`📂 Found ${availableTargets.length} test targets: ${availableTargets.join(', ')}\n`);
+
+        for (let i = 0; i < availableTargets.length; i++) {
+          const target = availableTargets[i];
+          const targetStartTime = Date.now();
+
+          console.log('='.repeat(80));
+          console.log(`🎯 Running tests for: ${target.toUpperCase()} (${i + 1}/${availableTargets.length})`);
+          console.log('='.repeat(80));
+
+          // Create target-specific options
+          const targetOptions: TestRunOptions = {
+            ...options,
+            target,
+          };
+
+          // Reset test suite tracking for this target
+          this.currentTestSuite = null;
+          this.testSuiteOutputs.clear();
+          this.startedSuites.clear();
+          this.completedSuites.clear();
+          this.suiteLogPaths.clear();
+          this.suiteStartTimes.clear();
+          this.suiteFailedTests.clear();
+
+          const { exitCode, allOutput, summary } = await this.runSingleTarget(targetOptions);
+
+          const targetDuration = Date.now() - targetStartTime;
+          summary.duration = targetDuration;
+
+          combinedOutput += `\n${'='.repeat(80)}\n`;
+          combinedOutput += `TARGET: ${target.toUpperCase()}\n`;
+          combinedOutput += `${'='.repeat(80)}\n`;
+          combinedOutput += allOutput;
+
+          targetSummaries.push(summary);
+
+          if (exitCode !== 0) {
+            finalExitCode = exitCode;
+          }
+
+          console.log(`\n✅ Completed ${target} in ${Math.round(targetDuration / 1000)}s`);
+          console.log(`   📊 ${summary.results.passed} passed, ${summary.results.failed} failed, ${summary.results.skipped} skipped\n`);
+        }
+      } else {
+        // Run single target
+        const { exitCode, allOutput } = await this.runSingleTarget(options);
+        finalExitCode = exitCode;
+        combinedOutput = allOutput;
       }
-    } else {
-      // Run single target
-      const { exitCode, allOutput } = await this.runSingleTarget(options);
-      finalExitCode = exitCode;
-      combinedOutput = allOutput;
-    }
 
-    const endTime = Date.now();
-    const totalDuration = endTime - startTime;
+      const endTime = Date.now();
+      const totalDuration = endTime - startTime;
 
-    // Save complete output and process coverage
-    let coverageFile: string | null = null;
-    if (this.currentRunDir) {
-      const completeOutputPath = path.join(this.currentRunDir, 'complete-output.log');
-      fs.writeFileSync(completeOutputPath, this.stripAnsi(combinedOutput));
-      // Process and save coverage output if coverage was enabled
-      coverageFile = this.processCoverageOutput(combinedOutput, options);
-    }
+      // Save complete output and process coverage
+      let coverageFile: string | null = null;
+      if (this.currentRunDir) {
+        const completeOutputPath = path.join(this.currentRunDir, 'complete-output.log');
+        fs.writeFileSync(completeOutputPath, this.stripAnsi(combinedOutput));
+        // Process and save coverage output if coverage was enabled
+        coverageFile = this.processCoverageOutput(combinedOutput, options);
+      }
 
-    // Extract Jest configuration info for debugging
-    const jestConfig = this.extractJestConfig(combinedOutput);
-    if (jestConfig && this.currentRunDir) {
-      const configPath = path.join(this.currentRunDir, 'jest-config.log');
-      fs.writeFileSync(configPath, this.stripAnsi(jestConfig));
-      console.log(`⚙️  Jest configuration saved to: jest-config.log`);
-    }
+      // Extract Jest configuration info for debugging
+      const jestConfig = this.extractJestConfig(combinedOutput);
+      if (jestConfig && this.currentRunDir) {
+        const configPath = path.join(this.currentRunDir, 'jest-config.log');
+        fs.writeFileSync(configPath, this.stripAnsi(jestConfig));
+        console.log(`⚙️  Jest configuration saved to: jest-config.log`);
+      }
 
-    // Create final summary report
-    let summary: TestSummary;
-    if (options.target === 'all') {
-      // Aggregate all target summaries
-      const totalPassed = targetSummaries.reduce((sum, s) => sum + s.results.passed, 0);
-      const totalFailed = targetSummaries.reduce((sum, s) => sum + s.results.failed, 0);
-      const totalSkipped = targetSummaries.reduce((sum, s) => sum + s.results.skipped, 0);
+      // Create final summary report
+      let summary: TestSummary;
+      if (options.target === 'all') {
+        // Aggregate all target summaries
+        const totalPassed = targetSummaries.reduce((sum, s) => sum + s.results.passed, 0);
+        const totalFailed = targetSummaries.reduce((sum, s) => sum + s.results.failed, 0);
+        const totalSkipped = targetSummaries.reduce((sum, s) => sum + s.results.skipped, 0);
 
-      summary = {
-        timestamp: new Date().toISOString(),
-        target: 'all',
-        pattern: options.pattern,
-        testPathPattern: options.testPathPattern,
-        comment: options.comment,
-        duration: totalDuration,
-        exitCode: finalExitCode,
-        results: {
-          passed: totalPassed,
-          failed: totalFailed,
-          skipped: totalSkipped,
-          total: totalPassed + totalFailed + totalSkipped,
-        },
-        files: [],
-        targets: targetSummaries, // Include individual target results
-      };
-    } else {
-      summary = this.createSummaryReport(options, finalExitCode, totalDuration);
-    }
+        summary = {
+          timestamp: new Date().toISOString(),
+          target: 'all',
+          pattern: options.pattern,
+          testPathPattern: options.testPathPattern,
+          comment: options.comment,
+          duration: totalDuration,
+          exitCode: finalExitCode,
+          results: {
+            passed: totalPassed,
+            failed: totalFailed,
+            skipped: totalSkipped,
+            total: totalPassed + totalFailed + totalSkipped,
+          },
+          files: [],
+          targets: targetSummaries, // Include individual target results
+        };
+      } else {
+        summary = this.createSummaryReport(options, finalExitCode, totalDuration);
+      }
 
-    if (coverageFile) {
-      summary.coverageFile = coverageFile;
-    }
+      if (coverageFile) {
+        summary.coverageFile = coverageFile;
+      }
 
-    // Save final summary
-    if (this.currentRunDir) {
-      const summaryPath = path.join(this.currentRunDir, 'summary.json');
-      fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
-    }
-
-    // Always write summary.json (already done above)
-    // If --ci or --json, print summary.json to stdout between CI_SUMMARY_JSON_START/END
-    if (options.ci || options.json) {
+      // Save final summary
       if (this.currentRunDir) {
         const summaryPath = path.join(this.currentRunDir, 'summary.json');
-        const summaryContent = fs.readFileSync(summaryPath, 'utf8');
-        console.log('\nCI_SUMMARY_JSON_START');
-        console.log(summaryContent);
-        console.log('CI_SUMMARY_JSON_END\n');
+        fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
       }
+
+      // Always write summary.json (already done above)
+      // If --ci or --json, print summary.json to stdout between CI_SUMMARY_JSON_START/END
+      if (options.ci || options.json) {
+        if (this.currentRunDir) {
+          const summaryPath = path.join(this.currentRunDir, 'summary.json');
+          const summaryContent = fs.readFileSync(summaryPath, 'utf8');
+          console.log('\nCI_SUMMARY_JSON_START');
+          console.log(summaryContent);
+          console.log('CI_SUMMARY_JSON_END\n');
+        }
+      }
+
+      console.log('\n' + '='.repeat(60));
+      console.log('📊 Test Run Complete!');
+      console.log('='.repeat(60));
+      console.log(`⏱️  Total Duration: ${Math.round(totalDuration / 1000)}s`);
+      if (this.currentRunDir) {
+        console.log(`📁 Results saved to: ${path.relative(process.cwd(), this.currentRunDir)}`);
+      }
+      console.log('');
+
+      if (options.target === 'all') {
+        // Show aggregate results
+        console.log('📊 AGGREGATE RESULTS:');
+        console.log(`✅ Total Passed: ${summary.results.passed}`);
+        console.log(`❌ Total Failed: ${summary.results.failed}`);
+        console.log(`⏭️ Total Skipped: ${summary.results.skipped}`);
+        console.log(`📊 Grand Total: ${summary.results.total}\n`);
+
+        // Show per-target breakdown
+        console.log('📋 PER-TARGET BREAKDOWN:');
+        targetSummaries.forEach(targetSummary => {
+          const status = targetSummary.exitCode === 0 ? '✅' : '❌';
+          console.log(`${status} ${targetSummary.target}: ${targetSummary.results.passed} passed, ${targetSummary.results.failed} failed, ${targetSummary.results.skipped} skipped (${Math.round(targetSummary.duration / 1000)}s)`);
+        });
+      } else {
+        console.log(`✅ Passed: ${summary.results.passed}`);
+        console.log(`❌ Failed: ${summary.results.failed}`);
+        console.log(`⏭️ Skipped: ${summary.results.skipped}`);
+        console.log(`📊 Total: ${summary.results.total}`);
+      }
+
+      if (coverageFile) {
+        console.log(`📊 Coverage report: ${coverageFile}`);
+      }
+
+      if (options.comment) {
+        console.log(`📝 Comment: ${options.comment}`);
+      }
+
+      // Show pattern information in summary
+      if (options.pattern) {
+        console.log(`🎯 Test name pattern used: "${options.pattern}"`);
+      }
+      if (options.testPathPattern) {
+        console.log(`📁 Test path pattern used: "${options.testPathPattern}"`);
+      }
+
+      // Announce summary file and its purpose
+      if (this.currentRunDir) {
+        const summaryPath = path.join(this.currentRunDir, 'summary.json');
+        console.log(
+          `\nTest summary written to: ${path.relative(process.cwd(), summaryPath)}\n` +
+          'This file provides a machine-readable list of all test suites, their pass/fail status, and direct links to individual log files for analysis.\n'
+        );
+      }
+
+      // Show test suites that failed to run completely
+      this.showUnrunSuitesSummary();
+
+      return finalExitCode;
     }
-
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 Test Run Complete!');
-    console.log('='.repeat(60));
-    console.log(`⏱️  Total Duration: ${Math.round(totalDuration / 1000)}s`);
-    if (this.currentRunDir) {
-      console.log(`📁 Results saved to: ${path.relative(process.cwd(), this.currentRunDir)}`);
-    }
-    console.log('');
-
-    if (options.target === 'all') {
-      // Show aggregate results
-      console.log('📊 AGGREGATE RESULTS:');
-      console.log(`✅ Total Passed: ${summary.results.passed}`);
-      console.log(`❌ Total Failed: ${summary.results.failed}`);
-      console.log(`⏭️ Total Skipped: ${summary.results.skipped}`);
-      console.log(`📊 Grand Total: ${summary.results.total}\n`);
-
-      // Show per-target breakdown
-      console.log('📋 PER-TARGET BREAKDOWN:');
-      targetSummaries.forEach(targetSummary => {
-        const status = targetSummary.exitCode === 0 ? '✅' : '❌';
-        console.log(`${status} ${targetSummary.target}: ${targetSummary.results.passed} passed, ${targetSummary.results.failed} failed, ${targetSummary.results.skipped} skipped (${Math.round(targetSummary.duration / 1000)}s)`);
-      });
-    } else {
-      console.log(`✅ Passed: ${summary.results.passed}`);
-      console.log(`❌ Failed: ${summary.results.failed}`);
-      console.log(`⏭️ Skipped: ${summary.results.skipped}`);
-      console.log(`📊 Total: ${summary.results.total}`);
-    }
-
-    if (coverageFile) {
-      console.log(`📊 Coverage report: ${coverageFile}`);
-    }
-
-    if (options.comment) {
-      console.log(`📝 Comment: ${options.comment}`);
-    }
-
-    // Show pattern information in summary
-    if (options.pattern) {
-      console.log(`🎯 Test name pattern used: "${options.pattern}"`);
-    }
-    if (options.testPathPattern) {
-      console.log(`📁 Test path pattern used: "${options.testPathPattern}"`);
-    }
-
-    // Announce summary file and its purpose
-    if (this.currentRunDir) {
-      const summaryPath = path.join(this.currentRunDir, 'summary.json');
-      console.log(
-        `\nTest summary written to: ${path.relative(process.cwd(), summaryPath)}\n` +
-        'This file provides a machine-readable list of all test suites, their pass/fail status, and direct links to individual log files for analysis.\n'
-      );
-    }
-
-    // Show test suites that failed to run completely
-    this.showUnrunSuitesSummary();
-
-    return finalExitCode;
   }
-}
 
-// Run the test runner
-if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
+  // Run the test runner
+
+  // Always run the runner logic when this script is executed (for tsx/ESM compatibility)
   const runner = new TestRunner();
-  runner.runTests().then(exitCode => {
+runner.runTests().then(exitCode => {
     process.exit(exitCode);
-  });
-}
+});
 
 export default TestRunner;

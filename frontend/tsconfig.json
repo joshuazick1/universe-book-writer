@@ -4,7 +4,6 @@
     "target": "ES2022",
     "module": "ESNext",
     "outDir": "./dist",
-    "rootDir": ".",
     "jsx": "react-jsx",
     "composite": true,
     "declarationMap": true,
@@ -29,9 +28,17 @@
       ],
       "@src/*": [
         "src/*"
+      ],
+      "shared/*": [
+        "../shared/*"
       ]
     }
   },
+  "include": [
+    "src/**/*",
+    "test/**/*",
+    "../shared/**/*"
+  ],
   "references": [
     {
       "path": "../packages/core"
@@ -42,10 +49,6 @@
     {
       "path": "../packages/plugin-sdk"
     }
-  ],
-  "include": [
-    "src/**/*",
-    "test/**/*"
   ],
   "exclude": [
     "dist",

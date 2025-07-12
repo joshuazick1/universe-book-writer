@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware.js';
 import { AIGeneratorService } from '../../core/interfaces/ai-generator.service.js';
-import { logError, logInfo } from '../../utils/logger.js';
+import logger from '../../../../shared/logging/logger.js';
 
 export class AIGeneratorController {
-  constructor(private aiGeneratorService: AIGeneratorService) {}
+  constructor(private aiGeneratorService: AIGeneratorService) { }
 
   /**
    * Generate a new universe
@@ -14,7 +14,7 @@ export class AIGeneratorController {
       const { prompt, genre, complexity, additionalContext } = req.body;
       const userId = req.user!.id;
 
-      logInfo(`Generating universe for user ${userId}`);
+      logger.info(`Generating universe for user ${userId}`);
 
       const result = await this.aiGeneratorService.generateUniverse({
         prompt,
@@ -29,7 +29,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error generating universe:', error);
+      logger.error('Error generating universe', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to generate universe',
@@ -59,7 +59,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error expanding universe:', error);
+      logger.error('Error expanding universe', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to expand universe',
@@ -86,7 +86,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error validating universe:', error);
+      logger.error('Error validating universe', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to validate universe',
@@ -116,7 +116,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error generating character:', error);
+      logger.error('Error generating character', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to generate character',
@@ -146,7 +146,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error expanding character:', error);
+      logger.error('Error expanding character', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to expand character',
@@ -173,7 +173,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error validating character:', error);
+      logger.error('Error validating character', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to validate character',
@@ -202,7 +202,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error integrating memory:', error);
+      logger.error('Error integrating memory', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to integrate memory',
@@ -229,7 +229,7 @@ export class AIGeneratorController {
         data: result
       });
     } catch (error) {
-      logError('Error getting character memories:', error);
+      logger.error('Error getting character memories', { error });
       res.status(500).json({
         success: false,
         message: 'Failed to get character memories',
@@ -250,7 +250,7 @@ export class AIGeneratorController {
         data: health
       });
     } catch (error) {
-      logError('Error checking AI generator health:', error);
+      logger.error('Error checking AI generator health', { error });
       res.status(500).json({
         success: false,
         message: 'AI generator service unavailable',

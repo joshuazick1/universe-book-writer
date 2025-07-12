@@ -21,9 +21,13 @@
   ],
   "include": [
     "src/**/*",
+    "orchestrator/**/*.ts",
+    "benchmarking/**/*.ts",
+    "types/**/*.ts",
     "tests/**/*",
     "tests/unit/**/*.ts",
     "tests/unit/**/*.test.ts",
-    "tests/unit/**/*.js"
+    "tests/unit/**/*.js",
+    "../shared/**/*.ts"
   ]
 }

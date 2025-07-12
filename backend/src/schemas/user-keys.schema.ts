@@ -129,7 +129,11 @@ export class UserKeysService {
             { returnDocument: 'after' }
         );
 
-        return result.value;
+        // Fix: Add null check for result and return correct value
+        if (!result || !('value' in result) || !result.value) {
+            return null;
+        }
+        return result.value as UserKeysDocument;
     }
 
     /**

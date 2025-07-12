@@ -7,7 +7,7 @@ import { EventEmitter } from 'events';
 import { ProcessingJob, ProcessingResult, ParsingOptions, ParsedEntity, DualAiProcessingOptions } from '../core/interfaces.js';
 import { PrimaryParser } from '../parsers/primaryParser.js';
 import { RelationshipExtractor, RelationshipExtractionOptions } from '../parsers/relationshipExtractor.js';
-import { logInfo, logError, logDebug } from '../../../logger.js';
+import { logger } from '../../../../../shared/logging/logger.js';
 
 export interface ProcessingStage {
     stage: 'primary' | 'contextual' | 'relationship' | 'validation' | 'completed';
@@ -52,14 +52,14 @@ export class DualAiProcessor extends EventEmitter {
     ): Promise<DualAiResult> {
         const startTime = Date.now();
         const stages: ProcessingStage[] = [];
-        
-        logInfo(`Starting dual-AI processing for job ${job.id}`);
+
+        logger.info(`Starting dual-AI processing for job ${job.id}`);
 
         try {
             // Stage 1: Primary parsing
             this.emitStage('primary', 0, stages);
             const primaryResults = await this.runPrimaryParsing(job, options, stages);
-            
+
             // Stage 2: Relationship extraction (if enabled)
             let relationshipExtractionResult;
             if (options.enableRelationshipExtraction && primaryResults.entities.length > 1) {
@@ -96,8 +96,8 @@ export class DualAiProcessor extends EventEmitter {
             this.emitStage('completed', 1.0, stages);
 
             const totalProcessingTime = Date.now() - startTime;
-            
-            logInfo(`Dual-AI processing completed for job ${job.id} in ${totalProcessingTime}ms`);
+
+            logger.info(`Dual-AI processing completed for job ${job.id} in ${totalProcessingTime}ms`);
 
             return {
                 ...finalResult,
@@ -109,7 +109,7 @@ export class DualAiProcessor extends EventEmitter {
             };
 
         } catch (error) {
-            logError(`Dual-AI processing failed for job ${job.id}: ${error}`);
+            logger.error(`Dual-AI processing failed for job ${job.id}: ${error}`);
             throw error;
         }
     }
@@ -122,7 +122,7 @@ export class DualAiProcessor extends EventEmitter {
         options: DualAiProcessingOptions,
         stages: ProcessingStage[]
     ): Promise<ProcessingResult> {
-        logDebug(`Running primary parsing for job ${job.id}`);
+        logger.debug(`Running primary parsing for job ${job.id}`);
 
         // Configure primary parser options
         const primaryOptions = {
@@ -173,7 +173,7 @@ export class DualAiProcessor extends EventEmitter {
         sourceText: string,
         options: DualAiProcessingOptions
     ): Promise<{ relationships: any[]; confidence: number; processingTime: number }> {
-        logDebug(`Running relationship extraction for ${entities.length} entities`);
+        logger.debug(`Running relationship extraction for ${entities.length} entities`);
 
         const extractionOptions: RelationshipExtractionOptions = {
             model: options.contextualModel || options.primaryModel,
@@ -200,7 +200,7 @@ export class DualAiProcessor extends EventEmitter {
         options: DualAiProcessingOptions,
         relationships: any[]
     ): Promise<ProcessingResult> {
-        logDebug(`Running contextual updates for job ${job.id}`);
+        logger.debug(`Running contextual updates for job ${job.id}`);
 
         // For now, this is a placeholder for contextual processing
         // In a full implementation, this would:
@@ -253,7 +253,7 @@ export class DualAiProcessor extends EventEmitter {
 
         for (const entity of entities) {
             // Get relationships for this entity
-            const entityRelationships = relationships.filter(rel => 
+            const entityRelationships = relationships.filter(rel =>
                 rel.sourceEntityId === entity.id || rel.targetEntityId === entity.id
             );
 
@@ -281,7 +281,7 @@ export class DualAiProcessor extends EventEmitter {
                 if (response.ok) {
                     const data = await response.json();
                     const aiResponse = data.message?.content || data.response || '';
-                    
+
                     const refinedEntity = this.parseRefinementResponse(aiResponse, entity);
                     refinedEntities.push(refinedEntity);
                 } else {
@@ -290,7 +290,7 @@ export class DualAiProcessor extends EventEmitter {
                 }
 
             } catch (error) {
-                logError(`Entity refinement failed for ${entity.name}: ${error}`);
+                logger.error(`Entity refinement failed for ${entity.name}: ${error}`);
                 refinedEntities.push(entity);
             }
         }
@@ -306,7 +306,7 @@ export class DualAiProcessor extends EventEmitter {
         relationships: any[],
         sourceText: string
     ): string {
-        const relationshipDescriptions = relationships.map(rel => 
+        const relationshipDescriptions = relationships.map(rel =>
             `- ${rel.type}: ${rel.description} (confidence: ${rel.confidence})`
         ).join('\n');
 
@@ -372,7 +372,7 @@ JSON object:`;
             };
 
         } catch (error) {
-            logError(`Failed to parse refinement response: ${error}`);
+            logger.error(`Failed to parse refinement response: ${error}`);
             return originalEntity;
         }
     }
@@ -440,7 +440,7 @@ JSON object:`;
      * Calculate overall confidence from entities and relationships
      */
     private calculateOverallConfidence(entities: ParsedEntity[], relationships: any[]): number {
-        const entityConfidence = entities.length > 0 
+        const entityConfidence = entities.length > 0
             ? entities.reduce((sum, e) => sum + e.confidence, 0) / entities.length
             : 0;
 
@@ -449,7 +449,7 @@ JSON object:`;
             : 0;
 
         // Weight entities more heavily than relationships
-        return entities.length > 0 
+        return entities.length > 0
             ? (entityConfidence * 0.7) + (relationshipConfidence * 0.3)
             : 0;
     }
@@ -459,7 +459,7 @@ JSON object:`;
      */
     private calculateUpdatedConfidence(entities: ParsedEntity[]): number {
         if (entities.length === 0) return 0;
-        
+
         const totalConfidence = entities.reduce((sum, entity) => sum + entity.confidence, 0);
         return totalConfidence / entities.length;
     }

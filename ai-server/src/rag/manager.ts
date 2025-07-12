@@ -4,7 +4,7 @@ import type {
 } from './core/types.js';
 import type { RAGStorageBackend } from './services/storage.service.js';
 import { StorageAdapterFactory, type StorageAdapterConfig } from './adapters/factory.js';
-import { logInfo, logError, logDebug } from '../logger.js';
+import { logger } from '../../../shared/logging/logger.js';
 
 /**
  * Configuration for the RAG service manager
@@ -31,16 +31,16 @@ export class RAGServiceManager {
      */
     async initialize(): Promise<void> {
         try {
-            logInfo('Initializing RAG Service Manager');
+            logger.info('Initializing RAG Service Manager');
 
             // Initialize storage adapter
             this.storage = await StorageAdapterFactory.createAdapter(this.config.storage);
-            logInfo(`Storage adapter initialized: ${this.config.storage.type}`);
+            logger.info(`Storage adapter initialized: ${this.config.storage.type}`);
 
             this.initialized = true;
-            logInfo('RAG Service Manager initialized successfully');
+            logger.info('RAG Service Manager initialized successfully');
         } catch (error) {
-            logError(`Failed to initialize RAG Service Manager: ${error instanceof Error ? error.message : String(error)}`);
+            logger.error(`Failed to initialize RAG Service Manager: ${error instanceof Error ? error.message : String(error)}`);
             throw error;
         }
     }
@@ -55,7 +55,7 @@ export class RAGServiceManager {
         this.storage = null;
         this.initialized = false;
 
-        logInfo('RAG Service Manager disconnected');
+        logger.info('RAG Service Manager disconnected');
     }
 
     /**
@@ -85,7 +85,7 @@ export class RAGServiceManager {
 
         await this.storage!.storeNode(node);
 
-        logDebug(`Created RAG node: ${node.id}`);
+        logger.debug(`Created RAG node: ${node.id}`);
         return node;
     }
 
@@ -133,7 +133,7 @@ export class RAGServiceManager {
         this.ensureInitialized();
 
         await this.storage!.deleteNode(nodeId);
-        logDebug(`Deleted RAG node: ${nodeId}`);
+        logger.debug(`Deleted RAG node: ${nodeId}`);
     }
 
     // Relationship Management
@@ -154,7 +154,7 @@ export class RAGServiceManager {
 
         await this.storage!.storeRelationship(relationship);
 
-        logDebug(`Created RAG relationship: ${relationship.id}`);
+        logger.debug(`Created RAG relationship: ${relationship.id}`);
         return relationship;
     }
 
@@ -202,7 +202,7 @@ export class RAGServiceManager {
         this.ensureInitialized();
 
         await this.storage!.deleteRelationship(relationshipId);
-        logDebug(`Deleted RAG relationship: ${relationshipId}`);
+        logger.debug(`Deleted RAG relationship: ${relationshipId}`);
     }
 
     // Graph Operations

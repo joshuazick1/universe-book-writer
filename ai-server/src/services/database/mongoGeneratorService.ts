@@ -1,3 +1,39 @@
+// ============================================
+// SHARED MEMORY QUERIES (STUBS)
+// ============================================
+
+/**
+ * Get shared memories by event ID
+ */
+
+/**
+ * Get shared memories by event ID (production implementation)
+ */
+export async function getSharedMemoriesByEvent(eventId: string): Promise<any[]> {
+    return mongoGeneratorService.getSharedMemoriesByEvent(eventId);
+}
+
+/**
+ * Get shared memories by time (or time range)
+ */
+
+/**
+ * Get shared memories by time (production implementation)
+ */
+export async function getSharedMemoriesByTime(timestamp: string): Promise<any[]> {
+    return mongoGeneratorService.getSharedMemoriesByTime(timestamp);
+}
+
+/**
+ * Get shared memories involving a character
+ */
+
+/**
+ * Get shared memories by character (production implementation)
+ */
+export async function getSharedMemoriesByCharacter(characterId: string): Promise<any[]> {
+    return mongoGeneratorService.getSharedMemoriesByCharacter(characterId);
+}
 /**
  * MongoDB Service for AI Generation Systems
  * 
@@ -363,5 +399,87 @@ export class MongoGeneratorService {
     }
 }
 
+
+// ============================================
+// SHARED MEMORY QUERIES (STUBS)
+// ============================================
+
+export class MongoGeneratorServiceWithSharedMemory extends MongoGeneratorService {
+    /**
+     * Get shared memories by event ID
+     */
+
+    /**
+     * Get shared memories by event ID
+     */
+    async getSharedMemoriesByEvent(eventId: string): Promise<any[]> {
+        // Use the main character_memories collection for now (until rag_nodes or shared_memories is added)
+        // This will only return nodes with type: 'shared_memory'
+        // TODO: Update to use rag_nodes or shared_memories collection if/when available
+        // getCollections is private, so use a public static helper
+        const collections = await getCollections();
+        const docs = await collections.character_memories.find({
+            type: 'shared_memory',
+            $or: [
+                { 'metadata.eventId': eventId },
+                { 'content.attributes.eventId': eventId }
+            ]
+        }).toArray();
+        return docs.map((doc: any) => {
+            const { _id, ...node } = doc;
+            return node;
+        });
+    }
+
+    /**
+     * Get shared memories by time (or time range)
+     */
+
+    /**
+     * Get shared memories by time (or time range)
+     * Accepts ISO string or Date. Matches if the event's startDate, endDate, or timestamps.created matches the timestamp.
+     */
+    async getSharedMemoriesByTime(timestamp: string): Promise<any[]> {
+        const collections = await getCollections();
+        const date = new Date(timestamp);
+        // Accept both string and Date matches for flexibility
+        const docs = await collections.character_memories.find({
+            type: 'shared_memory',
+            $or: [
+                { 'temporal.startDate': { $eq: date } },
+                { 'temporal.endDate': { $eq: date } },
+                { 'timestamps.created': { $eq: date } },
+                { 'temporal.startDate': timestamp },
+                { 'temporal.endDate': timestamp },
+                { 'timestamps.created': timestamp }
+            ]
+        }).toArray();
+        return docs.map((doc: any) => {
+            const { _id, ...node } = doc;
+            return node;
+        });
+    }
+
+    /**
+     * Get shared memories involving a character
+     */
+
+    /**
+     * Get shared memories involving a character
+     * Looks for characterId in content.attributes.involved_entities
+     */
+    async getSharedMemoriesByCharacter(characterId: string): Promise<any[]> {
+        const collections = await getCollections();
+        const docs = await collections.character_memories.find({
+            type: 'shared_memory',
+            'content.attributes.involved_entities': characterId
+        }).toArray();
+        return docs.map((doc: any) => {
+            const { _id, ...node } = doc;
+            return node;
+        });
+    }
+}
+
 // Singleton instance
-export const mongoGeneratorService = new MongoGeneratorService();
+export const mongoGeneratorService = new MongoGeneratorServiceWithSharedMemory();

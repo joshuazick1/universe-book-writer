@@ -5,6 +5,15 @@
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
+  extensionsToTreatAsEsm: ['.ts'],
+  transform: {
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
+  },
   // Global teardown
   globalTeardown: '<rootDir>/jest.teardown.global.mjs',
 
@@ -117,7 +126,30 @@ export default {
       moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
       extensionsToTreatAsEsm: ['.ts'],
     },
-    // Packages
+    // Shared (new shared utilities and types)
+    {
+      displayName: 'shared',
+      testEnvironment: 'node',
+      testMatch: [
+        '<rootDir>/shared/**/*.test.ts',
+        '<rootDir>/shared/**/__tests__/**/*.test.ts'
+      ],
+      moduleNameMapper: {
+        '^(\\.{1,2}/.*)\\.(m?js|ts|tsx)$': '$1',
+      },
+      transform: {
+        '^.+\\.(ts)$': [
+          'ts-jest',
+          {
+            useESM: true,
+            tsconfig: '<rootDir>/tsconfig.json',
+          },
+        ],
+      },
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+      extensionsToTreatAsEsm: ['.ts'],
+      transformIgnorePatterns: ['/node_modules/'],
+    },
     {
       displayName: 'packages',
       testEnvironment: 'node',

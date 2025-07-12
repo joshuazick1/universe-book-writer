@@ -14,11 +14,6 @@ router.use(urlencoded({ extended: true }));
 
 // Debug logging middleware
 router.use((req, res, next) => {
-    console.debug(`[ollamaCompat] ${req.method} ${req.path}`, {
-        body: req.body,
-        query: req.query,
-        headers: req.headers
-    });
     next();
 });
 

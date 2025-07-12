@@ -39,7 +39,7 @@ import { Request, Response, RequestHandler } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import fetch from 'node-fetch';
 import { getOrchestratorInstance } from '../../orchestrator-instance.js';
-import { logDebug, logError } from '../../logger.js';
+import { logger } from '../../../../shared/logging/logger.js';
 
 // Token counting utility (simple approximation)
 function countTokens(text: string): number {
@@ -278,7 +278,7 @@ export const openaiChatCompletionsHandler: RequestHandler = async (req, res): Pr
                                 return;
                             }
                         } catch (parseError) {
-                            logError(`Error parsing Ollama streaming response: ${parseError}`);
+                            logger.error(`Error parsing Ollama streaming response: ${parseError}`);
                         }
                     }
                 }
@@ -403,7 +403,7 @@ export const openaiChatCompletionsHandler: RequestHandler = async (req, res): Pr
             res.json(response);
         }
     } catch (error) {
-        logError(`Error in chat completions handler: ${error}`);
+        logger.error(`Error in chat completions handler: ${error}`);
 
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 

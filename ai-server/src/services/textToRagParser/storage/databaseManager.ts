@@ -11,6 +11,29 @@ import { mongoGeneratorService } from '../../database/mongoGeneratorService.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class DatabaseManager {
+    /**
+     * Get shared memories by event ID
+     */
+    async getSharedMemoriesByEvent(eventId: string): Promise<any[]> {
+        // Uses production implementation in mongoGeneratorService
+        return mongoGeneratorService.getSharedMemoriesByEvent(eventId);
+    }
+
+    /**
+     * Get shared memories by time (or time range)
+     */
+    async getSharedMemoriesByTime(timestamp: string): Promise<any[]> {
+        // Uses production implementation in mongoGeneratorService
+        return mongoGeneratorService.getSharedMemoriesByTime(timestamp);
+    }
+
+    /**
+     * Get shared memories involving a character
+     */
+    async getSharedMemoriesByCharacter(characterId: string): Promise<any[]> {
+        // Uses production implementation in mongoGeneratorService
+        return mongoGeneratorService.getSharedMemoriesByCharacter(characterId);
+    }
 
     /**
      * Convert textToRagParser CharacterMemory to characterGenerator CharacterMemory

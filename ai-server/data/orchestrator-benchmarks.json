@@ -30,1629 +30,1629 @@
     "lastTested": 1751914019632
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:smollm2:135m": {
-    "latencyMs": 75.66306537924899,
-    "throughput": 5.750200675768012,
-    "lastTested": 1752082750315
+    "latencyMs": 191.86271054491328,
+    "throughput": 2.75249295018114,
+    "lastTested": 1752203776434
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:mistral:latest": {
-    "latencyMs": 74.61550000851744,
-    "throughput": 1.7742077510101664,
-    "lastTested": 1752082750389
+    "latencyMs": 195.38791982598204,
+    "throughput": 4.731251574724985,
+    "lastTested": 1752203776436
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepseek-r1:latest": {
-    "latencyMs": 155.85192781022738,
-    "throughput": 4.161010124119455,
-    "lastTested": 1752082750321
+    "latencyMs": 240.5136815073822,
+    "throughput": 3.9299455015507436,
+    "lastTested": 1752203776439
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:eliem08/llama3.1-report:latest": {
-    "latencyMs": 78.40363835594535,
-    "throughput": 4.188862001971875,
-    "lastTested": 1752082750446
+    "latencyMs": 244.0190938770622,
+    "throughput": 2.8228442665631652,
+    "lastTested": 1752203776441
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:devstral:24b": {
-    "latencyMs": 232.9288199330959,
-    "throughput": 5.065987163199416,
-    "lastTested": 1752082750368
+    "latencyMs": 204.04892863111434,
+    "throughput": 5.8078038876902855,
+    "lastTested": 1752203776444
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:llama3.3:70b": {
-    "latencyMs": 195.33910493770296,
-    "throughput": 3.999237126878429,
-    "lastTested": 1752082750380
+    "latencyMs": 174.9957245747637,
+    "throughput": 1.8622820813655974,
+    "lastTested": 1752203776446
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:starcoder2:15b": {
-    "latencyMs": 95.8173986971631,
-    "throughput": 5.487163576382729,
-    "lastTested": 1752082750358
+    "latencyMs": 60.9897025623916,
+    "throughput": 2.822148734961236,
+    "lastTested": 1752207417228
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepseek-coder-v2:16b": {
-    "latencyMs": 164.93483192006124,
-    "throughput": 5.977554892654271,
-    "lastTested": 1752082750364
+    "latencyMs": 153.7421204104482,
+    "throughput": 3.5174300575489927,
+    "lastTested": 1752207417327
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:mistral-nemo:12b": {
-    "latencyMs": 213.19827482426513,
-    "throughput": 4.576638392940893,
-    "lastTested": 1752082750420
+    "latencyMs": 68.25787357581899,
+    "throughput": 5.6810159812645935,
+    "lastTested": 1752207417313
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:codestral:22b": {
-    "latencyMs": 50.78623014366901,
-    "throughput": 2.1241909435619424,
-    "lastTested": 1752082750430
+    "latencyMs": 157.87064361196605,
+    "throughput": 2.0366635102682134,
+    "lastTested": 1752203776456
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepcoder:14b": {
-    "latencyMs": 247.74490637836902,
-    "throughput": 2.737706612466563,
-    "lastTested": 1752082750353
+    "latencyMs": 76.23555434087099,
+    "throughput": 4.4302695336659825,
+    "lastTested": 1752207417324
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:mistral:7b": {
-    "latencyMs": 205.47135328881643,
-    "throughput": 3.818208209139467,
-    "lastTested": 1752082750413
+    "latencyMs": 203.50056099441392,
+    "throughput": 1.3229775200368379,
+    "lastTested": 1752207417603
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:llama3.1:8b": {
-    "latencyMs": 193.61885713901762,
-    "throughput": 4.065840296478029,
-    "lastTested": 1752034548715
+    "latencyMs": 149.32968189332408,
+    "throughput": 5.03033530124452,
+    "lastTested": 1752203776464
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:phi4-mini-reasoning:latest": {
-    "latencyMs": 86.45953447989494,
-    "throughput": 5.4464429898653215,
-    "lastTested": 1752082750394
+    "latencyMs": 127.68885661480115,
+    "throughput": 1.1297012985668045,
+    "lastTested": 1752203776466
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:phi4-reasoning:latest": {
-    "latencyMs": 216.9226841966733,
-    "throughput": 3.119193297970068,
-    "lastTested": 1752082750401
+    "latencyMs": 102.31311685668673,
+    "throughput": 1.3607644656704256,
+    "lastTested": 1752203776468
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:phi4:latest": {
-    "latencyMs": 70.12176536648802,
-    "throughput": 3.963923195385166,
-    "lastTested": 1752082750299
+    "latencyMs": 76.7765152076695,
+    "throughput": 2.053016199336849,
+    "lastTested": 1752203776471
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepseek-r1:70b": {
-    "latencyMs": 53.73521158676331,
-    "throughput": 2.4829600879201332,
-    "lastTested": 1752082750252
+    "latencyMs": 186.0561782067865,
+    "throughput": 2.611207597187456,
+    "lastTested": 1752203776473
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:gemma3:27b": {
-    "latencyMs": 191.08252997449551,
-    "throughput": 2.2703986261201483,
-    "lastTested": 1752082750246
+    "latencyMs": 111.59106088056086,
+    "throughput": 3.6200548185061976,
+    "lastTested": 1752207417231
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:codellama:70b": {
-    "latencyMs": 137.41286243224238,
-    "throughput": 5.071206093070998,
-    "lastTested": 1752082750384
+    "latencyMs": 219.18343251738955,
+    "throughput": 3.8744377999480686,
+    "lastTested": 1752203776478
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:exaone-deep:32b": {
-    "latencyMs": 148.97311040449583,
-    "throughput": 3.9017926037231225,
-    "lastTested": 1752082750376
+    "latencyMs": 103.93286235701846,
+    "throughput": 1.8480278378645212,
+    "lastTested": 1752207417342
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:devstral:latest": {
-    "latencyMs": 240.27464381113273,
-    "throughput": 3.567655364256326,
-    "lastTested": 1752082750326
+    "latencyMs": 169.24704777132933,
+    "throughput": 5.995283220096949,
+    "lastTested": 1752203776483
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:llama3.2:latest": {
-    "latencyMs": 107.91726616781352,
-    "throughput": 2.53002973587688,
-    "lastTested": 1752082750307
+    "latencyMs": 137.06274107697976,
+    "throughput": 3.2414945867914513,
+    "lastTested": 1752203776486
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:gemma3:latest": {
-    "latencyMs": 118.92376330538328,
-    "throughput": 1.7377521317753555,
-    "lastTested": 1752082750240
+    "latencyMs": 126.8619656392302,
+    "throughput": 3.3097076427104826,
+    "lastTested": 1752203776488
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepcoder:1.5b": {
-    "latencyMs": 56.24696711784858,
-    "throughput": 2.0823191936197674,
-    "lastTested": 1752082750349
+    "latencyMs": 65.71775983791764,
+    "throughput": 1.7113265129716595,
+    "lastTested": 1752207417290
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:qwen3:4b": {
-    "latencyMs": 55.35142750648285,
-    "throughput": 1.6929389363080418,
-    "lastTested": 1752034548710
+    "latencyMs": 146.931514181812,
+    "throughput": 4.107394858568627,
+    "lastTested": 1752207417234
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:exaone-deep:2.4b": {
-    "latencyMs": 68.70633938455528,
-    "throughput": 4.589817054608294,
-    "lastTested": 1752082750345
+    "latencyMs": 135.8588128348797,
+    "throughput": 3.7162886112426254,
+    "lastTested": 1752207417278
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepcoder:14b-preview-fp16": {
-    "latencyMs": 58.58714977997472,
-    "throughput": 4.551684712093505,
-    "lastTested": 1752082750426
+    "latencyMs": 152.30908108611408,
+    "throughput": 4.742881699908706,
+    "lastTested": 1752203776501
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:phi4-reasoning:plus": {
-    "latencyMs": 156.52552665243354,
-    "throughput": 1.470411683705514,
-    "lastTested": 1752082750451
+    "latencyMs": 112.47144812975209,
+    "throughput": 5.501680187313539,
+    "lastTested": 1752203776504
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:qwen3:32b": {
-    "latencyMs": 159.6120875643337,
-    "throughput": 1.344781529715401,
-    "lastTested": 1752082750287
+    "latencyMs": 169.82027900128185,
+    "throughput": 2.565168853586014,
+    "lastTested": 1752207417251
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:exaone3.5:32b": {
-    "latencyMs": 218.85107093991815,
-    "throughput": 3.9145523856278555,
-    "lastTested": 1752082750372
+    "latencyMs": 151.61735995436015,
+    "throughput": 3.530682325404708,
+    "lastTested": 1752207417339
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:phi4-mini:latest": {
-    "latencyMs": 168.3549620598394,
-    "throughput": 3.05091385188253,
-    "lastTested": 1751992919391
+    "latencyMs": 232.81871637036122,
+    "throughput": 4.717457467119061,
+    "lastTested": 1752203776511
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:exaone3.5:2.4b": {
-    "latencyMs": 56.69320431338147,
-    "throughput": 3.94274397257141,
-    "lastTested": 1752082750341
+    "latencyMs": 168.55778131515189,
+    "throughput": 3.387396888011205,
+    "lastTested": 1752203776514
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:gemma3:1b": {
-    "latencyMs": 229.21739244210121,
-    "throughput": 4.538879594612759,
-    "lastTested": 1752082750258
+    "latencyMs": 239.40029438375058,
+    "throughput": 5.1840317063367465,
+    "lastTested": 1752203776516
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepseek-r1:1.5b": {
-    "latencyMs": 69.09782660423804,
-    "throughput": 1.5090266375508057,
-    "lastTested": 1752082750267
+    "latencyMs": 84.94007670650565,
+    "throughput": 1.7992224824030192,
+    "lastTested": 1752203776518
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:all-minilm:l6-v2": {
-    "latencyMs": 149.26623917271206,
-    "throughput": 5.436404250162745,
-    "lastTested": 1752082750459
+    "latencyMs": 149.93706901799638,
+    "throughput": 1.8201536512677943,
+    "lastTested": 1752203776521
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:qwen2.5:32b": {
-    "latencyMs": 164.54390308981823,
-    "throughput": 4.782075928716257,
-    "lastTested": 1752082750436
+    "latencyMs": 129.95890534330638,
+    "throughput": 1.6917995889715445,
+    "lastTested": 1752207417941
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepseek-r1:14b": {
-    "latencyMs": 69.85125007624653,
-    "throughput": 2.689564612746227,
-    "lastTested": 1752082750282
+    "latencyMs": 182.52099650673773,
+    "throughput": 3.145386118026271,
+    "lastTested": 1752207417245
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:qwen:1.8b": {
-    "latencyMs": 117.05882982963529,
-    "throughput": 5.194499400878731,
-    "lastTested": 1752034548746
+    "latencyMs": 141.6074664708853,
+    "throughput": 3.0174126536703243,
+    "lastTested": 1752207417692
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:deepseek-coder:33b": {
-    "latencyMs": 74.23181989609611,
-    "throughput": 5.905679846410096,
-    "lastTested": 1752082750441
+    "latencyMs": 169.2920801562159,
+    "throughput": 5.393149513931042,
+    "lastTested": 1752207417948
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:phi3:medium-128k": {
-    "latencyMs": 229.2506722726515,
-    "throughput": 5.55806082003286,
-    "lastTested": 1752082750464
+    "latencyMs": 92.04570035862565,
+    "throughput": 3.106505338007673,
+    "lastTested": 1752203776536
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:qwen2.5-coder:32b": {
-    "latencyMs": 142.11967263898572,
-    "throughput": 2.9240602441057053,
-    "lastTested": 1752082750292
+    "latencyMs": 130.83643394520044,
+    "throughput": 4.66953237762501,
+    "lastTested": 1752207417258
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:llama3.2:1b": {
-    "latencyMs": 133.9733472164569,
-    "throughput": 4.805147539160883,
-    "lastTested": 1752082750331
+    "latencyMs": 148.25207580155222,
+    "throughput": 1.3299510986995313,
+    "lastTested": 1752207417262
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:phi3:latest": {
-    "latencyMs": 65.04742564486764,
-    "throughput": 5.704885406330053,
-    "lastTested": 1752082750469
+    "latencyMs": 165.25896451661606,
+    "throughput": 4.1071147823000524,
+    "lastTested": 1752203776544
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:qwen2.5-coder:3b": {
-    "latencyMs": 173.94747499991973,
-    "throughput": 5.394096594669472,
-    "lastTested": 1752082750336
+    "latencyMs": 83.945876886621,
+    "throughput": 1.3618961310379865,
+    "lastTested": 1752207417271
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:gemma3:12b": {
-    "latencyMs": 238.0374116448214,
-    "throughput": 4.041509509652723,
-    "lastTested": 1752082750276
+    "latencyMs": 240.28533557081596,
+    "throughput": 4.114579659444681,
+    "lastTested": 1752207417224
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:gemma2:latest": {
-    "latencyMs": 202.08264503440066,
-    "throughput": 3.8514140077832604,
-    "lastTested": 1752082750473
+    "latencyMs": 212.8555447036749,
+    "throughput": 1.3933001344829468,
+    "lastTested": 1752203776551
   },
   "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA:llama3.1:latest": {
-    "latencyMs": 201.63515336021104,
-    "throughput": 3.069934180401064,
-    "lastTested": 1752082750408
+    "latencyMs": 194.1675302453004,
+    "throughput": 2.3405906596104367,
+    "lastTested": 1752203776554
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:hf.co/unsloth/DeepSeek-R1-0528-GGUF:TQ1_0": {
-    "latencyMs": 170.91411047502936,
-    "throughput": 1.4169304715262423,
-    "lastTested": 1752082750624
+    "latencyMs": 235.43000213305368,
+    "throughput": 2.0089024640533983,
+    "lastTested": 1752248540270
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:llama4:latest": {
-    "latencyMs": 106.51814499842085,
-    "throughput": 1.1953067824668053,
-    "lastTested": 1752082750576
+    "latencyMs": 103.22950203087248,
+    "throughput": 1.5591471080586397,
+    "lastTested": 1752276304303
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:nomic-embed-text:v1.5": {
-    "latencyMs": 158.7938008540189,
-    "throughput": 2.4901553947413406,
-    "lastTested": 1752082750629
+    "latencyMs": 199.74390866210223,
+    "throughput": 3.2092452704249954,
+    "lastTested": 1752248540274
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:nomic-embed-text:latest": {
-    "latencyMs": 139.08790615305014,
-    "throughput": 3.1282525507496572,
-    "lastTested": 1752082750486
+    "latencyMs": 125.82957025066679,
+    "throughput": 2.251285604931595,
+    "lastTested": 1752203776564
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:huihui_ai/deepseek-r1-abliterated:latest": {
-    "latencyMs": 216.21003130324956,
-    "throughput": 2.909554935489531,
-    "lastTested": 1752082750594
+    "latencyMs": 55.84126102336899,
+    "throughput": 1.3083806118077947,
+    "lastTested": 1752248540398
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:huihui_ai/qwq-abliterated:latest": {
-    "latencyMs": 84.88716438842157,
-    "throughput": 2.798267763576421,
-    "lastTested": 1752082750634
+    "latencyMs": 50.177403249302046,
+    "throughput": 5.768383693550402,
+    "lastTested": 1752248540277
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:huihui_ai/qwen3-abliterated:latest": {
-    "latencyMs": 125.6785789385353,
-    "throughput": 5.279683937382054,
-    "lastTested": 1752082750638
+    "latencyMs": 154.6873828058716,
+    "throughput": 5.434781070334477,
+    "lastTested": 1752248540281
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:llama3.2:3b": {
-    "latencyMs": 87.80065739105183,
-    "throughput": 1.819503385470216,
-    "lastTested": 1752082750544
+    "latencyMs": 139.8838271497477,
+    "throughput": 5.097172451998122,
+    "lastTested": 1752276304237
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:devstral:latest": {
-    "latencyMs": 166.4707304797866,
-    "throughput": 5.10447531843025,
-    "lastTested": 1752082750540
+    "latencyMs": 206.58223609022363,
+    "throughput": 1.7549253625770158,
+    "lastTested": 1752276304311
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:phi4-reasoning:latest": {
-    "latencyMs": 248.7869773097283,
-    "throughput": 4.546419940377426,
-    "lastTested": 1752082750608
+    "latencyMs": 118.37181658221425,
+    "throughput": 4.180537915014185,
+    "lastTested": 1752276304881
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:phi4-mini-reasoning:latest": {
-    "latencyMs": 102.75563344538577,
-    "throughput": 4.900732379795981,
-    "lastTested": 1752082750604
+    "latencyMs": 74.44225783327153,
+    "throughput": 1.7003552282724446,
+    "lastTested": 1752276304883
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:qwen3:30b": {
-    "latencyMs": 155.94701611963876,
-    "throughput": 2.063923980429861,
-    "lastTested": 1752034548830
+    "latencyMs": 148.2892576585721,
+    "throughput": 1.9095018806666288,
+    "lastTested": 1752276304280
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:cogito:14b": {
-    "latencyMs": 66.33599947904654,
-    "throughput": 3.1738827772260794,
-    "lastTested": 1752034548819
+    "latencyMs": 83.18603359121522,
+    "throughput": 4.088716334870622,
+    "lastTested": 1752276304277
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:qwen3:14b": {
-    "latencyMs": 194.19244003508518,
-    "throughput": 1.3138281296333079,
-    "lastTested": 1752082750491
+    "latencyMs": 107.21658304238582,
+    "throughput": 4.78868369520296,
+    "lastTested": 1752276304214
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:gemma3:latest": {
-    "latencyMs": 144.73996539950986,
-    "throughput": 3.047219764559005,
-    "lastTested": 1752082750477
+    "latencyMs": 172.07828410921087,
+    "throughput": 4.677440485262253,
+    "lastTested": 1752248540346
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:hermes3:8b": {
-    "latencyMs": 112.19409404467706,
-    "throughput": 4.103439492235822,
-    "lastTested": 1752034548808
+    "latencyMs": 159.46690859908938,
+    "throughput": 3.5785121110323828,
+    "lastTested": 1752276304209
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:deepscaler:latest": {
-    "latencyMs": 200.0091478384336,
-    "throughput": 3.285867999863911,
-    "lastTested": 1752082750643
+    "latencyMs": 234.66187315735755,
+    "throughput": 4.711854090846073,
+    "lastTested": 1752276304886
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:openthinker:32b": {
-    "latencyMs": 127.22188821992586,
-    "throughput": 4.463609228785677,
-    "lastTested": 1752082750571
+    "latencyMs": 116.63194810316368,
+    "throughput": 3.967740947642631,
+    "lastTested": 1752276304288
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:mistral-small:24b": {
-    "latencyMs": 145.13331322691707,
-    "throughput": 1.2328909266161516,
-    "lastTested": 1752082750620
+    "latencyMs": 227.27262469175778,
+    "throughput": 1.4864776275610394,
+    "lastTested": 1752276304745
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:qwen2.5-coder:latest": {
-    "latencyMs": 102.49759248778405,
-    "throughput": 3.2672962404749377,
-    "lastTested": 1752082750616
+    "latencyMs": 131.7133583628388,
+    "throughput": 3.7318836216123588,
+    "lastTested": 1752248538957
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:qwen2.5-coder:32b": {
-    "latencyMs": 218.97952446999062,
-    "throughput": 2.0583124247546873,
-    "lastTested": 1752082750506
+    "latencyMs": 206.11476236037825,
+    "throughput": 5.669530242684598,
+    "lastTested": 1752276304292
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:qwen2.5-coder:14b": {
-    "latencyMs": 62.73477134885699,
-    "throughput": 1.8893585402844562,
-    "lastTested": 1752034548790
+    "latencyMs": 161.8663989371361,
+    "throughput": 1.8966852472693043,
+    "lastTested": 1752276304219
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:falcon3:10b": {
-    "latencyMs": 172.32132272045175,
-    "throughput": 2.601468602354731,
-    "lastTested": 1752082750555
+    "latencyMs": 156.85248742123656,
+    "throughput": 5.866168375798314,
+    "lastTested": 1752276304268
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:llama3.1:latest": {
-    "latencyMs": 201.51924146008616,
-    "throughput": 5.803015207194507,
-    "lastTested": 1751992919622
+    "latencyMs": 156.2469769397648,
+    "throughput": 1.0063700792501253,
+    "lastTested": 1752248540286
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:codellama:13b": {
-    "latencyMs": 113.67626824665527,
-    "throughput": 4.212808292011293,
-    "lastTested": 1752082750564
+    "latencyMs": 83.59550474701516,
+    "throughput": 4.129604985226218,
+    "lastTested": 1752276304275
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:deepseek-r1:70b": {
-    "latencyMs": 75.25803408048958,
-    "throughput": 4.569784401363021,
-    "lastTested": 1752082750482
+    "latencyMs": 175.21742755755741,
+    "throughput": 1.1708819340551615,
+    "lastTested": 1752276304199
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:dolphin3:latest": {
-    "latencyMs": 143.474497481857,
-    "throughput": 1.3861311128350409,
-    "lastTested": 1752082750590
+    "latencyMs": 226.57249669124354,
+    "throughput": 2.0468639355413867,
+    "lastTested": 1752248540501
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:deepseek-r1:32b": {
-    "latencyMs": 187.4409519680647,
-    "throughput": 2.8608886257455226,
-    "lastTested": 1752082750502
+    "latencyMs": 76.54006725754402,
+    "throughput": 1.7855148002641987,
+    "lastTested": 1752276304226
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:command-r7b:latest": {
-    "latencyMs": 143.77264089565608,
-    "throughput": 3.0358651155871077,
-    "lastTested": 1752082750549
+    "latencyMs": 188.76206131601813,
+    "throughput": 5.9281881208697875,
+    "lastTested": 1752276304261
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:deepseek-r1:latest": {
-    "latencyMs": 112.47693610835282,
-    "throughput": 4.559138913395085,
-    "lastTested": 1752082750536
+    "latencyMs": 216.3432236759586,
+    "throughput": 1.1788193409542038,
+    "lastTested": 1752248538667
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:0xroyce/plutus:latest": {
-    "latencyMs": 198.49793237226834,
-    "throughput": 3.9794712974190385,
-    "lastTested": 1752082750649
+    "latencyMs": 220.52660722628534,
+    "throughput": 3.0591152643472377,
+    "lastTested": 1752248540290
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:deepseek-r1:14b": {
-    "latencyMs": 177.04556053780695,
-    "throughput": 3.886177014616841,
-    "lastTested": 1752082750495
+    "latencyMs": 107.64606434944048,
+    "throughput": 4.762506953425763,
+    "lastTested": 1752276304217
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:olmo2:13b": {
-    "latencyMs": 70.78563433866547,
-    "throughput": 2.2132667718770627,
-    "lastTested": 1752082750559
+    "latencyMs": 126.02105286853873,
+    "throughput": 5.284043207986219,
+    "lastTested": 1752276304272
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:mathstral:latest": {
-    "latencyMs": 180.27172821528103,
-    "throughput": 2.988502890504049,
-    "lastTested": 1751992919599
+    "latencyMs": 132.35363372209565,
+    "throughput": 2.100785734741576,
+    "lastTested": 1752248540487
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:deepseek-v3:latest": {
-    "latencyMs": 194.08634102864823,
-    "throughput": 4.963435835553417,
-    "lastTested": 1752082750580
+    "latencyMs": 187.0604070979482,
+    "throughput": 5.331641162089028,
+    "lastTested": 1752248540472
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:athene-v2:latest": {
-    "latencyMs": 148.07582579928007,
-    "throughput": 4.236250373382914,
-    "lastTested": 1752082750584
+    "latencyMs": 118.69832492511195,
+    "throughput": 3.4311764320531237,
+    "lastTested": 1752248540479
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:minicpm-v:latest": {
-    "latencyMs": 231.542389804398,
-    "throughput": 3.5420176349707937,
-    "lastTested": 1752082750527
+    "latencyMs": 232.41757708731313,
+    "throughput": 5.222234178276719,
+    "lastTested": 1752248540386
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:llama3.3:latest": {
-    "latencyMs": 238.4023916577359,
-    "throughput": 3.459156119505118,
-    "lastTested": 1752082750516
+    "latencyMs": 249.06950456631552,
+    "throughput": 4.863216212126193,
+    "lastTested": 1752248540352
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:llama3.2-vision:latest": {
-    "latencyMs": 174.05028748440128,
-    "throughput": 4.033196220740216,
-    "lastTested": 1752082750599
+    "latencyMs": 126.63058189905834,
+    "throughput": 4.287138384833458,
+    "lastTested": 1752248540507
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:marco-o1:latest": {
-    "latencyMs": 213.75097259474018,
-    "throughput": 5.601231154349485,
-    "lastTested": 1752082750656
+    "latencyMs": 196.04881200925942,
+    "throughput": 5.370444787989513,
+    "lastTested": 1752248540294
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:qwq:latest": {
-    "latencyMs": 177.95141348484952,
-    "throughput": 1.8616458968663931,
-    "lastTested": 1752082750532
+    "latencyMs": 239.09100046709582,
+    "throughput": 5.401553592003923,
+    "lastTested": 1752248540394
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:phi4:latest": {
-    "latencyMs": 247.34118054611355,
-    "throughput": 1.774748378849599,
-    "lastTested": 1752082750511
+    "latencyMs": 176.77964480093493,
+    "throughput": 3.0495569095291133,
+    "lastTested": 1752248540465
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:qwen2.5:latest": {
-    "latencyMs": 93.60360468273514,
-    "throughput": 1.4443432415905113,
-    "lastTested": 1752082750661
+    "latencyMs": 172.0838820038778,
+    "throughput": 2.713967131118764,
+    "lastTested": 1752248540298
   },
   "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ:llama3.2:latest": {
-    "latencyMs": 178.34437389673883,
-    "throughput": 5.091101050958907,
-    "lastTested": 1752082750522
+    "latencyMs": 241.00538085372912,
+    "throughput": 3.8456767739704913,
+    "lastTested": 1752203776674
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:huihui_ai/deepseek-r1-abliterated:32b": {
-    "latencyMs": 149.02314559254296,
-    "throughput": 1.0656048179754953,
-    "lastTested": 1752082749426
+    "latencyMs": 118.69280558884027,
+    "throughput": 3.5924355506335517,
+    "lastTested": 1752248539893
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:smollm2:135m": {
-    "latencyMs": 236.76619223041072,
-    "throughput": 4.081945532167661,
-    "lastTested": 1752082748378
+    "latencyMs": 221.82516392372457,
+    "throughput": 1.2808856864867293,
+    "lastTested": 1752167892958
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:huihui_ai/deepseek-r1-abliterated:latest": {
-    "latencyMs": 205.33007150968308,
-    "throughput": 2.860558564436794,
-    "lastTested": 1752082748556
+    "latencyMs": 99.43779066754846,
+    "throughput": 5.196940838357197,
+    "lastTested": 1752248538752
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.1:8b": {
-    "latencyMs": 213.53661193720086,
-    "throughput": 5.241142581335597,
-    "lastTested": 1752082748289
+    "latencyMs": 107.80099555288962,
+    "throughput": 2.738884341052654,
+    "lastTested": 1752197976327
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-r1:70b": {
-    "latencyMs": 94.88908289219569,
-    "throughput": 5.1333379635222665,
-    "lastTested": 1752082748240
+    "latencyMs": 153.58370935433837,
+    "throughput": 3.840742094259421,
+    "lastTested": 1752167892859
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.2:latest": {
-    "latencyMs": 156.67710632473901,
-    "throughput": 3.787081175727124,
-    "lastTested": 1752082749891
+    "latencyMs": 148.23652325757766,
+    "throughput": 1.345175080664758,
+    "lastTested": 1752248540253
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-r1:14b": {
-    "latencyMs": 186.95601821961452,
-    "throughput": 3.64763791395895,
-    "lastTested": 1752082748305
+    "latencyMs": 128.93654583483794,
+    "throughput": 5.872998454358878,
+    "lastTested": 1752201568835
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:command-a:latest": {
-    "latencyMs": 244.59828413932053,
-    "throughput": 5.523162565962703,
-    "lastTested": 1752082749880
+    "latencyMs": 86.19302302115184,
+    "throughput": 5.009709997435732,
+    "lastTested": 1752248540249
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-r1:32b": {
-    "latencyMs": 165.0919933153134,
-    "throughput": 2.4673019142410118,
-    "lastTested": 1752082748329
+    "latencyMs": 102.36227997255271,
+    "throughput": 4.55019699265738,
+    "lastTested": 1752248538731
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-r1:671b": {
-    "latencyMs": 76.12926661523494,
-    "throughput": 3.010837482174541,
-    "lastTested": 1752082749571
+    "latencyMs": 127.14344870627134,
+    "throughput": 2.14644772993305,
+    "lastTested": 1752248540036
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mxbai-embed-large:latest": {
-    "latencyMs": 210.61407743430803,
-    "throughput": 5.75626652112319,
-    "lastTested": 1752082749876
+    "latencyMs": 167.69522132710418,
+    "throughput": 4.560416030533253,
+    "lastTested": 1752248540245
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:goekdenizguelmez/JOSIEFIED-Qwen2.5:3b": {
-    "latencyMs": 66.83536614088675,
-    "throughput": 3.4284272164078144,
-    "lastTested": 1752082748691
+    "latencyMs": 215.39443615479473,
+    "throughput": 1.8682614755134355,
+    "lastTested": 1752276304389
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwq:latest": {
-    "latencyMs": 228.82126789445317,
-    "throughput": 5.605801033231361,
-    "lastTested": 1752082748372
+    "latencyMs": 147.38707375573364,
+    "throughput": 4.159642392781806,
+    "lastTested": 1752248538745
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:goekdenizguelmez/JOSIEFIED-Qwen2.5:14b": {
-    "latencyMs": 227.97295699126371,
-    "throughput": 1.0357372325247873,
-    "lastTested": 1752034549271
+    "latencyMs": 111.08668058478509,
+    "throughput": 3.097662061985112,
+    "lastTested": 1752276304682
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:goekdenizguelmez/JOSIEFIED-Qwen2.5:7b": {
-    "latencyMs": 184.76489882758412,
-    "throughput": 4.1568156112892884,
-    "lastTested": 1752082749032
+    "latencyMs": 157.24579747109476,
+    "throughput": 5.397185655569055,
+    "lastTested": 1752276304544
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin-mixtral:8x22b": {
-    "latencyMs": 239.8676758081463,
-    "throughput": 2.4597898726497496,
-    "lastTested": 1752082749339
+    "latencyMs": 59.352462532310035,
+    "throughput": 1.1373783795722006,
+    "lastTested": 1752248539793
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:wizard-vicuna-uncensored:7b": {
-    "latencyMs": 91.891957057529,
-    "throughput": 3.9607260634325794,
-    "lastTested": 1752082749024
+    "latencyMs": 177.0779668232138,
+    "throughput": 3.4668545588801596,
+    "lastTested": 1752276304542
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:wizard-vicuna-uncensored:30b": {
-    "latencyMs": 69.79476861827206,
-    "throughput": 4.865513435699574,
-    "lastTested": 1752082749387
+    "latencyMs": 192.39854949378721,
+    "throughput": 1.8702850338112111,
+    "lastTested": 1752276304768
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:wizard-vicuna-uncensored:13b": {
-    "latencyMs": 244.3596344760829,
-    "throughput": 4.312457298147838,
-    "lastTested": 1752082749229
+    "latencyMs": 91.84934411866004,
+    "throughput": 2.768058704476745,
+    "lastTested": 1752276304668
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin3:latest": {
-    "latencyMs": 55.71671533783879,
-    "throughput": 3.2443503673136487,
-    "lastTested": 1752082748550
+    "latencyMs": 70.06908210169675,
+    "throughput": 5.003052450198211,
+    "lastTested": 1752248538937
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-r1:7b": {
-    "latencyMs": 145.28959997238834,
-    "throughput": 2.7710349706733286,
-    "lastTested": 1752082748793
+    "latencyMs": 95.45216115465509,
+    "throughput": 3.9829837659360168,
+    "lastTested": 1752276304914
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin-mistral:latest": {
-    "latencyMs": 245.04964725206193,
-    "throughput": 2.499971033426223,
-    "lastTested": 1752082749871
+    "latencyMs": 60.851214457911375,
+    "throughput": 2.080888264529023,
+    "lastTested": 1752248540241
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-r1:8b": {
-    "latencyMs": 245.3320482622009,
-    "throughput": 2.9792246482351725,
-    "lastTested": 1752082748430
+    "latencyMs": 196.6606498367022,
+    "throughput": 3.298381458143104,
+    "lastTested": 1752276304920
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:kubernetes_bad/chargen-v2:latest": {
-    "latencyMs": 139.5117546897132,
-    "throughput": 4.31128666181125,
-    "lastTested": 1752082749862
+    "latencyMs": 159.56498913494266,
+    "throughput": 2.5222938386925966,
+    "lastTested": 1752248540237
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-r1:1.5b": {
-    "latencyMs": 131.45791878949203,
-    "throughput": 5.89707709557033,
-    "lastTested": 1752082748279
+    "latencyMs": 228.3985771414826,
+    "throughput": 1.066788308303688,
+    "lastTested": 1752276304911
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:Plexi09/SentientAI:latest": {
-    "latencyMs": 115.68446717977814,
-    "throughput": 4.026290821324658,
-    "lastTested": 1752082749857
+    "latencyMs": 121.92518849446255,
+    "throughput": 4.516387587258631,
+    "lastTested": 1752248540233
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:BlackDream/blue-orchid-2x7b:latest": {
-    "latencyMs": 146.5898003923421,
-    "throughput": 3.524054317140243,
-    "lastTested": 1752082749007
+    "latencyMs": 93.89392780582631,
+    "throughput": 3.1462503498954186,
+    "lastTested": 1752276304539
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:technobyte/mn-12b-starcannon-v2:latest": {
-    "latencyMs": 167.80670574438204,
-    "throughput": 1.8203651001308288,
-    "lastTested": 1752082749202
+    "latencyMs": 193.63726959869894,
+    "throughput": 4.707706781256271,
+    "lastTested": 1752276304636
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nchapman/mn-12b-mag-mell-r1:latest": {
-    "latencyMs": 222.11159910550106,
-    "throughput": 2.4569496545322247,
-    "lastTested": 1752082749197
+    "latencyMs": 69.69478515863274,
+    "throughput": 1.1950959053461865,
+    "lastTested": 1752276304640
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nchapman/mn-12b-inferor-v0.0:latest": {
-    "latencyMs": 238.9201287120544,
-    "throughput": 1.9064699366646378,
-    "lastTested": 1752034549242
+    "latencyMs": 180.51070445078977,
+    "throughput": 4.818393567225789,
+    "lastTested": 1752276304633
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nchapman/l3.3-70b-euryale-v2.3:latest": {
-    "latencyMs": 164.15899334912277,
-    "throughput": 3.325273675118078,
-    "lastTested": 1752082749495
+    "latencyMs": 126.62792932173934,
+    "throughput": 1.9831472992274992,
+    "lastTested": 1752276304847
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nchapman/l3.1-70b-hanami-x1:latest": {
-    "latencyMs": 53.55202954501084,
-    "throughput": 3.824466896976978,
-    "lastTested": 1752082749491
+    "latencyMs": 114.00504890203695,
+    "throughput": 3.847031055009377,
+    "lastTested": 1752248539968
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma:7b": {
-    "latencyMs": 226.9568272787713,
-    "throughput": 1.9222307971287602,
-    "lastTested": 1752082748997
+    "latencyMs": 220.0587793970135,
+    "throughput": 2.1475882193201334,
+    "lastTested": 1752276304536
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mistral:latest": {
-    "latencyMs": 58.358448729889865,
-    "throughput": 1.306836216490377,
-    "lastTested": 1752082748546
+    "latencyMs": 123.04271341439441,
+    "throughput": 4.818260091697109,
+    "lastTested": 1752167893200
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2:72b": {
-    "latencyMs": 104.40502720372997,
-    "throughput": 4.604795340915823,
-    "lastTested": 1752082749521
+    "latencyMs": 221.9831938057323,
+    "throughput": 2.3079676024649443,
+    "lastTested": 1752248539997
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma:2b": {
-    "latencyMs": 160.9383585597131,
-    "throughput": 5.434082230366304,
-    "lastTested": 1752082748626
+    "latencyMs": 97.33755940054651,
+    "throughput": 4.054650493774513,
+    "lastTested": 1752276304234
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2:7b": {
-    "latencyMs": 53.22375233763515,
-    "throughput": 5.385998165795362,
-    "lastTested": 1752082748990
+    "latencyMs": 218.32105480410232,
+    "throughput": 4.088727400653153,
+    "lastTested": 1752276304534
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2:1.5b": {
-    "latencyMs": 160.64714500540217,
-    "throughput": 2.3271182383226874,
-    "lastTested": 1752082748764
+    "latencyMs": 102.60928905076034,
+    "throughput": 5.238968963323922,
+    "lastTested": 1752248539193
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma2:27b": {
-    "latencyMs": 227.8825123634598,
-    "throughput": 1.21474853698786,
-    "lastTested": 1752034549307
+    "latencyMs": 167.77660177606543,
+    "throughput": 4.000332200605568,
+    "lastTested": 1752276304751
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2:0.5b": {
-    "latencyMs": 52.95472885049559,
-    "throughput": 1.2374535379601894,
-    "lastTested": 1752082748758
+    "latencyMs": 224.23966678372253,
+    "throughput": 1.839498491347952,
+    "lastTested": 1752276304453
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codellama:7b": {
-    "latencyMs": 158.69452809414167,
-    "throughput": 4.858291625681206,
-    "lastTested": 1752082748980
+    "latencyMs": 92.43603488831633,
+    "throughput": 3.7947950746787775,
+    "lastTested": 1752276304531
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma2:2b": {
-    "latencyMs": 162.34606746135836,
-    "throughput": 3.051441744578745,
-    "lastTested": 1752082748622
+    "latencyMs": 192.63123146192694,
+    "throughput": 4.2225477660883595,
+    "lastTested": 1752276304232
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma2:9b": {
-    "latencyMs": 160.8177978149768,
-    "throughput": 1.464276566116092,
-    "lastTested": 1752082749176
+    "latencyMs": 129.71084693947157,
+    "throughput": 3.7466715913771655,
+    "lastTested": 1752276304616
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5-coder:14b": {
-    "latencyMs": 214.11317633449457,
-    "throughput": 1.0044399576525733,
-    "lastTested": 1752082748314
+    "latencyMs": 236.9475373565713,
+    "throughput": 1.0860019315463179,
+    "lastTested": 1752248538712
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5-coder:32b": {
-    "latencyMs": 153.6398477899473,
-    "throughput": 5.519709880151705,
-    "lastTested": 1752082748337
+    "latencyMs": 223.65382067910824,
+    "throughput": 2.50499066526099,
+    "lastTested": 1752248538869
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codellama:34b": {
-    "latencyMs": 102.41219291209526,
-    "throughput": 5.647460740629126,
-    "lastTested": 1752082749458
+    "latencyMs": 223.2818432465729,
+    "throughput": 1.196828081354713,
+    "lastTested": 1752276304843
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5-coder:7b": {
-    "latencyMs": 89.51288241979496,
-    "throughput": 2.1799349379439708,
-    "lastTested": 1752034549162
+    "latencyMs": 154.2562050736581,
+    "throughput": 5.76751071778406,
+    "lastTested": 1752248538813
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codellama:70b": {
-    "latencyMs": 158.95163103398465,
-    "throughput": 1.6819736523018893,
-    "lastTested": 1752082748509
+    "latencyMs": 133.4993647480989,
+    "throughput": 4.701075404522203,
+    "lastTested": 1752248539962
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5-coder:3b": {
-    "latencyMs": 78.48092151144556,
-    "throughput": 4.553329273170403,
-    "lastTested": 1752082748386
+    "latencyMs": 228.08640104341964,
+    "throughput": 2.715062587525008,
+    "lastTested": 1752276304386
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codellama:13b": {
-    "latencyMs": 140.0475061035596,
-    "throughput": 3.623550299722668,
-    "lastTested": 1752082748452
+    "latencyMs": 137.04013422243645,
+    "throughput": 2.1544237037413985,
+    "lastTested": 1752248538840
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5-coder:1.5b": {
-    "latencyMs": 211.3339926341975,
-    "throughput": 2.026293116570703,
-    "lastTested": 1752082748747
+    "latencyMs": 114.31590112325591,
+    "throughput": 4.6367605220425006,
+    "lastTested": 1752276304444
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5-coder:0.5b": {
-    "latencyMs": 221.40192978253958,
-    "throughput": 1.285052503854809,
-    "lastTested": 1752082748742
+    "latencyMs": 168.69449097486728,
+    "throughput": 3.4495175701540663,
+    "lastTested": 1752276304441
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:tinyllama:latest": {
-    "latencyMs": 196.472092028207,
-    "throughput": 5.289145998354316,
-    "lastTested": 1752082749851
+    "latencyMs": 167.97026098308334,
+    "throughput": 1.3719942534133047,
+    "lastTested": 1752248538932
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:starcoder2:15b": {
-    "latencyMs": 132.59144938651065,
-    "throughput": 2.5830475767829935,
-    "lastTested": 1752082748468
+    "latencyMs": 102.81158159976079,
+    "throughput": 4.1452153889106125,
+    "lastTested": 1752276304221
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codegemma:2b": {
-    "latencyMs": 50.293159338282265,
-    "throughput": 1.2237484135984324,
-    "lastTested": 1752082748613
+    "latencyMs": 197.58685232118447,
+    "throughput": 1.9262669154654457,
+    "lastTested": 1752276304354
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:starcoder2:3b": {
-    "latencyMs": 159.65996418987214,
-    "throughput": 5.231807525912199,
-    "lastTested": 1752082748686
+    "latencyMs": 134.89871392263404,
+    "throughput": 5.090959201134962,
+    "lastTested": 1752276304383
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:starcoder2:7b": {
-    "latencyMs": 189.88170316018687,
-    "throughput": 5.290674980698786,
-    "lastTested": 1752082748970
+    "latencyMs": 194.04970970367123,
+    "throughput": 5.0703243186507265,
+    "lastTested": 1752276304528
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mistral-nemo:latest": {
-    "latencyMs": 117.31169682215761,
-    "throughput": 5.532724505554347,
-    "lastTested": 1752082749845
+    "latencyMs": 95.06549540076867,
+    "throughput": 5.10960598358418,
+    "lastTested": 1752248540229
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phi:latest": {
-    "latencyMs": 219.14207050578102,
-    "throughput": 2.4104463527635325,
-    "lastTested": 1751992918781
+    "latencyMs": 72.88347586401542,
+    "throughput": 3.729681565067912,
+    "lastTested": 1752248540225
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codegemma:7b": {
-    "latencyMs": 224.77402947496455,
-    "throughput": 1.8164290449007527,
-    "lastTested": 1752034549157
+    "latencyMs": 227.1640854922158,
+    "throughput": 3.0961894619304444,
+    "lastTested": 1752276304525
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:wizardlm2:8x22b": {
-    "latencyMs": 190.12102315069535,
-    "throughput": 5.060189565095115,
-    "lastTested": 1752082749331
+    "latencyMs": 92.32408916382688,
+    "throughput": 5.172777795132348,
+    "lastTested": 1752276304719
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:wizardlm2:7b": {
-    "latencyMs": 139.49887796919057,
-    "throughput": 5.441820242788611,
-    "lastTested": 1752082748957
+    "latencyMs": 130.97088211178058,
+    "throughput": 3.1654863931656054,
+    "lastTested": 1752276304522
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:yi:34b": {
-    "latencyMs": 178.06783438463577,
-    "throughput": 1.563072700982713,
-    "lastTested": 1752082749453
+    "latencyMs": 194.0885160755987,
+    "throughput": 5.911640804394803,
+    "lastTested": 1752276304840
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:zephyr:7b": {
-    "latencyMs": 192.3335598399612,
-    "throughput": 1.7043730714903862,
-    "lastTested": 1752082748947
+    "latencyMs": 237.68250629144322,
+    "throughput": 5.208563299195005,
+    "lastTested": 1752276304519
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin-llama3:70b": {
-    "latencyMs": 106.85065455991838,
-    "throughput": 2.978970817556479,
-    "lastTested": 1752082749486
+    "latencyMs": 225.8891328815123,
+    "throughput": 4.307116956317979,
+    "lastTested": 1752248539958
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin-llama3:8b": {
-    "latencyMs": 67.27344756194199,
-    "throughput": 4.751472494639209,
-    "lastTested": 1752082749156
+    "latencyMs": 92.65492213739228,
+    "throughput": 4.187866051568927,
+    "lastTested": 1752276304601
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:yi:6b": {
-    "latencyMs": 238.572911344743,
-    "throughput": 1.6394179170886216,
-    "lastTested": 1752034549096
+    "latencyMs": 131.44825943154405,
+    "throughput": 3.0578454946518434,
+    "lastTested": 1752276304470
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:yi:9b": {
-    "latencyMs": 157.13366745942486,
-    "throughput": 3.9407282993711625,
-    "lastTested": 1752082749170
+    "latencyMs": 70.14085658129163,
+    "throughput": 5.701230278708197,
+    "lastTested": 1752276304612
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codestral:latest": {
-    "latencyMs": 245.88119583833188,
-    "throughput": 2.1586482564302356,
-    "lastTested": 1752082749838
+    "latencyMs": 243.66438182757594,
+    "throughput": 4.631203299964579,
+    "lastTested": 1752248540220
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phi3.5:latest": {
-    "latencyMs": 69.48111575960482,
-    "throughput": 5.270574119265555,
-    "lastTested": 1752082749831
+    "latencyMs": 158.74851329342505,
+    "throughput": 2.9908126184865518,
+    "lastTested": 1752248540216
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:zephyr:141b": {
-    "latencyMs": 132.61680863890706,
-    "throughput": 3.316440904810845,
-    "lastTested": 1752082749541
+    "latencyMs": 75.66702271000567,
+    "throughput": 2.8456647404776474,
+    "lastTested": 1752276304851
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:all-minilm:33m": {
-    "latencyMs": 179.66360489665533,
-    "throughput": 1.9278843179565233,
-    "lastTested": 1752082749822
+    "latencyMs": 137.41749449626468,
+    "throughput": 2.320206551191554,
+    "lastTested": 1752248540494
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:all-minilm:22m": {
-    "latencyMs": 189.4629878475719,
-    "throughput": 4.059958290962087,
-    "lastTested": 1752082749826
+    "latencyMs": 94.19285231220638,
+    "throughput": 2.805511137271325,
+    "lastTested": 1752276304875
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:codebooga:latest": {
-    "latencyMs": 53.29933795994215,
-    "throughput": 3.4178993589931186,
-    "lastTested": 1752082749817
+    "latencyMs": 109.14715916481077,
+    "throughput": 3.8806291381253155,
+    "lastTested": 1752248540211
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:smollm:1.7b": {
-    "latencyMs": 103.91579647470891,
-    "throughput": 3.8548464917679817,
-    "lastTested": 1752082748938
+    "latencyMs": 77.90237657072696,
+    "throughput": 3.583783702031007,
+    "lastTested": 1752276304516
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:smollm:360m": {
-    "latencyMs": 81.82327783368994,
-    "throughput": 4.816856722186132,
-    "lastTested": 1752082749811
+    "latencyMs": 67.58653348602515,
+    "throughput": 3.167873777916273,
+    "lastTested": 1752248540202
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:duckdb-nsql:latest": {
-    "latencyMs": 149.71306320173773,
-    "throughput": 2.0783122703286017,
-    "lastTested": 1752082749805
+    "latencyMs": 177.4899534445898,
+    "throughput": 3.516357213322503,
+    "lastTested": 1752248540207
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:goliath:latest": {
-    "latencyMs": 242.82705557014802,
-    "throughput": 1.023559456058404,
-    "lastTested": 1752082749797
+    "latencyMs": 109.42587343046695,
+    "throughput": 3.077364091389322,
+    "lastTested": 1752248540196
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mathstral:latest": {
-    "latencyMs": 63.34208567008845,
-    "throughput": 4.502329296643883,
-    "lastTested": 1751992917576
+    "latencyMs": 200.06575225735003,
+    "throughput": 2.6589733334959145,
+    "lastTested": 1752248538921
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3-moe:1b": {
-    "latencyMs": 231.0893067790375,
-    "throughput": 4.0689861321434195,
-    "lastTested": 1752082748582
+    "latencyMs": 237.33420395971905,
+    "throughput": 1.6751626478620487,
+    "lastTested": 1752276304330
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:megadolphin:latest": {
-    "latencyMs": 55.33062450388173,
-    "throughput": 5.136061097085914,
-    "lastTested": 1752082749793
+    "latencyMs": 150.93733256763431,
+    "throughput": 2.1010923261228047,
+    "lastTested": 1752248540191
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:solar-pro:latest": {
-    "latencyMs": 94.34367385877368,
-    "throughput": 2.012815977904553,
-    "lastTested": 1752082749781
+    "latencyMs": 217.99582558985708,
+    "throughput": 5.436215934812527,
+    "lastTested": 1752248540179
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:alfred:latest": {
-    "latencyMs": 88.1276112534187,
-    "throughput": 2.281478178594729,
-    "lastTested": 1752082749788
+    "latencyMs": 159.77213956843545,
+    "throughput": 1.8998095630413938,
+    "lastTested": 1752248540184
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nuextract:latest": {
-    "latencyMs": 101.44693358748773,
-    "throughput": 5.310311758040912,
-    "lastTested": 1752082749777
+    "latencyMs": 217.10868013546602,
+    "throughput": 4.881305403220985,
+    "lastTested": 1752276304872
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3-moe:3b": {
-    "latencyMs": 195.15935355050354,
-    "throughput": 3.4944301478601605,
-    "lastTested": 1752082748680
+    "latencyMs": 158.9266926368901,
+    "throughput": 3.105211329592833,
+    "lastTested": 1752276304379
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:bge-large:latest": {
-    "latencyMs": 127.76898790591598,
-    "throughput": 4.206119057812136,
-    "lastTested": 1752082749769
+    "latencyMs": 100.84443992129724,
+    "throughput": 1.580574836409401,
+    "lastTested": 1752248540169
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:paraphrase-multilingual:latest": {
-    "latencyMs": 61.376798170996814,
-    "throughput": 2.0164297002146916,
-    "lastTested": 1752082749773
+    "latencyMs": 244.69410323780738,
+    "throughput": 3.0189022778195143,
+    "lastTested": 1752248540175
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-v2.5:latest": {
-    "latencyMs": 204.4743958204028,
-    "throughput": 2.622440911691255,
-    "lastTested": 1752082749762
+    "latencyMs": 203.04478798135102,
+    "throughput": 3.746771669176863,
+    "lastTested": 1752248540164
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphincoder:7b": {
-    "latencyMs": 96.92617668091894,
-    "throughput": 2.990945252284556,
-    "lastTested": 1752082748928
+    "latencyMs": 159.32892147501775,
+    "throughput": 2.2780172559422076,
+    "lastTested": 1752276304513
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-v2:236b": {
-    "latencyMs": 196.38748827768936,
-    "throughput": 3.8513124404237167,
-    "lastTested": 1752082749556
+    "latencyMs": 249.1860477173212,
+    "throughput": 2.792106980315915,
+    "lastTested": 1752248540024
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hermes3:8b": {
-    "latencyMs": 215.99878295423943,
-    "throughput": 2.7145631589522905,
-    "lastTested": 1752082748436
+    "latencyMs": 228.91188013443394,
+    "throughput": 5.495074297923296,
+    "lastTested": 1752201569417
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:wizardlm-uncensored:latest": {
-    "latencyMs": 205.47079679781493,
-    "throughput": 4.629184375344607,
-    "lastTested": 1752082749758
+    "latencyMs": 120.2016508910452,
+    "throughput": 1.6613386189649983,
+    "lastTested": 1752276304869
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-v2:16b": {
-    "latencyMs": 98.56891248998534,
-    "throughput": 2.583443782330549,
-    "lastTested": 1752082749278
+    "latencyMs": 121.36914587120047,
+    "throughput": 5.25302960509339,
+    "lastTested": 1752276304697
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:samantha-mistral:latest": {
-    "latencyMs": 195.92642867725644,
-    "throughput": 2.9691222725712576,
-    "lastTested": 1752082749753
+    "latencyMs": 86.36441215513022,
+    "throughput": 4.501682438726659,
+    "lastTested": 1752248540160
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphincoder:15b": {
-    "latencyMs": 64.29129452919202,
-    "throughput": 2.597552083038792,
-    "lastTested": 1752082749272
+    "latencyMs": 185.83034545782132,
+    "throughput": 2.173211744536151,
+    "lastTested": 1752276304688
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin-phi:latest": {
-    "latencyMs": 51.871162954906055,
-    "throughput": 3.898858646157768,
-    "lastTested": 1752082749747
+    "latencyMs": 91.23709436793668,
+    "throughput": 3.8342983682658196,
+    "lastTested": 1752276304866
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:medllama2:latest": {
-    "latencyMs": 178.206584478052,
-    "throughput": 1.916700917276465,
-    "lastTested": 1751992918688
+    "latencyMs": 141.40058188850332,
+    "throughput": 4.184688422559015,
+    "lastTested": 1752248540155
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:meditron:7b": {
-    "latencyMs": 128.88130949614344,
-    "throughput": 2.21412942783514,
-    "lastTested": 1752082748908
+    "latencyMs": 134.7648044208837,
+    "throughput": 2.0395198036669697,
+    "lastTested": 1752276304510
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nemotron-mini:latest": {
-    "latencyMs": 203.30939357835624,
-    "throughput": 5.044653272570588,
-    "lastTested": 1752082749741
+    "latencyMs": 72.99919549019376,
+    "throughput": 3.155393370079036,
+    "lastTested": 1752248540151
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama-pro:latest": {
-    "latencyMs": 93.69274757174391,
-    "throughput": 5.394675199749304,
-    "lastTested": 1752082749737
+    "latencyMs": 177.87151307222567,
+    "throughput": 2.2500917962543645,
+    "lastTested": 1752248540147
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:stablelm2:12b": {
-    "latencyMs": 145.6132491560868,
-    "throughput": 4.179395345571956,
-    "lastTested": 1752082749189
+    "latencyMs": 80.31897856477279,
+    "throughput": 1.6882498852565533,
+    "lastTested": 1752276304630
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:stablelm2:1.6b": {
-    "latencyMs": 93.71802953556121,
-    "throughput": 4.157385544855583,
-    "lastTested": 1752082748772
+    "latencyMs": 117.8839686798792,
+    "throughput": 1.757642404290798,
+    "lastTested": 1752276304467
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:meditron:70b": {
-    "latencyMs": 125.08423103095171,
-    "throughput": 2.0246264450230247,
-    "lastTested": 1752082749480
+    "latencyMs": 172.200940224232,
+    "throughput": 4.982626636751916,
+    "lastTested": 1752248539954
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nexusraven:latest": {
-    "latencyMs": 83.76053439696074,
-    "throughput": 4.911763873969411,
-    "lastTested": 1752082749730
+    "latencyMs": 223.97222842530405,
+    "throughput": 2.030064281147064,
+    "lastTested": 1752248540136
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:reflection:latest": {
-    "latencyMs": 149.3789735607189,
-    "throughput": 1.1426274673961758,
-    "lastTested": 1752082749726
+    "latencyMs": 202.21472976813092,
+    "throughput": 4.728586411065761,
+    "lastTested": 1752248540142
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:bakllava:latest": {
-    "latencyMs": 215.58161194643554,
-    "throughput": 3.0876603578810817,
-    "lastTested": 1752082749722
+    "latencyMs": 150.89841947816262,
+    "throughput": 1.6207093164036848,
+    "lastTested": 1752276304862
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3-chatqa:8b": {
-    "latencyMs": 147.4504467035842,
-    "throughput": 2.4326445531589673,
-    "lastTested": 1752082749148
+    "latencyMs": 181.55177056791874,
+    "throughput": 2.247848783834502,
+    "lastTested": 1752248539584
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:neural-chat:latest": {
-    "latencyMs": 156.44712897618254,
-    "throughput": 5.762032100102282,
-    "lastTested": 1752082749707
+    "latencyMs": 138.4360907247069,
+    "throughput": 5.276634971317913,
+    "lastTested": 1752276304940
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nous-hermes:7b": {
-    "latencyMs": 155.60163775587228,
-    "throughput": 5.996978792195711,
-    "lastTested": 1752082748885
+    "latencyMs": 191.96275922211424,
+    "throughput": 3.268674305349828,
+    "lastTested": 1752276304508
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:sqlcoder:15b": {
-    "latencyMs": 167.132603154832,
-    "throughput": 5.9823853688676065,
-    "lastTested": 1752082749264
+    "latencyMs": 219.56640636817335,
+    "throughput": 1.3055196730053589,
+    "lastTested": 1752276304685
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:moondream:latest": {
-    "latencyMs": 102.69579728553065,
-    "throughput": 4.252610405122822,
-    "lastTested": 1752082749717
+    "latencyMs": 142.84723265618572,
+    "throughput": 4.063304808915576,
+    "lastTested": 1752248540132
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:sqlcoder:7b": {
-    "latencyMs": 195.59293409379754,
-    "throughput": 5.638065604503621,
-    "lastTested": 1752034549140
+    "latencyMs": 176.15072068336627,
+    "throughput": 5.38006972298782,
+    "lastTested": 1752276304505
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phind-codellama:latest": {
-    "latencyMs": 139.26975614642916,
-    "throughput": 5.3492097030963315,
-    "lastTested": 1752082749703
+    "latencyMs": 235.89235716955068,
+    "throughput": 1.060719321169228,
+    "lastTested": 1752276304859
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nous-hermes:13b": {
-    "latencyMs": 239.23731598339114,
-    "throughput": 3.1423428959525626,
-    "lastTested": 1752082749222
+    "latencyMs": 94.4721982666032,
+    "throughput": 4.340563657397185,
+    "lastTested": 1752276304664
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nous-hermes2:34b": {
-    "latencyMs": 170.71079615537758,
-    "throughput": 3.1030840553165655,
-    "lastTested": 1752082749447
+    "latencyMs": 237.96716306743068,
+    "throughput": 2.282042423132994,
+    "lastTested": 1752276304836
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:bge-m3:latest": {
-    "latencyMs": 219.93440784414156,
-    "throughput": 1.6753160252636914,
-    "lastTested": 1752082749697
+    "latencyMs": 62.328060930562536,
+    "throughput": 2.5074134146708906,
+    "lastTested": 1752276304308
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:yarn-llama2:13b": {
-    "latencyMs": 241.89959333675978,
-    "throughput": 5.035221661393969,
-    "lastTested": 1752082749214
+    "latencyMs": 163.00794056455248,
+    "throughput": 2.6797664276837,
+    "lastTested": 1752276304661
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:wizardcoder:33b": {
-    "latencyMs": 97.83211701111708,
-    "throughput": 4.233170368376806,
-    "lastTested": 1752082749437
+    "latencyMs": 134.71604786656428,
+    "throughput": 2.761667073949429,
+    "lastTested": 1752276304826
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:yarn-llama2:7b": {
-    "latencyMs": 158.13380253122426,
-    "throughput": 3.3354337079522356,
-    "lastTested": 1752034549137
+    "latencyMs": 76.54606325616112,
+    "throughput": 4.99307499481159,
+    "lastTested": 1752276304502
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nous-hermes2:10.7b": {
-    "latencyMs": 125.03800609239076,
-    "throughput": 1.0099787944284013,
-    "lastTested": 1752082748862
+    "latencyMs": 53.29030575481286,
+    "throughput": 3.2055821207441695,
+    "lastTested": 1752276304500
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:command-r-plus:latest": {
-    "latencyMs": 195.4617996522268,
-    "throughput": 4.7643585183660235,
-    "lastTested": 1752082749690
+    "latencyMs": 139.79758643187108,
+    "throughput": 2.1249136177494865,
+    "lastTested": 1752248540127
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mistral-large:latest": {
-    "latencyMs": 248.61775717322877,
-    "throughput": 1.1465042367186553,
-    "lastTested": 1752082748538
+    "latencyMs": 76.13428115358275,
+    "throughput": 1.0601119015644513,
+    "lastTested": 1752248538904
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:stable-code:latest": {
-    "latencyMs": 248.3095162086227,
-    "throughput": 2.5012593353487427,
-    "lastTested": 1752082749686
+    "latencyMs": 232.0467718059936,
+    "throughput": 1.7038585227379701,
+    "lastTested": 1752248540123
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2-math:72b": {
-    "latencyMs": 96.45182290258872,
-    "throughput": 3.5425484562211587,
-    "lastTested": 1752082749515
+    "latencyMs": 108.12481132194422,
+    "throughput": 4.896262583542693,
+    "lastTested": 1752248539990
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2-math:1.5b": {
-    "latencyMs": 56.0360876078569,
-    "throughput": 2.553051806843775,
-    "lastTested": 1752082748736
+    "latencyMs": 228.64874318520822,
+    "throughput": 2.180501547595995,
+    "lastTested": 1752276304439
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:tinydolphin:latest": {
-    "latencyMs": 107.2828208734077,
-    "throughput": 3.5497565343190165,
-    "lastTested": 1752082749679
+    "latencyMs": 135.86424066722185,
+    "throughput": 3.6864019014880656,
+    "lastTested": 1752248540118
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:smallthinker:latest": {
-    "latencyMs": 79.74635330186221,
-    "throughput": 4.669984191162258,
-    "lastTested": 1752082749673
+    "latencyMs": 148.46800252983408,
+    "throughput": 4.466234237071836,
+    "lastTested": 1752248540114
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2-math:7b": {
-    "latencyMs": 191.92974920670923,
-    "throughput": 4.5229022386998,
-    "lastTested": 1752082748856
+    "latencyMs": 83.81217164796593,
+    "throughput": 5.3422513674957885,
+    "lastTested": 1752276304497
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.1-dense:8b": {
-    "latencyMs": 64.15200172441588,
-    "throughput": 1.2562090149834761,
-    "lastTested": 1752082749095
+    "latencyMs": 172.30248886766867,
+    "throughput": 1.9057847195018642,
+    "lastTested": 1752276304576
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.1-moe:latest": {
-    "latencyMs": 57.88373272781402,
-    "throughput": 3.356794053532095,
-    "lastTested": 1752082749667
+    "latencyMs": 195.12251821218715,
+    "throughput": 5.449076396826238,
+    "lastTested": 1752248540110
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.1-dense:2b": {
-    "latencyMs": 85.31481710386872,
-    "throughput": 2.6216705985752347,
-    "lastTested": 1752082748593
+    "latencyMs": 239.76369331038546,
+    "throughput": 5.964996481086428,
+    "lastTested": 1752276304341
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:glm4:latest": {
-    "latencyMs": 194.93612818128057,
-    "throughput": 1.937806241403818,
-    "lastTested": 1752082749660
+    "latencyMs": 243.8008803569636,
+    "throughput": 5.530162378748268,
+    "lastTested": 1752248540106
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.2-vision:latest": {
-    "latencyMs": 160.08452537292501,
-    "throughput": 2.2021629614215987,
-    "lastTested": 1752082748561
+    "latencyMs": 236.93145845557896,
+    "throughput": 1.4027280113670362,
+    "lastTested": 1752248538943
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.1-moe:1b": {
-    "latencyMs": 90.89582464047567,
-    "throughput": 2.8241926038699896,
-    "lastTested": 1752082748565
+    "latencyMs": 249.00196803034768,
+    "throughput": 4.581501183520496,
+    "lastTested": 1752276304318
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llava-phi3:latest": {
-    "latencyMs": 137.44978965987764,
-    "throughput": 1.8584865410937481,
-    "lastTested": 1752082749656
+    "latencyMs": 75.0310240006347,
+    "throughput": 4.484452390578906,
+    "lastTested": 1752248540102
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:minicpm-v:latest": {
-    "latencyMs": 141.4436775376409,
-    "throughput": 4.060448871844907,
-    "lastTested": 1752082748364
+    "latencyMs": 114.53383463461013,
+    "throughput": 5.15893276266562,
+    "lastTested": 1752248538736
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:smollm2:1.7b": {
-    "latencyMs": 77.32977664944394,
-    "throughput": 4.740995031420709,
-    "lastTested": 1752082748848
+    "latencyMs": 171.9881594359689,
+    "throughput": 3.259834201467167,
+    "lastTested": 1752276304494
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:athene-v2:latest": {
-    "latencyMs": 97.60046880289433,
-    "throughput": 5.328899271981522,
-    "lastTested": 1752082748531
+    "latencyMs": 248.7505238880197,
+    "throughput": 2.115109473723538,
+    "lastTested": 1752248538899
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.1-moe:3b": {
-    "latencyMs": 82.62123137226686,
-    "throughput": 5.947381013639322,
-    "lastTested": 1752082748650
+    "latencyMs": 50.908613347266666,
+    "throughput": 2.5618720929391303,
+    "lastTested": 1752276304367
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:smollm2:360m": {
-    "latencyMs": 99.32232271897786,
-    "throughput": 2.341429507071219,
-    "lastTested": 1752082749648
+    "latencyMs": 158.69184485511224,
+    "throughput": 3.7400940628953174,
+    "lastTested": 1752276304856
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:aya-expanse:8b": {
-    "latencyMs": 135.40220072041006,
-    "throughput": 1.0968528804818658,
-    "lastTested": 1752082749143
+    "latencyMs": 154.8037910214631,
+    "throughput": 1.5033428751650626,
+    "lastTested": 1752276304598
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:aya-expanse:32b": {
-    "latencyMs": 139.66625293997419,
-    "throughput": 2.8009304968269433,
-    "lastTested": 1752082749417
+    "latencyMs": 103.49367603103086,
+    "throughput": 2.917666625308372,
+    "lastTested": 1752276304800
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nemotron:70b": {
-    "latencyMs": 199.1481574398513,
-    "throughput": 2.104260345569025,
-    "lastTested": 1752082749476
+    "latencyMs": 63.72304767237429,
+    "throughput": 4.063411335778973,
+    "lastTested": 1752248539950
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:Cyboghost/dolphin-uncensored:latest": {
-    "latencyMs": 82.82311011727357,
-    "throughput": 1.6532916759709262,
-    "lastTested": 1752082749641
+    "latencyMs": 92.16048034616979,
+    "throughput": 2.670394387854416,
+    "lastTested": 1752248540097
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:firefunction-v2:latest": {
-    "latencyMs": 142.70259928838846,
-    "throughput": 4.32971216791774,
-    "lastTested": 1752082749635
+    "latencyMs": 222.46577607075858,
+    "throughput": 2.827609170221527,
+    "lastTested": 1752248540091
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:olmo2:13b": {
-    "latencyMs": 77.55547419423365,
-    "throughput": 4.154274290479347,
-    "lastTested": 1752082748446
+    "latencyMs": 172.44526996300056,
+    "throughput": 3.39263883054025,
+    "lastTested": 1752248538834
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:command-r7b:latest": {
-    "latencyMs": 192.3202393177155,
-    "throughput": 3.4417222130057525,
-    "lastTested": 1752082748425
+    "latencyMs": 214.49173381735403,
+    "throughput": 3.1187174011106293,
+    "lastTested": 1752248538805
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:olmo2:7b": {
-    "latencyMs": 70.15741030467844,
-    "throughput": 2.359208566655793,
-    "lastTested": 1752082748787
+    "latencyMs": 219.63769659898813,
+    "throughput": 1.1841814133572195,
+    "lastTested": 1752248539221
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.2-vision:latest": {
-    "latencyMs": 246.79524432564483,
-    "throughput": 3.3563335263810714,
-    "lastTested": 1752082749628
+    "latencyMs": 237.00381865799875,
+    "throughput": 5.019166275164049,
+    "lastTested": 1752248540086
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.2:latest": {
-    "latencyMs": 237.21101219497012,
-    "throughput": 2.914161027207003,
-    "lastTested": 1752082748358
+    "latencyMs": 242.94394938005178,
+    "throughput": 5.373630293031737,
+    "lastTested": 1752167892940
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llava-llama3:latest": {
-    "latencyMs": 129.38106671024389,
-    "throughput": 5.260829845226473,
-    "lastTested": 1751992918578
+    "latencyMs": 167.55845181736117,
+    "throughput": 3.3882264613682036,
+    "lastTested": 1752248540082
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin-mixtral:8x7b": {
-    "latencyMs": 53.65829037193457,
-    "throughput": 3.474541090139868,
-    "lastTested": 1752082748842
+    "latencyMs": 205.95734450711905,
+    "throughput": 3.918921545727311,
+    "lastTested": 1752276304491
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hermes3:3b": {
-    "latencyMs": 125.08063837319408,
-    "throughput": 4.66297441942685,
-    "lastTested": 1752082748676
+    "latencyMs": 98.69868839923356,
+    "throughput": 2.5371595297892773,
+    "lastTested": 1752276304376
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hermes3:405b": {
-    "latencyMs": 222.1605071610075,
-    "throughput": 4.815773359091915,
-    "lastTested": 1752082749564
+    "latencyMs": 58.16385365419503,
+    "throughput": 5.4756449894974075,
+    "lastTested": 1752248540032
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hermes3:70b": {
-    "latencyMs": 94.83441206884629,
-    "throughput": 3.2983604173455365,
-    "lastTested": 1752082749470
+    "latencyMs": 196.97143557251206,
+    "throughput": 3.9022769304709026,
+    "lastTested": 1752248539945
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nous-hermes2-mixtral:latest": {
-    "latencyMs": 155.7223719609314,
-    "throughput": 2.008953535984144,
-    "lastTested": 1752082749623
+    "latencyMs": 205.62500220017617,
+    "throughput": 4.676308557490076,
+    "lastTested": 1752248540078
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:openhermes:latest": {
-    "latencyMs": 218.61735988608078,
-    "throughput": 4.647410148847428,
-    "lastTested": 1752082749617
+    "latencyMs": 88.54116620764168,
+    "throughput": 2.47357733985223,
+    "lastTested": 1752248540074
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama2-uncensored:latest": {
-    "latencyMs": 88.54270625066806,
-    "throughput": 5.283513122607953,
-    "lastTested": 1752082749612
+    "latencyMs": 184.01932168247464,
+    "throughput": 3.1522857416130248,
+    "lastTested": 1752248540070
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:adi0adi/ollama_stheno-8b_v3.1_q6k:latest": {
-    "latencyMs": 54.67281941736486,
-    "throughput": 4.835304965775612,
-    "lastTested": 1752082749138
+    "latencyMs": 131.51282127634835,
+    "throughput": 4.560831754348211,
+    "lastTested": 1752276304594
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mixtral:8x22b": {
-    "latencyMs": 221.3855122540922,
-    "throughput": 5.25621376105984,
-    "lastTested": 1752082749322
+    "latencyMs": 94.91860529521317,
+    "throughput": 2.6214482700379476,
+    "lastTested": 1752276304715
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma3:latest": {
-    "latencyMs": 91.67620227186117,
-    "throughput": 5.81926990427588,
-    "lastTested": 1752082748221
+    "latencyMs": 168.41642551099687,
+    "throughput": 2.739785919021908,
+    "lastTested": 1752167892874
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mixtral:8x7b": {
-    "latencyMs": 243.3791957148832,
-    "throughput": 4.243371705873196,
-    "lastTested": 1752082748835
+    "latencyMs": 67.28774123563142,
+    "throughput": 1.2973429084178292,
+    "lastTested": 1752276304488
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma3:1b": {
-    "latencyMs": 139.20899878102287,
-    "throughput": 5.783397473468916,
-    "lastTested": 1752082748257
+    "latencyMs": 193.2102740571834,
+    "throughput": 1.0489526740512536,
+    "lastTested": 1752197976349
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.2-vision:90b": {
-    "latencyMs": 74.35408971528364,
-    "throughput": 4.193128455430321,
-    "lastTested": 1752082749527
+    "latencyMs": 180.1158097609201,
+    "throughput": 4.385567336035669,
+    "lastTested": 1752248540002
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.2-vision:11b": {
-    "latencyMs": 150.1548641917948,
-    "throughput": 4.920180035645808,
-    "lastTested": 1752082749183
+    "latencyMs": 233.6815506486983,
+    "throughput": 4.448899887206461,
+    "lastTested": 1752276304626
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nidumai/nidum-gemma-3-27b-instruct-uncensored:q3_k_m": {
-    "latencyMs": 58.46892122666798,
-    "throughput": 4.627626344722987,
-    "lastTested": 1752082749360
+    "latencyMs": 247.11781565254526,
+    "throughput": 3.129502308202551,
+    "lastTested": 1752248539828
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nidumai/nidum-gemma-3-4b-it-uncensored:q3_k_m": {
-    "latencyMs": 57.8205594477521,
-    "throughput": 4.98887971442949,
-    "lastTested": 1752082748715
+    "latencyMs": 233.61940946980474,
+    "throughput": 5.831042469107207,
+    "lastTested": 1752276304417
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llava:34b": {
-    "latencyMs": 52.6686116587892,
-    "throughput": 1.627410261910547,
-    "lastTested": 1752082749442
+    "latencyMs": 171.36800186435374,
+    "throughput": 2.23900918155182,
+    "lastTested": 1752276304834
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llava:13b": {
-    "latencyMs": 137.3385832895692,
-    "throughput": 1.4275152428453066,
-    "lastTested": 1752082749209
+    "latencyMs": 88.46612319730994,
+    "throughput": 4.4258897868698925,
+    "lastTested": 1752276304658
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llava:7b": {
-    "latencyMs": 126.28448997674973,
-    "throughput": 2.0508284552674105,
-    "lastTested": 1752082748828
+    "latencyMs": 193.12148583708208,
+    "throughput": 5.95296016305722,
+    "lastTested": 1752276304485
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/DavidAU/Reka-Flash-3-21B-Reasoning-Uncensored-MAX-NEO-Imatrix-GGUF:latest": {
-    "latencyMs": 116.42535434181549,
-    "throughput": 3.4689176837197646,
-    "lastTested": 1752082749312
+    "latencyMs": 104.56044762961389,
+    "throughput": 2.2885346208320603,
+    "lastTested": 1752276304711
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/DavidAU/Llama-3.2-8X4B-MOE-V2-Dark-Champion-Instruct-uncensored-abliterated-21B-GGUF:latest": {
-    "latencyMs": 217.31637104242907,
-    "throughput": 1.5465259261000466,
-    "lastTested": 1752082748697
+    "latencyMs": 219.5973250006467,
+    "throughput": 3.5540029664353736,
+    "lastTested": 1752276304407
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/nidum/Nidum-Gemma-3-27B-it-Uncensored-GGUF:latest": {
-    "latencyMs": 108.63731015585185,
-    "throughput": 3.5362792632828643,
-    "lastTested": 1752082749371
+    "latencyMs": 216.81818109007108,
+    "throughput": 5.788898201345182,
+    "lastTested": 1752248539836
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/DavidAU/Gemma-3-it-4B-Uncensored-DBL-X-GGUF:latest": {
-    "latencyMs": 239.83006361275466,
-    "throughput": 4.294797295272404,
-    "lastTested": 1752082748723
+    "latencyMs": 216.67713034435056,
+    "throughput": 1.7098307286137584,
+    "lastTested": 1752276304422
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/unsloth/gemma-3-27b-it-GGUF:latest": {
-    "latencyMs": 248.72431938322072,
-    "throughput": 2.9274884109568378,
-    "lastTested": 1752082749379
+    "latencyMs": 147.22432682485726,
+    "throughput": 3.494892868839239,
+    "lastTested": 1752276304756
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/DavidAU/Llama-3.2-8X3B-MOE-Dark-Champion-Instruct-uncensored-abliterated-18.4B-GGUF:latest": {
-    "latencyMs": 180.85672908660771,
-    "throughput": 2.1386817524498847,
-    "lastTested": 1752034549040
+    "latencyMs": 163.04461045650982,
+    "throughput": 2.7932800024792472,
+    "lastTested": 1752276304360
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-coder-v2:236b": {
-    "latencyMs": 222.04625349270572,
-    "throughput": 4.427427764215319,
-    "lastTested": 1752082749550
+    "latencyMs": 73.18881744099085,
+    "throughput": 3.832944921357953,
+    "lastTested": 1752248540020
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-v3:latest": {
-    "latencyMs": 99.25771998300763,
-    "throughput": 2.567544336318333,
-    "lastTested": 1752082748527
+    "latencyMs": 222.31800866732988,
+    "throughput": 2.668397468807062,
+    "lastTested": 1752248538893
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-coder-v2:16b": {
-    "latencyMs": 111.49849891713353,
-    "throughput": 5.827292948361459,
-    "lastTested": 1752082748475
+    "latencyMs": 248.23378535319955,
+    "throughput": 1.2336528702011231,
+    "lastTested": 1752276304693
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-140B/DeepSeekAI140B:latest": {
-    "latencyMs": 79.67103918718936,
-    "throughput": 4.0167742875435275,
-    "lastTested": 1752082749537
+    "latencyMs": 164.45519207292958,
+    "throughput": 1.087863332450937,
+    "lastTested": 1752248540015
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.1:405b": {
-    "latencyMs": 96.00728914535969,
-    "throughput": 4.282283340423307,
-    "lastTested": 1752082749560
+    "latencyMs": 82.93287719679023,
+    "throughput": 3.3403524243278095,
+    "lastTested": 1752248540028
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:32b": {
-    "latencyMs": 108.31944353073496,
-    "throughput": 2.3071855958077228,
-    "lastTested": 1752082748322
+    "latencyMs": 72.05843766957747,
+    "throughput": 5.810746438205079,
+    "lastTested": 1752276304283
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:14b": {
-    "latencyMs": 134.26478600665905,
-    "throughput": 2.5329249438340598,
-    "lastTested": 1752027546338
+    "latencyMs": 161.82463630322547,
+    "throughput": 5.135526725077089,
+    "lastTested": 1752207417243
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:30b": {
-    "latencyMs": 186.14508950173337,
-    "throughput": 3.4975920385432913,
-    "lastTested": 1752082748483
+    "latencyMs": 205.94425631779137,
+    "throughput": 1.3234068956589742,
+    "lastTested": 1752248538852
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:8b": {
-    "latencyMs": 205.49281980052427,
-    "throughput": 3.8773661281241205,
-    "lastTested": 1752082749068
+    "latencyMs": 144.10292410642427,
+    "throughput": 3.424029562130947,
+    "lastTested": 1752276304566
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:4b": {
-    "latencyMs": 211.51405957446644,
-    "throughput": 2.262196370495574,
-    "lastTested": 1752082748264
+    "latencyMs": 156.251100520305,
+    "throughput": 5.470925741709728,
+    "lastTested": 1752276304929
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:0.6b": {
-    "latencyMs": 153.3182931640784,
-    "throughput": 3.8488773884701644,
-    "lastTested": 1752082748409
+    "latencyMs": 73.73282813620526,
+    "throughput": 4.8359541545694364,
+    "lastTested": 1752276304204
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:1.7b": {
-    "latencyMs": 240.82119576324797,
-    "throughput": 1.4984787192263263,
-    "lastTested": 1752082748416
+    "latencyMs": 99.98632661067334,
+    "throughput": 5.031617840770146,
+    "lastTested": 1752276304933
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama4:latest": {
-    "latencyMs": 154.30177166954957,
-    "throughput": 1.7946833781635665,
-    "lastTested": 1752082748523
+    "latencyMs": 72.74941985705806,
+    "throughput": 5.849180068222351,
+    "lastTested": 1752248538888
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.3:latest": {
-    "latencyMs": 184.8751918590275,
-    "throughput": 5.180877815513384,
-    "lastTested": 1752082748348
+    "latencyMs": 230.14328640573757,
+    "throughput": 2.8940089347593614,
+    "lastTested": 1752248538662
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma3:12b": {
-    "latencyMs": 51.379597715662314,
-    "throughput": 5.046029041344509,
-    "lastTested": 1752034548912
+    "latencyMs": 50.19063606191128,
+    "throughput": 5.7761543701175135,
+    "lastTested": 1752276304923
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma3:27b": {
-    "latencyMs": 219.41643843664994,
-    "throughput": 1.8476291081799292,
-    "lastTested": 1752082748230
+    "latencyMs": 175.68434559630043,
+    "throughput": 3.4230422561023035,
+    "lastTested": 1752276304926
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phi4:latest": {
-    "latencyMs": 139.4384231063368,
-    "throughput": 2.320945619004037,
-    "lastTested": 1752082748342
+    "latencyMs": 112.26587858411791,
+    "throughput": 5.749529280670561,
+    "lastTested": 1752167892926
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma3:4b": {
-    "latencyMs": 219.57404707608546,
-    "throughput": 3.139888629019815,
-    "lastTested": 1752082748708
+    "latencyMs": 77.42752537083426,
+    "throughput": 1.526562585089404,
+    "lastTested": 1752276304248
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:nomic-embed-text:latest": {
-    "latencyMs": 148.05127362955983,
-    "throughput": 1.8884772732701651,
-    "lastTested": 1752082748247
+    "latencyMs": 202.00831141496073,
+    "throughput": 5.615292443503108,
+    "lastTested": 1752167892865
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite-embedding:278m": {
-    "latencyMs": 178.42052005272257,
-    "throughput": 3.7684277266643296,
-    "lastTested": 1752082749591
+    "latencyMs": 68.11454451769028,
+    "throughput": 4.181722969184557,
+    "lastTested": 1752248540053
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite-embedding:30m": {
-    "latencyMs": 120.05275195569224,
-    "throughput": 3.214795574829267,
-    "lastTested": 1752082749586
+    "latencyMs": 178.19343694843516,
+    "throughput": 5.601107870464494,
+    "lastTested": 1752248540049
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:snowflake-arctic-embed2:latest": {
-    "latencyMs": 227.9253259762958,
-    "throughput": 5.435274160468376,
-    "lastTested": 1752082749607
+    "latencyMs": 163.11001498637276,
+    "throughput": 5.612352301877105,
+    "lastTested": 1752248540065
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:bailey_kindo/Llama-3-WhiteRabbitNeo-8B-v2.0:latest": {
-    "latencyMs": 215.54531205435418,
-    "throughput": 2.380673729740259,
-    "lastTested": 1752082749163
+    "latencyMs": 102.8575353744989,
+    "throughput": 2.5313168409872557,
+    "lastTested": 1752248539599
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama2:7b": {
-    "latencyMs": 58.42239823519924,
-    "throughput": 4.613169130846585,
-    "lastTested": 1752082749043
+    "latencyMs": 172.54808239499295,
+    "throughput": 5.633678242563702,
+    "lastTested": 1752276304548
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama2-uncensored:7b": {
-    "latencyMs": 218.7935506733918,
-    "throughput": 2.4643277782028585,
-    "lastTested": 1752082749053
+    "latencyMs": 198.67448633736706,
+    "throughput": 1.4475296073052137,
+    "lastTested": 1752276304550
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama2:13b": {
-    "latencyMs": 128.68379368873929,
-    "throughput": 3.2083648131562796,
-    "lastTested": 1752082749239
+    "latencyMs": 228.3189961885827,
+    "throughput": 1.4398474241817063,
+    "lastTested": 1752276304671
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama2:70b": {
-    "latencyMs": 135.7940765237112,
-    "throughput": 2.9956037100140933,
-    "lastTested": 1752082749500
+    "latencyMs": 93.42764561919523,
+    "throughput": 4.8241104764112865,
+    "lastTested": 1752248539972
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama2-uncensored:70b": {
-    "latencyMs": 187.5920515802867,
-    "throughput": 1.0158271442608438,
-    "lastTested": 1752082749506
+    "latencyMs": 229.15536500753763,
+    "throughput": 4.11002014428878,
+    "lastTested": 1752248539976
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama2:latest": {
-    "latencyMs": 228.92876037034506,
-    "throughput": 4.563348510268369,
-    "lastTested": 1751992918836
+    "latencyMs": 212.3288548643044,
+    "throughput": 3.590850048731137,
+    "lastTested": 1752276304909
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:devstral:24b": {
-    "latencyMs": 226.89712836364237,
-    "throughput": 3.7490944772823034,
-    "lastTested": 1752082748479
+    "latencyMs": 116.06991832548292,
+    "throughput": 1.9397896001243178,
+    "lastTested": 1752276304729
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma3n:e2b": {
-    "latencyMs": 237.16763245899463,
-    "throughput": 3.4802655557950635,
-    "lastTested": 1752082748609
+    "latencyMs": 182.37646836182714,
+    "throughput": 3.1405379136392977,
+    "lastTested": 1752276304350
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5vl:3b": {
-    "latencyMs": 177.09354797940858,
-    "throughput": 4.783873816886797,
-    "lastTested": 1752082748672
+    "latencyMs": 135.63971266248444,
+    "throughput": 5.869211126896705,
+    "lastTested": 1752276304373
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:gemma3n:e4b": {
-    "latencyMs": 158.3437358525395,
-    "throughput": 2.0994109656298665,
-    "lastTested": 1752082748703
+    "latencyMs": 224.06157571944246,
+    "throughput": 4.710760392512689,
+    "lastTested": 1752276304245
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5vl:7b": {
-    "latencyMs": 206.76573286242905,
-    "throughput": 4.891579656430305,
-    "lastTested": 1752082748822
+    "latencyMs": 103.73411134585812,
+    "throughput": 4.784660134418515,
+    "lastTested": 1752248538800
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5vl:32b": {
-    "latencyMs": 174.25895789068315,
-    "throughput": 3.997899935058168,
-    "lastTested": 1752082749409
+    "latencyMs": 184.8900917298818,
+    "throughput": 4.7227403838783735,
+    "lastTested": 1752276304797
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen2.5vl:72b": {
-    "latencyMs": 89.38200878013527,
-    "throughput": 2.843686974149754,
-    "lastTested": 1752082749511
+    "latencyMs": 83.25709334976588,
+    "throughput": 3.0994995876235856,
+    "lastTested": 1752248539986
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:magistral:latest": {
-    "latencyMs": 102.10596035733946,
-    "throughput": 4.469558037942296,
-    "lastTested": 1752082749602
+    "latencyMs": 91.1500975921276,
+    "throughput": 1.532724300706492,
+    "lastTested": 1752248540061
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mistral-small3.2:latest": {
-    "latencyMs": 241.64727277449538,
-    "throughput": 2.227690666900856,
-    "lastTested": 1752082748516
+    "latencyMs": 112.65367586020902,
+    "throughput": 1.7087430460723099,
+    "lastTested": 1752248538882
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepcoder:1.5b": {
-    "latencyMs": 84.91555087772568,
-    "throughput": 5.945547212331248,
-    "lastTested": 1752082748404
+    "latencyMs": 180.68040992068512,
+    "throughput": 4.362624997111936,
+    "lastTested": 1752276304437
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepcoder:14b": {
-    "latencyMs": 216.72380478386197,
-    "throughput": 2.1540736760896597,
-    "lastTested": 1752082748463
+    "latencyMs": 247.7569376221847,
+    "throughput": 3.8272034814760927,
+    "lastTested": 1752276304676
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:cogito:14b": {
-    "latencyMs": 212.61205290534804,
-    "throughput": 2.7194169962303087,
-    "lastTested": 1752082748458
+    "latencyMs": 155.3943454455751,
+    "throughput": 3.553144410609849,
+    "lastTested": 1752248538847
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.3:2b": {
-    "latencyMs": 151.27005129320054,
-    "throughput": 1.4795945257047907,
-    "lastTested": 1752082748604
+    "latencyMs": 217.66864074332014,
+    "throughput": 2.8171128076743495,
+    "lastTested": 1752276304347
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:cogito:3b": {
-    "latencyMs": 242.24831848071324,
-    "throughput": 5.070665017176917,
-    "lastTested": 1752082748665
+    "latencyMs": 231.3274240255184,
+    "throughput": 4.5004626537864265,
+    "lastTested": 1752276304370
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:cogito:8b": {
-    "latencyMs": 130.9408306828665,
-    "throughput": 2.597693126809049,
-    "lastTested": 1752082749115
+    "latencyMs": 189.6457320560656,
+    "throughput": 1.7883265744755963,
+    "lastTested": 1752276304586
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.3:8b": {
-    "latencyMs": 204.63362870718765,
-    "throughput": 4.410678817969531,
-    "lastTested": 1752082749123
+    "latencyMs": 154.14948772539316,
+    "throughput": 2.200817944697923,
+    "lastTested": 1752276304589
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phi4-mini-reasoning:3.8b": {
-    "latencyMs": 184.77787440947614,
-    "throughput": 3.4998581905301362,
-    "lastTested": 1752082749130
+    "latencyMs": 194.78988575177812,
+    "throughput": 3.080238870731735,
+    "lastTested": 1752276304592
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phi4-reasoning:14b": {
-    "latencyMs": 151.3482738026672,
-    "throughput": 3.7185227949069537,
-    "lastTested": 1752082749255
+    "latencyMs": 245.69033951865688,
+    "throughput": 3.7806589809037305,
+    "lastTested": 1752276304679
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:mistral-small3.1:24b": {
-    "latencyMs": 230.50312793344574,
-    "throughput": 5.525765136407424,
-    "lastTested": 1752082749353
+    "latencyMs": 162.91814839694192,
+    "throughput": 2.3666768362068513,
+    "lastTested": 1752276304725
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:cogito:32b": {
-    "latencyMs": 71.69015968495899,
-    "throughput": 3.8180536599821435,
-    "lastTested": 1752082749404
+    "latencyMs": 219.7941098574389,
+    "throughput": 4.941192619550769,
+    "lastTested": 1752276304793
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:cogito:70b": {
-    "latencyMs": 98.26170522926003,
-    "throughput": 2.2054839542861497,
-    "lastTested": 1751992918384
+    "latencyMs": 82.4333310084242,
+    "throughput": 5.600541222534331,
+    "lastTested": 1752248539941
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwen3:235b": {
-    "latencyMs": 92.87455192325895,
-    "throughput": 4.208149580766091,
-    "lastTested": 1752082749545
+    "latencyMs": 99.2806718344486,
+    "throughput": 3.396725128632027,
+    "lastTested": 1752276304937
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.2-vision:2b": {
-    "latencyMs": 58.12986223452788,
-    "throughput": 5.047154633397454,
-    "lastTested": 1752082748598
+    "latencyMs": 141.72498506441366,
+    "throughput": 4.522348398952607,
+    "lastTested": 1752276304344
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:exaone-deep:7.8b": {
-    "latencyMs": 243.58643643753481,
-    "throughput": 3.083666224402551,
-    "lastTested": 1752082749109
+    "latencyMs": 85.59123324218878,
+    "throughput": 1.8447867158066158,
+    "lastTested": 1752276304582
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama4:128x17b": {
-    "latencyMs": 94.32784132413134,
-    "throughput": 3.272103824439694,
-    "lastTested": 1752082749294
+    "latencyMs": 144.03710497450257,
+    "throughput": 2.652531508086942,
+    "lastTested": 1752276304706
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama4:16x17b": {
-    "latencyMs": 97.38076370771265,
-    "throughput": 4.559953354146329,
-    "lastTested": 1752082749286
+    "latencyMs": 215.15962231207837,
+    "throughput": 3.908028156285727,
+    "lastTested": 1752276304704
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:exaone-deep:32b": {
-    "latencyMs": 229.3982167021469,
-    "throughput": 1.9845880244754301,
-    "lastTested": 1752082748498
+    "latencyMs": 146.2583909907097,
+    "throughput": 1.0563365233268853,
+    "lastTested": 1752248539880
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:command-a:111b": {
-    "latencyMs": 105.03326092228824,
-    "throughput": 3.1359202580545333,
-    "lastTested": 1752082749531
+    "latencyMs": 197.67577656050267,
+    "throughput": 3.549524155294961,
+    "lastTested": 1752248540009
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:exaone-deep:2.4b": {
-    "latencyMs": 65.39612882913546,
-    "throughput": 4.8314665961630725,
-    "lastTested": 1752082748396
+    "latencyMs": 97.12432153529318,
+    "throughput": 3.6201248961889356,
+    "lastTested": 1752276304413
   },
   "test-server:llama3.2:1b": {
     "latencyMs": 189.88907774601097,
@@ -1665,154 +1665,154 @@
     "lastTested": 1751837517083
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:exaone3.5:2.4b": {
-    "latencyMs": 181.23587013447025,
-    "throughput": 5.730832647479816,
-    "lastTested": 1752082748392
+    "latencyMs": 171.4426407680917,
+    "throughput": 5.564337659200285,
+    "lastTested": 1752276304410
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:falcon3:10b": {
-    "latencyMs": 175.4785417120765,
-    "throughput": 5.497374778226088,
-    "lastTested": 1752082748441
+    "latencyMs": 113.80857018913639,
+    "throughput": 1.0536123658512444,
+    "lastTested": 1752248538821
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:falcon3:1b": {
-    "latencyMs": 206.18269162070567,
-    "throughput": 4.673741819165723,
-    "lastTested": 1752082748573
+    "latencyMs": 117.99895090541797,
+    "throughput": 4.061736590147753,
+    "lastTested": 1752276304322
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:sailor2:1b": {
-    "latencyMs": 169.14175903890296,
-    "throughput": 4.876734326506048,
-    "lastTested": 1752082748577
+    "latencyMs": 86.88096629172199,
+    "throughput": 5.164400440334775,
+    "lastTested": 1752276304326
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/QuantFactory/NSFW-3B-GGUF:latest": {
-    "latencyMs": 184.21056555612535,
-    "throughput": 4.59612957926466,
-    "lastTested": 1752082748631
+    "latencyMs": 133.57479732255274,
+    "throughput": 2.8308414750544744,
+    "lastTested": 1752276304357
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:smallthinker:3b": {
-    "latencyMs": 177.07532562696537,
-    "throughput": 4.05664598190595,
-    "lastTested": 1752082748642
+    "latencyMs": 212.09148108061524,
+    "throughput": 4.858033362414673,
+    "lastTested": 1752276304363
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepscaler:1.5b": {
-    "latencyMs": 80.2525380326773,
-    "throughput": 1.5732535484071577,
-    "lastTested": 1752082748729
+    "latencyMs": 238.89235965811025,
+    "throughput": 3.583685890445313,
+    "lastTested": 1752276304434
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:openthinker:7b": {
-    "latencyMs": 178.61076975067166,
-    "throughput": 3.570002343887209,
-    "lastTested": 1752082748799
+    "latencyMs": 116.4519784918625,
+    "throughput": 4.96912172356143,
+    "lastTested": 1752248539225
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/QuantFactory/DarkIdol-Llama-3.1-8B-Instruct-1.2-Uncensored-GGUF:latest": {
-    "latencyMs": 126.38256828203076,
-    "throughput": 2.586131467912569,
-    "lastTested": 1752082749060
+    "latencyMs": 231.12404498723382,
+    "throughput": 5.634961363711226,
+    "lastTested": 1752248539507
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.2:8b": {
-    "latencyMs": 104.75999544109183,
-    "throughput": 3.365519571031344,
-    "lastTested": 1752082749075
+    "latencyMs": 69.85845408670914,
+    "throughput": 1.0982744050786377,
+    "lastTested": 1752276304569
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phi4-mini:3.8b": {
-    "latencyMs": 203.2556148653194,
-    "throughput": 3.968941040894447,
-    "lastTested": 1752082749080
+    "latencyMs": 101.15067026908645,
+    "throughput": 1.2682522389959607,
+    "lastTested": 1752276304571
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:dolphin3:8b": {
-    "latencyMs": 54.86039238074261,
-    "throughput": 3.8597376766683946,
-    "lastTested": 1752082749089
+    "latencyMs": 232.85809985966216,
+    "throughput": 3.9318988402091084,
+    "lastTested": 1752276304574
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:exaone3.5:7.8b": {
-    "latencyMs": 203.2891328591302,
-    "throughput": 1.5423689959338718,
-    "lastTested": 1752082749102
+    "latencyMs": 58.76054252110681,
+    "throughput": 2.3300571671422947,
+    "lastTested": 1752276304579
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/DavidAU/Gemma-The-Writer-N-Restless-Quill-10B-Uncensored-GGUF:latest": {
-    "latencyMs": 228.19104009728503,
-    "throughput": 5.1395753191195315,
-    "lastTested": 1752034549235
+    "latencyMs": 188.7095508080889,
+    "throughput": 4.8789331551986015,
+    "lastTested": 1752276304623
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:phi4:14b": {
-    "latencyMs": 121.55072325014555,
-    "throughput": 2.5876471826208904,
-    "lastTested": 1752082749246
+    "latencyMs": 191.02583879765288,
+    "throughput": 5.6272245788507185,
+    "lastTested": 1752276304674
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:sailor2:20b": {
-    "latencyMs": 165.45121598211634,
-    "throughput": 4.513882905069573,
-    "lastTested": 1752082749304
+    "latencyMs": 225.19224480464698,
+    "throughput": 1.4279417303991906,
+    "lastTested": 1752276304709
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:magistral:24b": {
-    "latencyMs": 115.6758137837659,
-    "throughput": 5.384890130942752,
-    "lastTested": 1752082749346
+    "latencyMs": 239.76510214789107,
+    "throughput": 1.3187771743026246,
+    "lastTested": 1752276304722
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:qwq:32b": {
-    "latencyMs": 128.0077043052023,
-    "throughput": 5.11611815046517,
-    "lastTested": 1752082749397
+    "latencyMs": 237.85526163418461,
+    "throughput": 2.891291266079944,
+    "lastTested": 1752276304788
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:r1-1776:70b": {
-    "latencyMs": 59.424492689862205,
-    "throughput": 3.4564518395668644,
-    "lastTested": 1752082749462
+    "latencyMs": 202.99928237929672,
+    "throughput": 5.786347081995153,
+    "lastTested": 1752248539937
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:r1-1776:671b": {
-    "latencyMs": 164.0627261470352,
-    "throughput": 2.1172629240538035,
-    "lastTested": 1752082749575
+    "latencyMs": 191.50607087125047,
+    "throughput": 5.7575175839923345,
+    "lastTested": 1752248540040
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:deepseek-v3:671b": {
-    "latencyMs": 241.63882582790254,
-    "throughput": 3.2246179898240404,
-    "lastTested": 1752082749580
+    "latencyMs": 169.51002991250377,
+    "throughput": 3.838625064544228,
+    "lastTested": 1752248540044
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:snowflake-arctic-embed2:568m": {
-    "latencyMs": 63.59811015260557,
-    "throughput": 4.261036408825867,
-    "lastTested": 1752082749595
+    "latencyMs": 210.31477423564016,
+    "throughput": 2.1693354794723634,
+    "lastTested": 1752248540057
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:openthinker:32b": {
-    "latencyMs": 244.26076787042481,
-    "throughput": 1.493911687721602,
-    "lastTested": 1752082748490
+    "latencyMs": 143.36280933338628,
+    "throughput": 1.9444921031949627,
+    "lastTested": 1752248538863
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:llama3.3:70b": {
-    "latencyMs": 124.00649685600146,
-    "throughput": 2.5999961279955164,
-    "lastTested": 1752082748505
+    "latencyMs": 158.03448400983288,
+    "throughput": 2.1646989693708676,
+    "lastTested": 1752248540456
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:granite3.2:2b": {
-    "latencyMs": 145.66460219539977,
-    "throughput": 2.5774589437634057,
-    "lastTested": 1752082748589
+    "latencyMs": 228.0659628594945,
+    "throughput": 1.097071387219324,
+    "lastTested": 1752276304338
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:falcon3:3b": {
-    "latencyMs": 229.42081252835487,
-    "throughput": 3.9920436195681033,
-    "lastTested": 1752082748659
+    "latencyMs": 128.51432117032772,
+    "throughput": 4.986312774796293,
+    "lastTested": 1752248539059
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:falcon3:7b": {
-    "latencyMs": 137.92409494566212,
-    "throughput": 4.228122559633134,
-    "lastTested": 1752082748807
+    "latencyMs": 94.09402529868589,
+    "throughput": 1.437045966569336,
+    "lastTested": 1752276304477
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:marco-o1:7b": {
-    "latencyMs": 224.33072803982355,
-    "throughput": 4.108223996674701,
-    "lastTested": 1752082748813
+    "latencyMs": 230.18316329026342,
+    "throughput": 5.8211701230845065,
+    "lastTested": 1752276304482
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:exaone3.5:32b": {
-    "latencyMs": 144.98649398515198,
-    "throughput": 2.2273493189354614,
-    "lastTested": 1752082748494
+    "latencyMs": 143.52093041528042,
+    "throughput": 3.9215317158745604,
+    "lastTested": 1752276304783
   },
   "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0:hf.co/Ttimofeyka/MistralRP-Noromaid-NSFW-Mistral-7B-GGUF:latest": {
-    "latencyMs": 111.46927157460497,
-    "throughput": 4.881649291057018,
-    "lastTested": 1752082748780
+    "latencyMs": 227.9385085977689,
+    "throughput": 3.6015204744054987,
+    "lastTested": 1752276304473
   },
   "s1:modelA": {
     "latencyMs": 130.1049428551362,
@@ -1850,323 +1850,1068 @@
     "lastTested": 1751914022945
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:1b": {
-    "latencyMs": 60.798557764834584,
-    "throughput": 5.9879991577558505,
-    "lastTested": 1752082749926
+    "latencyMs": 60.59103765623153,
+    "throughput": 2.6948080254144515,
+    "lastTested": 1752203776391
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:qwen3:4b": {
-    "latencyMs": 169.4229801322253,
-    "throughput": 4.9516942949987985,
-    "lastTested": 1752082749936
+    "latencyMs": 234.9036482546886,
+    "throughput": 4.810362604421106,
+    "lastTested": 1752276304242
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:llama3.1:8b": {
-    "latencyMs": 192.65429870272115,
-    "throughput": 3.6294402593764357,
-    "lastTested": 1752082749944
+    "latencyMs": 114.25629811695006,
+    "throughput": 5.175037444395961,
+    "lastTested": 1752203776357
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:12b": {
-    "latencyMs": 173.24293658021648,
-    "throughput": 4.603077406399659,
-    "lastTested": 1752034548601
+    "latencyMs": 178.76054979789032,
+    "throughput": 5.200179392860934,
+    "lastTested": 1752276304212
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:latest": {
-    "latencyMs": 211.96464193682988,
-    "throughput": 5.79115518497851,
-    "lastTested": 1752082749906
+    "latencyMs": 131.55155218368208,
+    "throughput": 4.956213700131526,
+    "lastTested": 1752203776375
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:smollm2:135m": {
-    "latencyMs": 167.78812729764297,
-    "throughput": 5.984509093461771,
-    "lastTested": 1751992918888
+    "latencyMs": 71.00871282131558,
+    "throughput": 4.354174661681533,
+    "lastTested": 1752203776273
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:llama3.2:1b": {
-    "latencyMs": 188.0703428078458,
-    "throughput": 3.626495988471466,
-    "lastTested": 1752082749993
+    "latencyMs": 113.6157234471359,
+    "throughput": 1.1982717928939004,
+    "lastTested": 1752276304334
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:qwen3:0.6b": {
-    "latencyMs": 55.64613922459767,
-    "throughput": 5.115950846175641,
-    "lastTested": 1752082750008
+    "latencyMs": 190.81274114928917,
+    "throughput": 2.1138740646281375,
+    "lastTested": 1752248540356
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:qwen3:1.7b": {
-    "latencyMs": 244.1646980367977,
-    "throughput": 1.1100500797963178,
-    "lastTested": 1752082750016
+    "latencyMs": 113.69844602640015,
+    "throughput": 4.181716055075727,
+    "lastTested": 1752276304252
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:qwen3:14b": {
-    "latencyMs": 246.65637858615023,
-    "throughput": 5.420125891317421,
-    "lastTested": 1752082749956
+    "latencyMs": 57.835798670527794,
+    "throughput": 5.930071000069185,
+    "lastTested": 1752203776325
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:qwen2.5-coder:14b": {
-    "latencyMs": 184.87789139473435,
-    "throughput": 2.2330765051727632,
-    "lastTested": 1752082749964
+    "latencyMs": 148.7258361933176,
+    "throughput": 2.884856866126039,
+    "lastTested": 1752203776426
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:mistral-small3.2:latest": {
-    "latencyMs": 91.36942759218725,
-    "throughput": 4.03443733739692,
-    "lastTested": 1752082750024
+    "latencyMs": 58.26492032338426,
+    "throughput": 1.3299792719383599,
+    "lastTested": 1752276304298
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:minicpm-v:latest": {
-    "latencyMs": 135.08789149661442,
-    "throughput": 3.376965025268313,
-    "lastTested": 1752082749973
+    "latencyMs": 153.5451542045977,
+    "throughput": 4.514420923626124,
+    "lastTested": 1752203776343
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:deepseek-r1:latest": {
-    "latencyMs": 198.08109690858947,
-    "throughput": 2.921831464126049,
-    "lastTested": 1752082749985
+    "latencyMs": 69.35367418719171,
+    "throughput": 2.666330599946159,
+    "lastTested": 1752203776292
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:1b-it-qat": {
-    "latencyMs": 167.3829212029787,
-    "throughput": 1.0334727064725049,
-    "lastTested": 1752027546963
+    "latencyMs": 174.30770413534643,
+    "throughput": 5.393985065356839,
+    "lastTested": 1752248538990
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:sadiq-bd/llama3.2-3b-uncensored:latest": {
-    "latencyMs": 198.80031846241306,
-    "throughput": 3.4981972414679774,
-    "lastTested": 1752034548616
+    "latencyMs": 117.75792229544612,
+    "throughput": 2.5721867215901595,
+    "lastTested": 1752276304394
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:4b-it-qat": {
-    "latencyMs": 80.92819292630983,
-    "throughput": 2.067107534108378,
-    "lastTested": 1752082750052
+    "latencyMs": 140.40510572748923,
+    "throughput": 2.481913087648643,
+    "lastTested": 1752276304425
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/stduhpf/google-gemma-3-4b-it-qat-q4_0-gguf-small:latest": {
-    "latencyMs": 111.26242314379984,
-    "throughput": 5.37717770472458,
-    "lastTested": 1752082750059
+    "latencyMs": 53.87124153131162,
+    "throughput": 3.921513610392746,
+    "lastTested": 1752276304427
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/google/gemma-3-4b-it-qat-q4_0-gguf:latest": {
-    "latencyMs": 198.19968108357583,
-    "throughput": 1.4069935207198594,
-    "lastTested": 1752082750066
+    "latencyMs": 60.20487245445101,
+    "throughput": 5.686831919850336,
+    "lastTested": 1752276304430
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:ZimaBlueAI/Qwen2.5-VL-7B-Instruct:latest": {
-    "latencyMs": 101.23732141555344,
-    "throughput": 1.5365342138239737,
-    "lastTested": 1752082750074
+    "latencyMs": 193.8588572285097,
+    "throughput": 3.203670543796675,
+    "lastTested": 1752276304553
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:0000/ui-tars-1.5-7b-q8_0:7b": {
-    "latencyMs": 112.3190329033855,
-    "throughput": 2.2951635794818426,
-    "lastTested": 1752082750079
+    "latencyMs": 117.76217380249747,
+    "throughput": 4.610301820909761,
+    "lastTested": 1752276304556
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:0000/ui-tars-1.5-7b:latest": {
-    "latencyMs": 91.54040869628753,
-    "throughput": 2.1058570941764945,
-    "lastTested": 1752082750086
+    "latencyMs": 228.34771013114903,
+    "throughput": 4.235882070498826,
+    "lastTested": 1752276304559
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:moondream:1.8b": {
-    "latencyMs": 186.64327486174645,
-    "throughput": 1.325448810844755,
-    "lastTested": 1752082750094
+    "latencyMs": 67.80263880737358,
+    "throughput": 4.995502005770724,
+    "lastTested": 1752276304604
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:glm4:9b": {
-    "latencyMs": 243.0227447412617,
-    "throughput": 5.0738394580310535,
-    "lastTested": 1752082750102
+    "latencyMs": 57.52015238283832,
+    "throughput": 1.1965114752435393,
+    "lastTested": 1752276304620
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:12b-it-qat": {
-    "latencyMs": 179.16975740496986,
-    "throughput": 4.184291270252477,
-    "lastTested": 1752082750109
+    "latencyMs": 181.63042866960106,
+    "throughput": 3.3692501669275856,
+    "lastTested": 1752248538826
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/stduhpf/google-gemma-3-12b-it-qat-q4_0-gguf-small:latest": {
-    "latencyMs": 56.05907926376528,
-    "throughput": 4.141921888754194,
-    "lastTested": 1752082750117
+    "latencyMs": 236.32224448117105,
+    "throughput": 5.361011117844775,
+    "lastTested": 1752276304643
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/vinimuchulski/gemma-3-12b-it-qat-q4_0-gguf:latest": {
-    "latencyMs": 94.25325970947051,
-    "throughput": 3.6677555350822777,
-    "lastTested": 1752082750127
+    "latencyMs": 81.89019721234331,
+    "throughput": 3.21280187189131,
+    "lastTested": 1752276304645
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/bartowski/soob3123_amoral-gemma3-12B-GGUF:Q4_K_M": {
-    "latencyMs": 224.90387988278408,
-    "throughput": 2.742732375178937,
-    "lastTested": 1752082750135
+    "latencyMs": 109.62914723509374,
+    "throughput": 3.233741192829126,
+    "lastTested": 1752248539690
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/Lucy-in-the-Sky/Qwen3-16B-A3B-Q4_K_M-GGUF:Q4_K_M": {
-    "latencyMs": 193.8651111806051,
-    "throughput": 3.768792379891835,
-    "lastTested": 1752082750142
+    "latencyMs": 76.19689574338828,
+    "throughput": 3.9578907709141133,
+    "lastTested": 1752276304701
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF:UD-Q4_K_XL": {
-    "latencyMs": 221.7304949919424,
-    "throughput": 5.25619382734631,
-    "lastTested": 1752082750150
+    "latencyMs": 88.86933919908327,
+    "throughput": 2.704005209192929,
+    "lastTested": 1752276304734
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/bartowski/mistralai_Mistral-Small-3.1-24B-Instruct-2503-GGUF:Q4_K_M": {
-    "latencyMs": 171.28003575611177,
-    "throughput": 3.4700240873666903,
-    "lastTested": 1752082750157
+    "latencyMs": 60.39929005729769,
+    "throughput": 1.6230197064549081,
+    "lastTested": 1752276304737
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/WesPro/Mistral-Small-3.1-24B-Instruct-2503-HF-Q6_K-GGUF:latest": {
-    "latencyMs": 179.9904109220567,
-    "throughput": 1.3221128496858217,
-    "lastTested": 1752034548670
+    "latencyMs": 188.6662236592307,
+    "throughput": 5.203394800134932,
+    "lastTested": 1752276304741
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:27b-it-qat": {
-    "latencyMs": 140.99882354696547,
-    "throughput": 5.016945073224184,
-    "lastTested": 1752082750167
+    "latencyMs": 201.68060092933987,
+    "throughput": 5.28791114861686,
+    "lastTested": 1752276304759
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/unsloth/Qwen3-30B-A3B-GGUF:Q4_K_XL": {
-    "latencyMs": 157.28984638494072,
-    "throughput": 2.281690622247118,
-    "lastTested": 1752034548675
+    "latencyMs": 150.3163307472141,
+    "throughput": 2.144077344756611,
+    "lastTested": 1752276304773
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:qwen3:30b-a3b-q4_K_M": {
-    "latencyMs": 248.42457222187483,
-    "throughput": 3.036352005112585,
-    "lastTested": 1752082750176
+    "latencyMs": 79.76102832257777,
+    "throughput": 3.0484205013119983,
+    "lastTested": 1752276304778
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:JollyLlama/GLM-4-32B-0414-Q4_K_M:latest": {
-    "latencyMs": 131.0704650624142,
-    "throughput": 1.3424511745390413,
-    "lastTested": 1752082750181
+    "latencyMs": 64.15258776389874,
+    "throughput": 3.0593303374203895,
+    "lastTested": 1752276304806
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:glm4:32B-0414": {
-    "latencyMs": 52.850113516760324,
-    "throughput": 1.7281359100596352,
-    "lastTested": 1752082750189
+    "latencyMs": 206.87618779283534,
+    "throughput": 5.261398043935223,
+    "lastTested": 1752276304810
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/matteogeniaccio/GLM-4-32B-0414-GGUF-fixed:Q4_K_M": {
-    "latencyMs": 222.96886755785746,
-    "throughput": 3.4012908310610968,
-    "lastTested": 1752082750197
+    "latencyMs": 246.43864590009233,
+    "throughput": 4.440883498460382,
+    "lastTested": 1752276304814
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/bartowski/Qwen_QwQ-32B-GGUF:Q4_K_M": {
-    "latencyMs": 201.85126818822363,
-    "throughput": 3.1079807025706487,
-    "lastTested": 1752082750204
+    "latencyMs": 209.14544078719922,
+    "throughput": 1.2146584829580878,
+    "lastTested": 1752276304818
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:ZimaBlueAI/MiniCPM-o-2_6:latest": {
-    "latencyMs": 59.675348587907884,
-    "throughput": 1.333579151467579,
-    "lastTested": 1752082750210
+    "latencyMs": 201.10113720931787,
+    "throughput": 1.951567394274685,
+    "lastTested": 1752248540257
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:qwen3:latest": {
-    "latencyMs": 78.85904416912464,
-    "throughput": 2.5906735024074647,
-    "lastTested": 1752082750218
+    "latencyMs": 137.2242360079032,
+    "throughput": 2.9851940487990962,
+    "lastTested": 1752248538948
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:sroecker/moondream:latest": {
-    "latencyMs": 188.3149527843746,
-    "throughput": 4.451465650309701,
-    "lastTested": 1752082750225
+    "latencyMs": 88.7950393482936,
+    "throughput": 3.7101179058523615,
+    "lastTested": 1752248540261
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:mistral-small3.1:latest": {
-    "latencyMs": 90.2163120343979,
-    "throughput": 1.627095608850864,
-    "lastTested": 1752082750030
+    "latencyMs": 163.0285837185744,
+    "throughput": 5.4257914631045345,
+    "lastTested": 1752248538952
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:omercelik/openhands-lm:latest": {
-    "latencyMs": 94.08025438218664,
-    "throughput": 4.190242528337045,
-    "lastTested": 1752082750233
+    "latencyMs": 236.13851085973874,
+    "throughput": 4.599366664714989,
+    "lastTested": 1752248540265
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:gemma3:27b": {
-    "latencyMs": 125.8948559578842,
-    "throughput": 3.2392909559117413,
-    "lastTested": 1752034548581
+    "latencyMs": 139.69832025978528,
+    "throughput": 1.4627216853941607,
+    "lastTested": 1752276304224
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:nomic-embed-text:latest": {
-    "latencyMs": 94.45983679147062,
-    "throughput": 2.367071734548099,
-    "lastTested": 1752082749919
+    "latencyMs": 121.50736060668308,
+    "throughput": 4.566444349248582,
+    "lastTested": 1752203776297
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:hf.co/remyxai/SpaceQwen2.5-VL-3B-Instruct:latest": {
-    "latencyMs": 217.22048949248745,
-    "throughput": 4.888591222952945,
-    "lastTested": 1752082750041
+    "latencyMs": 192.6480619330628,
+    "throughput": 5.716989109142375,
+    "lastTested": 1752276304392
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:gemma3:latest": {
-    "latencyMs": 188.88153809025616,
-    "throughput": 1.7038061938013063,
-    "lastTested": 1752082750665
+    "latencyMs": 117.592693305154,
+    "throughput": 2.8522441424396243,
+    "lastTested": 1752203776700
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:gemma3:27b": {
-    "latencyMs": 208.52646710675273,
-    "throughput": 4.699770220650493,
-    "lastTested": 1752082750670
+    "latencyMs": 146.34941859755534,
+    "throughput": 5.745963477869315,
+    "lastTested": 1752203776692
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:deepseek-r1:70b": {
-    "latencyMs": 57.90530214797891,
-    "throughput": 3.522966165190923,
-    "lastTested": 1752082750674
+    "latencyMs": 116.93833324828628,
+    "throughput": 1.8525144675053786,
+    "lastTested": 1752203776677
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:nomic-embed-text:latest": {
-    "latencyMs": 159.20747158905885,
-    "throughput": 3.160647937412122,
-    "lastTested": 1752082750679
+    "latencyMs": 208.77442217288484,
+    "throughput": 5.931080411165169,
+    "lastTested": 1752203776711
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:deepseek-r1:1.5b": {
-    "latencyMs": 110.54024772394122,
-    "throughput": 3.494583188557261,
-    "lastTested": 1752082750683
+    "latencyMs": 145.35465428256336,
+    "throughput": 4.149853683158124,
+    "lastTested": 1752203776722
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:qwen3:32b": {
-    "latencyMs": 107.62536631734659,
-    "throughput": 2.6101641362937693,
-    "lastTested": 1752082750687
+    "latencyMs": 225.3333954509025,
+    "throughput": 1.3217773784382605,
+    "lastTested": 1752203776680
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:deepseek-r1:32b": {
-    "latencyMs": 176.762525323459,
-    "throughput": 5.596052213308792,
-    "lastTested": 1752082750697
+    "latencyMs": 55.35918085612539,
+    "throughput": 5.86618407064785,
+    "lastTested": 1752203776688
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:llama3.3:latest": {
-    "latencyMs": 127.63707884358699,
-    "throughput": 5.762029058695597,
-    "lastTested": 1752082750702
+    "latencyMs": 117.72700462182274,
+    "throughput": 1.1910715160000975,
+    "lastTested": 1752203776698
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:qwq:latest": {
-    "latencyMs": 60.543038029962574,
-    "throughput": 3.9574456540504346,
-    "lastTested": 1752082750710
+    "latencyMs": 117.30793402167672,
+    "throughput": 2.1622334724546124,
+    "lastTested": 1752203776703
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:devstral:latest": {
-    "latencyMs": 138.31669757192225,
-    "throughput": 3.302196709963434,
-    "lastTested": 1752082750717
+    "latencyMs": 187.96824193186444,
+    "throughput": 5.375302524686505,
+    "lastTested": 1752203776686
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:deepseek-r1:8b": {
-    "latencyMs": 180.96645242047137,
-    "throughput": 1.1767017596199716,
-    "lastTested": 1752082750723
+    "latencyMs": 62.631484889350375,
+    "throughput": 5.331637540792026,
+    "lastTested": 1752203776683
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:mistral-large:latest": {
-    "latencyMs": 177.15765312634804,
-    "throughput": 4.528866926270413,
-    "lastTested": 1751992919733
+    "latencyMs": 156.38565770735195,
+    "throughput": 2.105322565946568,
+    "lastTested": 1752203776706
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:mistral-small3.1:latest": {
-    "latencyMs": 69.86631589092629,
-    "throughput": 3.224621657247087,
-    "lastTested": 1752082750729
+    "latencyMs": 105.82065859645789,
+    "throughput": 2.285720185647069,
+    "lastTested": 1752276304943
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:qwen2.5-coder:latest": {
-    "latencyMs": 187.07131138279306,
-    "throughput": 2.3987525028544434,
-    "lastTested": 1752082750734
+    "latencyMs": 63.41228831039376,
+    "throughput": 1.8348560268397154,
+    "lastTested": 1752203776709
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:llama4:scout": {
-    "latencyMs": 202.4643813504233,
-    "throughput": 4.768617590347665,
-    "lastTested": 1752082750739
+    "latencyMs": 210.45145696162862,
+    "throughput": 1.8756563708551124,
+    "lastTested": 1752248540302
   },
   "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ:huihui_ai/llama3.3-abliterated:latest": {
-    "latencyMs": 211.55955181334343,
-    "throughput": 5.142831365063921,
-    "lastTested": 1752082750746
+    "latencyMs": 135.7628748968213,
+    "throughput": 3.511078187954523,
+    "lastTested": 1752248540305
   },
   "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA:llama3.2:3b": {
-    "latencyMs": 112.17434729709521,
-    "throughput": 2.549640250371395,
-    "lastTested": 1752082750000
+    "latencyMs": 71.23875590932039,
+    "throughput": 4.7291709329864755,
+    "lastTested": 1752203776416
+  },
+  "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:nomic-embed-text:latest": {
+    "latencyMs": 78.54420581535982,
+    "throughput": 2.791195509074898,
+    "lastTested": 1752248538610
+  },
+  "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:smollm2:135m": {
+    "latencyMs": 163.35198940878962,
+    "throughput": 1.636024989656121,
+    "lastTested": 1752203776731
+  },
+  "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:llama3:latest": {
+    "latencyMs": 181.78367248086366,
+    "throughput": 4.802314705011938,
+    "lastTested": 1752276304917
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:llama3.1:8b": {
+    "latencyMs": 156.3716509226786,
+    "throughput": 1.7483602761222874,
+    "lastTested": 1752203776753
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:deepseek-r1:1.5b": {
+    "latencyMs": 76.41640401657716,
+    "throughput": 4.620022013057325,
+    "lastTested": 1752203776740
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:llama3.1:8b-instruct-q4_K_M": {
+    "latencyMs": 148.1893272818869,
+    "throughput": 4.073656621271336,
+    "lastTested": 1752203776749
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:llama3.2:3b-instruct-q5_K_M": {
+    "latencyMs": 170.59181920124053,
+    "throughput": 3.4083386864988365,
+    "lastTested": 1752276304240
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:mixtral-8x7b-instruct-v0.1.Q3_K_M.gguf:latest": {
+    "latencyMs": 170.6279233459806,
+    "throughput": 3.034183810249033,
+    "lastTested": 1752276304562
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:starcoder2-15b.gguf:latest": {
+    "latencyMs": 146.22435087803373,
+    "throughput": 5.585633340525829,
+    "lastTested": 1752276304691
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:DeepSeek-R1-Distill-Qwen-32B-Q8_0.gguf:latest": {
+    "latencyMs": 238.20566765770107,
+    "throughput": 1.80567776104298,
+    "lastTested": 1752276304822
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:everyone-coder-33b-base.Q8_0.gguf:latest": {
+    "latencyMs": 174.01949989785143,
+    "throughput": 4.691110756766652,
+    "lastTested": 1752276304831
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:mixtral:instruct": {
+    "latencyMs": 88.21101890246351,
+    "throughput": 3.1105597349740215,
+    "lastTested": 1752248540310
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:llama3.2:latest": {
+    "latencyMs": 96.72141785825423,
+    "throughput": 3.3475562375082406,
+    "lastTested": 1752248538598
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:mario:latest": {
+    "latencyMs": 65.63638979470868,
+    "throughput": 1.6501524197054298,
+    "lastTested": 1752248538616
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:mattw/pygmalion:latest": {
+    "latencyMs": 219.00442793095408,
+    "throughput": 2.8553149809248923,
+    "lastTested": 1752248538624
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:nomic-embed-text:latest": {
+    "latencyMs": 183.82601238439418,
+    "throughput": 4.773420172551384,
+    "lastTested": 1752203776815
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:deepseek-r1:70b": {
+    "latencyMs": 237.48803911054296,
+    "throughput": 4.807600729586111,
+    "lastTested": 1752248538655
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:llama2:latest": {
+    "latencyMs": 120.40318064382545,
+    "throughput": 4.0951380036351175,
+    "lastTested": 1752276304189
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:llama3:latest": {
+    "latencyMs": 130.7920422712825,
+    "throughput": 1.890155418019567,
+    "lastTested": 1752248538672
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:deepseek-r1:8b": {
+    "latencyMs": 132.1405482623257,
+    "throughput": 1.6243905954126727,
+    "lastTested": 1752276304207
+  },
+  "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0:qwen3:235b": {
+    "latencyMs": 168.4262009413998,
+    "throughput": 4.300545651308306,
+    "lastTested": 1752276304294
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:llama3.2:latest": {
+    "latencyMs": 149.76385441940914,
+    "throughput": 1.6805478946881605,
+    "lastTested": 1752203776844
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:smollm2:135m": {
+    "latencyMs": 83.73139388259312,
+    "throughput": 1.780744270982906,
+    "lastTested": 1752203776831
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:mario:latest": {
+    "latencyMs": 155.45574111331226,
+    "throughput": 5.368658792587851,
+    "lastTested": 1752203776839
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:mattw/pygmalion:latest": {
+    "latencyMs": 195.06813785835445,
+    "throughput": 2.903129814075392,
+    "lastTested": 1752203776835
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:nomic-embed-text:latest": {
+    "latencyMs": 197.75848521328047,
+    "throughput": 3.641141819247114,
+    "lastTested": 1752203776856
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:deepseek-r1:latest": {
+    "latencyMs": 164.9292496440225,
+    "throughput": 3.7318239831076676,
+    "lastTested": 1752203776827
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:llama3:latest": {
+    "latencyMs": 80.3593035519969,
+    "throughput": 4.5884253395308825,
+    "lastTested": 1752203776848
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:huihui_ai/deepseek-r1-abliterated:latest": {
+    "latencyMs": 78.71433996161042,
+    "throughput": 3.9662060845820437,
+    "lastTested": 1752203776852
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:llama3.2:latest": {
+    "latencyMs": 119.9076292811745,
+    "throughput": 2.169830681605497,
+    "lastTested": 1752203776871
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:mario:latest": {
+    "latencyMs": 79.89783928305387,
+    "throughput": 3.135607267173427,
+    "lastTested": 1752203776876
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:mattw/pygmalion:latest": {
+    "latencyMs": 142.01677470734597,
+    "throughput": 2.5906558473845034,
+    "lastTested": 1752203776866
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:llama3.1:8b": {
+    "latencyMs": 132.33535610515293,
+    "throughput": 1.8443320893151796,
+    "lastTested": 1752203776881
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:mistral:latest": {
+    "latencyMs": 198.48452844564318,
+    "throughput": 3.673917230723557,
+    "lastTested": 1752203776862
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:neural-chat:latest": {
+    "latencyMs": 216.14989351872475,
+    "throughput": 5.545156684607999,
+    "lastTested": 1752248538916
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:deepseek-coder:1.3b": {
+    "latencyMs": 93.99355517678191,
+    "throughput": 1.2553779925958222,
+    "lastTested": 1752276304397
+  },
+  "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ:phi3:mini": {
+    "latencyMs": 171.57484371702188,
+    "throughput": 5.131692778235885,
+    "lastTested": 1752248540314
+  },
+  "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA:llama3.2:latest": {
+    "latencyMs": 113.13050421057613,
+    "throughput": 3.1573190896493055,
+    "lastTested": 1752203776904
+  },
+  "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA:mario:latest": {
+    "latencyMs": 244.2635206360246,
+    "throughput": 5.591059659151631,
+    "lastTested": 1752203776901
+  },
+  "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA:deepseek-r1:14b": {
+    "latencyMs": 75.85726753204511,
+    "throughput": 2.283632014109275,
+    "lastTested": 1752248538706
+  },
+  "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA:deepseek-r1:7b": {
+    "latencyMs": 63.99735582008912,
+    "throughput": 1.777308962560993,
+    "lastTested": 1752276304194
+  },
+  "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA:MartinRizzo/Ayla-Light-v2:12b-q4_K_M": {
+    "latencyMs": 110.06075398313611,
+    "throughput": 2.6650061422496187,
+    "lastTested": 1752276304649
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:llama3.2:latest": {
+    "latencyMs": 140.90713257800206,
+    "throughput": 5.434929921547786,
+    "lastTested": 1752203776938
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:mario:latest": {
+    "latencyMs": 109.80662961986471,
+    "throughput": 4.707760615024228,
+    "lastTested": 1752203776941
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:llama3.1:8b": {
+    "latencyMs": 212.48615371304908,
+    "throughput": 1.4646852004923008,
+    "lastTested": 1752203776944
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:llama3.3:latest": {
+    "latencyMs": 69.69310650771826,
+    "throughput": 4.976467711399242,
+    "lastTested": 1752203776947
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:deepseek-r1:latest": {
+    "latencyMs": 160.38301254431514,
+    "throughput": 5.685937284496308,
+    "lastTested": 1752203776932
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:qwen3:latest": {
+    "latencyMs": 51.87966383922284,
+    "throughput": 2.395616863259895,
+    "lastTested": 1752203776949
+  },
+  "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA:llama3.2:latest": {
+    "latencyMs": 239.59007629858715,
+    "throughput": 4.8796179107208895,
+    "lastTested": 1752203776963
+  },
+  "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA:smollm2:135m": {
+    "latencyMs": 119.97936037431613,
+    "throughput": 4.088052573127742,
+    "lastTested": 1752203776952
+  },
+  "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA:mario:latest": {
+    "latencyMs": 148.2829580191739,
+    "throughput": 5.41737292798277,
+    "lastTested": 1752276304903
+  },
+  "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA:mattw/pygmalion:latest": {
+    "latencyMs": 184.5603799926053,
+    "throughput": 2.043700393703685,
+    "lastTested": 1752276304906
+  },
+  "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA:llama3.1:8b": {
+    "latencyMs": 185.91577509562427,
+    "throughput": 1.463839517218032,
+    "lastTested": 1752276304186
+  },
+  "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA:llama3.1:8b-instruct-q4_K_M": {
+    "latencyMs": 111.49158755273878,
+    "throughput": 5.1787469013466865,
+    "lastTested": 1752276304196
+  },
+  "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA:llama3-backup:latest": {
+    "latencyMs": 128.7006983630918,
+    "throughput": 5.12942677693692,
+    "lastTested": 1752276304314
+  },
+  "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA:llama3.2:latest": {
+    "latencyMs": 66.80940865381473,
+    "throughput": 1.2881945336608471,
+    "lastTested": 1752203776977
+  },
+  "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA:smollm2:135m": {
+    "latencyMs": 195.63654612522646,
+    "throughput": 4.702945753152781,
+    "lastTested": 1752203776972
+  },
+  "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA:mario:latest": {
+    "latencyMs": 201.88393231225214,
+    "throughput": 2.578702694933104,
+    "lastTested": 1752203776980
+  },
+  "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA:mattw/pygmalion:latest": {
+    "latencyMs": 159.6871982892936,
+    "throughput": 1.8391762409004089,
+    "lastTested": 1752203776974
+  },
+  "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA:llama3:latest": {
+    "latencyMs": 88.06856495225625,
+    "throughput": 5.848010875997476,
+    "lastTested": 1752276304987
+  },
+  "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA:gemma:2b": {
+    "latencyMs": 108.13161962062799,
+    "throughput": 1.7819707382231522,
+    "lastTested": 1752203776982
+  },
+  "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0:llama3.2:latest": {
+    "latencyMs": 86.24619119728818,
+    "throughput": 1.759784918063594,
+    "lastTested": 1752203776999
+  },
+  "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0:smollm2:135m": {
+    "latencyMs": 129.8751840091079,
+    "throughput": 1.2789326749503485,
+    "lastTested": 1752203776991
+  },
+  "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0:mario:latest": {
+    "latencyMs": 237.91139051510365,
+    "throughput": 5.2729658182963615,
+    "lastTested": 1752203777002
+  },
+  "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0:mattw/pygmalion:latest": {
+    "latencyMs": 203.9830898020997,
+    "throughput": 3.988444476123963,
+    "lastTested": 1752203776996
+  },
+  "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0:deepseek-r1:1.5b": {
+    "latencyMs": 106.21702990577703,
+    "throughput": 3.6796580595441224,
+    "lastTested": 1752276304191
+  },
+  "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0:llama2:latest": {
+    "latencyMs": 87.51788369527107,
+    "throughput": 1.4117176676517975,
+    "lastTested": 1752203777008
+  },
+  "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ:smollm2:135m": {
+    "latencyMs": 213.81929918476555,
+    "throughput": 5.639548369115271,
+    "lastTested": 1752276304895
+  },
+  "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ:qwen2.5vl:7b": {
+    "latencyMs": 233.07472188833862,
+    "throughput": 5.465876902307481,
+    "lastTested": 1752276304258
+  },
+  "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ:qwen2.5-coder:7b": {
+    "latencyMs": 211.7852472923327,
+    "throughput": 1.4173367847572818,
+    "lastTested": 1752276304264
+  },
+  "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ:llama3.2:3b-text-q8_0": {
+    "latencyMs": 168.3501780719422,
+    "throughput": 2.603457405503532,
+    "lastTested": 1752276304400
+  },
+  "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ:llama3.2:3b-text-fp16": {
+    "latencyMs": 241.7726928623429,
+    "throughput": 1.3381728964346964,
+    "lastTested": 1752276304403
+  },
+  "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ:llama3.1:8b-text-q8_0": {
+    "latencyMs": 219.5110252832636,
+    "throughput": 4.235906444987192,
+    "lastTested": 1752276304609
+  },
+  "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ:gemma3:12b-it-qat": {
+    "latencyMs": 196.98922384703073,
+    "throughput": 1.4017676731816988,
+    "lastTested": 1752248540420
+  },
+  "srv-aHR0cDovLzg2LjM4LjE4Mi45OjExNDM0:nomic-embed-text:latest": {
+    "latencyMs": 217.8450900259272,
+    "throughput": 1.3425828879174908,
+    "lastTested": 1752203777043
+  },
+  "srv-aHR0cDovLzg2LjM4LjE4Mi45OjExNDM0:llama3.1:8b": {
+    "latencyMs": 222.93019513643162,
+    "throughput": 2.265334495985736,
+    "lastTested": 1752203777030
+  },
+  "srv-aHR0cDovLzg2LjM4LjE4Mi45OjExNDM0:gemma3n:e4b": {
+    "latencyMs": 104.47090657227758,
+    "throughput": 1.8951108507039396,
+    "lastTested": 1752207417281
+  },
+  "srv-aHR0cDovLzg2LjM4LjE4Mi45OjExNDM0:gemma3:12b-it-q4_K_M": {
+    "latencyMs": 129.2079383973914,
+    "throughput": 3.9611411507717156,
+    "lastTested": 1752276304652
+  },
+  "srv-aHR0cDovLzg2LjM4LjE4Mi45OjExNDM0:gemma3:27b-it-q4_K_M": {
+    "latencyMs": 101.83221219801956,
+    "throughput": 3.2117223289709176,
+    "lastTested": 1752248539847
+  },
+  "srv-aHR0cDovLzg2LjM4LjE4Mi45OjExNDM0:gemma2:27b-instruct-q6_K": {
+    "latencyMs": 176.9309117735764,
+    "throughput": 5.335219004057832,
+    "lastTested": 1752276304763
+  },
+  "srv-aHR0cDovLzY2LjE5OS4yMjQuNDA6MTE0MzQ:llama3.2:latest": {
+    "latencyMs": 58.12056573196629,
+    "throughput": 1.7988070467197506,
+    "lastTested": 1752203777048
+  },
+  "srv-aHR0cDovLzY2LjE5OS4yMjQuNDA6MTE0MzQ:smollm2:135m": {
+    "latencyMs": 206.54204031558046,
+    "throughput": 5.77839122863571,
+    "lastTested": 1752203777045
+  },
+  "srv-aHR0cDovLzY2LjE5OS4yMjQuNDA6MTE0MzQ:nomic-embed-text:latest": {
+    "latencyMs": 109.79641185409075,
+    "throughput": 3.1174820676255948,
+    "lastTested": 1752203777054
+  },
+  "srv-aHR0cDovLzY2LjE5OS4yMjQuNDA6MTE0MzQ:gemma2:2b": {
+    "latencyMs": 166.89584048804113,
+    "throughput": 4.685091029029943,
+    "lastTested": 1752207384514
+  },
+  "srv-aHR0cDovLzY2LjE5OS4yMjQuNDA6MTE0MzQ:gemma:2b-instruct": {
+    "latencyMs": 74.66259173366505,
+    "throughput": 5.044415582722914,
+    "lastTested": 1752207384518
+  },
+  "srv-aHR0cDovLzE2Ny43MS4yNTIuMTU1OjExNDM0:llama3.2:latest": {
+    "latencyMs": 129.07382822115613,
+    "throughput": 4.720327928857027,
+    "lastTested": 1752203777061
+  },
+  "srv-aHR0cDovLzE2Ny43MS4yNTIuMTU1OjExNDM0:mario:latest": {
+    "latencyMs": 110.06866914062358,
+    "throughput": 5.267941806728187,
+    "lastTested": 1752203777064
+  },
+  "srv-aHR0cDovLzE2Ny43MS4yNTIuMTU1OjExNDM0:mattw/pygmalion:latest": {
+    "latencyMs": 154.2553484440334,
+    "throughput": 2.8205401568116653,
+    "lastTested": 1752203777059
+  },
+  "srv-aHR0cDovLzE2Ny43MS4yNTIuMTU1OjExNDM0:tinyllama:latest": {
+    "latencyMs": 116.13995459028952,
+    "throughput": 3.635671517041116,
+    "lastTested": 1752203777066
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI3OjExNDM0:smollm2:135m": {
+    "latencyMs": 145.0042169309793,
+    "throughput": 2.2363217774369204,
+    "lastTested": 1752203777068
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI3OjExNDM0:llama3.1:8b-instruct-q4_K_M": {
+    "latencyMs": 215.08494816713238,
+    "throughput": 1.0407307922985911,
+    "lastTested": 1752203777071
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI3OjExNDM0:deepseek-r1:7b": {
+    "latencyMs": 83.78350621508264,
+    "throughput": 2.9612205115931234,
+    "lastTested": 1752203777076
+  },
+  "srv-aHR0cDovLzQuMTUwLjE3Ni4xMzI6MTE0MzQ:llama3.2:latest": {
+    "latencyMs": 132.6924843389021,
+    "throughput": 3.067315634398459,
+    "lastTested": 1752203777086
+  },
+  "srv-aHR0cDovLzQuMTUwLjE3Ni4xMzI6MTE0MzQ:mario:latest": {
+    "latencyMs": 122.24133311378229,
+    "throughput": 1.4692270519987918,
+    "lastTested": 1752203777082
+  },
+  "srv-aHR0cDovLzQuMTUwLjE3Ni4xMzI6MTE0MzQ:llama3.3:70b": {
+    "latencyMs": 167.98897088479174,
+    "throughput": 5.73254717734374,
+    "lastTested": 1752248538875
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjA2OjExNDM0:smollm2:135m": {
+    "latencyMs": 197.93830918723256,
+    "throughput": 3.531788999122316,
+    "lastTested": 1752203777092
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjA2OjExNDM0:llama3.1:8b-instruct-q4_K_M": {
+    "latencyMs": 136.76873202335912,
+    "throughput": 2.2458706619840756,
+    "lastTested": 1752276304984
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjA2OjExNDM0:llama2:latest": {
+    "latencyMs": 181.9934449220924,
+    "throughput": 2.919842633784813,
+    "lastTested": 1752276304979
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjA2OjExNDM0:deepseek-r1:7b": {
+    "latencyMs": 230.83720649878802,
+    "throughput": 2.3471961235850327,
+    "lastTested": 1752276304982
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI4OjExNDM0:smollm2:135m": {
+    "latencyMs": 223.47382079109997,
+    "throughput": 5.8243714087561695,
+    "lastTested": 1752203777104
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI4OjExNDM0:llama3.1:8b-instruct-q4_K_M": {
+    "latencyMs": 128.64959972822234,
+    "throughput": 3.138250385304379,
+    "lastTested": 1752248538644
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI4OjExNDM0:deepseek-r1:7b": {
+    "latencyMs": 89.96802977666887,
+    "throughput": 4.472759567131865,
+    "lastTested": 1752207384497
+  },
+  "srv-aHR0cDovLzUuMTYxLjE5Ni4yMTE6MTE0MzQ:nomic-embed-text:latest": {
+    "latencyMs": 135.49722007872788,
+    "throughput": 5.4593080035321755,
+    "lastTested": 1752203777122
+  },
+  "srv-aHR0cDovLzUuMTYxLjE5Ni4yMTE6MTE0MzQ:qwen3:0.6b": {
+    "latencyMs": 106.09047179279804,
+    "throughput": 3.567694028540185,
+    "lastTested": 1752207384540
+  },
+  "srv-aHR0cDovLzUuMTYxLjE5Ni4yMTE6MTE0MzQ:qwen2.5:0.5b": {
+    "latencyMs": 131.53570087788142,
+    "throughput": 4.012709438294849,
+    "lastTested": 1752276304456
+  },
+  "srv-aHR0cDovLzE2Mi44NC4yMzUuMzQ6MTE0MzQ:smollm2:135m": {
+    "latencyMs": 75.95939599545312,
+    "throughput": 5.357733243776323,
+    "lastTested": 1752203777134
+  },
+  "srv-aHR0cDovLzE2Mi44NC4yMzUuMzQ6MTE0MzQ:llama3.1:8b": {
+    "latencyMs": 65.41103135629949,
+    "throughput": 5.034140553704136,
+    "lastTested": 1752203777132
+  },
+  "srv-aHR0cDovLzE2Mi44NC4yMzUuMzQ6MTE0MzQ:qwen2.5:1.5b": {
+    "latencyMs": 195.62468248302477,
+    "throughput": 1.694737043678476,
+    "lastTested": 1752276304460
+  },
+  "srv-aHR0cDovLzIzLjIzOS4xMDcuNjoxMTQzNA:smollm2:135m": {
+    "latencyMs": 156.50318243002374,
+    "throughput": 5.8954872768432605,
+    "lastTested": 1752248538605
+  },
+  "srv-aHR0cDovLzIzLjIzOS4xMDcuNjoxMTQzNA:gemma3:latest": {
+    "latencyMs": 237.24539459933135,
+    "throughput": 3.1268481453859813,
+    "lastTested": 1752248538649
+  },
+  "srv-aHR0cDovLzIzLjIzOS4xMDcuNjoxMTQzNA:codellama:latest": {
+    "latencyMs": 70.580208764355,
+    "throughput": 4.177475309616373,
+    "lastTested": 1752248540318
+  },
+  "srv-aHR0cDovLzM0LjE3Mi4xNjMuMTM1OjExNDM0:mistral:latest": {
+    "latencyMs": 130.13135249519271,
+    "throughput": 1.2514531115830199,
+    "lastTested": 1752248540390
+  },
+  "srv-aHR0cDovLzM0LjE3Mi4xNjMuMTM1OjExNDM0:gemma2:latest": {
+    "latencyMs": 220.59002266095592,
+    "throughput": 5.066532455568116,
+    "lastTested": 1752248540322
+  },
+  "srv-aHR0cDovLzM0LjE3Mi4xNjMuMTM1OjExNDM0:gemma:latest": {
+    "latencyMs": 197.07043020637337,
+    "throughput": 5.144020988572429,
+    "lastTested": 1752276304888
+  },
+  "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:r1-1776-distill-llama-70b-Q5_K_M.gguf:latest": {
+    "latencyMs": 172.4029385179322,
+    "throughput": 2.1998718859954103,
+    "lastTested": 1752248539981
+  },
+  "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA:starcoder2:15b": {
+    "latencyMs": 61.09014695870365,
+    "throughput": 1.5515034544018549,
+    "lastTested": 1752207384508
+  },
+  "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA:llama3:8b": {
+    "latencyMs": 206.04855809377693,
+    "throughput": 1.937954239965355,
+    "lastTested": 1752276304607
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI3OjExNDM0:llama2:latest": {
+    "latencyMs": 165.97560096138125,
+    "throughput": 2.495739135312133,
+    "lastTested": 1752203777073
+  },
+  "srv-aHR0cDovLzQuMTUwLjE3Ni4xMzI6MTE0MzQ:mattw/pygmalion:latest": {
+    "latencyMs": 121.55800059416389,
+    "throughput": 1.4732943507560894,
+    "lastTested": 1752203777078
+  },
+  "srv-aHR0cDovLzg5LjIxMy4xODAuOTI6MTE0MzQ:llama2:latest": {
+    "latencyMs": 95.93896048580844,
+    "throughput": 2.2511499504578105,
+    "lastTested": 1752203777149
+  },
+  "srv-aHR0cDovLzg5LjIxMy4xODAuOTI6MTE0MzQ:deepseek-r1:7b": {
+    "latencyMs": 60.7563844906712,
+    "throughput": 1.6346389225451876,
+    "lastTested": 1752203777151
+  },
+  "srv-aHR0cDovLzEwNy4xNDkuMjEyLjExNDoxMTQzNA:deepseek-r1:1.5b": {
+    "latencyMs": 131.66843116117343,
+    "throughput": 3.466899828350119,
+    "lastTested": 1752207417215
+  },
+  "srv-aHR0cDovLzEwNy4xNDkuMjEyLjExNDoxMTQzNA:llama3.1:8b": {
+    "latencyMs": 94.94471079735906,
+    "throughput": 1.0775944929635275,
+    "lastTested": 1752203777174
+  },
+  "srv-aHR0cDovLzEzMi4xNDUuMTgxLjc2OjExNDM0:smollm2:135m": {
+    "latencyMs": 173.12960785145964,
+    "throughput": 4.21668114192077,
+    "lastTested": 1752248540336
+  },
+  "srv-aHR0cDovLzEzMi4xNDUuMTgxLjc2OjExNDM0:nomic-embed-text:latest": {
+    "latencyMs": 224.15228107914206,
+    "throughput": 1.3475510588542552,
+    "lastTested": 1752276304900
+  },
+  "srv-aHR0cDovLzc2LjI0Ny4xMzEuMTYxOjExNDM0:llama3.2:latest": {
+    "latencyMs": 68.03089523489865,
+    "throughput": 5.689606928290939,
+    "lastTested": 1752203777194
+  },
+  "srv-aHR0cDovLzM0LjI3Ljk0LjE0OjExNDM0:nomic-embed-text:latest": {
+    "latencyMs": 89.7621129422939,
+    "throughput": 5.0378105196323455,
+    "lastTested": 1752203777205
+  },
+  "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA:bge-m3:latest": {
+    "latencyMs": 148.0434017472433,
+    "throughput": 4.789424642863077,
+    "lastTested": 1752248538909
+  },
+  "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA:llama3-backup:latest": {
+    "latencyMs": 210.50987578939515,
+    "throughput": 1.5921648106474442,
+    "lastTested": 1752248538963
+  },
+  "srv-aHR0cDovLzE3OC4xNTYuMTMzLjEwNToxMTQzNA:gemma3:12b": {
+    "latencyMs": 76.37649463268784,
+    "throughput": 5.894779777637249,
+    "lastTested": 1752207384574
+  },
+  "srv-aHR0cDovLzE3OC4xNTYuMTMzLjEwNToxMTQzNA:gemma3:4b": {
+    "latencyMs": 91.49723164263483,
+    "throughput": 4.500283555532747,
+    "lastTested": 1752207384530
+  },
+  "srv-aHR0cDovLzE1NC4yMDIuMTE4LjMyOjExNDM0:smollm2:135m": {
+    "latencyMs": 190.2494843631285,
+    "throughput": 3.987016345488316,
+    "lastTested": 1752203777179
+  },
+  "srv-aHR0cDovLzE1NC4yMDIuMTE4LjMyOjExNDM0:hermes3:8b": {
+    "latencyMs": 92.85932920221111,
+    "throughput": 5.204787335396162,
+    "lastTested": 1752248538694
+  },
+  "srv-aHR0cDovLzY2LjI5LjEyOC41MzoxMTQzNA:llama3.1:8b": {
+    "latencyMs": 187.60266880275762,
+    "throughput": 4.261384910996013,
+    "lastTested": 1752207384492
+  },
+  "srv-aHR0cDovLzY2LjI5LjEyOC41MzoxMTQzNA:deepseek-r1:1.5b": {
+    "latencyMs": 60.17224783657604,
+    "throughput": 1.2881802629515429,
+    "lastTested": 1752207384502
+  },
+  "srv-aHR0cDovLzg5LjExNi40OC4xMDU6MTE0MzQ:llama3.2:latest": {
+    "latencyMs": 85.63046189331712,
+    "throughput": 4.06970225135161,
+    "lastTested": 1752203777200
+  },
+  "srv-aHR0cDovLzIzLjk1LjE5Mi4yNDI6MTE0MzQ:gemma3:1b": {
+    "latencyMs": 225.2206909191546,
+    "throughput": 1.4218700145915255,
+    "lastTested": 1752276304202
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:mattw/pygmalion:latest": {
+    "latencyMs": 79.01547621084109,
+    "throughput": 1.8986299596534153,
+    "lastTested": 1752203776935
+  },
+  "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA:starcoder2:15b": {
+    "latencyMs": 201.07859327933096,
+    "throughput": 2.570807615576424,
+    "lastTested": 1752203776928
+  },
+  "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0:llama3.1:8b-instruct-q4_K_M": {
+    "latencyMs": 114.28694266391517,
+    "throughput": 1.9480216226188842,
+    "lastTested": 1752207384603
+  },
+  "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI4OjExNDM0:llama2:latest": {
+    "latencyMs": 122.00568483073218,
+    "throughput": 3.1878502744615522,
+    "lastTested": 1752203777109
+  },
+  "srv-aHR0cDovLzg5LjIxMy4xODAuOTI6MTE0MzQ:llama3.2:3b-instruct-q5_K_M": {
+    "latencyMs": 177.94685007738383,
+    "throughput": 1.961277823128377,
+    "lastTested": 1752203777147
+  },
+  "srv-aHR0cDovLzEzMC41MS4yMS4yMjg6MTE0MzQ:llama3.2:latest": {
+    "latencyMs": 98.4198389587788,
+    "throughput": 5.42752948529308,
+    "lastTested": 1752203777159
+  },
+  "srv-aHR0cDovLzEzMC41MS4yMS4yMjg6MTE0MzQ:mario:latest": {
+    "latencyMs": 55.14832400307799,
+    "throughput": 1.1061048509554408,
+    "lastTested": 1752203777156
+  },
+  "srv-aHR0cDovLzEzMC41MS4yMS4yMjg6MTE0MzQ:mattw/pygmalion:latest": {
+    "latencyMs": 99.29845506593544,
+    "throughput": 2.982682037407233,
+    "lastTested": 1752203777154
+  },
+  "srv-aHR0cDovLzc0LjI0OS44Mi41NDoxMTQzNA:mistral-nemo:12b": {
+    "latencyMs": 176.83345488907992,
+    "throughput": 4.766999833072276,
+    "lastTested": 1752276304654
+  },
+  "srv-aHR0cDovLzc0LjI0OS44Mi41NDoxMTQzNA:vanilj/Phi-4:latest": {
+    "latencyMs": 182.2597639755648,
+    "throughput": 5.278948496207043,
+    "lastTested": 1752248540326
+  },
+  "srv-aHR0cDovLzE2NS4yMjcuMTAzLjgyOjExNDM0:nomic-embed-text:latest": {
+    "latencyMs": 108.32794743490388,
+    "throughput": 2.5348867945838105,
+    "lastTested": 1752276304180
+  },
+  "srv-aHR0cDovLzIwLjI0Mi4xODkuMTA1OjExNDM0:all-minilm:33m": {
+    "latencyMs": 96.8131711173076,
+    "throughput": 4.598639578240235,
+    "lastTested": 1752248538926
   }
 }

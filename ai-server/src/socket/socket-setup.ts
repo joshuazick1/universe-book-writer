@@ -6,7 +6,7 @@
 
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import { logInfo, logDebug, logError } from '../logger.js';
+import { logger } from '../../../shared/logging/logger.js';
 
 export function setupSocketIO(httpServer: HttpServer): Server {
     const io = new Server(httpServer, {
@@ -19,14 +19,14 @@ export function setupSocketIO(httpServer: HttpServer): Server {
         allowEIO3: true
     });
 
-    logInfo('Setting up Socket.IO server...');
+    logger.info('Setting up Socket.IO server...');
 
     // Default namespace for general connections
     io.on('connection', (socket) => {
-        logDebug(`Client connected: ${socket.id}`);
+        logger.debug(`Client connected: ${socket.id}`);
 
         socket.on('disconnect', (reason) => {
-            logDebug(`Client disconnected: ${socket.id}, reason: ${reason}`);
+            logger.debug(`Client disconnected: ${socket.id}, reason: ${reason}`);
         });
 
         // Basic ping/pong for connection testing
@@ -39,19 +39,19 @@ export function setupSocketIO(httpServer: HttpServer): Server {
     const characterChatNamespace = io.of('/character-chat');
 
     characterChatNamespace.on('connection', (socket) => {
-        logDebug(`Character chat client connected: ${socket.id}`);
+        logger.debug(`Character chat client connected: ${socket.id}`);
 
         // Join conversation room
         socket.on('join_conversation', ({ conversationId }) => {
             socket.join(conversationId);
-            logDebug(`Client ${socket.id} joined conversation: ${conversationId}`);
+            logger.debug(`Client ${socket.id} joined conversation: ${conversationId}`);
             socket.emit('conversation_joined', { conversationId });
         });
 
         // Leave conversation room
         socket.on('leave_conversation', ({ conversationId }) => {
             socket.leave(conversationId);
-            logDebug(`Client ${socket.id} left conversation: ${conversationId}`);
+            logger.debug(`Client ${socket.id} left conversation: ${conversationId}`);
         });
 
         // Handle chat messages with three-pass processing
@@ -59,7 +59,7 @@ export function setupSocketIO(httpServer: HttpServer): Server {
             try {
                 const { conversationId, message, characterId, enableContextVisualization } = data;
 
-                logDebug(`Processing message in conversation ${conversationId}: ${message}`);
+                logger.debug(`Processing message in conversation ${conversationId}: ${message}`);
 
                 // Echo the user message back to all clients
                 characterChatNamespace.to(conversationId).emit('message_received', {
@@ -237,7 +237,7 @@ export function setupSocketIO(httpServer: HttpServer): Server {
                 });
 
             } catch (error) {
-                logError(`Error handling message: ${error instanceof Error ? error.message : String(error)}`);
+                logger.error(`Error handling message: ${error instanceof Error ? error.message : String(error)}`);
                 socket.emit('error', { message: 'Failed to process message' });
             }
         });
@@ -245,7 +245,7 @@ export function setupSocketIO(httpServer: HttpServer): Server {
         // Handle character memory updates
         socket.on('memory_updated', (data) => {
             const { conversationId, memoryId, characterId } = data;
-            logDebug(`Memory updated for character ${characterId}: ${memoryId}`);
+            logger.debug(`Memory updated for character ${characterId}: ${memoryId}`);
 
             // Broadcast memory update to other clients in the conversation
             socket.to(conversationId).emit('character_memory_updated', {
@@ -256,12 +256,12 @@ export function setupSocketIO(httpServer: HttpServer): Server {
         });
 
         socket.on('disconnect', (reason) => {
-            logDebug(`Character chat client disconnected: ${socket.id}, reason: ${reason}`);
+            logger.debug(`Character chat client disconnected: ${socket.id}, reason: ${reason}`);
         });
     });
 
-    logInfo('Socket.IO server setup complete');
-    logDebug('Available namespaces: / (default), /character-chat');
+    logger.info('Socket.IO server setup complete');
+    logger.debug('Available namespaces: / (default), /character-chat');
 
     return io;
 }

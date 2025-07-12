@@ -4,7 +4,7 @@ import type {
 } from '../core/types.js';
 import type { EncryptedRAGNode, EncryptedRAGRelationship } from '../encryption/rag-encryption.service.js';
 import type { RAGStorageBackend } from '../services/storage.service.js';
-import { logDebug } from '../../logger.js';
+import { logger } from '../../../../shared/logging/logger.js';
 
 /**
  * In-memory storage adapter for the RAG system
@@ -16,19 +16,19 @@ export class InMemoryRagAdapter implements RAGStorageBackend {
 
     async initialize(): Promise<void> {
         // No initialization needed for in-memory storage
-        logDebug('In-memory RAG adapter initialized');
+        logger.debug('In-memory RAG adapter initialized');
     }
 
     async disconnect(): Promise<void> {
         this.nodes.clear();
         this.relationships.clear();
-        logDebug('In-memory RAG adapter disconnected');
+        logger.debug('In-memory RAG adapter disconnected');
     }
 
     // Node operations
     async storeNode(node: RAGNode | EncryptedRAGNode): Promise<void> {
         this.nodes.set(node.id, node);
-        logDebug(`Stored RAG node: ${node.id}`);
+        logger.debug(`Stored RAG node: ${node.id}`);
     }
 
     async retrieveNode(nodeId: string): Promise<RAGNode | EncryptedRAGNode | null> {
@@ -63,13 +63,13 @@ export class InMemoryRagAdapter implements RAGStorageBackend {
             this.relationships.delete(id);
         }
 
-        logDebug(`Deleted RAG node and ${relationshipsToDelete.length} relationships: ${nodeId}`);
+        logger.debug(`Deleted RAG node and ${relationshipsToDelete.length} relationships: ${nodeId}`);
     }
 
     // Relationship operations
     async storeRelationship(relationship: RAGRelationship | EncryptedRAGRelationship): Promise<void> {
         this.relationships.set(relationship.id, relationship);
-        logDebug(`Stored RAG relationship: ${relationship.id}`);
+        logger.debug(`Stored RAG relationship: ${relationship.id}`);
     }
 
     async retrieveRelationship(relationshipId: string): Promise<RAGRelationship | EncryptedRAGRelationship | null> {
@@ -89,7 +89,7 @@ export class InMemoryRagAdapter implements RAGStorageBackend {
             throw new Error(`Relationship not found: ${relationshipId}`);
         }
         this.relationships.delete(relationshipId);
-        logDebug(`Deleted RAG relationship: ${relationshipId}`);
+        logger.debug(`Deleted RAG relationship: ${relationshipId}`);
     }
 
     // Graph traversal

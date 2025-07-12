@@ -25,18 +25,21 @@ const router = Router();
  *       200:
  *         description: Array of books
  */
-router.get('/', async (req, res) => {
-    const { universeId } = req.query;
-    if (!universeId) {
-        return res.status(400).json({ error: 'universeId is required' });
-    }
-    try {
-        const books = await getBooks(universeId as string);
-        res.json(books);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch books' });
-    }
+router.get('/', (req, res, next) => {
+    (async () => {
+        const { universeId } = req.query;
+        if (!universeId) {
+            return res.status(400).json({ error: 'universeId is required' });
+        }
+        try {
+            const books = await getBooks(universeId as string);
+            res.json(books);
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to fetch books' });
+        }
+    })().catch(next);
 });
+
 
 /**
  * @swagger
@@ -61,18 +64,21 @@ router.get('/', async (req, res) => {
  *       201:
  *         description: Book created
  */
-router.post('/', async (req, res) => {
-    const { universeId } = req.query;
-    if (!universeId) {
-        return res.status(400).json({ error: 'universeId is required' });
-    }
-    try {
-        const created = await createBookAndInvalidate(universeId as string, req.body);
-        res.status(201).json(created);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to create book' });
-    }
+router.post('/', (req, res, next) => {
+    (async () => {
+        const { universeId } = req.query;
+        if (!universeId) {
+            return res.status(400).json({ error: 'universeId is required' });
+        }
+        try {
+            const created = await createBookAndInvalidate(universeId as string, req.body);
+            res.status(201).json(created);
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to create book' });
+        }
+    })().catch(next);
 });
+
 
 /**
  * @swagger
@@ -103,19 +109,22 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Book updated
  */
-router.put('/', async (req, res) => {
-    const { universeId, bookId } = req.query;
-    if (!universeId || !bookId) {
-        return res.status(400).json({ error: 'universeId and bookId are required' });
-    }
-    try {
-        const ok = await updateBookAndInvalidate(universeId as string, bookId as string, req.body);
-        if (ok) res.json({ success: true });
-        else res.status(404).json({ error: 'Book not found' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to update book' });
-    }
+router.put('/', (req, res, next) => {
+    (async () => {
+        const { universeId, bookId } = req.query;
+        if (!universeId || !bookId) {
+            return res.status(400).json({ error: 'universeId and bookId are required' });
+        }
+        try {
+            const ok = await updateBookAndInvalidate(universeId as string, bookId as string, req.body);
+            if (ok) res.json({ success: true });
+            else res.status(404).json({ error: 'Book not found' });
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to update book' });
+        }
+    })().catch(next);
 });
+
 
 /**
  * @swagger
@@ -140,18 +149,21 @@ router.put('/', async (req, res) => {
  *       200:
  *         description: Book deleted
  */
-router.delete('/', async (req, res) => {
-    const { universeId, bookId } = req.query;
-    if (!universeId || !bookId) {
-        return res.status(400).json({ error: 'universeId and bookId are required' });
-    }
-    try {
-        const ok = await deleteBookAndInvalidate(universeId as string, bookId as string);
-        if (ok) res.json({ success: true });
-        else res.status(404).json({ error: 'Book not found' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to delete book' });
-    }
+router.delete('/', (req, res, next) => {
+    (async () => {
+        const { universeId, bookId } = req.query;
+        if (!universeId || !bookId) {
+            return res.status(400).json({ error: 'universeId and bookId are required' });
+        }
+        try {
+            const ok = await deleteBookAndInvalidate(universeId as string, bookId as string);
+            if (ok) res.json({ success: true });
+            else res.status(404).json({ error: 'Book not found' });
+        } catch (err) {
+            res.status(500).json({ error: 'Failed to delete book' });
+        }
+    })().catch(next);
 });
+
 
 export default router;

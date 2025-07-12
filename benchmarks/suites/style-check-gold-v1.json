@@ -1,0 +1,12 @@
+[
+    {
+        "id": "style-001",
+        "input": "The knight drawed his sword and runned into battle.",
+        "reference_feedback": "Incorrect verb forms: should be 'drew' and 'ran'."
+    },
+    {
+        "id": "style-002",
+        "input": "Han Solo, he shot first.",
+        "reference_feedback": "Awkward phrasing: avoid comma splices."
+    }
+]

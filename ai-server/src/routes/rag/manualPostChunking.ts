@@ -12,6 +12,9 @@ import { manualPostChunking } from '../../controllers/ragTextController.js';
  */
 const router = Router();
 
-router.post('/manual-post-chunking', manualPostChunking);
+router.post('/manual-post-chunking', (req, res, next) => {
+    // @ts-expect-error: manualPostChunking is an async handler, but Express types are too strict
+    manualPostChunking(req, res, next);
+});
 
 export default router;

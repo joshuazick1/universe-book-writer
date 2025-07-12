@@ -1,3 +1,5 @@
+
+import { emitJobSSEEvent } from './pipeline/utils/sseEvents.js';
 /**
  * Benchmark Manager for AI Server Orchestration
  *
@@ -15,6 +17,8 @@ import path from 'path';
  */
 
 export class BenchmarkManager {
+    /** Track in-flight benchmark jobs per model (modelName: boolean) */
+    private inFlightBenchmarks: Set<string> = new Set();
     /** Tracks disabled model/server pairs due to RAM overages. Key: `${serverId}:${model}`. Value: timestamp (ms) when re-enabled. */
     private disabledDueToRAM: Map<string, number> = new Map();
     /** How long to disable a model/server pair after RAM overage (ms) */
@@ -138,83 +142,86 @@ export class BenchmarkManager {
             if (countDiff !== 0) return countDiff;
             return getSize(a) - getSize(b);
         });
-        for (const s of servers) {
-            if (!s.healthy) {
-                this.logDebug(`Skipping server ${s.id} (unhealthy)`);
-                continue;
+        // For each model, select the slowest available server and run a single benchmark job if not already in flight
+        for (const m of allModels) {
+            if (this.inFlightBenchmarks.has(m)) continue; // Only one in flight per model
+            // Find all healthy servers with this model
+            const candidates = servers.filter(s => s.healthy && s.models.includes(m));
+            if (!candidates.length) continue;
+            // Pick slowest server (highest avg latency)
+            let slowest: AIServer | undefined = undefined;
+            let maxLatency = -Infinity;
+            for (const s of candidates) {
+                const avg = this.getServerAvgLatency(s) ?? 0;
+                if (avg > maxLatency) {
+                    maxLatency = avg;
+                    slowest = s;
+                }
             }
-            // Track initial average latency if not set
-            if (!this.initialAvgResponseTime.has(s.id)) {
-                const avg = this.getServerAvgLatency(s);
-                if (avg !== undefined) this.initialAvgResponseTime.set(s.id, avg);
+            if (!slowest) continue;
+            const key = `${slowest.id}:${m}`;
+            // RAM overage check
+            const disabledUntil = this.disabledDueToRAM.get(key);
+            if (disabledUntil && now < disabledUntil) continue;
+            // Large model: only benchmark if enough time has passed
+            const size = getSize(m);
+            if (size >= this.largeModelThreshold) {
+                const last = this.lastLargeModelBenchmark.get(key) || 0;
+                if (now - last < this.largeModelMinInterval) continue;
             }
-            const avgLatency = this.getServerAvgLatency(s);
-            const initial = this.initialAvgResponseTime.get(s.id) ?? avgLatency;
-            const isSlow = avgLatency !== undefined && initial !== undefined && avgLatency > this.slowServerMultiplier * initial;
-            for (const m of allModels) {
-                if (!s.models.includes(m)) continue;
-                const key = `${s.id}:${m}`;
-                // Skip if disabled due to RAM overage
-                const disabledUntil = this.disabledDueToRAM.get(key);
-                if (disabledUntil && now < disabledUntil) {
-                    this.logDebug(`Skipping ${m} on ${s.id}: disabled due to RAM overage until ${new Date(disabledUntil).toISOString()}`);
-                    continue;
-                } else if (disabledUntil && now >= disabledUntil) {
-                    // Re-enable if time has passed
-                    this.disabledDueToRAM.delete(key);
-                }
-                const size = getSize(m);
-                // Large model: only benchmark if enough time has passed
-                if (size >= this.largeModelThreshold) {
-                    const last = this.lastLargeModelBenchmark.get(key) || 0;
-                    if (now - last < this.largeModelMinInterval) {
-                        this.logDebug(`Skipping large model ${m} on ${s.id}: last=${last}, now=${now}`);
-                        continue;
-                    }
-                }
-                // Adaptive backoff: if recent results are stable, increase interval
-                let interval = this.multiServerBenchmarkInterval;
-                if (modelMap[m].length === 1) interval = this.singleServerBenchmarkInterval;
-                if (isSlow) interval = this.slowServerBenchmarkInterval;
-                // Exponential backoff for stable results
-                const recents = this.recentLatencies.get(key) || [];
-                if (recents.length === this.stableRoundsForBackoff) {
-                    const mean = recents.reduce((a, b) => a + b, 0) / recents.length;
-                    const maxDev = Math.max(...recents.map(x => Math.abs(x - mean)));
-                    if (maxDev / mean < this.stableThreshold) {
-                        // Stable: increase interval exponentially up to maxBackoff
-                        interval = Math.min(interval * Math.pow(2, recents.length), this.maxBackoff);
-                        this.logDebug(`Stable results for ${key}: mean=${mean}, maxDev=${maxDev}, interval increased to ${interval}`);
-                    } else {
-                        // Not stable: reset to minBackoff
-                        interval = Math.max(interval, this.minBackoff);
-                        this.logDebug(`Unstable results for ${key}: mean=${mean}, maxDev=${maxDev}, interval reset to ${interval}`);
-                    }
-                }
-                // Large models: further increase interval
-                if (size >= this.largeModelThreshold) {
-                    interval = Math.max(interval, this.largeModelMinInterval);
-                }
-                const bench = this.getBenchmark(s.id, m);
-                if (!bench || now - bench.lastTested > interval) {
-                    this.logDebug(`Benchmarking ${m} on ${s.id}: lastTested=${bench?.lastTested}, interval=${interval}, now=${now}`);
-                    try {
-                        // benchmarkServerModel returns void, so we can't check result
-                        await this.benchmarkServerModel(s, m);
-                        if (size >= this.largeModelThreshold) {
-                            this.lastLargeModelBenchmark.set(key, now);
-                        }
-                    } catch (err: any) {
-                        // If error indicates RAM overage, disable this pair
-                        if (err && typeof err === 'object' && (err.ramOverage || (err.message && /ram|memory/i.test(err.message)))) {
-                            this.disabledDueToRAM.set(key, now + this.ramDisableDuration);
-                            this.logDebug(`Disabled ${m} on ${s.id} for RAM overage until ${new Date(now + this.ramDisableDuration).toISOString()} (error)`);
-                        } else {
-                            this.logDebug(`Benchmark error for ${m} on ${s.id}: ${err?.message || err}`);
-                        }
-                    }
+            // Adaptive backoff: if recent results are stable, increase interval
+            let interval = this.multiServerBenchmarkInterval;
+            if (modelMap[m].length === 1) interval = this.singleServerBenchmarkInterval;
+            // Exponential backoff for stable results
+            const recents = this.recentLatencies.get(key) || [];
+            if (recents.length === this.stableRoundsForBackoff) {
+                const mean = recents.reduce((a, b) => a + b, 0) / recents.length;
+                const maxDev = Math.max(...recents.map(x => Math.abs(x - mean)));
+                if (maxDev / mean < this.stableThreshold) {
+                    interval = Math.min(interval * Math.pow(2, recents.length), this.maxBackoff);
                 } else {
-                    this.logDebug(`Skipping ${m} on ${s.id}: lastTested=${bench?.lastTested}, interval=${interval}, now=${now}`);
+                    interval = Math.max(interval, this.minBackoff);
+                }
+            }
+            if (size >= this.largeModelThreshold) {
+                interval = Math.max(interval, this.largeModelMinInterval);
+            }
+            const bench = this.getBenchmark(slowest.id, m);
+            if (!bench || now - bench.lastTested > interval) {
+                this.inFlightBenchmarks.add(m);
+                emitJobSSEEvent({
+                    jobId: `benchmark_${slowest.id}_${m}_${now}`,
+                    sessionId: 'benchmark',
+                    version: 'v1',
+                    state: 'retry',
+                    message: `Benchmark enqueued for model ${m} on slowest server ${slowest.id}`
+                });
+                try {
+                    await this.benchmarkServerModel(slowest, m);
+                    if (size >= this.largeModelThreshold) {
+                        this.lastLargeModelBenchmark.set(key, now);
+                    }
+                    emitJobSSEEvent({
+                        jobId: `benchmark_${slowest.id}_${m}_${now}`,
+                        sessionId: 'benchmark',
+                        version: 'v1',
+                        state: 'complete',
+                        message: `Benchmark complete for model ${m} on slowest server ${slowest.id}`
+                    });
+                } catch (err: any) {
+                    if (err && typeof err === 'object' && (err.ramOverage || (err.message && /ram|memory/i.test(err.message)))) {
+                        this.disabledDueToRAM.set(key, now + this.ramDisableDuration);
+                    }
+                    emitJobSSEEvent({
+                        jobId: `benchmark_${slowest.id}_${m}_${now}`,
+                        sessionId: 'benchmark',
+                        version: 'v1',
+                        state: 'fail',
+                        error: err?.message || String(err),
+                        message: `Benchmark failed for model ${m} on slowest server ${slowest.id}`
+                    });
+                } finally {
+                    this.inFlightBenchmarks.delete(m);
                 }
             }
         }

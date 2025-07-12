@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response } from 'express';
 import { getOrchestratorInstance } from '../orchestrator-instance.js';
 
 const router = Router();
@@ -55,21 +56,14 @@ function mergeTags(tagsArr: unknown[], modelKey: string): Record<string, unknown
 }
 
 
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
     const orchestrator = res.req?.app?.locals?.orchestrator || getOrchestratorInstance();
-    // Targeted debug output
-    // eslint-disable-next-line no-console
-    console.log('[tags] GET /api/tags - START');
-    // eslint-disable-next-line no-console
-    console.log('[tags] orchestrator instance:', !!orchestrator);
-    // eslint-disable-next-line no-console
-    console.log('[tags] orchestrator servers count:', orchestrator.getServers().length);
-    // eslint-disable-next-line no-console
-    console.log('[tags] orchestrator servers:', JSON.stringify(orchestrator.getServers(), null, 2));
 
     const allTags = await orchestrator.getCachedTags();
-    // eslint-disable-next-line no-console
-    console.log('[tags] allTags:', allTags);
+    if (!allTags || Object.keys(allTags).length === 0) {
+        res.status(404).json({ error: 'No tags found' });
+        return;
+    }
     const tagList = Object.entries(allTags).flatMap(([modelKey, tagsArr]) => {
         if (!Array.isArray(tagsArr) || tagsArr.length === 0) return [];
         // Filter out empty/invalid tags, but keep those with at least a model or name
@@ -78,17 +72,13 @@ router.get('/', async (req, res) => {
             return t.model != null || t.name != null;
         });
         if (validTags.length === 0) return [];
-        // Always include the merged tag, even if all fields are null except model
-        // eslint-disable-next-line no-console
-        console.log('[tags] modelKey:', modelKey, 'tagsArr:', tagsArr);
         const merged = mergeTags(validTags, modelKey);
         // Only include if merged.model is defined (should always be true)
         if (merged.model == null) return [];
         return [merged];
     });
-    // eslint-disable-next-line no-console
-    console.log('[tags] tagList:', tagList);
     res.status(200).json({ models: tagList });
+    return;
 });
 
 export default router;

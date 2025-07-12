@@ -21,7 +21,7 @@ export interface ComponentRegistration {
 
 import React, { ComponentType, createContext, useContext, useState, ReactNode } from 'react';
 import { useTheme } from './ThemeProvider';
-import { logger } from '../../utils/logger';
+import { logger } from '../../../../shared/logging';
 
 /* === TYPES === */
 

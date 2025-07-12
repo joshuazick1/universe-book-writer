@@ -37,6 +37,11 @@
     ],
     "checkJs": false
   },
+  "paths": {
+    "shared/logging": [
+      "shared/logging/index.ts"
+    ]
+  },
   "references": [
     {
       "path": "./packages/core"
@@ -55,10 +60,12 @@
     },
     {
       "path": "./ai-server"
-    },
-    {
-      "path": "./collaboration-server"
     }
+  ],
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "scripts/test-runner/**/*.ts"
   ],
   "exclude": [
     "**/node_modules",

@@ -69,14 +69,10 @@ export async function handleTags(req: Request, res: Response): Promise<void> {
         // Use the same pattern as the original tags router
         const orchestrator = req.app?.locals?.orchestrator || (await import('../../orchestrator-instance.js')).getOrchestratorInstance();
 
-        console.log('[ollamaCompat/tags] GET /api/tags - START');
-        console.log('[ollamaCompat/tags] orchestrator instance:', !!orchestrator);
-        console.log('[ollamaCompat/tags] orchestrator servers count:', orchestrator.getServers().length);
-        console.log('[ollamaCompat/tags] orchestrator servers:', JSON.stringify(orchestrator.getServers(), null, 2));
+        // ...removed debug logs...
 
         const allTags = await orchestrator.getCachedTags();
-        console.log('[ollamaCompat/tags] allTags keys:', Object.keys(allTags));
-        console.log('[ollamaCompat/tags] allTags sample:', Object.entries(allTags).slice(0, 3));
+        // ...removed debug logs...
 
         const models: any[] = [];
 
@@ -91,7 +87,7 @@ export async function handleTags(req: Request, res: Response): Promise<void> {
 
             if (validTags.length === 0) continue;
 
-            console.log('[ollamaCompat/tags] Processing model:', modelName, 'validTags:', validTags.length);
+            // ...removed debug logs...
 
             // Merge tags for this model
             const allKeys = new Set<string>();
@@ -131,7 +127,7 @@ export async function handleTags(req: Request, res: Response): Promise<void> {
             models.push(merged);
         }
 
-        console.log('[ollamaCompat/tags] Final models count:', models.length);
+        // ...removed debug logs...
         res.status(200).json({ models });
     } catch (error) {
         console.error('[ollamaCompat/tags] Error:', error);
