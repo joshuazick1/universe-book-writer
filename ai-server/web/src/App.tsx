@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import ConversationTab from "./components/ConversationTab";
 import ServersTab from "./components/ServersTab";
 import ModelsTab from "./components/ModelsTab";
@@ -6,8 +7,10 @@ import BenchmarksTab from "./components/BenchmarksTab";
 import RAGTab from "./components/RAGTab";
 import CharacterChatInterface from "./pages/character-chat/CharacterChatInterface";
 import CharacterChatSetup from "./pages/character-chat/CharacterChatSetup";
+import Dashboard from "./components/Dashboard.js";
 
 const TABS = [
+    { key: "dashboard", label: "Universe Dashboard" },
     { key: "character-chat", label: "Character Chat" },
     { key: "conversation", label: "Basic Conversation" },
     { key: "rag", label: "RAG System" },
@@ -70,6 +73,7 @@ const App: React.FC = () => {
                 ))}
             </nav>
             <section>
+                {tab === "dashboard" && <Dashboard />}
                 {tab === "character-chat" && (
                     <>
                         {chatState.mode === 'setup' ? (

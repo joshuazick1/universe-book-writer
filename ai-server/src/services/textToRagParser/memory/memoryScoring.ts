@@ -3,7 +3,7 @@
  * and evaluates gap-filling scenarios
  */
 
-import { CharacterMemory } from '../core/interfaces.js';
+import type { CharacterMemory, GapFillingRequest, GapFillingResult } from '../../../../../shared/types/nodeTypes.js';
 
 export class MemoryScoring {
     /**
@@ -14,14 +14,14 @@ export class MemoryScoring {
         memoryType: CharacterMemory['memoryType']
     ): Promise<number> {
         let baseScore = this.getBaseScoreByType(memoryType);
-        
+
         // Content analysis modifiers
         const contentModifiers = this.analyzeContentImportance(content);
-        
+
         // Apply modifiers
-        let finalScore = baseScore + contentModifiers.emotionalWeight + 
-                        contentModifiers.complexityBonus + contentModifiers.keywordBonus;
-        
+        let finalScore = baseScore + contentModifiers.emotionalWeight +
+            contentModifiers.complexityBonus + contentModifiers.keywordBonus;
+
         // Ensure score is within bounds
         return Math.max(0.1, Math.min(1.0, finalScore));
     }
@@ -51,18 +51,18 @@ export class MemoryScoring {
         keywordBonus: number;
     } {
         const contentLower = content.toLowerCase();
-        
+
         // Emotional weight indicators
         const emotionalKeywords = [
             'loves', 'hates', 'fears', 'angry', 'sad', 'happy', 'devastated',
             'shocked', 'surprised', 'betrayed', 'loyal', 'trust', 'betrayal',
             'passion', 'rage', 'grief', 'joy', 'hope', 'despair'
         ];
-        
-        const emotionalMatches = emotionalKeywords.filter(keyword => 
+
+        const emotionalMatches = emotionalKeywords.filter(keyword =>
             contentLower.includes(keyword)
         ).length;
-        
+
         const emotionalWeight = Math.min(0.2, emotionalMatches * 0.05);
 
         // Complexity bonus (longer, more detailed memories are often more important)
@@ -76,11 +76,11 @@ export class MemoryScoring {
             'secret', 'hidden', 'revealed', 'truth', 'lie', 'promise',
             'vow', 'oath', 'mission', 'goal', 'destiny', 'fate'
         ];
-        
-        const keywordMatches = importantKeywords.filter(keyword => 
+
+        const keywordMatches = importantKeywords.filter(keyword =>
             contentLower.includes(keyword)
         ).length;
-        
+
         const keywordBonus = Math.min(0.15, keywordMatches * 0.03);
 
         return {
@@ -123,34 +123,34 @@ export class MemoryScoring {
     private calculatePlausibilityScore(content: string, timelineContext: string): number {
         const contentLower = content.toLowerCase();
         const contextLower = timelineContext.toLowerCase();
-        
+
         let score = 0.5; // Base plausibility
-        
+
         // Check for logical consistency with timeline context
         if (contextLower.includes('battle') || contextLower.includes('fight')) {
-            if (contentLower.includes('help') || contentLower.includes('support') || 
+            if (contentLower.includes('help') || contentLower.includes('support') ||
                 contentLower.includes('evacuate') || contentLower.includes('prepare')) {
                 score += 0.3; // Supportive actions during battle are plausible
             }
-            if (contentLower.includes('sleep') || contentLower.includes('party') || 
+            if (contentLower.includes('sleep') || contentLower.includes('party') ||
                 contentLower.includes('relax')) {
                 score -= 0.3; // Inappropriate actions during battle
             }
         }
-        
+
         if (contextLower.includes('crisis') || contextLower.includes('emergency')) {
-            if (contentLower.includes('respond') || contentLower.includes('react') || 
+            if (contentLower.includes('respond') || contentLower.includes('react') ||
                 contentLower.includes('address')) {
                 score += 0.2;
             }
         }
-        
+
         // Check for realistic activity descriptions
         if (contentLower.includes('meanwhile') || contentLower.includes('during this time') ||
             contentLower.includes('simultaneously')) {
             score += 0.1; // Good temporal awareness
         }
-        
+
         return Math.max(0.1, Math.min(1.0, score));
     }
 
@@ -168,7 +168,7 @@ export class MemoryScoring {
 
         characterTraits.forEach(trait => {
             const traitText = (trait.content || trait.description || trait).toLowerCase();
-            
+
             // Look for alignment with traits
             if (this.isContentAlignedWithTrait(contentLower, traitText)) {
                 consistencyScore += 0.1;
@@ -193,16 +193,16 @@ export class MemoryScoring {
     private calculateNarrativeHarmony(content: string, existingMemories: CharacterMemory[]): number {
         const contentLower = content.toLowerCase();
         let harmonyScore = 0.6; // Base harmony
-        
+
         // Check for conflicts with existing canon memories
         const canonMemories = existingMemories.filter(memory => memory.canonStatus === 'canon');
-        
+
         let conflicts = 0;
         let alignments = 0;
-        
+
         canonMemories.forEach(memory => {
             const memoryLower = memory.content.toLowerCase();
-            
+
             if (this.detectContentConflict(contentLower, memoryLower)) {
                 conflicts++;
             } else if (this.detectContentAlignment(contentLower, memoryLower)) {
@@ -223,16 +223,16 @@ export class MemoryScoring {
     private calculateEvidenceSupport(content: string, existingMemories: CharacterMemory[]): number {
         const contentLower = content.toLowerCase();
         let supportScore = 0.3; // Base support level
-        
+
         // Look for supporting evidence in existing memories
-        const relevantMemories = existingMemories.filter(memory => 
-            memory.canonStatus === 'canon' && 
+        const relevantMemories = existingMemories.filter(memory =>
+            memory.canonStatus === 'canon' &&
             this.isMemoryRelevantToContent(memory.content, contentLower)
         );
-        
+
         // Score based on amount of supporting evidence
         supportScore += Math.min(0.5, relevantMemories.length * 0.1);
-        
+
         // Bonus for specific evidence types
         relevantMemories.forEach(memory => {
             if (memory.memoryType === 'trait' || memory.memoryType === 'relationship') {
@@ -260,7 +260,7 @@ export class MemoryScoring {
         if (trait.includes('brave') && content.includes('hiding')) return true;
         if (trait.includes('kind') && content.includes('cruel')) return true;
         if (trait.includes('loyal') && content.includes('betray')) return true;
-        
+
         return false;
     }
 
@@ -275,8 +275,8 @@ export class MemoryScoring {
             ['here', 'there'],
             ['helping', 'hindering']
         ];
-        
-        return conflictPairs.some(([word1, word2]) => 
+
+        return conflictPairs.some(([word1, word2]) =>
             (content.includes(word1) && existingContent.includes(word2)) ||
             (content.includes(word2) && existingContent.includes(word1))
         );
@@ -289,7 +289,7 @@ export class MemoryScoring {
         // Look for similar themes or keywords
         const contentWords = content.split(/\s+/).filter(word => word.length > 4);
         const existingWords = existingContent.split(/\s+/).filter(word => word.length > 4);
-        
+
         const commonWords = contentWords.filter(word => existingWords.includes(word));
         return commonWords.length >= 2;
     }
@@ -300,7 +300,7 @@ export class MemoryScoring {
     private isMemoryRelevantToContent(memoryContent: string, gapContent: string): boolean {
         const memoryWords = memoryContent.toLowerCase().split(/\s+/).filter(word => word.length > 3);
         const gapWords = gapContent.split(/\s+/).filter(word => word.length > 3);
-        
+
         const commonWords = memoryWords.filter(word => gapWords.includes(word));
         return commonWords.length >= 1;
     }

@@ -5,8 +5,7 @@
  * Replaces the previous in-memory implementation with full database persistence.
  */
 
-import { CharacterMemory } from '../core/interfaces.js';
-import { CharacterMemory as CharGenMemory } from '../../characterGenerator/types.js';
+import type { CharacterMemory, GapFillingRequest, GapFillingResult, CharGenMemory } from '../../../../../shared/types/nodeTypes.js';
 import { mongoGeneratorService } from '../../database/mongoGeneratorService.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -54,7 +53,7 @@ export class DatabaseManager {
                 accessCount: memory.accessCount,
                 lastAccessed: memory.lastAccessed,
                 updatedAt: memory.updatedAt,
-                canonStatus: memory.canonStatus,
+                canonStatus: (memory.canonStatus === 'canon' || memory.canonStatus === 'non_canon' || memory.canonStatus === 'gap_filling') ? memory.canonStatus : 'canon',
                 timelineAnchor: memory.timelineAnchor,
                 sourceChunk: memory.sourceChunk,
                 gapFillingContext: memory.gapFillingContext
@@ -67,6 +66,8 @@ export class DatabaseManager {
      */
     private convertFromCharGenMemory(memory: CharGenMemory): CharacterMemory {
         const contextualInfo = memory.contextual_info || {};
+        // Defensive: always use array for tags
+        const safeTags = Array.isArray(memory.tags) ? memory.tags : [];
         return {
             id: memory.id,
             characterId: contextualInfo.characterId || '',
@@ -81,8 +82,9 @@ export class DatabaseManager {
             createdAt: memory.timestamp,
             updatedAt: contextualInfo.updatedAt || new Date(),
             memorySource: memory.source as any,
-            canonStatus: contextualInfo.canonStatus || 'canon',
-            gapFillingContext: contextualInfo.gapFillingContext
+            canonStatus: (contextualInfo.canonStatus === 'canon' || contextualInfo.canonStatus === 'non_canon' || contextualInfo.canonStatus === 'gap_filling') ? contextualInfo.canonStatus : 'canon',
+            gapFillingContext: contextualInfo.gapFillingContext,
+            tags: safeTags
         };
     }
 
@@ -151,7 +153,10 @@ export class DatabaseManager {
     async getCharacterMemory(memoryId: string): Promise<CharacterMemory | null> {
         const memories = await mongoGeneratorService.getCharacterMemories('', { limit: 1 });
         const memory = memories.find(m => m.id === memoryId);
-        return memory ? this.convertFromCharGenMemory(memory) : null;
+        if (memory && !Array.isArray(memory.tags)) {
+            memory.tags = [];
+        }
+        return memory ? this.convertFromCharGenMemory({ ...memory, tags: memory.tags ?? [] }) : null;
     }
 
     /**
@@ -162,7 +167,10 @@ export class DatabaseManager {
         if (!Array.isArray(charGenMemories)) {
             return [];
         }
-        return charGenMemories.map(m => this.convertFromCharGenMemory(m));
+        return charGenMemories.map(m => {
+            const tags = Array.isArray(m.tags) ? m.tags : [];
+            return this.convertFromCharGenMemory({ ...m, tags });
+        });
     }
 
     /**
@@ -170,7 +178,10 @@ export class DatabaseManager {
      */
     async getAllCharacterMemories(): Promise<CharacterMemory[]> {
         const charGenMemories = await mongoGeneratorService.getCharacterMemories(''); // Empty string gets all
-        return charGenMemories.map(m => this.convertFromCharGenMemory(m));
+        return charGenMemories.map(m => {
+            const tags = Array.isArray(m.tags) ? m.tags : [];
+            return this.convertFromCharGenMemory({ ...m, tags });
+        });
     }
 
     /**

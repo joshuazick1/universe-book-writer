@@ -7,6 +7,7 @@ import { Router, json, urlencoded } from 'express';
 import { Ollama } from '../compat/index.js';
 
 const router = Router();
+console.log('[DEBUG] ollamaCompat.ts router loaded');
 
 // Add JSON body parser middleware
 router.use(json());

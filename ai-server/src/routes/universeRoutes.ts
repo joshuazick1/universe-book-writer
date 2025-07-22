@@ -21,7 +21,16 @@ const router = Router();
 router.get('/', async (req, res) => {
     try {
         const universes = await getUniverses();
-        res.json(universes);
+        // Map _id to id for all universes for consistency
+        const mapped = universes.map(u => {
+            // Support both MongoDB (_id) and standard (id) properties
+            const anyU = u as any;
+            return {
+                ...u,
+                id: anyU._id ?? anyU.id,
+            };
+        });
+        res.json(mapped);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch universes' });
     }
@@ -76,7 +85,14 @@ router.post('/', async (req, res) => {
  */
 router.put('/:id', async (req, res) => {
     try {
-        const ok = await updateUniverseAndInvalidate(req.params.id, req.body);
+        const id = req.params.id;
+        // Try both id and _id for MongoDB compatibility
+        let ok = await updateUniverseAndInvalidate(id, req.body);
+        if (!ok && id.startsWith('ObjectId(')) {
+            // If the id is wrapped as ObjectId, try stripping it
+            const stripped = id.replace(/^ObjectId\((['"])?(.*?)(['"])?\)$/, '$2');
+            ok = await updateUniverseAndInvalidate(stripped, req.body);
+        }
         if (ok) res.json({ success: true });
         else res.status(404).json({ error: 'Universe not found' });
     } catch (err) {
@@ -102,7 +118,12 @@ router.put('/:id', async (req, res) => {
  */
 router.delete('/:id', async (req, res) => {
     try {
-        const ok = await deleteUniverseAndInvalidate(req.params.id);
+        const id = req.params.id;
+        let ok = await deleteUniverseAndInvalidate(id);
+        if (!ok && id.startsWith('ObjectId(')) {
+            const stripped = id.replace(/^ObjectId\((['"])?(.*?)(['"])?\)$/, '$2');
+            ok = await deleteUniverseAndInvalidate(stripped);
+        }
         if (ok) res.json({ success: true });
         else res.status(404).json({ error: 'Universe not found' });
     } catch (err) {

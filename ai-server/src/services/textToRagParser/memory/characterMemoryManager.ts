@@ -3,7 +3,7 @@
  * including gap-filling, retrieval, and approval workflows
  */
 
-import { CharacterMemory, GapFillingRequest, GapFillingResult, MemoryApprovalRequest } from '../core/interfaces.js';
+import type { CharacterMemory, GapFillingRequest, GapFillingResult, MemoryApprovalRequest } from '../../../../../shared/types/nodeTypes.ts';
 import { DatabaseManager } from '../storage/databaseManager.js';
 import { GapFillingGenerator } from './gapFillingGenerator.js';
 import { MemoryRetrieval } from './memoryRetrieval.js';
@@ -94,10 +94,10 @@ export class CharacterMemoryManager {
     async generateGapFillingMemory(request: GapFillingRequest): Promise<GapFillingResult> {
         // Get existing character memories for context
         const characterMemories = await this.memoryRetrieval.getCharacterMemories(request.characterId);
-        
+
         // Get character traits and established patterns
         const characterTraits = await this.memoryRetrieval.getCharacterTraits(request.characterId);
-        
+
         // Generate the gap-filling scenario
         const result = await this.gapFillingGenerator.generateScenario(
             request,

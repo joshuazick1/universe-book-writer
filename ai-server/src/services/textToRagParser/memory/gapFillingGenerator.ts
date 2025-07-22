@@ -3,9 +3,10 @@
  * Handles "What was X doing while Y happened?" type queries
  */
 
-import { CharacterMemory, GapFillingRequest, GapFillingResult } from '../core/interfaces.js';
+// TODO: Migrate CharacterMemory and related types to shared/types/nodeTypes.ts if they represent node types. Otherwise, leave as is.
 import { DatabaseManager } from '../storage/databaseManager.js';
 import { OllamaService } from '../ai/ollamaService.js';
+import type { CharacterMemory, GapFillingRequest, GapFillingResult } from '../../../../../shared/types/nodeTypes.js';
 
 export class GapFillingGenerator {
     private dbManager: DatabaseManager;
@@ -26,10 +27,10 @@ export class GapFillingGenerator {
     ): Promise<GapFillingResult> {
         // Build context for AI generation
         const context = await this.buildGapFillingContext(request, characterMemories, characterTraits);
-        
+
         // Generate the scenario using AI
         const generatedScenario = await this.generateWithAI(context);
-        
+
         // Score the generated scenario
         const scores = await this.scoreGapFillingScenario(
             generatedScenario,
@@ -88,10 +89,10 @@ export class GapFillingGenerator {
     ): Promise<string> {
         // Get character's name and basic info
         const character = await this.dbManager.getCharacterBasicInfo(request.characterId);
-        
+
         // Extract relevant memories around the timeline
-        const timelineMemories = characterMemories.filter(memory => 
-            memory.timelineAnchor && 
+        const timelineMemories = characterMemories.filter(memory =>
+            memory.timelineAnchor &&
             memory.canonStatus === 'canon' &&
             this.isTemporallyRelevant(memory.timelineAnchor, request.timelineAnchor || request.timelineContext)
         );
@@ -208,12 +209,12 @@ Please provide your response in the following JSON format:
     }> {
         // This would ideally use more sophisticated scoring
         // For now, provide reasonable default scores
-        
+
         const plausibilityScore = Math.min(0.9, 0.6 + (scenario.evidenceUsed.length * 0.1));
         const characterConsistency = Math.min(0.95, 0.7 + (characterTraits.length * 0.05));
         const narrativeHarmony = scenario.conflictWarnings.length === 0 ? 0.85 : 0.65;
         const evidenceSupport = Math.min(0.9, 0.5 + (scenario.evidenceUsed.length * 0.15));
-        
+
         const overallImportance = (plausibilityScore + characterConsistency + narrativeHarmony + evidenceSupport) / 4;
 
         return {
@@ -236,7 +237,7 @@ Please provide your response in the following JSON format:
     private isTemporallyRelevant(memoryAnchor: string, targetAnchor: string): boolean {
         // Simple temporal relevance check - could be enhanced with more sophisticated timeline analysis
         return memoryAnchor.toLowerCase().includes(targetAnchor.toLowerCase()) ||
-               targetAnchor.toLowerCase().includes(memoryAnchor.toLowerCase());
+            targetAnchor.toLowerCase().includes(memoryAnchor.toLowerCase());
     }
 
     private summarizeCharacterTraits(traits: any[]): string {

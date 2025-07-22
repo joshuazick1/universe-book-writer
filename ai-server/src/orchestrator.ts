@@ -55,6 +55,17 @@ interface RequestQueueEntry<T> {
 export class AIOrchestrator {
 
     /**
+     * Orchestrator constructor: initializes tag cache on startup
+     */
+    constructor() {
+        // Optionally, load servers here if needed
+        // Immediately refresh tags cache on startup
+        setImmediate(() => {
+            this.refreshTagsCache()
+                .catch(() => { });
+        });
+    }
+    /**
      * Wrap a job handler with error handling, retry, and job stealing for distributed jobs.
      * Use this for all distributed pipeline jobs.
      * @param handler The job handler function (server: AIServer) => Promise<T>
@@ -83,6 +94,29 @@ export class AIOrchestrator {
     private inFlight: Map<string, number> = new Map();
     /** Mark a server/model as failed and start cooldown */
     private failureCooldown: Map<string, number> = new Map();
+    /**
+     * Return the current model list from all servers, regardless of health or sync status
+     * This allows consumers to access the model list before RAG sync or health checks
+     */
+    getCurrentModelList(): string[] {
+        const models: string[] = [];
+        for (const s of this.servers) {
+            if (Array.isArray(s.models)) {
+                for (const m of s.models) {
+                    if (typeof m === 'string' && m) {
+                        models.push(m);
+                    } else if (typeof m === 'object' && m !== null) {
+                        // Use safe property access for model and name
+                        const modelName = (typeof (m as any).model === 'string' && (m as any).model)
+                            || (typeof (m as any).name === 'string' && (m as any).name);
+                        if (modelName) models.push(modelName);
+                    }
+                }
+            }
+        }
+        const uniqueModels = Array.from(new Set(models));
+        return uniqueModels;
+    }
     /** Check if a server/model is in cooldown */
     private permanentBan: Set<string> = new Set();
     private cooldownMs = 2 * 60 * 1000; // 2 minutes, configurable
@@ -184,7 +218,14 @@ export class AIOrchestrator {
             // Already exists, do not add again
             return;
         }
-        this.servers.push({ ...server, healthy: false, lastResponseTime: Infinity, models: [] });
+        // Start as healthy, then run health check
+        this.servers.push({ ...server, healthy: true, lastResponseTime: Infinity, models: [] });
+        // Log current model list before health check
+        this.getCurrentModelList();
+        // Run health check immediately
+        this.updateAllStatus().catch(err => {
+            console.error(`[Orchestrator] Health check failed for server ${server.id}:`, err);
+        });
         // Run benchmarks for new server after short delay (async, non-blocking)
         setTimeout(() => { this.maybeRunBenchmarks(true); }, 1000);
         // Invalidate model map and tags cache
@@ -224,11 +265,17 @@ export class AIOrchestrator {
             } catch (e) { /* ignore */ }
         };
         await Promise.all(this.servers.map(async (s) => {
+            // Skip permanently banned server/model pairs
+            const bannedModels = Array.from(this.permanentBan).filter(banKey => banKey.startsWith(`${s.id}:`)).map(banKey => banKey.split(':')[1]);
+            if (bannedModels.length === s.models.length) {
+                logDebug(`[HEALTH] Skipping health check for permanently banned server ${s.id}`);
+                return;
+            }
             try {
-                // AbortController for timeout (node-fetch v3+)
+                const apiUrl = `${s.url}/api/tags`;
                 const controller = new AbortController();
                 const timeout = setTimeout(() => controller.abort(), 3000);
-                const resp = await fetch(`${s.url}/api/tags`, { signal: controller.signal });
+                const resp = await fetch(apiUrl, { signal: controller.signal });
                 clearTimeout(timeout);
                 logDebug(`Health check for ${s.id} (${s.url}): status=${resp.status}`);
                 if (!resp.ok) throw new Error(`Status ${resp.status}`);
@@ -491,8 +538,6 @@ export class AIOrchestrator {
      * @returns The result or throws if all fail or all at max concurrency/queue
      */
     async tryRequestWithFailover<T>(model: string, fn: (server: AIServer) => Promise<T>): Promise<T> {
-        // ...existing code...
-
         const tried: { server: string; error: string }[] = [];
         const candidates = this.servers
             .filter(s =>
@@ -513,8 +558,6 @@ export class AIOrchestrator {
                 return ba - bb;
             });
 
-        // ...removed debug logs...
-
         if (candidates.length === 0) {
             throw new Error(`No healthy servers available for model '${model}'.`);
         }
@@ -523,43 +566,26 @@ export class AIOrchestrator {
             const max = server.maxConcurrency ?? 4;
             const currentInFlight = this.getInFlight(server.id, model);
             if (currentInFlight < max) {
-                this.incrementInFlight(server.id, model);
                 try {
-                    // Wrap the job handler for error handling, retry, and job stealing
-                    const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-                    const version = 'v1'; // TODO: Pass actual version if available
-                    const sessionId = 'unknown'; // TODO: Pass actual sessionId if available
-                    const wrappedHandler = this.wrapDistributedJobHandler(fn, { model, version, sessionId, jobId });
-                    const result = await wrappedHandler(server);
-                    // Only track usage here if not a direct request (i.e., orchestrated)
-                    if (!(fn as any).__source || (fn as any).__source !== 'direct') {
-                        this.trackUsageWithRAG(server.id, model, {
-                            requestId: jobId,
-                            taskType: 'general',
-                            priority: 'normal',
-                            source: 'orchestrated'
-                        });
-                    }
+                    this.incrementInFlight(server.id, model);
+                    const result = await fn(server);
                     this.decrementInFlight(server.id, model);
-                    this.processNextInQueue(server.id, model);
                     return result;
-                } catch (err) {
-                    const msg = err instanceof Error ? err.message : String(err);
+                } catch (err: any) {
                     this.decrementInFlight(server.id, model);
-                    this.processNextInQueue(server.id, model);
-                    if (/not enough ram|model not supported|out of memory|permanent/i.test(msg)) {
+                    // Patch: If fatal error, permanently ban this server/model
+                    const msg = err?.message || String(err);
+                    if (/runner process has terminated: signal: killed/i.test(msg) || /fatal model server error/i.test(msg)) {
                         this.permanentBan.add(`${server.id}:${model}`);
+                        server.healthy = false;
+                        console.error(`[Orchestrator] Permanently banning server ${server.id} for model ${model} due to fatal error: ${msg}`);
                     } else {
                         this.markFailure(server.id, model);
+                        server.healthy = false;
+                        console.warn(`[Orchestrator] Marking server ${server.id} as unhealthy for model ${model} due to error: ${msg}`);
                     }
-                    emitJobSSEEvent({
-                        jobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                        sessionId: 'unknown',
-                        version: 'v1',
-                        state: 'fail',
-                        error: msg,
-                    });
                     tried.push({ server: server.id, error: msg });
+                    continue;
                 }
             }
         }
@@ -623,24 +649,84 @@ export class AIOrchestrator {
     /** Refresh tags cache (aggregates tags from all servers, skips only bad responses) */
     async refreshTagsCache() {
         await this.updateAllStatus();
-        // PATCH: Aggregate tags from all servers, not just healthy ones, for robustness
+        // Parallel fetch: Aggregate tags from fast servers immediately, merge slow server tags as they arrive
         const servers = this.getServers();
         const allTags: Record<string, any[]> = {};
-        for (const server of servers) {
+        const TIMEOUT_MS = 3000;
+        // Helper for per-request timeout
+        const fetchWithTimeout = async (server: AIServer) => {
+            const apiUrl = `${server.url}/api/tags`;
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
             try {
-                const resp = await fetch(`${server.url}/api/tags`);
-                if (!resp.ok) continue;
-                const data = (await resp.json()) as any;
-                if (!data || !Array.isArray(data.models)) continue;
-                for (const tag of data.models) {
-                    if (!tag || typeof tag !== 'object') continue;
-                    // Accept models with missing fields, fill with nulls later
-                    let modelKey = tag.model ?? tag.name ?? '__unknown__';
-                    if (!allTags[modelKey]) allTags[modelKey] = [];
-                    allTags[modelKey].push({ ...tag, server: server.id });
-                }
+                const resp = await fetch(apiUrl, { signal: controller.signal });
+                clearTimeout(timeout);
+                if (!resp.ok) return null;
+                const data = await resp.json();
+                return { server, data };
             } catch (err) {
-                continue;
+                clearTimeout(timeout);
+                return null;
+            }
+        };
+
+        // Helper for slow fetch (no timeout, runs in background)
+        const fetchWithoutTimeout = async (server: AIServer) => {
+            const apiUrl = `${server.url}/api/tags`;
+            try {
+                const resp = await fetch(apiUrl);
+                if (!resp.ok) return null;
+                const data = await resp.json();
+                return { server, data };
+            } catch (err) {
+                return null;
+            }
+        };
+
+        // Start all fast fetches in parallel
+        const fastFetchPromises = servers.map(fetchWithTimeout);
+        const results = await Promise.allSettled(fastFetchPromises);
+        // Aggregate fast responses and synchronize server.models arrays
+        for (let i = 0; i < results.length; i++) {
+            const result = results[i];
+            const server = servers[i];
+            if (result.status === 'fulfilled' && result.value && result.value.data) {
+                const { data } = result.value;
+                const models = (data as any).models;
+                if (Array.isArray(models)) {
+                    // Synchronize server.models array
+                    server.models = models.map((tag: any) => tag.model ?? tag.name ?? tag);
+                    for (const tag of models) {
+                        if (!tag || typeof tag !== 'object') continue;
+                        let modelKey = tag.model ?? tag.name ?? '__unknown__';
+                        if (!allTags[modelKey]) allTags[modelKey] = [];
+                        allTags[modelKey].push({ ...tag, server: server.id });
+                    }
+                } else {
+                    // If models is not an array, clear server.models
+                    server.models = [];
+                }
+            } else {
+                // If timed out, start slow fetch in background
+                fetchWithoutTimeout(server).then(slowResult => {
+                    if (slowResult && slowResult.data) {
+                        const models = (slowResult.data as any).models;
+                        if (Array.isArray(models)) {
+                            // Synchronize server.models array
+                            server.models = models.map((tag: any) => tag.model ?? tag.name ?? tag);
+                            // Merge slow tags into cache
+                            for (const tag of models) {
+                                if (!tag || typeof tag !== 'object') continue;
+                                let modelKey = tag.model ?? tag.name ?? '__unknown__';
+                                if (!this.tagsCache.tags[modelKey]) this.tagsCache.tags[modelKey] = [];
+                                this.tagsCache.tags[modelKey].push({ ...tag, server: server.id });
+                            }
+                            this.tagsCache.updated = Date.now();
+                        } else {
+                            server.models = [];
+                        }
+                    }
+                });
             }
         }
         this.tagsCache.tags = allTags;

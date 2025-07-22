@@ -1,5 +1,5 @@
 import { universeCache } from '../infrastructure/cache/cacheProvider.js';
-import type { Universe } from '../models/Universe.js';
+import type { Universe } from '../../../shared/types/nodeTypes.js';
 import { fetchUniverses, createUniverse, updateUniverse, deleteUniverse } from '../repositories/ragNodeRepository.js';
 /**
  * Create a new universe and invalidate cache.

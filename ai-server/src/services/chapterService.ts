@@ -1,5 +1,5 @@
 import { chapterCache } from '../infrastructure/cache/cacheProvider.js';
-import type { Chapter } from '../models/Chapter.js';
+import type { Chapter } from '../../../shared/types/nodeTypes.ts';
 import { fetchChapters, createChapter, updateChapter, deleteChapter } from '../repositories/ragNodeRepository.js';
 /**
  * Create a new chapter and invalidate cache.

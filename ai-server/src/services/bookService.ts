@@ -1,5 +1,5 @@
 import { bookCache } from '../infrastructure/cache/cacheProvider.js';
-import type { Book } from '../models/Book.js';
+import type { Book } from '../../../shared/types/nodeTypes.js';
 import { fetchBooks, createBook, updateBook, deleteBook } from '../repositories/ragNodeRepository.js';
 /**
  * Create a new book and invalidate cache.

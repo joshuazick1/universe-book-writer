@@ -6,3 +6,5 @@ export interface Universe {
     readonly description?: string;
     readonly metadata?: Record<string, unknown>;
 }
+// Deprecated: Universe type is now defined in shared/types/nodeTypes.ts
+// Remove this file; import Universe directly from shared/types/nodeTypes.ts where needed.

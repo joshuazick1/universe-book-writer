@@ -3,7 +3,7 @@
  * Respects memory source distinctions and provides context-aware retrieval
  */
 
-import { CharacterMemory } from '../core/interfaces.js';
+import type { CharacterMemory, GapFillingRequest, GapFillingResult } from '../../../../../shared/types/nodeTypes.js';
 import { DatabaseManager } from '../storage/databaseManager.js';
 
 export class MemoryRetrieval {
@@ -106,9 +106,9 @@ export class MemoryRetrieval {
             canonOnly: true
         });
 
-        return memories.filter(memory => 
+        return memories.filter(memory =>
             memory.content.toLowerCase().includes(otherCharacter.toLowerCase()) ||
-            memory.associatedEntities.some(entity => 
+            memory.associatedEntities.some(entity =>
                 entity.toLowerCase().includes(otherCharacter.toLowerCase())
             )
         );
@@ -135,11 +135,11 @@ export class MemoryRetrieval {
      * Get all pending gap-filling memories awaiting approval
      */
     async getPendingGapFillingMemories(characterId?: string): Promise<CharacterMemory[]> {
-        const baseQuery = characterId ? 
+        const baseQuery = characterId ?
             await this.dbManager.getCharacterMemories(characterId) :
             await this.dbManager.getAllCharacterMemories();
 
-        return baseQuery.filter(memory => 
+        return baseQuery.filter(memory =>
             memory.memorySource === 'ai_gap_filling' &&
             memory.gapFillingContext &&
             memory.gapFillingContext.userApproved === undefined
@@ -154,7 +154,7 @@ export class MemoryRetrieval {
             includeGapFilling: true
         });
 
-        return memories.filter(memory => 
+        return memories.filter(memory =>
             memory.memorySource === 'ai_gap_filling' &&
             memory.gapFillingContext?.userApproved === true
         );
@@ -179,14 +179,14 @@ export class MemoryRetrieval {
 
         // Filter by memory types
         if (options.memoryTypes?.length) {
-            filtered = filtered.filter(memory => 
+            filtered = filtered.filter(memory =>
                 options.memoryTypes.includes(memory.memoryType)
             );
         }
 
         // Filter by memory source
         if (options.memorySource?.length) {
-            filtered = filtered.filter(memory => 
+            filtered = filtered.filter(memory =>
                 options.memorySource.includes(memory.memorySource)
             );
         }
@@ -255,7 +255,7 @@ export class MemoryRetrieval {
         context: string
     ): Promise<Array<{ memory: CharacterMemory; relevanceScore: number }>> {
         const contextLower = context.toLowerCase();
-        
+
         return memories.map(memory => {
             let score = 0;
             const contentLower = memory.content.toLowerCase();
@@ -263,14 +263,14 @@ export class MemoryRetrieval {
             // Basic keyword matching
             const contextWords = contextLower.split(/\s+/);
             const contentWords = contentLower.split(/\s+/);
-            
+
             let matchingWords = 0;
             contextWords.forEach(word => {
                 if (word.length > 3 && contentWords.some(cWord => cWord.includes(word))) {
                     matchingWords++;
                 }
             });
-            
+
             score += (matchingWords / contextWords.length) * 0.6;
 
             // Memory type relevance
@@ -323,8 +323,8 @@ export class MemoryRetrieval {
     private isTimelineProximate(anchor1: string, anchor2: string): boolean {
         // Simple proximity check - could be enhanced with more sophisticated temporal analysis
         const commonTerms = ['chapter', 'scene', 'day', 'night', 'morning', 'evening', 'battle', 'meeting'];
-        
-        return commonTerms.some(term => 
+
+        return commonTerms.some(term =>
             anchor1.includes(term) && anchor2.includes(term)
         ) || anchor1.includes(anchor2) || anchor2.includes(anchor1);
     }

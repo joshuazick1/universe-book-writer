@@ -66,15 +66,16 @@ export class ModelPerformanceRAGService {
      */
     async initialize(): Promise<void> {
         try {
-            console.log('[RAG] ModelPerformanceRAGService: Starting initialization...');
             this.ragManager = await getRAGServiceManager();
-            console.log('[RAG] ModelPerformanceRAGService: RAG manager obtained successfully');
             logger.info('Model Performance RAG Service initialized');
 
+            // Ensure orchestrator has aggregated models before initial sync
+            if (typeof this.orchestrator.refreshTagsCache === 'function') {
+                await this.orchestrator.refreshTagsCache();
+            }
+
             // Perform initial sync
-            console.log('[RAG] ModelPerformanceRAGService: Starting initial benchmark sync...');
             await this.syncBenchmarkDataToRAG();
-            console.log('[RAG] ModelPerformanceRAGService: Initial benchmark sync completed');
 
             // Start periodic sync (every 30 minutes to reduce load)
             this.syncInterval = setInterval(async () => {
