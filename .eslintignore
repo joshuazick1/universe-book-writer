@@ -1,0 +1,29 @@
+# Ignore compiled output
+**/dist/
+**/build/
+**/coverage/
+
+# Ignore generated files
+**/*.d.ts.map
+**/*.js.map
+
+# Ignore compiled TypeScript output
+frontend/src/index.js
+ai-server/src/index.js
+backend/src/index.js
+backend/plugins/*.js
+backend/src/**/*.js
+ai-server/src/**/*.js
+
+# Ignore node_modules
+node_modules/
+
+# Ignore test artifacts
+test-results/
+playwright-report/
+
+# Ignore config files that shouldn't be linted
+*.config.js
+babel.config.js
+commitlint.config.js
+migrate-mongo-config.js

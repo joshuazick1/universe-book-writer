@@ -1,0 +1,48 @@
+[
+    {
+        "id": "link-001",
+        "input": "The Enterprise is captained by Jean-Luc Picard.",
+        "entities": [
+            "Jean-Luc Picard",
+            "Enterprise"
+        ],
+        "reference_links": [
+            {
+                "entity": "Jean-Luc Picard",
+                "canonical_id": "char-picard"
+            },
+            {
+                "entity": "Enterprise",
+                "canonical_id": "ship-ncc1701d"
+            }
+        ]
+    },
+    {
+        "id": "link-002",
+        "input": "Leia and Han travel to Bespin to seek help from Lando Calrissian.",
+        "entities": [
+            "Leia",
+            "Han",
+            "Bespin",
+            "Lando Calrissian"
+        ],
+        "reference_links": [
+            {
+                "entity": "Leia",
+                "canonical_id": "char-leia"
+            },
+            {
+                "entity": "Han",
+                "canonical_id": "char-han"
+            },
+            {
+                "entity": "Bespin",
+                "canonical_id": "loc-bespin"
+            },
+            {
+                "entity": "Lando Calrissian",
+                "canonical_id": "char-lando"
+            }
+        ]
+    }
+]

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
@@ -16,29 +16,94 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./packages/*"]
+      "@/*": [
+        "./packages/*"
+      ]
     },
     "jsx": "react-jsx",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
     "allowJs": true,
-    "types": ["node", "jest"],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./"
+    ],
     "checkJs": false
   },
+  "paths": {
+    "shared/logging": [
+      "shared/logging/index.ts"
+    ]
+  },
   "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/ui-core" },
-    { "path": "./packages/plugin-sdk" },
-    { "path": "./frontend" },
-    { "path": "./backend" },
-    { "path": "./ai-server" }
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/ui-core"
+    },
+    {
+      "path": "./packages/plugin-sdk"
+    },
+    {
+      "path": "./frontend"
+    },
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./ai-server"
+    }
+  ],
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "scripts/test-runner/**/*.ts"
   ],
   "exclude": [
     "**/node_modules",
     "**/dist",
+    "**/coverage",
+    "**/coverage/**",
+    "coverage",
+    "coverage/**",
+    "test-results",
+    "test-results/**",
+    "**/test-results",
+    "**/test-results/**",
+    "test-mcp-files",
+    "test-mcp-files/**",
     "**/*.test.ts",
-    "jest.config.js",
-    "jest.setup.js",
+    "**/*.config.js",
+    "**/*.config.ts",
+    "**/*.config.mjs",
+    "jest*.js",
+    "jest*.ts",
+    "jest*.mjs",
     "commitlint.config.js",
-    "*.d.ts"
+    "**/scripts/**/*.js",
+    "**/scripts/**/*.mjs",
+    "**/migrate-mongo-config.js",
+    "backend/plugins/test-core.plugin.js",
+    "backend/tests/jest.env.mjs",
+    "backend/register.js",
+    "backend/debug-init.mjs",
+    "backend/temp/**/*.js",
+    "tools/**/*.mjs",
+    "*.d.ts",
+    "test-api-structure.js",
+    "test-universe-api-with-auth.js",
+    "test-universe-api.js",
+    "test-universe-api.mjs",
+    "backend/scripts/test-repository-irreversible-status.ts",
+    "e2e/**/*",
+    "frontend/src/stories/**/*"
   ]
 }

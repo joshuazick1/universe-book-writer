@@ -1,0 +1,156 @@
+/**
+ * Design Tokens - CSS Custom Properties
+ * These variables define the base design system and can be overridden by universe plugins
+ */
+
+:root {
+  /* === PRIMARY COLOR PALETTE === */
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-primary-950: #082f49;
+
+  /* === SECONDARY COLOR PALETTE === */
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+  --color-secondary-950: #020617;
+
+  /* === ACCENT COLOR PALETTE === */
+  --color-accent-50: #fdf4ff;
+  --color-accent-100: #fae8ff;
+  --color-accent-200: #f5d0fe;
+  --color-accent-300: #f0abfc;
+  --color-accent-400: #e879f9;
+  --color-accent-500: #d946ef;
+  --color-accent-600: #c026d3;
+  --color-accent-700: #a21caf;
+  --color-accent-800: #86198f;
+  --color-accent-900: #701a75;
+  --color-accent-950: #4a044e;
+
+  /* === NEUTRAL COLOR PALETTE === */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f4f4f5;
+  --color-neutral-200: #e4e4e7;
+  --color-neutral-300: #d4d4d8;
+  --color-neutral-400: #a1a1aa;
+  --color-neutral-500: #71717a;
+  --color-neutral-600: #52525b;
+  --color-neutral-700: #3f3f46;
+  --color-neutral-800: #27272a;
+  --color-neutral-900: #18181b;
+  --color-neutral-950: #09090b;
+
+  /* === SEMANTIC COLORS === */
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+
+  --color-info-50: #f0f9ff;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+  --color-info-700: #1d4ed8;
+
+  /* === TYPOGRAPHY SYSTEM === */
+  --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Monaco', 'Consolas', 'Liberation Mono', monospace;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* === LAYOUT & SPACING === */
+  --border-radius-universe: 0.375rem;
+  --animation-duration: 300ms;
+
+  /* === UNIVERSE PLUGIN SLOTS === */
+  /* These will be overridden by active universe plugins */
+  --color-universe-primary: var(--color-primary-500);
+  --color-universe-secondary: var(--color-secondary-500);
+  --color-universe-accent: var(--color-accent-500);
+  --color-universe-background: var(--color-neutral-50);
+  --color-universe-surface: var(--color-neutral-100);
+  --color-universe-text: var(--color-neutral-900);
+
+  /* === SHADOWS & EFFECTS === */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-universe: 0 0 20px var(--color-universe-primary);
+
+  /* === TRANSITIONS === */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* === DARK MODE OVERRIDES === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-universe-background: var(--color-neutral-900);
+    --color-universe-surface: var(--color-neutral-800);
+    --color-universe-text: var(--color-neutral-100);
+  }
+}
+
+/* === UNIVERSE THEME OVERRIDES === */
+/* LCARS Theme (Star Trek) */
+:root[data-universe-theme='lcars'] {
+  --color-universe-primary: #ff9900;
+  --color-universe-secondary: #9999ff;
+  --color-universe-accent: #ffcc99;
+  --color-universe-background: #000000;
+  --color-universe-surface: #333333;
+  --color-universe-text: #ffffff;
+  --border-radius-universe: 20px;
+  --animation-duration: 300ms;
+}
+
+/* Imperial Theme (Star Wars) */
+:root[data-universe-theme='imperial'] {
+  --color-universe-primary: #dc2626;
+  --color-universe-secondary: #1f2937;
+  --color-universe-accent: #fbbf24;
+  --color-universe-background: #111827;
+  --color-universe-surface: #1f2937;
+  --color-universe-text: #f9fafb;
+  --border-radius-universe: 4px;
+  --animation-duration: 200ms;
+}
+
+/* Cyberpunk Theme */
+:root[data-universe-theme='cyberpunk'] {
+  --color-universe-primary: #00ff41;
+  --color-universe-secondary: #ff0080;
+  --color-universe-accent: #00d4ff;
+  --color-universe-background: #0a0a0a;
+  --color-universe-surface: #1a1a1a;
+  --color-universe-text: #e0e0e0;
+  --border-radius-universe: 0px;
+  --animation-duration: 100ms;
+}

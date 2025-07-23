@@ -1,0 +1,163 @@
+﻿import { Router, Request, Response, NextFunction } from 'express';
+import { fetchBooks, createBook, updateBook, deleteBook, createChapter, fetchChapters } from '../repositories/ragNodeRepository.js';
+
+const router = Router();
+
+/**
+ * @swagger
+ * /api/books:
+ *   get:
+ *     summary: List books for a universe
+ *     tags: [Books]
+ *     parameters:
+ *       - in: query
+ *         name: universeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Universe ID
+ *     responses:
+ *       200:
+ *         description: Array of books
+ */
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    const { universeId } = req.query;
+    if (!universeId) {
+        return res.status(400).json({ error: 'universeId is required' });
+    }
+    try {
+        const books = await fetchBooks(universeId as string);
+        res.json(books);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch books' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/books:
+ *   post:
+ *     summary: Create a new book for a universe
+ *     tags: [Books]
+ *     parameters:
+ *       - in: query
+ *         name: universeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Universe ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Book'
+ *     responses:
+ *       201:
+ *         description: Book created
+ */
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
+    const { universeId } = req.query;
+    const { title, ...rest } = req.body;
+    if (!universeId) {
+        return res.status(400).json({ error: 'universeId is required' });
+    }
+    if (!title || typeof title !== "string" || !title.trim()) {
+        return res.status(400).json({ error: "Book title is required" });
+    }
+    // Generate unique ID: base64 of title + timestamp
+    const base64Title = Buffer.from(title.trim()).toString('base64').replace(/=+$/, '');
+    const id = `bok-${base64Title}-${Date.now()}`;
+    const bookData = { id, type: "book", universeId, title, ...rest };
+    try {
+        const created = await createBook(universeId as string, bookData);
+        res.status(201).json(created);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to create book' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/books:
+ *   put:
+ *     summary: Update a book for a universe
+ *     tags: [Books]
+ *     parameters:
+ *       - in: query
+ *         name: universeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Universe ID
+ *       - in: query
+ *         name: bookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Book ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Book'
+ *     responses:
+ *       200:
+ *         description: Book updated
+ */
+router.put('/', async (req: Request, res: Response, next: NextFunction) => {
+    const { universeId, bookId } = req.query;
+    if (!universeId || !bookId) {
+        return res.status(400).json({ error: 'universeId and bookId are required' });
+    }
+    try {
+        const ok = await updateBook(universeId as string, bookId as string, req.body);
+        if (ok) res.json({ success: true });
+        else res.status(404).json({ error: 'Book not found' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to update book' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/books/{bookId}:
+ *   delete:
+ *     summary: Delete a book for a universe
+ *     tags: [Books]
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Book ID
+ *       - in: query
+ *         name: universeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Universe ID
+ *     responses:
+ *       200:
+ *         description: Book deleted
+ *       404:
+ *         description: Book not found
+ */
+router.delete('/:bookId', async (req: Request, res: Response, next: NextFunction) => {
+    const { universeId } = req.query;
+    const { bookId } = req.params;
+    if (!universeId || !bookId) {
+        return res.status(400).json({ error: 'universeId and bookId are required' });
+    }
+    try {
+        const ok = await deleteBook(universeId as string, bookId as string);
+        if (ok) res.json({ success: true });
+        else res.status(404).json({ error: 'Book not found' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete book' });
+    }
+});
+
+export default router;

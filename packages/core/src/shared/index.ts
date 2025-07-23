@@ -1,0 +1,25 @@
+﻿/**
+ * Shared utilities and types
+ */
+
+export interface BaseEntity {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  metadata?: Record<string, unknown>;
+}
+
+export interface Result<T> {
+  success: boolean;
+  data?: T;
+  error?: Error;
+}
+
+export type AsyncResult<T> = Promise<Result<T>>;
+
+export interface Logger {
+  debug(message: string, ...args: unknown[]): void;
+  info(message: string, ...args: unknown[]): void;
+  warn(message: string, ...args: unknown[]): void;
+  error(message: string, error?: Error, ...args: unknown[]): void;
+}

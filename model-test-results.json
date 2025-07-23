@@ -1,0 +1,128 @@
+{
+  "timestamp": "2025-07-04T03:26:31.631Z",
+  "testCases": [
+    {
+      "name": "Fantasy Politics",
+      "expectedTypes": [
+        "character",
+        "location",
+        "organization",
+        "object"
+      ]
+    },
+    {
+      "name": "Sci-Fi Discovery",
+      "expectedTypes": [
+        "character",
+        "location",
+        "object",
+        "event"
+      ]
+    },
+    {
+      "name": "Historical Event",
+      "expectedTypes": [
+        "event",
+        "location",
+        "organization",
+        "lore"
+      ]
+    },
+    {
+      "name": "Complex Fantasy",
+      "expectedTypes": [
+        "character",
+        "location",
+        "organization",
+        "object"
+      ]
+    }
+  ],
+  "modelSummaries": [
+    {
+      "model": "deepseek-coder-v2:16b",
+      "totalTests": 4,
+      "successfulTests": 4,
+      "avgResponseTime": 5523.5,
+      "avgEntitiesFound": 8.25,
+      "avgConfidence": 0.8125,
+      "jsonValidityRate": 1,
+      "overallScore": 0.9598825
+    },
+    {
+      "model": "mistral-nemo:12b",
+      "totalTests": 4,
+      "successfulTests": 4,
+      "avgResponseTime": 5529.75,
+      "avgEntitiesFound": 6.25,
+      "avgConfidence": 0.8125,
+      "jsonValidityRate": 1,
+      "overallScore": 0.9598512499999999
+    },
+    {
+      "model": "phi4:latest",
+      "totalTests": 4,
+      "successfulTests": 4,
+      "avgResponseTime": 7656.25,
+      "avgEntitiesFound": 8,
+      "avgConfidence": 0.8125,
+      "jsonValidityRate": 1,
+      "overallScore": 0.94921875
+    },
+    {
+      "model": "codestral:22b",
+      "totalTests": 4,
+      "successfulTests": 4,
+      "avgResponseTime": 10844.25,
+      "avgEntitiesFound": 8,
+      "avgConfidence": 0.8125,
+      "jsonValidityRate": 1,
+      "overallScore": 0.9332787499999999
+    },
+    {
+      "model": "qwen2.5:32b",
+      "totalTests": 4,
+      "successfulTests": 4,
+      "avgResponseTime": 15247.75,
+      "avgEntitiesFound": 7.25,
+      "avgConfidence": 0.8125,
+      "jsonValidityRate": 1,
+      "overallScore": 0.9112612499999999
+    },
+    {
+      "model": "gemma3:27b",
+      "totalTests": 4,
+      "successfulTests": 3,
+      "avgResponseTime": 16746,
+      "avgEntitiesFound": 8,
+      "avgConfidence": 0.8333333333333334,
+      "jsonValidityRate": 0.75,
+      "overallScore": 0.7329366666666667
+    },
+    {
+      "model": "llama3.3:latest",
+      "totalTests": 4,
+      "successfulTests": 0,
+      "avgResponseTime": 30010.75,
+      "avgEntitiesFound": 0,
+      "avgConfidence": 0,
+      "jsonValidityRate": 0,
+      "overallScore": 0
+    },
+    {
+      "model": "qwen3:14b",
+      "totalTests": 4,
+      "successfulTests": 0,
+      "avgResponseTime": 30008.25,
+      "avgEntitiesFound": 0,
+      "avgConfidence": 0,
+      "jsonValidityRate": 0,
+      "overallScore": 0
+    }
+  ],
+  "recommendations": {
+    "bestOverall": "deepseek-coder-v2:16b",
+    "fastest": "deepseek-coder-v2:16b",
+    "mostAccurate": "gemma3:27b"
+  }
+}

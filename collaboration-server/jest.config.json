@@ -1,0 +1,22 @@
+/**
+ * Collaboration Server Jest Configuration
+ * Uses shared configuration with collaboration server-specific overrides
+ */
+import { createJestConfig } from '../jest.config.shared.mjs';
+
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+export default createJestConfig({
+  displayName: 'collaboration-server',
+  testEnvironment: 'node',
+  rootDir: '.',
+  testMatch: [
+    '<rootDir>/src/**/__tests__/**/*.test.ts', 
+    '<rootDir>/**/?(*.)+(spec|test).ts'
+  ],
+  setupFiles: ['<rootDir>/jest.setup.ts'],
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts', 
+    '!<rootDir>/src/**/*.d.ts', 
+    '!<rootDir>/src/__tests__/**/*'
+  ],
+});

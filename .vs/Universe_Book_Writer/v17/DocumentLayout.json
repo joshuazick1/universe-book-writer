@@ -1,0 +1,90 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\jzick\\Universe_Book_Writer\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\Dashboard.tsx||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\web\\src\\components\\Dashboard.tsx||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\bookRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\routes\\bookRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorEmbeddingController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\controllers\\orchestratorEmbeddingController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\scripts\\run-tests-with-output.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:scripts\\run-tests-with-output.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Dashboard.tsx",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\Dashboard.tsx",
+              "RelativeDocumentMoniker": "ai-server\\web\\src\\components\\Dashboard.tsx",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\Dashboard.tsx",
+              "RelativeToolTip": "ai-server\\web\\src\\components\\Dashboard.tsx",
+              "ViewState": "AgIAANwBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-23T18:04:29.029Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "bookRoutes.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\bookRoutes.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\routes\\bookRoutes.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\bookRoutes.ts",
+              "RelativeToolTip": "ai-server\\src\\routes\\bookRoutes.ts",
+              "ViewState": "AgIAAIcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-23T05:24:44.274Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "run-tests-with-output.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\scripts\\run-tests-with-output.ts",
+              "RelativeDocumentMoniker": "scripts\\run-tests-with-output.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\scripts\\run-tests-with-output.ts",
+              "RelativeToolTip": "scripts\\run-tests-with-output.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-23T01:32:50.952Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "orchestratorEmbeddingController.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
+              "RelativeToolTip": "ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-23T01:17:01.532Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

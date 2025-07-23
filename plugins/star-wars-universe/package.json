@@ -1,0 +1,51 @@
+{
+    "name": "star-wars-universe-plugin",
+    "version": "0.0.1-dev",
+    "description": "Official Star Wars Universe plugin with Imperial/Rebel themes and galactic politics",
+    "main": "index.ts",
+    "type": "module",
+    "author": "VerseForge Team",
+    "license": "MIT",
+    "keywords": [
+        "star-wars",
+        "sci-fi",
+        "universe",
+        "imperial",
+        "rebel",
+        "force"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "plugin": {
+        "type": "universe",
+        "universeType": "star-wars",
+        "supportedFeatures": [
+            "sub-universes",
+            "themes",
+            "validation",
+            "ai-prompts",
+            "ui-components",
+            "faction-system",
+            "force-powers",
+            "galactic-politics"
+        ],
+        "frontend": {
+            "components": "./frontend/components",
+            "themes": "./themes",
+            "assets": "./assets"
+        },
+        "architecture": {
+            "type": "faction-based",
+            "focusAreas": [
+                "galactic-politics",
+                "force-abilities",
+                "planetary-systems",
+                "faction-warfare",
+                "technological-advancement"
+            ]
+        }
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}

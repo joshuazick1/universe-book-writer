@@ -1,0 +1,12 @@
+[
+    {
+        "id": "regex-001",
+        "input": "The stardate is 4523.3.",
+        "reference_regex": "^The stardate is \\d+\\.\\d+\\.$"
+    },
+    {
+        "id": "regex-002",
+        "input": "May the Force be with you!",
+        "reference_regex": "^May the Force be with you!$"
+    }
+]

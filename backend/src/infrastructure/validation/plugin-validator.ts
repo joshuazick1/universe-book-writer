@@ -1,0 +1,725 @@
+/**
+ * Enhanced plugin validation system with security checks and advanced validation rules
+ */
+
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import {
+  type Plugin,
+  type PluginConfig,
+  type PluginMetadata,
+  PluginType,
+} from '@verseforge/core';
+
+/**
+ * Validation severity levels
+ */
+export enum ValidationSeverity {
+  ERROR = 'error',
+  WARNING = 'warning',
+  INFO = 'info',
+}
+
+/**
+ * Validation rule result
+ */
+export interface ValidationResult {
+  valid: boolean;
+  severity: ValidationSeverity;
+  rule: string;
+  message: string;
+  details?: Record<string, unknown>;
+}
+
+/**
+ * Plugin validation report
+ */
+export interface PluginValidationReport {
+  valid: boolean;
+  pluginName: string;
+  results: ValidationResult[];
+  securityScore: number;
+  performanceScore: number;
+  overallScore: number;
+  timestamp: Date;
+}
+
+/**
+ * Security validation options
+ */
+export interface SecurityValidationOptions {
+  checkFilePermissions: boolean;
+  validateCodeSignature: boolean;
+  scanForMaliciousPatterns: boolean;
+  checkDependencyVulnerabilities: boolean;
+  enforceFileExtensions: boolean;
+  maxFileSize: number; // in bytes
+}
+
+/**
+ * Performance validation options
+ */
+export interface PerformanceValidationOptions {
+  maxInitializationTime: number; // in milliseconds
+  maxMemoryUsage: number; // in bytes
+  maxFileSize: number; // in bytes
+  checkAsyncOperations: boolean;
+}
+
+/**
+ * Validation configuration
+ */
+export interface ValidationConfig {
+  security: SecurityValidationOptions;
+  performance: PerformanceValidationOptions;
+  enableStrictMode: boolean;
+  allowedPluginTypes: PluginType[];
+  requiredFields: string[];
+  customValidators: ValidationRule[];
+}
+
+/**
+ * Custom validation rule interface
+ */
+export interface ValidationRule {
+  name: string;
+  description: string;
+  severity: ValidationSeverity;
+  validate: (
+    plugin: Plugin,
+    metadata: PluginMetadata,
+    config?: PluginConfig
+  ) => Promise<ValidationResult>;
+}
+
+/**
+ * Default malicious patterns to detect
+ */
+const MALICIOUS_PATTERNS = [
+  /eval\s*\(/i,
+  /Function\s*\(/i,
+  /process\.exit/i,
+  /child_process/i,
+  /fs\.unlink/i,
+  /fs\.rmdir/i,
+  /require\s*\(\s*['"`].*['"`]\s*\)/i,
+  /import\s*\(\s*['"`].*['"`]\s*\)/i,
+  /\.env/i,
+  /password/i,
+  /token/i,
+  /secret/i,
+  /crypto/i,
+];
+
+/**
+ * Enhanced plugin validator
+ */
+export class PluginValidator {
+  private config: ValidationConfig;
+  private customRules: Map<string, ValidationRule> = new Map();
+
+  constructor(config?: Partial<ValidationConfig>) {
+    this.config = {
+      security: {
+        checkFilePermissions: true,
+        validateCodeSignature: false,
+        scanForMaliciousPatterns: true,
+        checkDependencyVulnerabilities: true,
+        enforceFileExtensions: true,
+        maxFileSize: 10 * 1024 * 1024, // 10MB
+        ...config?.security,
+      },
+      performance: {
+        maxInitializationTime: 5000, // 5 seconds
+        maxMemoryUsage: 100 * 1024 * 1024, // 100MB
+        maxFileSize: 5 * 1024 * 1024, // 5MB
+        checkAsyncOperations: true,
+        ...config?.performance,
+      },
+      enableStrictMode: false,
+      allowedPluginTypes: Object.values(PluginType),
+      requiredFields: ['name', 'version', 'type'],
+      customValidators: [],
+      ...config,
+    };
+
+    this.initializeBuiltInRules();
+  }
+
+  /**
+   * Validate a plugin comprehensively
+   */
+  async validatePlugin(plugin: Plugin, pluginPath?: string): Promise<PluginValidationReport> {
+    const results: ValidationResult[] = [];
+    // Record start time for potential performance tracking
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _startTime = Date.now();
+
+    try {
+      // Basic metadata validation
+      results.push(...(await this.validateMetadata(plugin.metadata)));
+
+      // Configuration validation
+      if (plugin.config) {
+        results.push(...(await this.validateConfiguration(plugin.config)));
+      }
+
+      // Security validation
+      if (pluginPath) {
+        results.push(...(await this.validateSecurity(plugin, pluginPath)));
+      }
+
+      // Performance validation
+      results.push(...(await this.validatePerformance(plugin)));
+
+      // Type-specific validation
+      results.push(...(await this.validatePluginType(plugin)));
+
+      // Custom validation rules
+      results.push(...(await this.runCustomValidators(plugin)));
+
+      // Dependencies validation
+      results.push(...(await this.validateDependencies(plugin.metadata)));
+
+      const report = this.generateReport(plugin.metadata.name, results);
+
+      return report;
+    } catch (error) {
+      results.push({
+        valid: false,
+        severity: ValidationSeverity.ERROR,
+        rule: 'validation_error',
+        message: `Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        details: { error },
+      });
+
+      return this.generateReport(plugin.metadata.name, results);
+    }
+  }
+
+  /**
+   * Add custom validation rule
+   */
+  addCustomRule(rule: ValidationRule): void {
+    this.customRules.set(rule.name, rule);
+  }
+
+  /**
+   * Remove custom validation rule
+   */
+  removeCustomRule(ruleName: string): void {
+    this.customRules.delete(ruleName);
+  }
+
+  /**
+   * Get all custom rules
+   */
+  getCustomRules(): ValidationRule[] {
+    return Array.from(this.customRules.values());
+  }
+
+  /**
+   * Update validation configuration
+   */
+  updateConfig(config: Partial<ValidationConfig>): void {
+    this.config = { ...this.config, ...config };
+  }
+
+  /**
+   * Validate plugin metadata
+   */
+  private async validateMetadata(metadata: PluginMetadata): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    // Required fields validation
+    for (const field of this.config.requiredFields) {
+      if (!metadata[field as keyof PluginMetadata]) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.ERROR,
+          rule: 'required_field',
+          message: `Required field '${field}' is missing`,
+          details: { field },
+        });
+      }
+    }
+
+    // Name validation
+    if (metadata.name) {
+      if (!/^[a-zA-Z0-9\-_]+$/.test(metadata.name)) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.ERROR,
+          rule: 'invalid_name',
+          message: 'Plugin name contains invalid characters',
+        });
+      }
+
+      if (metadata.name.length > 50) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.WARNING,
+          rule: 'name_too_long',
+          message: 'Plugin name is too long (max 50 characters)',
+        });
+      }
+    }
+
+    // Version validation
+    if (metadata.version) {
+      const semverRegex = /^\d+\.\d+\.\d+(-[a-zA-Z0-9-]+)?$/;
+      if (!semverRegex.test(metadata.version)) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.WARNING,
+          rule: 'invalid_version',
+          message: 'Plugin version does not follow semantic versioning',
+        });
+      }
+    }
+
+    // Type validation
+    if (metadata.type && !this.config.allowedPluginTypes.includes(metadata.type)) {
+      results.push({
+        valid: false,
+        severity: ValidationSeverity.ERROR,
+        rule: 'invalid_type',
+        message: `Plugin type '${metadata.type}' is not allowed`,
+        details: { allowedTypes: this.config.allowedPluginTypes },
+      });
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate plugin configuration
+   */
+  private async validateConfiguration(config: PluginConfig): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    // Basic configuration validation
+    if (typeof config !== 'object' || config === null) {
+      results.push({
+        valid: false,
+        severity: ValidationSeverity.ERROR,
+        rule: 'invalid_config',
+        message: 'Plugin configuration must be an object',
+      });
+      return results;
+    }
+
+    // Check for sensitive data in configuration
+    const configStr = JSON.stringify(config);
+    const sensitivePatterns = [/password/i, /secret/i, /token/i, /key/i];
+
+    for (const pattern of sensitivePatterns) {
+      if (pattern.test(configStr)) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.WARNING,
+          rule: 'sensitive_data',
+          message: 'Configuration may contain sensitive data',
+        });
+        break;
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate plugin security
+   */
+  private async validateSecurity(plugin: Plugin, pluginPath: string): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    try {
+      // File size validation
+      const stats = await fs.stat(pluginPath);
+      if (stats.size > this.config.security.maxFileSize) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.WARNING,
+          rule: 'file_too_large',
+          message: `Plugin file is too large (${stats.size} bytes, max: ${this.config.security.maxFileSize})`,
+        });
+      }
+
+      // File permissions validation
+      if (this.config.security.checkFilePermissions) {
+        const mode = stats.mode & 0o777;
+        if (mode & 0o002) {
+          // World writable
+          results.push({
+            valid: false,
+            severity: ValidationSeverity.ERROR,
+            rule: 'insecure_permissions',
+            message: 'Plugin file has insecure permissions (world writable)',
+          });
+        }
+      }
+
+      // File extension validation
+      if (this.config.security.enforceFileExtensions) {
+        const allowedExtensions = ['.js', '.mjs', '.cjs'];
+        const ext = path.extname(pluginPath);
+        if (!allowedExtensions.includes(ext)) {
+          results.push({
+            valid: false,
+            severity: ValidationSeverity.ERROR,
+            rule: 'invalid_extension',
+            message: `Plugin file has invalid extension '${ext}'`,
+          });
+        }
+      }
+
+      // Malicious pattern scanning
+      if (this.config.security.scanForMaliciousPatterns) {
+        const content = await fs.readFile(pluginPath, 'utf-8');
+        for (const pattern of MALICIOUS_PATTERNS) {
+          if (pattern.test(content)) {
+            results.push({
+              valid: false,
+              severity: ValidationSeverity.ERROR,
+              rule: 'malicious_pattern',
+              message: `Potentially malicious pattern detected: ${pattern.source}`,
+              details: { pattern: pattern.source },
+            });
+          }
+        }
+      }
+
+      // Code signature validation (placeholder)
+      if (this.config.security.validateCodeSignature) {
+        // This would require integration with actual code signing validation
+        results.push({
+          valid: true,
+          severity: ValidationSeverity.INFO,
+          rule: 'code_signature',
+          message: 'Code signature validation not implemented',
+        });
+      }
+    } catch (error) {
+      results.push({
+        valid: false,
+        severity: ValidationSeverity.ERROR,
+        rule: 'security_check_failed',
+        message: `Security validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      });
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate plugin performance characteristics
+   */
+  private async validatePerformance(plugin: Plugin): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    // Test initialization time
+    const startTime = process.hrtime.bigint();
+    try {
+      // Create a test instance to measure initialization
+      const testPlugin = Object.create(plugin);
+      if (typeof testPlugin.initialize === 'function') {
+        await Promise.race([
+          testPlugin.initialize(),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('Initialization timeout')),
+              this.config.performance.maxInitializationTime
+            )
+          ),
+        ]);
+      }
+
+      const endTime = process.hrtime.bigint();
+      const initTime = Number(endTime - startTime) / 1000000; // Convert to milliseconds
+
+      if (initTime > this.config.performance.maxInitializationTime) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.WARNING,
+          rule: 'slow_initialization',
+          message: `Plugin initialization is too slow (${initTime}ms, max: ${this.config.performance.maxInitializationTime}ms)`,
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Initialization timeout') {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.ERROR,
+          rule: 'initialization_timeout',
+          message: 'Plugin initialization timed out',
+        });
+      }
+    }
+
+    // Memory usage estimation (basic check)
+    const memBefore = process.memoryUsage().heapUsed;
+    // Simulate plugin load
+    const memAfter = process.memoryUsage().heapUsed;
+    const memUsed = memAfter - memBefore;
+
+    if (memUsed > this.config.performance.maxMemoryUsage) {
+      results.push({
+        valid: false,
+        severity: ValidationSeverity.WARNING,
+        rule: 'high_memory_usage',
+        message: `Plugin uses too much memory (${memUsed} bytes, max: ${this.config.performance.maxMemoryUsage})`,
+      });
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate plugin type-specific requirements
+   */
+  private async validatePluginType(plugin: Plugin): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    switch (plugin.metadata.type) {
+      case PluginType.UNIVERSE:
+        results.push(...(await this.validateUniversePlugin(plugin)));
+        break;
+      case PluginType.THEME:
+        results.push(...(await this.validateThemePlugin(plugin)));
+        break;
+      case PluginType.AI:
+        results.push(...(await this.validateAIPlugin(plugin)));
+        break;
+      case PluginType.CORE:
+        results.push(...(await this.validateCorePlugin(plugin)));
+        break;
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate universe plugin specific requirements
+   */
+  private async validateUniversePlugin(plugin: Plugin): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    // Check for required universe plugin methods
+    const requiredMethods = ['getUniverseData', 'validateStoryElement'];
+    for (const method of requiredMethods) {
+      if (typeof (plugin as unknown as Record<string, unknown>)[method] !== 'function') {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.ERROR,
+          rule: 'missing_universe_method',
+          message: `Universe plugin missing required method: ${method}`,
+        });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate theme plugin specific requirements
+   */
+  private async validateThemePlugin(plugin: Plugin): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    // Check for required theme plugin methods
+    const requiredMethods = ['getThemeData', 'applyTheme'];
+    for (const method of requiredMethods) {
+      if (typeof (plugin as unknown as Record<string, unknown>)[method] !== 'function') {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.ERROR,
+          rule: 'missing_theme_method',
+          message: `Theme plugin missing required method: ${method}`,
+        });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate AI plugin specific requirements
+   */
+  private async validateAIPlugin(plugin: Plugin): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    // Check for required AI plugin methods
+    const requiredMethods = ['processRequest', 'getModelInfo'];
+    for (const method of requiredMethods) {
+      if (typeof (plugin as unknown as Record<string, unknown>)[method] !== 'function') {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.ERROR,
+          rule: 'missing_ai_method',
+          message: `AI plugin missing required method: ${method}`,
+        });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate core plugin specific requirements
+   */
+  private async validateCorePlugin(plugin: Plugin): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    // Core plugins have minimal requirements
+    if (!plugin.metadata.description) {
+      results.push({
+        valid: false,
+        severity: ValidationSeverity.WARNING,
+        rule: 'missing_description',
+        message: 'Core plugin should have a description',
+      });
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate plugin dependencies
+   */
+  private async validateDependencies(metadata: PluginMetadata): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    if (metadata.dependencies) {
+      for (const [depName, version] of Object.entries(metadata.dependencies)) {
+        // Basic dependency validation
+        if (!version || typeof version !== 'string') {
+          results.push({
+            valid: false,
+            severity: ValidationSeverity.ERROR,
+            rule: 'invalid_dependency_version',
+            message: `Invalid version for dependency ${depName}`,
+          });
+        }
+
+        // Check for potentially vulnerable dependencies (placeholder)
+        if (this.config.security.checkDependencyVulnerabilities) {
+          // This would require integration with vulnerability databases
+          results.push({
+            valid: true,
+            severity: ValidationSeverity.INFO,
+            rule: 'dependency_security',
+            message: `Dependency vulnerability check not implemented for ${depName}`,
+          });
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Run custom validation rules
+   */
+  private async runCustomValidators(plugin: Plugin): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = [];
+
+    for (const rule of this.customRules.values()) {
+      try {
+        const result = await rule.validate(plugin, plugin.metadata, plugin.config);
+        results.push(result);
+      } catch (error) {
+        results.push({
+          valid: false,
+          severity: ValidationSeverity.ERROR,
+          rule: rule.name,
+          message: `Custom validation rule '${rule.name}' failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Generate validation report
+   */
+  private generateReport(pluginName: string, results: ValidationResult[]): PluginValidationReport {
+    const errors = results.filter(r => !r.valid && r.severity === ValidationSeverity.ERROR);
+    // Track warnings for potential future use
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _warnings = results.filter(r => !r.valid && r.severity === ValidationSeverity.WARNING);
+
+    const valid = errors.length === 0;
+
+    // Calculate scores
+    const securityResults = results.filter(
+      r =>
+        r.rule.includes('security') ||
+        r.rule.includes('malicious') ||
+        r.rule.includes('permissions')
+    );
+    const securityScore = this.calculateScore(securityResults);
+
+    const performanceResults = results.filter(
+      r =>
+        r.rule.includes('performance') ||
+        r.rule.includes('memory') ||
+        r.rule.includes('initialization')
+    );
+    const performanceScore = this.calculateScore(performanceResults);
+
+    const overallScore = this.calculateOverallScore(results);
+
+    return {
+      valid,
+      pluginName,
+      results,
+      securityScore,
+      performanceScore,
+      overallScore,
+      timestamp: new Date(),
+    };
+  }
+
+  /**
+   * Calculate score for a set of results
+   */
+  private calculateScore(results: ValidationResult[]): number {
+    if (results.length === 0) return 100;
+
+    let score = 100;
+    for (const result of results) {
+      if (!result.valid) {
+        switch (result.severity) {
+          case ValidationSeverity.ERROR:
+            score -= 20;
+            break;
+          case ValidationSeverity.WARNING:
+            score -= 10;
+            break;
+          case ValidationSeverity.INFO:
+            score -= 2;
+            break;
+        }
+      }
+    }
+
+    return Math.max(0, score);
+  }
+
+  /**
+   * Calculate overall score
+   */
+  private calculateOverallScore(results: ValidationResult[]): number {
+    return this.calculateScore(results);
+  }
+
+  /**
+   * Initialize built-in validation rules
+   */
+  private initializeBuiltInRules(): void {
+    // Add any built-in custom rules here
+    // This is a placeholder for future built-in rules
+  }
+}

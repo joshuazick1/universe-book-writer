@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Playwright Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .primary {
+            background-color: #007acc;
+            color: white;
+        }
+
+        .secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            min-height: 50px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007acc;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎭 MCP Playwright Test Page</h1>
+        <p>This page is designed to test Playwright MCP server functionality with GitHub Copilot.</p>
+
+        <div class="test-buttons">
+            <button id="test-btn-1" class="primary" onclick="handleClick('Test 1')">Test Button 1</button>
+            <button id="test-btn-2" class="secondary" onclick="handleClick('Test 2')">Test Button 2</button>
+            <button id="test-btn-3" class="success" onclick="handleClick('Test 3')">Test Button 3</button>
+        </div>
+
+        <div class="form-group">
+            <label for="test-input">Test Input Field:</label>
+            <input type="text" id="test-input" placeholder="Enter test data here...">
+        </div>
+
+        <div class="form-group">
+            <label for="test-textarea">Test Text Area:</label>
+            <textarea id="test-textarea" placeholder="Enter longer test content here..."></textarea>
+        </div>
+
+        <div class="test-buttons">
+            <button onclick="submitForm()" class="primary">Submit Form</button>
+            <button onclick="clearForm()" class="secondary">Clear Form</button>
+        </div>
+
+        <div id="result">
+            <strong>Result:</strong> <span id="result-text">No actions performed yet.</span>
+        </div>
+
+        <h3>Testing Instructions:</h3>
+        <ul>
+            <li>Use Playwright MCP to interact with this page</li>
+            <li>Try clicking buttons, filling forms, and reading content</li>
+            <li>Ask Copilot to help automate interactions with this page</li>
+            <li>Test element selection and manipulation</li>
+        </ul>
+    </div>
+
+    <script>
+        function handleClick(buttonName) {
+            const resultText = document.getElementById('result-text');
+            resultText.textContent = `${buttonName} was clicked at ${new Date().toLocaleTimeString()}`;
+            console.log(`Button clicked: ${buttonName}`);
+        }
+
+        function submitForm() {
+            const input = document.getElementById('test-input').value;
+            const textarea = document.getElementById('test-textarea').value;
+            const resultText = document.getElementById('result-text');
+
+            resultText.textContent = `Form submitted with: Input="${input}", Textarea="${textarea}"`;
+            console.log('Form submitted', { input, textarea });
+        }
+
+        function clearForm() {
+            document.getElementById('test-input').value = '';
+            document.getElementById('test-textarea').value = '';
+            document.getElementById('result-text').textContent = 'Form cleared.';
+            console.log('Form cleared');
+        }
+
+        // Add some dynamic content for testing
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('MCP Playwright test page loaded');
+        });
+    </script>
+</body>
+
+</html>

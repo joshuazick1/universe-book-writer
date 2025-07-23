@@ -2,15 +2,32 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "composite": true,
     "declarationMap": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "target": "ES2020",
-    "module": "CommonJS"
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "isolatedModules": true
   },
-  "references": [{ "path": "../packages/core" }],
-  "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  "references": [
+    {
+      "path": "../packages/core"
+    }
+  ],
+  "files": [
+    "src/config/database.config.ts"
+  ],
+  "include": [
+    "src/**/*",
+    "orchestrator/**/*.ts",
+    "benchmarking/**/*.ts",
+    "types/**/*.ts",
+    "tests/**/*",
+    "tests/unit/**/*.ts",
+    "tests/unit/**/*.test.ts",
+    "tests/unit/**/*.js",
+    "../shared/**/*.ts"
+  ]
 }

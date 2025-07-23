@@ -1,0 +1,120 @@
+{
+    "folders": [
+        {
+            "name": "🏠 Root",
+            "path": "."
+        },
+        {
+            "name": "🖥️ Frontend",
+            "path": "./frontend"
+        },
+        {
+            "name": "⚙️ Backend",
+            "path": "./backend"
+        },
+        {
+            "name": "🤖 AI Server",
+            "path": "./ai-server"
+        },
+        {
+            "name": "🤝 Collaboration Server",
+            "path": "./collaboration-server"
+        },
+        {
+            "name": "📦 Packages",
+            "path": "./packages"
+        },
+        {
+            "name": "📚 Documentation",
+            "path": "./docs"
+        },
+        {
+            "name": "🔧 Scripts & Tools",
+            "path": "./scripts"
+        }
+    ],
+    "settings": {
+        "chat.agent.enabled": true,
+        "chat.mcp.enabled": true,
+        "mcp": {
+            "servers": {
+                "filesystem": {
+                    "command": "npx",
+                    "args": [
+                        "@cyanheads/filesystem-mcp-server"
+                    ],
+                    "env": {
+                        "ALLOWED_DIRECTORIES": "./src,./docs,./backend,./frontend,./ai-server,./collaboration-server,./packages,./scripts,./tools"
+                    }
+                },
+                "playwright": {
+                    "command": "npx",
+                    "args": [
+                        "@executeautomation/playwright-mcp-server"
+                    ]
+                }
+            }
+        },
+        "files.associations": {
+            "*.md": "markdown",
+            "*.mjs": "javascript"
+        },
+        "typescript.preferences.inlayHints.parameterNames.enabled": "all",
+        "typescript.preferences.inlayHints.variableTypes.enabled": true,
+        "typescript.preferences.inlayHints.functionLikeReturnTypes.enabled": true,
+        "editor.inlayHints.enabled": "on",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+        },
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/coverage": true,
+            "**/build": true,
+            "**/dist": true,
+            "**/test-results": true,
+            "**/.vscode": false
+        },
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/coverage": true,
+            "**/build": true,
+            "**/dist": true
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "github.copilot",
+            "github.copilot-chat",
+            "vikashloomba.copilot-mcp-search",
+            "ms-vscode.vscode-typescript-next",
+            "bradlc.vscode-tailwindcss",
+            "esbenp.prettier-vscode",
+            "ms-playwright.playwright"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "🚀 Setup MCP Servers",
+                "type": "shell",
+                "command": "powershell.exe",
+                "args": [
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    "./scripts/setup-mcp-servers.ps1"
+                ],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "new"
+                },
+                "problemMatcher": []
+            }
+        ]
+    }
+}

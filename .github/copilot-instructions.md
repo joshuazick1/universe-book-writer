@@ -1,34 +1,62 @@
-# GitHub Copilot Custom Instructions
+# Copilot Instructions for Universe Book Writer (VerseForge)
 
-This project is a **Multi-Universe Book Series Writing Assistant**, designed to help writers craft series of books set in various fictional universes. The base application provides a framework for world-building and storytelling, with franchise-specific features implemented through plugins (such as Star Trek, Star Wars, or custom universes). The application provides tools for:
+## Project Overview
 
-- **World-Building**: Comprehensive creation of locations, vessels, factions, lore, etc., adaptable to any fictional universe through plugins.
-- **Character Development**: Tools for developing and managing characters across multiple books.
-- **Consistency Maintenance**: Ensuring continuity and coherence throughout the series.
-- **AI-Assisted Writing**: Utilizing Ollama for intelligent writing assistance.
-- **Visual Planning**: Timelines, relationship maps, and other planning tools.
-- **Real-Time Collaboration**: Features enabling multiple users to work together seamlessly.
+- **Monorepo** for a multi-universe book writing assistant: backend (Node.js/Express), frontend (React/Vite), AI server (Ollama), collaboration server, plugins, and shared utilities.
+- **Plugin-first**: All universe-specific logic is implemented as plugins. Core system remains agnostic.
+- **Layered backend**: Follows strict Clean Architecture (`backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md`): Core → Application → Infrastructure → API.
+- **Shared code**: All cross-cutting logic (node creation, types, logging, encryption, validation, etc.) is centralized in `shared/` and imported by all packages.
 
-The project adopts a **monorepo structure** comprising:
+## Key Patterns & Conventions
 
-- **Frontend**: React, TypeScript, Vite
-- **Backend**: Node.js, Express
-- **AI Server**: Ollama
-- **Collaboration Server**: Real-time collaboration functionalities
-- **Database**: MongoDB for data storage
+- **Strict TypeScript**: Use interfaces, readonly, and strict typing everywhere. No `any` unless unavoidable.
+- **ES Modules only**: All code uses `import`/`export`.
+- **Barrel files**: Each directory (especially in `shared/`) should have an `index.ts` for exports.
+- **File size**: Backend files <200 lines, frontend <500 lines. Decompose logic aggressively.
+- **Testing**: All logic must be unit tested. Use the enhanced TypeScript runner (`scripts/run-tests-with-output.ts`) for all test execution. See below for commands.
+- **Documentation**: Every module and shared utility must have JSDoc and a local README with usage and edge cases.
+- **No duplication**: All shared logic (node services, types, helpers) must exist in `shared/` and be imported everywhere. Remove old copies after migration.
+- **Plugin SDK**: All plugin development must follow the SDK in `packages/plugin-sdk/`.
 
-## Development Guidelines
+## Developer Workflows
 
-### Code Style
+- **Build/Dev**: Use `npm run dev` (all services), or `npm run dev:backend`, `npm run dev:frontend`, etc.
+- **Testing**: Use `npm test` for all tests, or `npm run test:backend`, `npm run test:frontend`, etc. For targeted runs:
+  - `npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth"`
+  - `npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" --coverage`
+  - All test logs and summaries are in `test-results/` (rotated, per-suite, with metadata).
+- **CI/CD**: All merges require passing tests and >80% coverage. CI runs must use `--ci` or `--json` for machine-readable output.
+- **PowerShell**: Use `;` to chain commands. See `docs/POWERSHELL_GUIDE.md` for Windows-specific tips.
 
-- **TypeScript Practices**:
+## Architecture & Data Flow
 
-  - Use **ES Modules** (`import`/`export`) exclusively.
-  - Enforce **strict typing**; avoid the `any` type unless absolutely necessary.
-  - Prefer `interface` over `type` for defining object shapes, unless specific use cases dictate otherwise.
-  - Utilize `readonly` for immutable properties to enhance code reliability.
+- **Node creation**: Use `ensureNode` from `shared/node/nodeService.ts` everywhere. Example:
+  ```ts
+  import { ensureNode } from 'shared/node/nodeService';
+  const universeNode = await ensureNode({ type: 'universe', title: universeId, metadata: { universeId } });
+  ```
+- **Types**: All shared types/interfaces are in `shared/types/`. Never redefine in backend, ai-server, or plugins.
+- **Logging, encryption, validation, deduplication**: Always import from `shared/` (see `shared/README.md` for structure).
+- **API**: REST endpoints are versioned and documented in OpenAPI. See `backend/docs/API_DOCUMENTATION.md`.
+- **Collaboration**: Real-time sync via WebSocket (`collaboration-server/`).
+- **AI**: All AI orchestration and prompt logic is in `ai-server/`, with shared types in `shared/`.
 
-- **React Components**:
+## Examples & References
+
+- **Directory structure**: See `MODULAR_DIRECTORY_STRUCTURE.md` and `shared/README.md` for canonical layouts.
+- **Backend layering**: See `backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md`.
+- **Plugin development**: See `packages/plugin-sdk/README.md` and `plugins/` for real-world examples.
+- **Test runner**: See `scripts/run-tests-with-output.ts` for advanced test/CI features.
+
+## Special Notes
+
+- **All migrations**: When moving code to `shared/`, update all imports, remove old files, and update `tsconfig.json` includes.
+- **Architectural decisions**: All major changes must be logged in `docs/DECISION_LOG.md`.
+- **Documentation**: Update module and root READMEs, and architectural diagrams, after any structural change.
+
+---
+
+For more, see: `README.md`, `shared/README.md`, `backend/CLEAN_BACKEND_ARCHITECTURE_PLAN.md`, `MODULAR_DIRECTORY_STRUCTURE.md`, and `docs/DECISION_LOG.md`.
 
   - Employ **functional components** with hooks; avoid class components.
   - Use `PascalCase` for component names and filenames to maintain consistency.
@@ -128,6 +156,82 @@ The project adopts a **monorepo structure** comprising:
     - Document new file paths and their purposes.
     - Detail how they integrate into the existing architecture.
     - Specify dependencies and interfaces.
+
+### Enhanced Test Runner Guidelines
+
+- **TypeScript Test Runner**:
+
+  - Located at `scripts/run-tests-with-output.ts` - a fully TypeScript-powered test execution system
+  - Uses `tsx` for direct TypeScript execution without compilation step
+  - Provides organized output management with separate files per test suite
+  - Implements automatic log rotation to prevent disk space accumulation
+
+- **Output Management Features**:
+
+  - **Separate files per test suite**: Each Jest test file gets its own `.log` file
+  - **Timestamped directories**: Test runs organized in `test-results/run_YYYY-MM-DDTHH-MM-SS/`
+  - **ANSI stripping**: Clean, readable log files without terminal escape codes
+  - **Log rotation**: Automatically keeps only the 10 most recent test runs
+  - **Descriptive filenames**: Path-based naming makes finding specific test outputs easy
+
+- **Real-time Feedback**:
+
+  - Live progress indicators: ✅ for passed, ❌ for failed, ⏭️ for skipped tests
+  - Accurate test result counting with Jest summary parsing
+  - Console displays important test suite results immediately
+  - Final summary shows precise counts matching Jest output
+
+- **Flexible Test Execution**:
+
+  - Target specific projects: `backend`, `frontend`, `ai-server`, `collaboration-server`, `packages`, `e2e`
+  - Pattern matching: `--pattern "auth"` runs only tests matching the pattern
+  - Issue tracking: `--comment "Bug fix description"` adds context to test runs
+  - Coverage reports: `--coverage` generates and organizes coverage data
+  - Watch mode: `--watch` for continuous testing during development
+
+- **CI-Friendly Output**:
+
+  - Always include a `summary.json` file for every test run. This file must be written to the test results directory, regardless of flags.
+  - Use `--ci` or `--json` flags when running tests in CI/CD pipelines, or when you want machine-readable output for further automation or reporting.
+  - If either flag is present, the runner must print the full JSON summary (from `summary.json`) to stdout, wrapped between `CI_SUMMARY_JSON_START` and `CI_SUMMARY_JSON_END` markers.
+  - The `--ci` flag is intended for automated environments (CI/CD, build servers, etc.).
+  - The `--json` flag is for local or scripted runs where a JSON summary is desired in the output.
+  - Both flags can be used together; their effect is the same.
+
+- **Output Rules**:
+
+  - The JSON summary must include:
+    - Timestamp, target, patterns, comment, duration, exit code, test results (passed/failed/skipped/total), log file paths, and coverage file path if present.
+    - For each suite, include status, duration, log file, and failed test names if any.
+  - The summary must be valid JSON and suitable for parsing by CI tools or scripts.
+  - The summary must always be written to disk, even if the flags are not present.
+  - When the flags are present, the summary must be printed to stdout as a single block, for easy extraction by CI systems.
+
+- **Usage Examples**:
+
+  ```bash
+  # Run all tests with enhanced output
+  npm test
+
+  # Run specific project tests
+  npm run test:backend
+  npm run test:frontend
+
+  # Run pattern-matched tests with comments
+  npx tsx scripts/run-tests-with-output.ts --pattern "auth" --comment "Testing auth system"
+
+  # Run specific project with pattern and coverage
+  npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button" --coverage --comment "UI testing"
+
+  # CI run, machine-readable output
+  npx tsx scripts/run-tests-with-output.ts --ci
+
+  # Local run, but want JSON summary in output
+  npx tsx scripts/run-tests-with-output.ts --json backend
+
+  # NPM script with CI output
+  yarn test --ci
+  ```
 
 ### Environment Notes
 

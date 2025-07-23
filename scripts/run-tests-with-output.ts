@@ -1,0 +1,478 @@
+#!/usr/bin/env node
+
+/**
+ * Enhanced Test Runner with Output Management
+ *
+ * Features:
+ * - Breaks output into manageable sizes (separate files per test suite)
+ * - Strips ANSI encoding from saved output
+ * - Implements log rotation (keeps only recent test runs)
+ * - Supports individual test/pattern execution
+ * - Creates timestamped subdirectories for organization
+ *
+ * Usage:
+ *   npx tsx scripts/run-tests-with-output.ts [options] [target] [pattern]
+ *
+ * Examples:
+ *   npx tsx scripts/run-tests-with-output.ts --all
+ *   npx tsx scripts/run-tests-with-output.ts backend
+ *   npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button"
+ *   npx tsx scripts/run-tests-with-output.ts --comment "Fixing auth bug" backend
+ */
+
+import { spawn, ChildProcess } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+interface TestRunOptions {
+  target: string;
+  pattern: string | null;
+  testPathPattern: string | null;
+  comment: string | null;
+  coverage: boolean;
+  watch: boolean;
+  verbose: boolean;
+  passthroughArgs: string[];
+  ci: boolean;
+  json: boolean;
+}
+
+interface TestRunMetadata {
+  timestamp: string;
+  target: string;
+  pattern: string | null;
+  testPathPattern: string | null;
+  comment: string | null;
+  coverage: boolean;
+  watch: boolean;
+  nodeVersion: string;
+  platform: string;
+  cwd: string;
+}
+
+interface TestSummary {
+  timestamp: string;
+  target: string;
+  pattern: string | null;
+  testPathPattern: string | null;
+  comment: string | null;
+  duration: number;
+  exitCode: number;
+  results: {
+    passed: number;
+    failed: number;
+    skipped: number;
+    total: number;
+  };
+  files: string[];
+  coverageFile?: string;
+  targets?: TestSummary[]; // For aggregate 'all' results
+}
+
+interface LogEntry {
+  name: string;
+  path: string;
+  mtime: Date;
+}
+
+interface LcovRecord {
+  file: string;
+  functions: {
+    found: number;
+    hit: number;
+    details: Array<{ name: string; line: number; hits: number }>;
+  };
+  lines: {
+    found: number;
+    hit: number;
+    details: Array<{ line: number; hits: number }>;
+  };
+  branches: {
+    found: number;
+    hit: number;
+    details: Array<{ line: number; block: number; branch: number; hits: number }>;
+  };
+}
+
+interface CoverageRow {
+  file: string;
+  stmtPercent: number;
+  branchPercent: number;
+  funcPercent: number;
+  linePercent: number;
+  stmtHit: number;
+  stmtTotal: number;
+  branchHit: number;
+  branchTotal: number;
+  funcHit: number;
+  funcTotal: number;
+  lineHit: number;
+  lineTotal: number;
+  uncoveredLines: string;
+}
+
+class TestRunner {
+  /**
+   * Buffer for output before any suite starts (so early debug output is not lost)
+   */
+  private _preSuiteBuffer: string = '';
+  private testResultsDir: string;
+  private maxLogDirs: number;
+  private currentRunDir: string | null;
+  private testSuiteOutputs: Map<string, string>;
+  private currentTestSuite: string | null;
+  private totalTests: number;
+  private passedTests: number;
+  private failedTests: number;
+  private skippedTests: number;
+  private projectRoot: string;
+  private startedSuites: Set<string> = new Set();
+  private completedSuites: Set<string> = new Set();
+  private suiteLogPaths: Map<string, string> = new Map();
+  private suiteStartTimes: Map<string, number> = new Map();
+  private suiteFailedTests: Map<string, string[]> = new Map();
+
+  constructor() {
+    // Find and change to project root directory
+    this.projectRoot = this.findProjectRoot();
+    process.chdir(this.projectRoot);
+
+    this.testResultsDir = path.join(this.projectRoot, 'test-results');
+    this.maxLogDirs = 10; // Keep only last 10 test runs
+    this.currentRunDir = null;
+    this.testSuiteOutputs = new Map();
+    this.currentTestSuite = null;
+    this.totalTests = 0;
+    this.passedTests = 0;
+    this.failedTests = 0;
+    this.skippedTests = 0;
+  }
+
+  /**
+   * Find the project root by looking for package.json with monorepo structure
+   */
+  private findProjectRoot(): string {
+    let currentDir = process.cwd();
+
+    while (currentDir !== path.dirname(currentDir)) {
+      const packageJsonPath = path.join(currentDir, 'package.json');
+
+      if (fs.existsSync(packageJsonPath)) {
+        try {
+          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+          // Check if this is the monorepo root by looking for our specific structure
+          if (
+            packageJson.name === 'verseforge' ||
+            (packageJson.workspaces && Array.isArray(packageJson.workspaces)) ||
+            (fs.existsSync(path.join(currentDir, 'frontend')) &&
+              fs.existsSync(path.join(currentDir, 'backend')) &&
+              fs.existsSync(path.join(currentDir, 'scripts')))
+          ) {
+            console.log(`📁 Found project root: ${currentDir}`);
+            return currentDir;
+          }
+        } catch (error) {
+          // Continue searching if package.json is invalid
+        }
+      }
+
+      currentDir = path.dirname(currentDir);
+    }
+
+    // Fallback to current directory if no root found
+    console.warn('⚠️  Could not find project root, using current directory');
+    return process.cwd();
+  }
+
+  /**
+   * Parse command line arguments, including npm passthrough (after --)
+   */
+  parseArgs(): TestRunOptions & { ci: boolean; json: boolean } {
+    // Support npm passthrough: npm run test -- frontend --pattern "Button" --runInBand
+    let args = process.argv.slice(2);
+    const doubleDashIdx = args.indexOf('--');
+    let passthroughArgs: string[] = [];
+    if (doubleDashIdx !== -1) {
+      passthroughArgs = args.slice(doubleDashIdx + 1);
+      args = args.slice(0, doubleDashIdx);
+    }
+    const options: TestRunOptions & { ci: boolean; json: boolean } = {
+      target: 'all',
+      pattern: null,
+      testPathPattern: null,
+      comment: null,
+      coverage: false,
+      watch: false,
+      verbose: false,
+      passthroughArgs,
+      ci: false,
+      json: false,
+    };
+    for (let i = 0; i < args.length; i++) {
+      const arg = args[i];
+      switch (arg) {
+        case '--ci':
+          options.ci = true;
+          break;
+        case '--json':
+          options.json = true;
+          break;
+        case '--comment':
+        case '-c':
+          options.comment = args[++i];
+          break;
+        case '--pattern':
+        case '-p':
+          options.pattern = args[++i];
+          break;
+        case '--test-path-pattern':
+        case '--file':
+        case '-f':
+          options.testPathPattern = args[++i];
+          break;
+        case '--coverage':
+          options.coverage = true;
+          break;
+        case '--watch':
+        case '-w':
+          options.watch = true;
+          break;
+        case '--verbose':
+        case '-v':
+          options.verbose = true;
+          break;
+        case '--all':
+          options.target = 'all';
+          break;
+        case '--help':
+        case '-h':
+          this.showHelp();
+          process.exit(0);
+          break;
+        default:
+          if (
+            !arg.startsWith('--') &&
+            [
+              'backend',
+              'frontend',
+              'ai-server',
+              'collaboration-server',
+              'packages',
+              'e2e',
+            ].includes(arg)
+          ) {
+            options.target = arg;
+          } else if (!arg.startsWith('--') && !options.pattern && !options.testPathPattern) {
+            // If no flags are set, treat as a pattern first
+            options.pattern = arg;
+          } else if (arg.startsWith('--')) {
+            // Forward unknown flags to Jest
+            options.passthroughArgs.push(arg);
+            // If next arg is not a flag, treat as value
+            if (args[i + 1] && !args[i + 1].startsWith('--')) {
+              options.passthroughArgs.push(args[++i]);
+            }
+          }
+          break;
+      }
+    }
+    return options;
+  }
+
+  /**
+   * Show help information
+   */
+  showHelp(): void {
+    console.log(`
+Enhanced Test Runner with Output Management
+
+Usage: npx tsx scripts/run-tests-with-output.ts [options] [target] [pattern]
+
+Targets:
+  all                    Run all available test targets sequentially (default)
+  backend               Run backend tests only
+  frontend              Run frontend tests only
+  ai-server             Run AI server tests only
+  collaboration-server  Run collaboration server tests only
+  packages              Run package tests only
+  shared                Run shared utilities/types tests only
+  e2e                   Run end-to-end tests only
+
+Options:
+  -c, --comment <text>      Add a comment to the test run
+  -p, --pattern <text>      Run tests matching test name pattern (within test files)
+  -f, --file <text>         Run tests matching file path pattern (test file paths)
+  --test-path-pattern <text> Same as --file (Jest option)
+  --coverage               Generate coverage report
+  -w, --watch              Run tests in watch mode
+  -v, --verbose            Verbose output
+  -h, --help               Show this help
+  --ci                     CI-friendly output (prints summary.json to stdout)
+  --json                   Print summary as JSON to stdout
+
+Pattern Matching:
+  --pattern: Matches test names/descriptions within test files (e.g., "should validate user")
+  --file: Matches test file paths (e.g., "auth" matches auth.test.ts, user-auth.test.ts)
+
+Behavior Notes:
+  - When using 'all', each target runs from its own directory sequentially
+  - Each target maintains separate test output logs and results
+  - Final summary aggregates results from all targets
+  - Failed targets don't stop execution of remaining targets
+  
+Examples:
+  npx tsx scripts/run-tests-with-output.ts --all
+  npx tsx scripts/run-tests-with-output.ts backend
+  npx tsx scripts/run-tests-with-output.ts frontend --pattern "Button"
+  npx tsx scripts/run-tests-with-output.ts frontend --file "auth"
+  npx tsx scripts/run-tests-with-output.ts backend --pattern "should validate" --file "user"
+  npx tsx scripts/run-tests-with-output.ts -c "Fixing auth bug" backend
+  npx tsx scripts/run-tests-with-output.ts --coverage
+`);
+  }
+
+  /**
+   * Strip ANSI escape codes from text
+   */
+  stripAnsi(text: string): string {
+    // Remove ANSI escape codes
+    // eslint-disable-next-line no-control-regex
+    return text.replace(/\x1b\[[0-9;]*[mGKHF]/g, '');
+  }
+
+  /**
+   * Create timestamped directory for current test run
+   */
+  setupTestRunDirectory(): void {
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/:/g, '-').replace(/\./g, '-').slice(0, 19); // Format: 2025-06-14T10-30-45
+
+    this.currentRunDir = path.join(this.testResultsDir, `run_${timestamp}`);
+
+    // Ensure test results directory exists
+    if (!fs.existsSync(this.testResultsDir)) {
+      fs.mkdirSync(this.testResultsDir, { recursive: true });
+    }
+    // Create current run directory
+    fs.mkdirSync(this.currentRunDir, { recursive: true });
+
+    console.log(
+      `📁 Test results will be saved to: ${path.relative(this.projectRoot, this.currentRunDir)}`
+    );
+  }
+
+  /**
+   * Implement log rotation - keep only recent test runs
+   */
+  rotateLogDirectories(): void {
+    if (!fs.existsSync(this.testResultsDir)) return;
+
+    const entries: LogEntry[] = fs
+      .readdirSync(this.testResultsDir, { withFileTypes: true })
+      .filter(entry => entry.isDirectory() && entry.name.startsWith('run_'))
+      .map(entry => ({
+        name: entry.name,
+        path: path.join(this.testResultsDir, entry.name),
+        mtime: fs.statSync(path.join(this.testResultsDir, entry.name)).mtime,
+      }))
+      .sort((a, b) => b.mtime.getTime() - a.mtime.getTime()); // Sort by modification time, newest first
+
+    // Remove old directories if we exceed the limit
+    if (entries.length >= this.maxLogDirs) {
+      const toRemove = entries.slice(this.maxLogDirs - 1); // Keep maxLogDirs - 1, remove the rest
+
+      for (const entry of toRemove) {
+        try {
+          fs.rmSync(entry.path, { recursive: true, force: true });
+          console.log(`🗑️  Removed old test run: ${entry.name}`);
+        } catch (error) {
+          console.warn(`⚠️  Could not remove ${entry.name}: ${(error as Error).message}`);
+        }
+      }
+    }
+  }
+
+  /**
+   * Create test run metadata file
+   */
+  createRunMetadata(options: TestRunOptions): void {
+    if (!this.currentRunDir) return;
+
+    const metadata: TestRunMetadata = {
+      timestamp: new Date().toISOString(),
+      target: options.target,
+      pattern: options.pattern,
+      testPathPattern: options.testPathPattern,
+      comment: options.comment,
+      coverage: options.coverage,
+      watch: options.watch,
+      nodeVersion: process.version,
+      platform: process.platform,
+      cwd: process.cwd(),
+    };
+
+    const metadataPath = path.join(this.currentRunDir, 'metadata.json');
+    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+  }
+  /**
+   * Save test suite output to file and print clickable link, duration, and failed tests
+   */
+  saveTestSuiteOutput(suiteName: string, output: string): void {
+    if (!this.currentRunDir) return;
+
+    // Create a more descriptive filename from the test file path
+    const sanitizedName = suiteName
+      .replace(/[/\\]/g, '_') // Replace path separators
+      .replace(/[^a-zA-Z0-9-_.]/g, '_') // Replace other special chars
+      .replace(/_+/g, '_') // Collapse multiple underscores
+      .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
+
+    const outputPath = path.join(this.currentRunDir, `${sanitizedName}.log`);
+
+    // Strip ANSI codes and save
+    const cleanOutput = this.stripAnsi(output);
+
+    // Add a header to identify the test suite
+    const header =
+      `=== Test Suite: ${suiteName} ===\n` + `=== Generated: ${new Date().toISOString()} ===\n\n`;
+
+    fs.writeFileSync(outputPath, header + cleanOutput);
+    this.suiteLogPaths.set(suiteName, outputPath);
+    this.completedSuites.add(suiteName);
+    // Print clickable link (relative path)
+    const relPath = path.relative(process.cwd(), outputPath);
+    // VS Code and many terminals support file:// links
+    // Calculate and print duration
+    let durationMsg = '';
+    if (this.suiteStartTimes.has(suiteName)) {
+      const start = this.suiteStartTimes.get(suiteName)!;
+      const duration = Math.round((Date.now() - start) / 1000);
+      durationMsg = ` (Duration: ${duration}s)`;
+    }
+    console.log(`💾 Saved output for: ${suiteName}${durationMsg}\n    ↳ file://${outputPath.replace(/\\/g, '/')}`);
+    // Print failed test names if any
+    const failed = this.suiteFailedTests.get(suiteName);
+    if (failed && failed.length > 0) {
+      console.log('   ❌ Failed tests:');
+      failed.forEach(name => console.log(`     - ${name}`));
+    }
+  }
+  /**
+   * Process test output line by line, track started/completed suites, failed tests, and suite times
+   * Captures all output (including debug/console) for each suite's log file.
+   */
+  processTestOutput(data: Buffer): void {
+    const lines = data.toString().split('\n');
+    // Buffer for output before any suite starts
+    if (!this._preSuiteBuffer) this._preSuiteBuffer = '';
+    for (const line of lines) {
+      if (!line.trim()) continue;
+
+      // Detect test suite start - look for actual test file paths in PASS/FAIL lines

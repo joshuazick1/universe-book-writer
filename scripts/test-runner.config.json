@@ -1,0 +1,53 @@
+{
+  "testRunner": {
+    "outputDirectory": "test-results",
+    "maxLogDirectories": 10,
+    "stripAnsiCodes": true,
+    "separateFilePerSuite": true,
+    "timestampFormat": "yyyy-MM-dd_HH-mm-ss",
+    "defaultTarget": "all",
+    "projects": {
+      "backend": {
+        "displayName": "Backend API Tests",
+        "testMatch": ["backend/**/*.test.{js,ts}"],
+        "description": "Node.js backend API and business logic tests"
+      },
+      "frontend": {
+        "displayName": "Frontend Component Tests",
+        "testMatch": ["frontend/**/*.test.{js,ts,jsx,tsx}"],
+        "description": "React component and frontend logic tests"
+      },
+      "ai-server": {
+        "displayName": "AI Server Tests",
+        "testMatch": ["ai-server/**/*.test.{js,ts}"],
+        "description": "AI server and model integration tests"
+      },
+      "collaboration-server": {
+        "displayName": "Collaboration Server Tests",
+        "testMatch": ["collaboration-server/**/*.test.{js,ts}"],
+        "description": "Real-time collaboration server tests"
+      },
+      "packages": {
+        "displayName": "Package Tests",
+        "testMatch": ["packages/**/*.test.{js,ts}"],
+        "description": "Shared package and utility tests"
+      },
+      "e2e": {
+        "displayName": "End-to-End Tests",
+        "testMatch": ["e2e/**/*.test.{js,ts}"],
+        "description": "Full application end-to-end tests"
+      }
+    },
+    "outputFormatting": {
+      "passed": "✅",
+      "failed": "❌",
+      "skipped": "⏭️",
+      "colors": {
+        "success": "#22c55e",
+        "error": "#ef4444",
+        "warning": "#f59e0b",
+        "info": "#3b82f6"
+      }
+    }
+  }
+}

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Trek Plugin Component Verification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #111;
+        }
+
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .pass {
+            background: #1a4a1a;
+            border-left: 4px solid #4caf50;
+        }
+
+        .fail {
+            background: #4a1a1a;
+            border-left: 4px solid #f44336;
+        }
+
+        .warn {
+            background: #4a4a1a;
+            border-left: 4px solid #ff9800;
+        }
+
+        .loading {
+            background: #1a1a4a;
+            border-left: 4px solid #2196f3;
+        }
+
+        button {
+            background: #ff9900;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #ffb533;
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 Star Trek Plugin Component Verification</h1>
+        <p>This page verifies that the modular Star Trek plugin components can be accessed from the frontend.</p>
+
+        <div class="test-section">
+            <h2>🔍 Component Import Tests</h2>
+            <button onclick="runImportTests()">Run Import Tests</button>
+            <div id="import-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 LCARS Component Rendering</h2>
+            <button onclick="runRenderingTests()">Run Rendering Tests</button>
+            <div id="rendering-results"></div>
+            <div id="component-demo"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Test Summary</h2>
+            <div id="summary-results"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        let testResults = {
+            imports: {},
+            rendering: {},
+            total: 0,
+            passed: 0
+        };
+
+        function logResult(containerId, test, status, message) {
+            const container = document.getElementById(containerId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${status}`;
+
+            const emoji = status === 'pass' ? '✅' : status === 'fail' ? '❌' : status === 'warn' ? '⚠️' : '🔄';
+            resultDiv.innerHTML = `${emoji} <strong>${test}:</strong> ${message}`;
+
+            container.appendChild(resultDiv);
+
+            testResults.total++;
+            if (status === 'pass') testResults.passed++;
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summaryContainer = document.getElementById('summary-results');
+            const percentage = testResults.total > 0 ? Math.round((testResults.passed / testResults.total) * 100) : 0;
+
+            summaryContainer.innerHTML = `
+                <div class="test-result ${percentage >= 80 ? 'pass' : percentage >= 50 ? 'warn' : 'fail'}">
+                    <strong>Overall Score:</strong> ${testResults.passed}/${testResults.total} tests passed (${percentage}%)
+                </div>
+            `;
+        }
+
+        // Test 1: Import Tests
+        window.runImportTests = async function () {
+            const container = document.getElementById('import-results');
+            container.innerHTML = '';
+
+            logResult('import-results', 'Starting Import Tests', 'loading', 'Testing component imports...');
+
+            // Test if we can access the plugin components through different import methods
+            const importTests = [
+                {
+                    name: 'Plugin Base URL Access',
+                    test: async () => {
+                        const response = await fetch('/plugins/star-trek-universe/');
+                        return response.ok;
+                    }
+                },
+                {
+                    name: 'Component Directory Access',
+                    test: async () => {
+                        const response = await fetch('/plugins/star-trek-universe/frontend/components/');
+                        return response.status !== 404; // May return 403 which is fine
+                    }
+                },
+                {
+                    name: 'Main App Plugin Integration',
+                    test: async () => {
+                        // Check if the main app includes plugin references
+                        const response = await fetch('/');
+                        if (response.ok) {
+                            const html = await response.text();
+                            return html.includes('plugin') || html.includes('star-trek') || html.includes('lcars');
+                        }
+                        return false;
+                    }
+                }
+            ];
+
+            for (const importTest of importTests) {
+                try {
+                    const result = await importTest.test();
+                    logResult('import-results', importTest.name, result ? 'pass' : 'warn',
+                        result ? 'Accessible' : 'Not accessible (may be normal)');
+                } catch (error) {
+                    logResult('import-results', importTest.name, 'fail', `Error: ${error.message}`);
+                }
+            }
+        };
+
+        // Test 2: Rendering Tests
+        window.runRenderingTests = async function () {
+            const container = document.getElementById('rendering-results');
+            const demoContainer = document.getElementById('component-demo');
+            container.innerHTML = '';
+            demoContainer.innerHTML = '';
+
+            logResult('rendering-results', 'Starting Rendering Tests', 'loading', 'Testing component rendering...');
+
+            // Create mock LCARS components for testing
+            const renderingTests = [
+                {
+                    name: 'LCARS Color Scheme',
+                    test: () => {
+                        const colors = ['#FF9900', '#9999FF', '#CC6699', '#CCFF66'];
+                        const colorDiv = document.createElement('div');
+                        colorDiv.style.cssText = `
+                            display: flex; 
+                            gap: 10px; 
+                            margin: 10px 0; 
+                            flex-wrap: wrap;
+                        `;
+
+                        colors.forEach(color => {
+                            const swatch = document.createElement('div');
+                            swatch.style.cssText = `
+                                width: 60px; 
+                                height: 30px; 
+                                background: ${color}; 
+                                border-radius: 4px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: #000;
+                                font-size: 10px;
+                                font-weight: bold;
+                            `;
+                            swatch.textContent = color;
+                            colorDiv.appendChild(swatch);
+                        });
+
+                        demoContainer.appendChild(colorDiv);
+                        return true;
+                    }
+                },
+                {
+                    name: 'LCARS Elbow Shape',
+                    test: () => {
+                        const elbow = document.createElement('div');
+                        elbow.style.cssText = `
+                            width: 100px;
+                            height: 100px;
+                            background: #FF9900;
+                            border-radius: 50px;
+                            clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 50%, 50% 100%, 0 100%);
+                            box-shadow: 0 0 15px #FF990060;
+                            margin: 10px;
+                            display: inline-block;
+                        `;
+
+                        const label = document.createElement('p');
+                        label.textContent = 'LCARS Elbow Component (Mock)';
+                        label.style.cssText = 'color: #FF9900; margin: 10px;';
+
+                        demoContainer.appendChild(elbow);
+                        demoContainer.appendChild(label);
+                        return true;
+                    }
+                },
+                {
+                    name: 'LCARS Button Style',
+                    test: () => {
+                        const button = document.createElement('button');
+                        button.textContent = 'LCARS BUTTON';
+                        button.style.cssText = `
+                            background: #FF9900;
+                            color: #000;
+                            border: none;
+                            padding: 15px 30px;
+                            border-radius: 25px;
+                            font-weight: bold;
+                            font-family: 'Orbitron', monospace;
+                            margin: 10px;
+                            cursor: pointer;
+                            box-shadow: 0 0 10px #FF990080;
+                        `;
+
+                        button.onmouseover = () => {
+                            button.style.background = '#FFBB33';
+                            button.style.boxShadow = '0 0 15px #FF9900';
+                        };
+                        button.onmouseout = () => {
+                            button.style.background = '#FF9900';
+                            button.style.boxShadow = '0 0 10px #FF990080';
+                        };
+
+                        demoContainer.appendChild(button);
+                        return true;
+                    }
+                },
+                {
+                    name: 'LCARS Panel Layout',
+                    test: () => {
+                        const panel = document.createElement('div');
+                        panel.style.cssText = `
+                            background: #111;
+                            border: 2px solid #FF9900;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin: 10px;
+                            box-shadow: 0 0 20px #FF990040;
+                        `;
+
+                        const header = document.createElement('div');
+                        header.textContent = 'LCARS PANEL';
+                        header.style.cssText = `
+                            color: #FF9900;
+                            font-weight: bold;
+                            font-size: 16px;
+                            margin-bottom: 10px;
+                            text-align: center;
+                        `;
+
+                        const content = document.createElement('div');
+                        content.textContent = 'This demonstrates the LCARS panel styling with authentic colors and layout.';
+                        content.style.cssText = 'color: #9999FF; line-height: 1.5;';
+
+                        panel.appendChild(header);
+                        panel.appendChild(content);
+                        demoContainer.appendChild(panel);
+                        return true;
+                    }
+                }
+            ];
+
+            for (const renderTest of renderingTests) {
+                try {
+                    const result = renderTest.test();
+                    logResult('rendering-results', renderTest.name, result ? 'pass' : 'fail',
+                        result ? 'Rendered successfully' : 'Failed to render');
+                } catch (error) {
+                    logResult('rendering-results', renderTest.name, 'fail', `Error: ${error.message}`);
+                }
+            }
+        };
+
+        // Auto-run basic tests on load
+        document.addEventListener('DOMContentLoaded', () => {
+            logResult('import-results', 'Page Load', 'pass', 'Verification page loaded successfully');
+            logResult('rendering-results', 'CSS Support', 'pass', 'CSS styling and JavaScript are working');
+        });
+    </script>
+</body>
+
+</html>

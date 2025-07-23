@@ -1,0 +1,22 @@
+[
+    {
+        "id": "ai-001",
+        "input": "The Federation is a group of planets that work together for peace.",
+        "reference_judgement": {
+            "clarity": 1.0,
+            "engagement": 0.8,
+            "coherence": 1.0,
+            "rationale": "Clear and coherent, but could be more engaging."
+        }
+    },
+    {
+        "id": "ai-002",
+        "input": "The dark lord's plan was complicated and hard to follow.",
+        "reference_judgement": {
+            "clarity": 0.6,
+            "engagement": 0.7,
+            "coherence": 0.5,
+            "rationale": "Somewhat unclear and lacks coherence."
+        }
+    }
+]

@@ -2,21 +2,39 @@
 
 ```
 book-writer/
+├── plugins/                             # 🔌 Plugin Directory (ROOT LEVEL)
+│   ├── README.md                       # Plugin installation guide
+│   ├── star-trek-universe/             # Star Trek universe plugin
+│   │   ├── package.json               # Plugin metadata
+│   │   ├── index.ts                   # Main plugin implementation
+│   │   ├── README.md                  # Plugin documentation
+│   │   ├── themes/                    # LCARS and other ST themes
+│   │   │   └── lcars.ts
+│   │   └── frontend/                  # Frontend components
+│   │       └── components.tsx
+│   ├── simple-core/                   # Basic core plugin
+│   │   ├── package.json
+│   │   └── index.ts
+│   └── [user-plugins]/               # User-installed plugins
+│
 ├── packages/                            # Monorepo packages
 │   ├── core/                           # Core shared libraries
-│   │   ├── types/                     # Shared TypeScript types
-│   │   │   ├── ai.types.ts          # AI-related type definitions
-│   │   │   ├── plugin.types.ts      # Plugin system types
-│   │   │   ├── universe.types.ts    # Universe management types
-│   │   │   └── story.types.ts       # Story management types
-│   │   │
-│   │   ├── utils/                     # Shared utilities
-│   │   │   ├── validation.ts        # Common validation utilities
-│   │   │   ├── formatting.ts        # Text/data formatting
-│   │   │   ├── async.ts            # Async operation helpers
-│   │   │   └── events.ts           # Event handling utilities
-│   │   │
-│   │   └── constants/                 # Shared constants
+│   │   ├── src/                       # Source code
+│   │   │   ├── index.ts             # Master barrel file
+│   │   │   ├── domains/             # Domain-specific modules
+│   │   │   │   ├── ai/             # AI-related functionality
+│   │   │   │   │   ├── index.ts   # Domain barrel file
+│   │   │   │   │   ├── types.ts
+│   │   │   │   │   └── utils.ts
+│   │   │   │   ├── universe/       # Universe management
+│   │   │   │   ├── story/         # Story management
+│   │   │   │   └── plugin/        # Plugin system
+│   │   │   ├── shared/             # Shared utilities
+│   │   │   │   ├── index.ts       # Shared barrel file
+│   │   │   │   ├── validation.ts
+│   │   │   │   ├── formatting.ts
+│   │   │   │   └── events.ts
+│   │   │   └── constants/           # Shared constants
 │   │       ├── api.constants.ts      # API-related constants
 │   │       ├── models.constants.ts   # AI model configurations
 │   │       └── themes.constants.ts   # Theme-related constants

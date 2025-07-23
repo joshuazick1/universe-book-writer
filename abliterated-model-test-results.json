@@ -1,0 +1,129 @@
+{
+  "timestamp": "2025-07-04T03:49:22.168Z",
+  "testType": "abliterated_uncensored_models",
+  "testCases": [
+    {
+      "name": "Fantasy Politics",
+      "expectedTypes": [
+        "character",
+        "location",
+        "organization",
+        "object"
+      ]
+    },
+    {
+      "name": "Sci-Fi Discovery",
+      "expectedTypes": [
+        "character",
+        "location",
+        "object",
+        "event"
+      ]
+    },
+    {
+      "name": "Historical Event",
+      "expectedTypes": [
+        "event",
+        "location",
+        "organization",
+        "lore"
+      ]
+    },
+    {
+      "name": "Complex Fantasy",
+      "expectedTypes": [
+        "character",
+        "location",
+        "organization",
+        "object"
+      ]
+    }
+  ],
+  "modelSummaries": [
+    {
+      "model": "wizardlm-uncensored:latest",
+      "totalTests": 4,
+      "successfulTests": 3,
+      "avgResponseTime": 21977,
+      "avgEntitiesFound": 7.333333333333333,
+      "avgConfidence": 0.8333333333333334,
+      "jsonValidityRate": 0.75,
+      "overallScore": 0.7237586666666667
+    },
+    {
+      "model": "nidumai/nidum-gemma-3-4b-it-uncensored:q3_k_m",
+      "totalTests": 4,
+      "successfulTests": 2,
+      "avgResponseTime": 6228.25,
+      "avgEntitiesFound": 12,
+      "avgConfidence": 0.875,
+      "jsonValidityRate": 0.5,
+      "overallScore": 0.620087
+    },
+    {
+      "model": "wizard-vicuna-uncensored:13b",
+      "totalTests": 4,
+      "successfulTests": 2,
+      "avgResponseTime": 22398,
+      "avgEntitiesFound": 11,
+      "avgConfidence": 0.875,
+      "jsonValidityRate": 0.5,
+      "overallScore": 0.555408
+    },
+    {
+      "model": "huihui_ai/deepseek-r1-abliterated:latest",
+      "totalTests": 4,
+      "successfulTests": 2,
+      "avgResponseTime": 32010,
+      "avgEntitiesFound": 9.5,
+      "avgConfidence": 0.875,
+      "jsonValidityRate": 0.5,
+      "overallScore": 0.525
+    },
+    {
+      "model": "wizard-vicuna-uncensored:7b",
+      "totalTests": 4,
+      "successfulTests": 2,
+      "avgResponseTime": 5938.25,
+      "avgEntitiesFound": 2.5,
+      "avgConfidence": 0.125,
+      "jsonValidityRate": 0.5,
+      "overallScore": 0.471247
+    },
+    {
+      "model": "huihui_ai/qwen3-abliterated:latest",
+      "totalTests": 4,
+      "successfulTests": 1,
+      "avgResponseTime": 41471.5,
+      "avgEntitiesFound": 7,
+      "avgConfidence": 0.75,
+      "jsonValidityRate": 0.25,
+      "overallScore": 0.325
+    },
+    {
+      "model": "hf.co/DavidAU/Gemma-3-it-4B-Uncensored-DBL-X-GGUF:latest",
+      "totalTests": 4,
+      "successfulTests": 0,
+      "avgResponseTime": 45006,
+      "avgEntitiesFound": 0,
+      "avgConfidence": 0,
+      "jsonValidityRate": 0,
+      "overallScore": 0
+    },
+    {
+      "model": "hf.co/DavidAU/Reka-Flash-3-21B-Reasoning-Uncensored-MAX-NEO-Imatrix-GGUF:latest",
+      "totalTests": 4,
+      "successfulTests": 0,
+      "avgResponseTime": 45009,
+      "avgEntitiesFound": 0,
+      "avgConfidence": 0,
+      "jsonValidityRate": 0,
+      "overallScore": 0
+    }
+  ],
+  "recommendations": {
+    "bestOverall": "wizardlm-uncensored:latest",
+    "fastest": "wizard-vicuna-uncensored:7b",
+    "mostAccurate": "nidumai/nidum-gemma-3-4b-it-uncensored:q3_k_m"
+  }
+}

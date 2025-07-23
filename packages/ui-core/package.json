@@ -1,6 +1,6 @@
 {
-  "name": "@universe-book-writer/ui-core",
-  "version": "0.1.0",
+  "name": "@verseforge/ui-core",
+  "version": "0.0.1-alpha.1",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

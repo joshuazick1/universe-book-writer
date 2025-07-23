@@ -1,0 +1,62 @@
+{
+    "taskType": "summarization",
+    "metrics": [
+        {
+            "name": "clarity",
+            "description": "How clear and understandable is the summary?",
+            "weight": 0.34,
+            "validator": "aiAssisted",
+            "params": {
+                "prompt": "Rate the clarity of the following summary on a scale from 1 (unclear) to 5 (very clear). Provide a short rationale.",
+                "examples": [
+                    {
+                        "summary": "The ship left port.",
+                        "clarity": 5
+                    },
+                    {
+                        "summary": "A confusing jumble of events.",
+                        "clarity": 2
+                    }
+                ]
+            }
+        },
+        {
+            "name": "coherence",
+            "description": "Does the summary flow logically and maintain coherence?",
+            "weight": 0.33,
+            "validator": "aiAssisted",
+            "params": {
+                "prompt": "Rate the coherence of the following summary on a scale from 1 (incoherent) to 5 (very coherent). Provide a short rationale.",
+                "examples": [
+                    {
+                        "summary": "The crew prepared, then launched.",
+                        "coherence": 5
+                    },
+                    {
+                        "summary": "Events are out of order.",
+                        "coherence": 2
+                    }
+                ]
+            }
+        },
+        {
+            "name": "engagement",
+            "description": "How engaging or interesting is the summary?",
+            "weight": 0.33,
+            "validator": "aiAssisted",
+            "params": {
+                "prompt": "Rate the engagement of the following summary on a scale from 1 (boring) to 5 (very engaging). Provide a short rationale.",
+                "examples": [
+                    {
+                        "summary": "A thrilling escape from danger.",
+                        "engagement": 5
+                    },
+                    {
+                        "summary": "Routine daily activities.",
+                        "engagement": 2
+                    }
+                ]
+            }
+        }
+    ]
+}

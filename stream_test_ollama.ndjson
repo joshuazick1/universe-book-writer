@@ -1,0 +1,15 @@
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.328519284Z","message":{"role":"assistant","content":"\u003cthink\u003e"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.340153577Z","message":{"role":"assistant","content":"\n\n"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.351991593Z","message":{"role":"assistant","content":"\u003c/think\u003e"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.363907835Z","message":{"role":"assistant","content":"\n\n"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.375754716Z","message":{"role":"assistant","content":"Hello"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.387560661Z","message":{"role":"assistant","content":"!"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.399410172Z","message":{"role":"assistant","content":" How"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.411274155Z","message":{"role":"assistant","content":" can"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.423093862Z","message":{"role":"assistant","content":" I"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.434886403Z","message":{"role":"assistant","content":" assist"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.446758454Z","message":{"role":"assistant","content":" you"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.45852071Z","message":{"role":"assistant","content":" today"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.470324919Z","message":{"role":"assistant","content":"?"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.493693275Z","message":{"role":"assistant","content":" 😊"},"done":false}
+{"model":"huihui_ai/deepseek-r1-abliterated:latest","created_at":"2025-06-29T21:41:02.505270164Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":303508770,"load_duration":105067792,"prompt_eval_count":7,"prompt_eval_duration":9208713,"eval_count":16,"eval_duration":188816090}
