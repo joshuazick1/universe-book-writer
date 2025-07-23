@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import {
-    getUniverses,
-    createUniverseAndInvalidate,
-    updateUniverseAndInvalidate,
-    deleteUniverseAndInvalidate
+  getUniverses,
+  createUniverseAndInvalidate,
+  updateUniverseAndInvalidate,
+  deleteUniverseAndInvalidate,
 } from '../services/universeService.js';
+import { createBook } from '../repositories/ragNodeRepository.js';
 
 const router = Router();
 
@@ -18,22 +19,28 @@ const router = Router();
  *       200:
  *         description: Array of universes
  */
-router.get('/', async (req, res) => {
-    try {
-        const universes = await getUniverses();
-        // Map _id to id for all universes for consistency
-        const mapped = universes.map(u => {
-            // Support both MongoDB (_id) and standard (id) properties
-            const anyU = u as any;
-            return {
-                ...u,
-                id: anyU._id ?? anyU.id,
-            };
+router.get('/', (req, res) => {
+  try {
+    const universes = getUniverses();
+    universes
+      .then(uList => {
+        const mapped = uList.map(u => {
+          const anyU = u;
+          return {
+            ...u,
+            id: (anyU as any)._id ?? anyU.id,
+          };
+          return {
+            ...u,
+            id: (anyU as any)._id ?? anyU.id,
+          };
         });
         res.json(mapped);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch universes' });
-    }
+      })
+      .catch(() => res.status(500).json({ error: 'Failed to fetch universes' }));
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch universes' });
+  }
 });
 
 /**
@@ -52,13 +59,27 @@ router.get('/', async (req, res) => {
  *       201:
  *         description: Universe created
  */
+// @ts-expect-error Express type inference false positive
 router.post('/', async (req, res) => {
-    try {
-        const created = await createUniverseAndInvalidate(req.body);
-        res.status(201).json(created);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to create universe' });
+  try {
+    const { title, ...rest } = req.body;
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ error: 'Universe title is required' });
     }
+    // Check for duplicate title
+    const existing = await getUniverses();
+    if (existing.some(u => u.title.trim().toLowerCase() === title.trim().toLowerCase())) {
+      return res.status(409).json({ error: 'Universe with this title already exists' });
+    }
+    // Generate unique ID: base64 of title + timestamp
+    const base64Title = Buffer.from(title.trim()).toString('base64').replace(/=+$/, '');
+    const id = `unv-${base64Title}-${Date.now()}`;
+    const universeData = { id, type: 'universe', title, ...rest };
+    const created = await createUniverseAndInvalidate(universeData);
+    res.status(201).json(created);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create universe' });
+  }
 });
 
 /**
@@ -83,21 +104,21 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Universe updated
  */
-router.put('/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        // Try both id and _id for MongoDB compatibility
-        let ok = await updateUniverseAndInvalidate(id, req.body);
-        if (!ok && id.startsWith('ObjectId(')) {
-            // If the id is wrapped as ObjectId, try stripping it
-            const stripped = id.replace(/^ObjectId\((['"])?(.*?)(['"])?\)$/, '$2');
-            ok = await updateUniverseAndInvalidate(stripped, req.body);
-        }
-        if (ok) res.json({ success: true });
-        else res.status(404).json({ error: 'Universe not found' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to update universe' });
-    }
+router.put('/:id', (req, res) => {
+  const id = req.params.id;
+  updateUniverseAndInvalidate(id, req.body)
+    .then(ok => {
+      if (!ok && id.startsWith('ObjectId(')) {
+        const stripped = id.replace(/^ObjectId\((['"])?(.*?)(['"])?\)$/, '$2');
+        return updateUniverseAndInvalidate(stripped, req.body);
+      }
+      return ok;
+    })
+    .then(ok => {
+      if (ok) res.json({ success: true });
+      else res.status(404).json({ error: 'Universe not found' });
+    })
+    .catch(() => res.status(500).json({ error: 'Failed to update universe' }));
 });
 
 /**
@@ -116,19 +137,33 @@ router.put('/:id', async (req, res) => {
  *       200:
  *         description: Universe deleted
  */
-router.delete('/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        let ok = await deleteUniverseAndInvalidate(id);
-        if (!ok && id.startsWith('ObjectId(')) {
-            const stripped = id.replace(/^ObjectId\((['"])?(.*?)(['"])?\)$/, '$2');
-            ok = await deleteUniverseAndInvalidate(stripped);
-        }
-        if (ok) res.json({ success: true });
-        else res.status(404).json({ error: 'Universe not found' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to delete universe' });
-    }
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  deleteUniverseAndInvalidate(id)
+    .then(ok => {
+      if (!ok && id.startsWith('ObjectId(')) {
+        const stripped = id.replace(/^ObjectId\((['"])?(.*?)(['"])?\)$/, '$2');
+        return deleteUniverseAndInvalidate(stripped);
+      }
+      return ok;
+    })
+    .then(ok => {
+      if (ok) res.json({ success: true });
+      else res.status(404).json({ error: 'Universe not found' });
+    })
+    .catch(() => res.status(500).json({ error: 'Failed to delete universe' }));
+});
+
+// --- RESTful route for creating a book in a universe ---
+// @ts-expect-error Express type inference false positive
+router.post('/:universeId/books', (req, res, next) => {
+  const { universeId } = req.params;
+  if (!universeId) {
+    return res.status(400).json({ error: 'universeId is required' });
+  }
+  createBook(universeId, req.body)
+    .then(created => res.status(201).json(created))
+    .catch(next);
 });
 
 export default router;

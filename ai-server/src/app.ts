@@ -1,8 +1,6 @@
-
 import express from 'express';
 import universeRoutes from './routes/universeRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
-import chapterRoutes from './routes/chapterRoutes.js';
 import llmRouter from './routes/llm.js';
 import characterRoutes from './routes/characterRoutes.js';
 import cors from 'cors';
@@ -22,14 +20,18 @@ import modelMapRouter from './routes/modelMap.js';
 import performanceRouter from './routes/performance.js';
 import { getRAGServiceManager } from './rag/instance.js';
 import { setRagManager } from './services/ragNodeService.js';
-import { ingestTextRouter, ingestCodeRouter, ingestTextStreamRouter, eventsStreamRouter } from './routes/rag/index.js';
+import {
+  ingestTextRouter,
+  ingestCodeRouter,
+  ingestTextStreamRouter,
+  eventsStreamRouter,
+} from './routes/rag/index.js';
 import { logger } from '../../shared/logging/logger.js';
 import type { Request, Response, NextFunction } from 'express';
 //import { generateRouter } from './routes/generation/index.js';
 import { universeRouter, characterRouter, messageRouter } from './routes/chat/index.js';
 import { sharedDatabaseConnection } from './config/database.config.js';
 import { sharedMemoryRouter } from './routes/memory/index.js';
-
 
 const app = express();
 // Mount shared memory endpoints for downstream use (after app is declared)
@@ -44,16 +46,17 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/api/universes', universeRoutes);
 // Alias for backend RAG integration compatibility
 app.use('/api/rag/universes', universeRoutes);
+// Mount /api/books routes for book CRUD only
 app.use('/api/books', bookRoutes);
-app.use('/api/chapters', chapterRoutes);
+// All book and chapter endpoints are now handled by bookRoutes
 app.use('/api/characters', characterRoutes);
 
 // Specialized debugging for orchestrator health/model aggregation issues
 import { getOrchestratorInstance } from './orchestrator-instance.js';
 app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.originalUrl.startsWith('/api/tags') || req.originalUrl.startsWith('/api/show')) {
-    }
-    next();
+  if (req.originalUrl.startsWith('/api/tags') || req.originalUrl.startsWith('/api/show')) {
+  }
+  next();
 });
 
 // Mount routers
@@ -98,88 +101,104 @@ app.use('/api/rag', manualPostChunkingRouter);
 
 // Enhanced Error handler
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
-    let details: string | undefined = undefined;
-    let stack: string | undefined = undefined;
-    if (typeof err === 'string') {
-        details = err;
-    } else if (err instanceof Error) {
-        details = err.message;
-        stack = err.stack;
-    } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof (err as any).message === 'string' && (err as any).message) {
-            details = String((err as any).message);
-            stack = (err as any).stack;
-        } else {
-            details = undefined;
-        }
+  let details: string | undefined = undefined;
+  let stack: string | undefined = undefined;
+  if (typeof err === 'string') {
+    details = err;
+  } else if (err instanceof Error) {
+    details = err.message;
+    stack = err.stack;
+  } else if (err && typeof err === 'object') {
+    if ('message' in err && typeof (err as any).message === 'string' && (err as any).message) {
+      details = String((err as any).message);
+      stack = (err as any).stack;
     } else {
-        details = undefined;
+      details = undefined;
     }
-    logger.error(`[ERROR HANDLER] Unhandled error: ${details}`);
-    if (stack) logger.error(`[ERROR HANDLER] Stack: ${stack}`);
-    const response: { error: string; details?: string } = { error: 'Internal server error' };
-    if (details !== undefined) response.details = details;
-    res.status(500).json(response);
+  } else {
+    details = undefined;
+  }
+  logger.error(`[ERROR HANDLER] Unhandled error: ${details}`);
+  if (stack) logger.error(`[ERROR HANDLER] Stack: ${stack}`);
+  const response: { error: string; details?: string } = { error: 'Internal server error' };
+  if (details !== undefined) response.details = details;
+  res.status(500).json(response);
 });
 
 // Initialize RAG system asynchronously
 async function initializeRAGSystem() {
-    try {
-        const ragServiceManager = await getRAGServiceManager();
-        // Set the singleton for ragNodeService (required for all RAG node/relationship CRUD)
-        setRagManager(ragServiceManager);
-        const { createSimpleRAGRouter } = await import('./rag/routes/simple-rag.routes.js');
-        const ragRouter = createSimpleRAGRouter(ragServiceManager);
-        app.use('/api/rag', ragRouter);
-    } catch (error) {
-        logger.error(`Failed to initialize RAG system: ${error instanceof Error ? error.message : String(error)}`);
-    }
+  try {
+    const ragServiceManager = await getRAGServiceManager();
+    // Set the singleton for ragNodeService (required for all RAG node/relationship CRUD)
+    setRagManager(ragServiceManager);
+    const { createSimpleRAGRouter } = await import('./rag/routes/simple-rag.routes.js');
+    const ragRouter = createSimpleRAGRouter(ragServiceManager);
+    app.use('/api/rag', ragRouter);
+  } catch (error) {
+    logger.error(
+      `Failed to initialize RAG system: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
 }
 
 initializeRAGSystem().catch(error => {
-    logger.error(`RAG system initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+  logger.error(
+    `RAG system initialization failed: ${error instanceof Error ? error.message : String(error)}`
+  );
 });
 
 // Initialize Performance RAG system asynchronously
 async function initializePerformanceRAGSystem() {
-    try {
-        const { getOrchestratorInstance } = await import('./orchestrator-instance.js');
-        const orchestrator = getOrchestratorInstance();
-        const { getModelPerformanceRAGService } = await import('./services/modelPerformanceRAG.service.js');
-        await getModelPerformanceRAGService(orchestrator);
-    } catch (error) {
-        logger.error(`Failed to initialize Performance RAG system: ${error instanceof Error ? error.message : String(error)}`);
-    }
+  try {
+    const { getOrchestratorInstance } = await import('./orchestrator-instance.js');
+    const orchestrator = getOrchestratorInstance();
+    const { getModelPerformanceRAGService } = await import(
+      './services/modelPerformanceRAG.service.js'
+    );
+    await getModelPerformanceRAGService(orchestrator);
+  } catch (error) {
+    logger.error(
+      `Failed to initialize Performance RAG system: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
 }
 
 setTimeout(() => {
-    initializePerformanceRAGSystem().catch(error => {
-        logger.error(`Performance RAG system initialization failed: ${error instanceof Error ? error.message : String(error)}`);
-    });
+  initializePerformanceRAGSystem().catch(error => {
+    logger.error(
+      `Performance RAG system initialization failed: ${error instanceof Error ? error.message : String(error)}`
+    );
+  });
 }, 2000);
 
 // Initialize Character Memory system asynchronously
 async function initializeCharacterMemorySystem() {
-    try {
-        const characterMemoryRouter = await import('./routes/characterMemory.js');
-        app.use('/api/memory', characterMemoryRouter.default);
-    } catch (error) {
-        logger.error(`Failed to initialize Character Memory system: ${error instanceof Error ? error.message : String(error)}`);
-    }
+  try {
+    const characterMemoryRouter = await import('./routes/characterMemory.js');
+    app.use('/api/memory', characterMemoryRouter.default);
+  } catch (error) {
+    logger.error(
+      `Failed to initialize Character Memory system: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
 }
 
 initializeCharacterMemorySystem().catch(error => {
-    logger.error(`Character Memory system initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+  logger.error(
+    `Character Memory system initialization failed: ${error instanceof Error ? error.message : String(error)}`
+  );
 });
 
 // Initialize database connection
 async function initializeDatabase() {
-    try {
-        await sharedDatabaseConnection.connect();
-    } catch (error) {
-        logger.error(`Failed to connect to MongoDB database: ${error instanceof Error ? error.message : String(error)}`);
-        process.exit(1);
-    }
+  try {
+    await sharedDatabaseConnection.connect();
+  } catch (error) {
+    logger.error(
+      `Failed to connect to MongoDB database: ${error instanceof Error ? error.message : String(error)}`
+    );
+    process.exit(1);
+  }
 }
 
 await initializeDatabase();

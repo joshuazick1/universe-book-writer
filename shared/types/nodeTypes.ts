@@ -3,95 +3,95 @@
  * This type is used for persistent storage and conversion between CharacterMemory and DB format.
  */
 export interface CharGenMemory {
-    id: string;
-    type: 'trait' | 'relationship' | 'event' | 'knowledge' | 'goal';
-    content: string;
-    importance: number;
-    emotional_weight: number;
-    related_entities: string[];
-    timestamp: Date;
-    source: string;
-    tags: string[];
-    contextual_info?: {
-        characterId?: string;
-        accessCount?: number;
-        lastAccessed?: Date;
-        updatedAt?: Date;
-        canonStatus?: string;
-        timelineAnchor?: string;
-        sourceChunk?: number;
-        gapFillingContext?: CharacterMemory['gapFillingContext'];
-    };
+  id: string;
+  type: 'trait' | 'relationship' | 'event' | 'knowledge' | 'goal';
+  content: string;
+  importance: number;
+  emotional_weight: number;
+  related_entities: string[];
+  timestamp: Date;
+  source: string;
+  tags: string[];
+  contextual_info?: {
+    characterId?: string;
+    accessCount?: number;
+    lastAccessed?: Date;
+    updatedAt?: Date;
+    canonStatus?: string;
+    timelineAnchor?: string;
+    sourceChunk?: number;
+    gapFillingContext?: CharacterMemory['gapFillingContext'];
+  };
 }
 /**
  * CharacterMemory - AI/Gap-filling/Interaction memory for a character
  * Used for advanced memory modeling and gap-filling in RAG pipelines.
  */
 export interface CharacterMemory {
-    id: string;
-    characterId: string;
-    memoryType: 'trait' | 'relationship' | 'event' | 'knowledge' | 'dialogue' | 'emotion';
-    content: string;
-    importance: number; // 0-1
-    timelineAnchor?: string;
-    associatedEntities: string[];
-    sourceChunk?: number;
-    accessCount: number;
-    lastAccessed: Date;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  characterId: string;
+  memoryType: 'trait' | 'relationship' | 'event' | 'knowledge' | 'dialogue' | 'emotion';
+  content: string;
+  importance: number; // 0-1
+  timelineAnchor?: string;
+  associatedEntities: string[];
+  sourceChunk?: number;
+  accessCount: number;
+  lastAccessed: Date;
+  createdAt: Date;
+  updatedAt: Date;
 
-    memorySource: 'book_extraction' | 'user_interaction' | 'ai_gap_filling';
-    canonStatus: 'canon' | 'non_canon' | 'gap_filling';
+  memorySource: 'book_extraction' | 'user_interaction' | 'ai_gap_filling';
+  canonStatus: 'canon' | 'non_canon' | 'gap_filling';
 
-    gapFillingContext?: {
-        triggerQuery: string;
-        timelineEvent: string;
-        scenarioContext: string;
-        plausibilityScore: number;
-        characterConsistency: number;
-        narrativeHarmony: number;
-        evidenceSupport: number;
-        generatedAt: Date;
-        userApproved?: boolean;
-        approvalDate?: Date;
-        reviewNotes?: string;
-    };
+  gapFillingContext?: {
+    triggerQuery: string;
+    timelineEvent: string;
+    scenarioContext: string;
+    plausibilityScore: number;
+    characterConsistency: number;
+    narrativeHarmony: number;
+    evidenceSupport: number;
+    generatedAt: Date;
+    userApproved?: boolean;
+    approvalDate?: Date;
+    reviewNotes?: string;
+  };
 
-    conversationId?: string;
-    affectsTimeline?: boolean;
-    /**
-     * Optional tags for advanced filtering and categorization (added for CharGenMemory compatibility)
-     */
-    tags?: string[];
+  conversationId?: string;
+  affectsTimeline?: boolean;
+  /**
+   * Optional tags for advanced filtering and categorization (added for CharGenMemory compatibility)
+   */
+  tags?: string[];
 }
 
 export interface GapFillingRequest {
-    characterId: string;
-    query: string;
-    timelineContext: string;
-    timelineAnchor?: string;
-    constraints?: {
-        mustInclude?: string[];
-        mustAvoid?: string[];
-        characterFocus?: string[];
-        locationConstraints?: string[];
-    };
+  characterId: string;
+  query: string;
+  timelineContext: string;
+  timelineAnchor?: string;
+  constraints?: {
+    mustInclude?: string[];
+    mustAvoid?: string[];
+    characterFocus?: string[];
+    locationConstraints?: string[];
+  };
 }
 
 export interface GapFillingResult {
-    memory: CharacterMemory;
-    alternatives?: CharacterMemory[];
-    reasoning: string;
-    evidenceUsed: string[];
-    conflictWarnings?: string[];
+  memory: CharacterMemory;
+  alternatives?: CharacterMemory[];
+  reasoning: string;
+  evidenceUsed: string[];
+  conflictWarnings?: string[];
 }
 
 export interface MemoryApprovalRequest {
-    memoryId: string;
-    approved: boolean;
-    reviewNotes?: string;
-    modifiedContent?: string;
+  memoryId: string;
+  approved: boolean;
+  reviewNotes?: string;
+  modifiedContent?: string;
 }
 /**
  * Shared types for Universe, Book, and Chapter entities.
@@ -100,31 +100,103 @@ export interface MemoryApprovalRequest {
  * @module shared/types/nodeTypes
  */
 
+/**
+ * Universe node type
+ * Represents a universe in the worldbuilding system.
+ * @example
+ * const universe: Universe = {
+ *   id: 'univ-1',
+ *   type: 'universe',
+ *   title: 'Star Trek',
+ *   summary: 'A future of exploration and diplomacy.',
+ *   lore: 'The Federation, warp travel, etc.',
+ *   rules: 'Prime Directive, etc.',
+ *   metadata: { genre: 'Sci-Fi' }
+ * };
+ */
 export interface Universe {
-    readonly id: string;
-    readonly type: 'universe';
-    readonly title: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'universe';
+  readonly title: string;
+  /** Short summary of the universe */
+  readonly summary?: string;
+  /** Worldbuilding lore, myths, or background */
+  readonly lore?: string;
+  /** Universe rules, laws, or constraints */
+  readonly rules?: string;
+  /** Arbitrary metadata */
+  readonly metadata?: Record<string, unknown>;
 }
 
+/**
+ * Book node type
+ * Represents a book within a universe.
+ * @example
+ * const book: Book = {
+ *   id: 'book-1',
+ *   type: 'book',
+ *   universeId: 'univ-1',
+ *   title: 'The Next Generation',
+ *   summary: 'Adventures of the Enterprise-D.',
+ *   lore: 'Picard, Data, Q, etc.',
+ *   rules: 'Starfleet protocols',
+ *   metadata: { published: 1987 },
+ *   chapters: []
+ * };
+ */
 export interface Book {
-    readonly id: string;
-    readonly type: 'book';
-    readonly universeId: string;
-    readonly title: string;
-    readonly metadata?: Record<string, unknown>;
-    readonly chapters?: Chapter[];
+  readonly id: string;
+  readonly type: 'book';
+  readonly universeId: string;
+  readonly title: string;
+  /** Short summary of the book */
+  readonly summary?: string;
+  /** Book-specific lore or background */
+  readonly lore?: string;
+  /** Book rules, constraints, or themes */
+  readonly rules?: string;
+  /** Arbitrary metadata */
+  readonly metadata?: Record<string, unknown>;
+  /** Chapters in the book */
+  readonly chapters?: Chapter[];
 }
 
+/**
+ * Chapter node type
+ * Represents a chapter within a book.
+ * @example
+ * const chapter: Chapter = {
+ *   id: 'chap-1',
+ *   type: 'chapter',
+ *   universeId: 'univ-1',
+ *   bookId: 'book-1',
+ *   title: 'Encounter at Farpoint',
+ *   summary: 'Enterprise investigates Farpoint Station.',
+ *   lore: 'Q appears, tests humanity.',
+ *   rules: 'No interference with locals.',
+ *   description: 'Pilot episode.',
+ *   content: 'Full text...',
+ *   metadata: { airDate: '1987-09-28' }
+ * };
+ */
 export interface Chapter {
-    readonly id: string;
-    readonly type: 'chapter';
-    readonly universeId: string;
-    readonly bookId: string;
-    readonly title: string;
-    readonly description?: string;
-    readonly content?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'chapter';
+  readonly universeId: string;
+  readonly bookId: string;
+  readonly title: string;
+  /** Short summary of the chapter */
+  readonly summary?: string;
+  /** Chapter-specific lore or background */
+  readonly lore?: string;
+  /** Chapter rules, constraints, or themes */
+  readonly rules?: string;
+  /** Description of the chapter */
+  readonly description?: string;
+  /** Full content of the chapter */
+  readonly content?: string;
+  /** Arbitrary metadata */
+  readonly metadata?: Record<string, unknown>;
 }
 
 /**
@@ -143,16 +215,16 @@ export interface Chapter {
  * };
  */
 export interface Character {
-    readonly id: string;
-    readonly type: 'character';
-    readonly universeId: string;
-    readonly name: string;
-    readonly aliases?: readonly string[];
-    readonly appearanceBookIds?: readonly string[];
-    readonly appearanceChapterIds?: readonly string[];
-    readonly appearanceSectionIds?: readonly string[];
-    readonly description?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'character';
+  readonly universeId: string;
+  readonly name: string;
+  readonly aliases?: readonly string[];
+  readonly appearanceBookIds?: readonly string[];
+  readonly appearanceChapterIds?: readonly string[];
+  readonly appearanceSectionIds?: readonly string[];
+  readonly description?: string;
+  readonly metadata?: Record<string, unknown>;
 }
 
 /**
@@ -169,12 +241,12 @@ export interface Character {
  * };
  */
 export interface Location {
-    readonly id: string;
-    readonly type: 'location';
-    readonly universeId: string;
-    readonly name: string;
-    readonly description?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'location';
+  readonly universeId: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly metadata?: Record<string, unknown>;
 }
 
 /**
@@ -191,12 +263,12 @@ export interface Location {
  * };
  */
 export interface Item {
-    readonly id: string;
-    readonly type: 'item';
-    readonly universeId: string;
-    readonly name: string;
-    readonly description?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'item';
+  readonly universeId: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly metadata?: Record<string, unknown>;
 }
 
 /**
@@ -213,14 +285,17 @@ export interface Item {
  * };
  */
 export interface Lore {
-    readonly id: string;
-    readonly type: 'lore';
-    readonly universeId: string;
-    readonly title: string;
-    readonly summary?: string;
-    readonly content?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'lore';
+  readonly universeId: string;
+  readonly title: string;
+  readonly description?: string;
+  readonly summary?: string;
+  readonly content?: string;
+  readonly metadata?: Record<string, unknown>;
 }
+// Re-export RAGRelationship for repository/service use
+export type { RAGRelationship } from './ragTypes.js';
 
 /**
  * Species node type
@@ -236,12 +311,12 @@ export interface Lore {
  * };
  */
 export interface Species {
-    readonly id: string;
-    readonly type: 'species';
-    readonly universeId: string;
-    readonly name: string;
-    readonly description?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'species';
+  readonly universeId: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly metadata?: Record<string, unknown>;
 }
 
 /**
@@ -258,12 +333,12 @@ export interface Species {
  * };
  */
 export interface Faction {
-    readonly id: string;
-    readonly type: 'faction';
-    readonly universeId: string;
-    readonly name: string;
-    readonly description?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'faction';
+  readonly universeId: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly metadata?: Record<string, unknown>;
 }
 
 /**
@@ -281,13 +356,13 @@ export interface Faction {
  * };
  */
 export interface TimelineEvent {
-    readonly id: string;
-    readonly type: 'timeline-event';
-    readonly universeId: string;
-    readonly title: string;
-    readonly date?: string;
-    readonly description?: string;
-    readonly metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly type: 'timeline-event';
+  readonly universeId: string;
+  readonly title: string;
+  readonly date?: string;
+  readonly description?: string;
+  readonly metadata?: Record<string, unknown>;
 }
 /**
  * Node Types - Shared
@@ -302,20 +377,20 @@ export interface TimelineEvent {
  * Metadata for a node (arbitrary key-value pairs).
  */
 export interface NodeMetadata {
-    readonly [key: string]: unknown;
+  readonly [key: string]: unknown;
 }
 
 /**
  * Input shape for creating or upserting a node.
  */
 export interface NodeInput {
-    /**
-     * Node type (must be a valid NodeType string)
-     */
-    readonly type: NodeType;
-    readonly title: string;
-    readonly parentId?: string;
-    readonly metadata?: NodeMetadata;
+  /**
+   * Node type (must be a valid NodeType string)
+   */
+  readonly type: NodeType;
+  readonly title: string;
+  readonly parentId?: string;
+  readonly metadata?: NodeMetadata;
 }
 
 /**
@@ -323,62 +398,62 @@ export interface NodeInput {
  * Extend as needed for new node types.
  */
 export type NodeType =
-    | 'universe'
-    | 'book'
-    | 'chapter'
-    | 'scene'
-    | 'character'
-    | 'location'
-    | 'item'
-    | 'lore'
-    | 'species'
-    | 'faction'
-    | 'timeline-event'
-    | 'note'
-    | 'plugin-data'
-    | 'ai-model'
-    | 'ai-server'
-    | 'model-performance';
+  | 'universe'
+  | 'book'
+  | 'chapter'
+  | 'scene'
+  | 'character'
+  | 'location'
+  | 'item'
+  | 'lore'
+  | 'species'
+  | 'faction'
+  | 'timeline-event'
+  | 'note'
+  | 'plugin-data'
+  | 'ai-model'
+  | 'ai-server'
+  | 'model-performance';
 
 /**
  * Node relationship mapping interface (extended for RAG compatibility).
  */
 export interface NodeRelationship {
-    readonly id?: string;
-    readonly parentId?: string;
-    readonly childIds?: readonly string[];
-    readonly fromNodeId?: string;
-    readonly toNodeId?: string;
-    readonly type?: import('./ragTypes.js').RAGRelationshipType;
-    readonly weight?: number;
-    readonly metadata?: import('./ragTypes.js').RAGRelationshipMetadata;
-    readonly temporal?: import('./ragTypes.js').RAGRelationshipTemporal;
-    readonly privacy?: import('./ragTypes.js').RAGRelationshipPrivacy;
-    readonly timestamps?: import('./ragTypes.js').RAGTimestamps;
-    readonly sourceNodeId?: string;
-    readonly targetNodeId?: string;
-    readonly relationshipType?: string;
-    readonly strength?: number;
-    readonly bidirectional?: boolean;
+  readonly id?: string;
+  readonly parentId?: string;
+  readonly childIds?: readonly string[];
+  readonly fromNodeId?: string;
+  readonly toNodeId?: string;
+  readonly type?: import('./ragTypes.js').RAGRelationshipType;
+  readonly weight?: number;
+  readonly metadata?: import('./ragTypes.js').RAGRelationshipMetadata;
+  readonly temporal?: import('./ragTypes.js').RAGRelationshipTemporal;
+  readonly privacy?: import('./ragTypes.js').RAGRelationshipPrivacy;
+  readonly timestamps?: import('./ragTypes.js').RAGTimestamps;
+  readonly sourceNodeId?: string;
+  readonly targetNodeId?: string;
+  readonly relationshipType?: string;
+  readonly strength?: number;
+  readonly bidirectional?: boolean;
 }
 
 /**
  * Node object shape (extended for RAG compatibility).
  */
 export interface Node {
-    readonly id: string;
-    readonly type: NodeType | import('./ragTypes.js').RAGNodeType;
-    readonly title: string;
-    readonly parentId?: string | null;
-    readonly metadata: NodeMetadata | import('./ragTypes.js').RAGNodeMetadata;
-    readonly content?: import('./ragTypes.js').RAGNodeContent;
-    readonly summaries?: import('./ragTypes.js').RAGNodeSummaries;
-    readonly embeddings?: number[];
-    readonly privacy?: import('./ragTypes.js').RAGNodePrivacy;
-    readonly temporal?: import('./ragTypes.js').RAGTemporalData;
-    readonly pluginData?: Record<string, any>;
-    readonly timestamps?: import('./ragTypes.js').RAGTimestamps;
-    readonly active?: boolean;
-    readonly createdAt?: string;
-    readonly updatedAt?: string;
+  readonly id: string;
+  readonly type: NodeType | import('./ragTypes.js').RAGNodeType;
+  readonly title: string;
+  readonly parentId?: string | null;
+  readonly metadata: NodeMetadata | import('./ragTypes.js').RAGNodeMetadata;
+  readonly content?: import('./ragTypes.js').RAGNodeContent;
+  readonly summaries?: import('./ragTypes.js').RAGNodeSummaries;
+  readonly embeddings?: number[];
+  readonly privacy?: import('./ragTypes.js').RAGNodePrivacy;
+  readonly temporal?: import('./ragTypes.js').RAGTemporalData;
+  readonly pluginData?: Record<string, any>;
+  readonly timestamps?: import('./ragTypes.js').RAGTimestamps;
+  readonly active?: boolean;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
 }

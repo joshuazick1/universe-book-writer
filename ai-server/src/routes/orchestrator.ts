@@ -1,24 +1,25 @@
-
 import { Router } from 'express';
 import {
-    addModelToFleet,
-    addModelToServer,
-    removeModel,
-    uploadModel,
-    listModelVersions
+  addModelToFleet,
+  addModelToServer,
+  removeModel,
+  uploadModel,
+  listModelVersions,
 } from '../controllers/modelsController.js';
 import {
-    addServer,
-    removeServer,
-    updateServer,
-    getModelMap
+  addServer,
+  removeServer,
+  updateServer,
+  getModelMap,
 } from '../controllers/serversController.js';
 import {
-    getRagAnalytics,
-    getRagModelPerformance,
-    getRagBestModels,
-    getRagUsageStats
+  getRagAnalytics,
+  getRagModelPerformance,
+  getRagBestModels,
+  getRagUsageStats,
 } from '../controllers/ragController.js';
+
+import { orchestratorEmbed } from '../controllers/orchestratorEmbeddingController.js';
 
 /**
  * Orchestrator API routes for model and server management.
@@ -35,10 +36,14 @@ import {
  *   PATCH  /api/orchestrator/servers/:id     - Update server config (concurrency, health, etc.)
  */
 
+// Utility to wrap async route handlers for Express
+function asyncHandler(fn: any) {
+  return function (req: any, res: any, next: any) {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
+
 const router = Router();
-
-
-
 
 // Model endpoints
 router.post('/models/add-fleet', addModelToFleet as any);
@@ -58,5 +63,8 @@ router.get('/rag/analytics', getRagAnalytics as any);
 router.get('/rag/model-performance', getRagModelPerformance as any);
 router.get('/rag/best-models', getRagBestModels as any);
 router.get('/rag/usage-stats', getRagUsageStats as any);
+
+// Embedding endpoint
+router.post('/embed', asyncHandler(orchestratorEmbed));
 
 export default router;
