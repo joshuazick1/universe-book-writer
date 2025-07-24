@@ -16,7 +16,7 @@ import {
     RAGNodeQuery,
     RAGRelationshipQuery
 } from '../schemas/rag-storage.schema.js';
-import type { Node, NodeRelationship } from '../../../shared/types/nodeTypes.js';
+import type { RAGNode, RAGRelationship } from '../../../shared/types/nodeTypes.js';
 
 /**
  * Configuration for RAG integration
@@ -202,7 +202,7 @@ export class RAGIntegrationService {
     private async syncNodesFromRAG(): Promise<number> {
         try {
             const response = await this.aiServerClient.get('/api/rag/nodes');
-            const nodes: Node[] = response.data;
+            const nodes: RAGNode[] = response.data;
 
             let synced = 0;
             const batchSize = this.config.batchSize;
@@ -210,7 +210,7 @@ export class RAGIntegrationService {
             for (let i = 0; i < nodes.length; i += batchSize) {
                 const batch = nodes.slice(i, i + batchSize);
 
-                await Promise.all(batch.map(async (ragNode) => {
+                await Promise.all(batch.map(async (ragNode: RAGNode) => {
                     const universeId = typeof ragNode.metadata?.universeId === 'string' ? ragNode.metadata.universeId : '';
                     const tags = Array.isArray(ragNode.metadata?.tags) ? ragNode.metadata.tags.filter((t): t is string => typeof t === 'string') : [];
                     const categories = Array.isArray(ragNode.metadata?.categories) ? ragNode.metadata.categories.filter((c): c is string => typeof c === 'string') : [];
@@ -233,7 +233,7 @@ export class RAGIntegrationService {
                         ragId: ragNode.id,
                         universeId,
                         nodeType: ragNode.type,
-                        title: ragNode.title,
+                        title: ragNode.title ?? '',
                         searchableText: this.extractSearchableText(ragNode),
                         tags,
                         categories,
@@ -278,7 +278,7 @@ export class RAGIntegrationService {
     private async syncRelationshipsFromRAG(): Promise<number> {
         try {
             const response = await this.aiServerClient.get('/api/rag/relationships');
-            const relationships: NodeRelationship[] = response.data;
+            const relationships: RAGRelationship[] = response.data;
 
             let synced = 0;
             const batchSize = this.config.batchSize;
@@ -286,7 +286,7 @@ export class RAGIntegrationService {
             for (let i = 0; i < relationships.length; i += batchSize) {
                 const batch = relationships.slice(i, i + batchSize);
 
-                await Promise.all(batch.map(async (ragRelationship) => {
+                await Promise.all(batch.map(async (ragRelationship: RAGRelationship) => {
                     const universeId = typeof ragRelationship.metadata?.universeId === 'string' ? ragRelationship.metadata.universeId : '';
                     const pluginType = typeof ragRelationship.metadata?.pluginType === 'string' ? ragRelationship.metadata.pluginType : undefined;
                     const authorId = typeof ragRelationship.metadata?.authorId === 'string' ? ragRelationship.metadata.authorId : '';
@@ -297,7 +297,7 @@ export class RAGIntegrationService {
                     if (typeof ragRelationship.metadata?.privacy?.level === 'string' && validEncryptionLevels.includes(ragRelationship.metadata.privacy.level as any)) {
                         encryptionLevel = ragRelationship.metadata.privacy.level as 'none' | 'partial' | 'full';
                     }
-                    const encryptedProperties = Array.isArray(ragRelationship.metadata?.privacy?.encryptedFields) ? ragRelationship.metadata.privacy.encryptedFields.filter((f): f is string => typeof f === 'string') : [];
+                    const encryptedProperties = Array.isArray(ragRelationship.metadata?.privacy?.encryptedFields) ? ragRelationship.metadata.privacy.encryptedFields.filter((f: unknown): f is string => typeof f === 'string') : [];
                     // Only allow valid temporalScope values
                     const validTemporalScopes = ['event', 'always', 'period'] as const;
                     let temporalScope: 'event' | 'always' | 'period' = 'always';
@@ -344,7 +344,7 @@ export class RAGIntegrationService {
     /**
      * Extract searchable text from RAG node content
      */
-    private extractSearchableText(node: Node): string {
+    private extractSearchableText(node: RAGNode): string {
         const searchableFields = [
             node.title,
             node.summaries?.brief || '',
@@ -492,7 +492,7 @@ export class RAGIntegrationService {
     private async syncSingleNode(ragId: string): Promise<void> {
         try {
             const response = await this.aiServerClient.get(`/api/rag/nodes/${ragId}`);
-            const ragNode: Node = response.data;
+            const ragNode: RAGNode = response.data;
 
             const universeId = typeof ragNode.metadata?.universeId === 'string' ? ragNode.metadata.universeId : '';
             const tags = Array.isArray(ragNode.metadata?.tags) ? ragNode.metadata.tags.filter((t): t is string => typeof t === 'string') : [];
@@ -506,7 +506,7 @@ export class RAGIntegrationService {
             if (typeof ragNode.privacy?.level === 'string' && validEncryptionLevels.includes(ragNode.privacy.level as any)) {
                 encryptionLevel = ragNode.privacy.level as 'none' | 'partial' | 'full';
             }
-            const encryptedFields = Array.isArray(ragNode.privacy?.encryptedFields) ? ragNode.privacy.encryptedFields.filter((f): f is string => typeof f === 'string') : [];
+            const encryptedFields = Array.isArray(ragNode.privacy?.encryptedFields) ? ragNode.privacy.encryptedFields.filter((f: unknown): f is string => typeof f === 'string') : [];
             const keyHierarchy = typeof ragNode.privacy?.keyHierarchy === 'string' ? ragNode.privacy.keyHierarchy : '';
             const timelinePosition = typeof ragNode.temporal?.position === 'number' ? ragNode.temporal.position : undefined;
             const stardateEquivalent = typeof ragNode.temporal?.stardateEquivalent === 'number' ? ragNode.temporal.stardateEquivalent : undefined;
@@ -515,7 +515,7 @@ export class RAGIntegrationService {
                 ragId: ragNode.id,
                 universeId,
                 nodeType: ragNode.type,
-                title: ragNode.title,
+                title: ragNode.title ?? '',
                 searchableText: this.extractSearchableText(ragNode),
                 tags,
                 categories,
@@ -553,7 +553,7 @@ export class RAGIntegrationService {
     private async syncSingleRelationship(relationshipId: string): Promise<void> {
         try {
             const response = await this.aiServerClient.get(`/api/rag/relationships/${relationshipId}`);
-            const ragRelationship: NodeRelationship = response.data;
+            const ragRelationship: RAGRelationship = response.data;
 
             const universeId = typeof ragRelationship.metadata?.universeId === 'string' ? ragRelationship.metadata.universeId : '';
             const pluginType = typeof ragRelationship.metadata?.pluginType === 'string' ? ragRelationship.metadata.pluginType : undefined;
@@ -565,7 +565,7 @@ export class RAGIntegrationService {
             if (typeof ragRelationship.metadata?.privacy?.level === 'string' && validEncryptionLevels.includes(ragRelationship.metadata.privacy.level as any)) {
                 encryptionLevel = ragRelationship.metadata.privacy.level as 'none' | 'partial' | 'full';
             }
-            const encryptedProperties = Array.isArray(ragRelationship.metadata?.privacy?.encryptedFields) ? ragRelationship.metadata.privacy.encryptedFields.filter((f): f is string => typeof f === 'string') : [];
+            const encryptedProperties = Array.isArray(ragRelationship.metadata?.privacy?.encryptedFields) ? ragRelationship.metadata.privacy.encryptedFields.filter((f: unknown): f is string => typeof f === 'string') : [];
             const validTemporalScopes = ['event', 'always', 'period'] as const;
             let temporalScope: 'event' | 'always' | 'period' = 'always';
             if (typeof ragRelationship.temporal?.scope === 'string' && validTemporalScopes.includes(ragRelationship.temporal.scope as any)) {

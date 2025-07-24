@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import type { Character } from '../models/Character.js';
+import type { Character } from '../../../shared/types/nodeTypes.js';
 import { getCharacters, createCharacterAndInvalidate, updateCharacterAndInvalidate, deleteCharacterAndInvalidate } from '../services/characterService.js';
 
 const router = Router();
@@ -161,7 +161,6 @@ router.post('/', async (req: any, res: any) => {
     const canonicalCharacter: Character = {
         id,
         universeId,
-        title,
         name: title, // For canonical compliance, name mirrors title
         type,
         aliases: aliases || [],
@@ -170,9 +169,6 @@ router.post('/', async (req: any, res: any) => {
         appearanceChapterIds,
         appearanceSectionIds,
         metadata: metadata || {},
-        pronounLinks: pronounLinks || [],
-        contextWindow: contextWindow || '',
-        sourceReferences: sourceReferences || [],
     };
     try {
         const created = await createCharacterAndInvalidate(canonicalCharacter);
@@ -218,7 +214,6 @@ router.put('/:id', async (req: any, res: any) => {
     const canonicalUpdate: Partial<Character> = {
         id: req.params.id,
         universeId,
-        title,
         name: title,
         type,
         aliases: aliases || [],
@@ -227,9 +222,6 @@ router.put('/:id', async (req: any, res: any) => {
         appearanceChapterIds,
         appearanceSectionIds,
         metadata: metadata || {},
-        pronounLinks: pronounLinks || [],
-        contextWindow: contextWindow || '',
-        sourceReferences: sourceReferences || [],
     };
     try {
         const ok = await updateCharacterAndInvalidate(req.params.id, canonicalUpdate);

@@ -1,5 +1,6 @@
 import express from 'express';
 import universeRoutes from './routes/universeRoutes.js';
+import inferRouter from './routes/infer.js';
 import bookRoutes from './routes/bookRoutes.js';
 import llmRouter from './routes/llm.js';
 import characterRoutes from './routes/characterRoutes.js';
@@ -32,15 +33,24 @@ import type { Request, Response, NextFunction } from 'express';
 import { universeRouter, characterRouter, messageRouter } from './routes/chat/index.js';
 import { sharedDatabaseConnection } from './config/database.config.js';
 import { sharedMemoryRouter } from './routes/memory/index.js';
+import aiHelperRouter from './routes/aiHelper.js';
+import toolRoutes from './routes/toolRoutes.js';
+import { registerAllTools } from './tools/registerAllTools.js';
 
 const app = express();
+// Ensure JSON body parsing is available for all routes
+app.use(express.json({ limit: '10mb' }));
+app.use(cors());
 // Mount shared memory endpoints for downstream use (after app is declared)
 app.use('/api/shared-memories', sharedMemoryRouter);
 
+// Mount AI helper endpoint
+app.use('/api/ai', aiHelperRouter);
+
 // LLM Evaluation endpoint
 app.use('/api/llm', llmRouter);
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+// Model inference endpoint
+app.use('/api/infer', inferRouter);
 
 // Backend-cached Universe/Book/Chapter/Character API endpoints
 app.use('/api/universes', universeRoutes);
@@ -98,6 +108,9 @@ app.use('/api/rag/events/stream', eventsStreamRouter);
 // Manual post-chunking reprocessing endpoint
 import { manualPostChunkingRouter } from './routes/rag/index.js';
 app.use('/api/rag', manualPostChunkingRouter);
+
+// Register tool routes
+app.use('/api/tools', toolRoutes);
 
 // Enhanced Error handler
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
@@ -202,5 +215,8 @@ async function initializeDatabase() {
 }
 
 await initializeDatabase();
+
+// Register all tools before starting the server
+registerAllTools();
 
 export default app;

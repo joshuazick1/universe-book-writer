@@ -1,5 +1,5 @@
 
-import type { Character } from '../models/Character.js';
+import type { Character } from '../../../shared/types/nodeTypes.js';
 import { fetchCharacters, createCharacter, updateCharacter, deleteCharacter } from '../repositories/ragNodeRepository.js';
 import { deduplicateCharacterCandidates, enforceCanonicalCharacterNode } from './textToRagParser/utils/aiDeduplicationHelper.js';
 import type { EnhancedParsedEntity } from './textToRagParser/core/interfaces.js';
@@ -66,7 +66,6 @@ export async function upsertCanonicalCharacters(
                     id: canonical.id,
                     universeId: canonical.universeId,
                     name: canonical.title,
-                    title: canonical.title,
                     type: 'character',
                     aliases: canonical.aliases || [],
                     description: canonical.description || '',

@@ -151,13 +151,16 @@ export const ragTextController = {
 
             // --- Validation ---
             if (!content || typeof content !== 'string' || !content.trim()) {
-                return res.status(400).json({ error: 'Missing or empty content' });
+                res.status(400).json({ error: 'Missing or empty content' });
+                return;
             }
             if (!metadata.universeId) {
-                return res.status(400).json({ error: 'Missing universeId in metadata' });
+                res.status(400).json({ error: 'Missing universeId in metadata' });
+                return;
             }
             if (!metadata.userId) {
-                return res.status(400).json({ error: 'Missing userId in metadata' });
+                res.status(400).json({ error: 'Missing userId in metadata' });
+                return;
             }
             // Optionally validate bookId/chapterId/model if required
 
@@ -509,7 +512,7 @@ export const ragTextController = {
             await addEnrichmentJob('characterMemoryGeneration', characterMemoryGenerationJob);
 
             // --- Respond with initial pipeline context, session ID, and job info ---
-            return res.status(200).json({
+            res.status(200).json({
                 message: 'Pipeline request accepted',
                 sessionId: pipelineSessionId,
                 apiVersion: API_VERSION,
@@ -602,7 +605,7 @@ export const ragTextController = {
                 ]
             });
         } catch (err) {
-            return res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+            res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
         }
     },
     /**

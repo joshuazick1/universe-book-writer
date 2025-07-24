@@ -43,10 +43,8 @@ export async function ensureNode(input: NodeInput): Promise<Node> {
         id: uuidv4(),
         type: input.type as NodeType,
         title: input.title,
-        parentId: input.parentId ?? null,
+        parentId: input.parentId ?? undefined,
         metadata: input.metadata ?? {},
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
     };
 }
 

@@ -1,0 +1,317 @@
+﻿openapi: 3.0.3
+info:
+  title: Multi-Universe Book Series Writing Assistant API
+  version: 1.0.0
+  description: |
+    API for managing universes, books, chapters, documents, sections, and characters in a multi-universe book series writing assistant. All node types strictly follow canonical structure as defined in RAG_API_Caching_and_Parser_Consistency_Plan.md.
+
+servers:
+  - url: /api
+
+paths:
+  /characters:
+    get:
+      summary: List characters (optionally filtered by universe, book, chapter)
+      tags: [Characters]
+      parameters:
+        - in: query
+          name: universeId
+          schema:
+            type: string
+          required: false
+          description: Universe ID
+        - in: query
+          name: bookId
+          schema:
+            type: string
+          required: false
+          description: Book ID
+        - in: query
+          name: chapterId
+          schema:
+            type: string
+          required: false
+          description: Chapter ID
+      responses:
+        '200':
+          description: Array of characters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+    post:
+      summary: Create a new character
+      tags: [Characters]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Character'
+      responses:
+        '201':
+          description: Character created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+
+  /characters/{id}:
+    put:
+      summary: Update a character
+      tags: [Characters]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Character'
+      responses:
+        '200':
+          description: Character updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+    delete:
+      summary: Delete a character
+      tags: [Characters]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Character deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+components:
+  schemas:
+    Character:
+      type: object
+      required:
+        - id
+        - universeId
+        - title
+        - type
+        - appearanceBookIds
+        - appearanceChapterIds
+        - appearanceSectionIds
+      properties:
+        id:
+          type: string
+        universeId:
+          type: string
+        title:
+          type: string
+        name:
+          type: string
+          description: Canonical name (mirrors title)
+        type:
+          type: string
+          enum: [character]
+        aliases:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        appearanceBookIds:
+          type: array
+          items:
+            type: string
+        appearanceChapterIds:
+          type: array
+          items:
+            type: string
+        appearanceSectionIds:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    Universe:
+      type: object
+      required:
+        - id
+        - type
+        - title
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [universe]
+        title:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    Book:
+      type: object
+      required:
+        - id
+        - type
+        - universeId
+        - title
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [book]
+        universeId:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    Chapter:
+      type: object
+      required:
+        - id
+        - type
+        - universeId
+        - bookId
+        - title
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [chapter]
+        universeId:
+          type: string
+        bookId:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    Document:
+      type: object
+      required:
+        - id
+        - type
+        - universeId
+        - title
+        - fullText
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [document]
+        universeId:
+          type: string
+        bookId:
+          type: string
+        chapterId:
+          type: string
+        title:
+          type: string
+        fullText:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    Section:
+      type: object
+      required:
+        - id
+        - type
+        - documentId
+        - startOffset
+        - endOffset
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [section]
+        documentId:
+          type: string
+        startOffset:
+          type: integer
+        endOffset:
+          type: integer
+        text:
+          type: string
+        summary:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    Note:
+      type: object
+      required:
+        - id
+        - type
+        - text
+        - createdAt
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [note]
+        parentId:
+          type: string
+        universeId:
+          type: string
+        bookId:
+          type: string
+        chapterId:
+          type: string
+        documentId:
+          type: string
+        sectionId:
+          type: string
+        author:
+          type: string
+        text:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true

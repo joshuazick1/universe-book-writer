@@ -1,4 +1,84 @@
 /**
+ * RAGNode - Rich node type for RAG integration (AI server/backend sync)
+ * Includes all properties expected by backend/AI server for sync and enrichment.
+ */
+export interface RAGNode {
+  id: string;
+  type: string;
+  title?: string;
+  parentId?: string;
+  metadata?: Record<string, any>;
+  privacy?: {
+    level?: 'none' | 'partial' | 'full';
+    encryptedFields?: string[];
+    keyHierarchy?: string;
+  };
+  temporal?: {
+    position?: number;
+    stardateEquivalent?: number;
+    relations?: string[];
+  };
+  summaries?: {
+    brief?: string;
+    medium?: string;
+    detailed?: string;
+  };
+  pluginData?: Record<string, any>;
+  content?: any;
+  [key: string]: any; // Allow extra fields for forward compatibility
+}
+
+/**
+ * RAGRelationship - Rich relationship type for RAG integration (AI server/backend sync)
+ * Includes all properties expected by backend/AI server for sync and enrichment.
+ */
+export interface RAGRelationship {
+  id: string;
+  universeId?: string;
+  sourceNodeId: string;
+  targetNodeId: string;
+  relationshipType: string;
+  strength?: number;
+  bidirectional?: boolean;
+  temporal?: {
+    scope?: 'event' | 'always' | 'period';
+    validFrom?: number;
+    validUntil?: number;
+    context?: string[];
+  };
+  metadata?: Record<string, any>;
+  pluginType?: string;
+  pluginMetadata?: Record<string, any>;
+  authorId?: string;
+  versionHash?: string;
+  [key: string]: any;
+}
+/**
+ * AI Suggestion type for form fields and context-aware recommendations.
+ * Used for universe/book/chapter suggestions.
+ */
+export interface AISuggestion {
+  field: string;
+  value: unknown;
+  reasoning?: string;
+  confidence?: number;
+  source?: string;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Diff object for suggested changes to form fields.
+ * Used for inline diff display and suggestion application.
+ */
+export interface DiffObject {
+  field: string;
+  original: unknown;
+  suggested: unknown;
+  summary?: string;
+  metadata?: Record<string, unknown>;
+}
+// ...existing code...
+/**
  * CharGenMemory - Character Generator Memory format (used by mongoGeneratorService)
  * This type is used for persistent storage and conversion between CharacterMemory and DB format.
  */
@@ -23,10 +103,7 @@ export interface CharGenMemory {
     gapFillingContext?: CharacterMemory['gapFillingContext'];
   };
 }
-/**
- * CharacterMemory - AI/Gap-filling/Interaction memory for a character
- * Used for advanced memory modeling and gap-filling in RAG pipelines.
- */
+// ...existing code...
 export interface CharacterMemory {
   id: string;
   characterId: string;
@@ -126,6 +203,12 @@ export interface Universe {
   readonly rules?: string;
   /** Arbitrary metadata */
   readonly metadata?: Record<string, unknown>;
+  /** AI suggestions for universe fields */
+  readonly suggestions?: AISuggestion[];
+  /** Diff objects for suggested changes */
+  readonly diffs?: DiffObject[];
+  /** Context enrichment for universe node */
+  readonly contextEnrichment?: UniverseContextEnrichment;
 }
 
 /**
@@ -159,6 +242,12 @@ export interface Book {
   readonly metadata?: Record<string, unknown>;
   /** Chapters in the book */
   readonly chapters?: Chapter[];
+  /** AI suggestions for book fields */
+  readonly suggestions?: AISuggestion[];
+  /** Diff objects for suggested changes */
+  readonly diffs?: DiffObject[];
+  /** Context enrichment for book node */
+  readonly contextEnrichment?: BookContextEnrichment;
 }
 
 /**
@@ -197,6 +286,43 @@ export interface Chapter {
   readonly content?: string;
   /** Arbitrary metadata */
   readonly metadata?: Record<string, unknown>;
+  /** AI suggestions for chapter fields */
+  readonly suggestions?: AISuggestion[];
+  /** Diff objects for suggested changes */
+  readonly diffs?: DiffObject[];
+  /** Context enrichment for chapter node */
+  readonly contextEnrichment?: ChapterContextEnrichment;
+}
+
+/**
+ * Diff object for suggested changes to form fields.
+ * Used for inline diff display and suggestion application.
+ */
+export interface UniverseContextEnrichment {
+  relatedBooks?: string[];
+  relatedChapters?: string[];
+  pluginData?: Record<string, unknown>;
+  aiInsights?: Record<string, unknown>;
+}
+
+/**
+ * Context enrichment for Book node.
+ */
+export interface BookContextEnrichment {
+  relatedUniverse?: string;
+  relatedChapters?: string[];
+  pluginData?: Record<string, unknown>;
+  aiInsights?: Record<string, unknown>;
+}
+
+/**
+ * Context enrichment for Chapter node.
+ */
+export interface ChapterContextEnrichment {
+  relatedUniverse?: string;
+  relatedBook?: string;
+  pluginData?: Record<string, unknown>;
+  aiInsights?: Record<string, unknown>;
 }
 
 /**
@@ -295,19 +421,19 @@ export interface Lore {
   readonly metadata?: Record<string, unknown>;
 }
 // Re-export RAGRelationship for repository/service use
-export type { RAGRelationship } from './ragTypes.js';
+// Removed re-export of RAGRelationship from ragTypes.js; now defined in this file.
 
 /**
  * Species node type
- * Represents a species or race in the universe.
+ * Represents a species in the universe.
  * @example
  * const species: Species = {
  *   id: 'species-1',
  *   type: 'species',
  *   universeId: 'univ-1',
  *   name: 'Vulcan',
- *   description: 'Logical, telepathic humanoids',
- *   metadata: { homeworld: 'Vulcan' }
+ *   description: 'A logical and peaceful species.',
+ *   metadata: { lifespan: '200 years' }
  * };
  */
 export interface Species {
@@ -321,15 +447,15 @@ export interface Species {
 
 /**
  * Faction node type
- * Represents a faction, organization, or group in the universe.
+ * Represents a faction in the universe.
  * @example
  * const faction: Faction = {
  *   id: 'faction-1',
  *   type: 'faction',
  *   universeId: 'univ-1',
  *   name: 'Starfleet',
- *   description: 'Exploration and defense arm of the Federation',
- *   metadata: { founded: 2161 }
+ *   description: 'The exploratory and defense service of the United Federation of Planets.',
+ *   metadata: { founded: '2161' }
  * };
  */
 export interface Faction {
@@ -343,117 +469,45 @@ export interface Faction {
 
 /**
  * TimelineEvent node type
- * Represents an event in the universe timeline.
+ * Represents an event in the timeline of the universe.
  * @example
- * const event: TimelineEvent = {
+ * const timelineEvent: TimelineEvent = {
  *   id: 'event-1',
- *   type: 'timeline-event',
+ *   type: 'timelineEvent',
  *   universeId: 'univ-1',
- *   title: 'First Contact with Vulcans',
- *   date: '2063-04-05',
- *   description: 'Humans meet Vulcans for the first time',
- *   metadata: { location: 'Montana, Earth' }
+ *   description: 'First contact with the Vulcans.',
+ *   metadata: { date: '2063-04-05' }
  * };
  */
 export interface TimelineEvent {
   readonly id: string;
-  readonly type: 'timeline-event';
+  readonly type: 'timelineEvent';
   readonly universeId: string;
-  readonly title: string;
-  readonly date?: string;
-  readonly description?: string;
+  readonly description: string;
   readonly metadata?: Record<string, unknown>;
 }
-/**
- * Node Types - Shared
- *
- * Defines TypeScript interfaces for nodes, node input, and node metadata.
- * Used by shared/node/nodeService and other modules.
- *
- * @module shared/types/nodeTypes
- */
 
-/**
- * Metadata for a node (arbitrary key-value pairs).
- */
-export interface NodeMetadata {
-  readonly [key: string]: unknown;
-}
-
-/**
- * Input shape for creating or upserting a node.
- */
-export interface NodeInput {
-  /**
-   * Node type (must be a valid NodeType string)
-   */
-  readonly type: NodeType;
-  readonly title: string;
-  readonly parentId?: string;
-  readonly metadata?: NodeMetadata;
-}
-
-/**
- * Node type string literal union.
- * Extend as needed for new node types.
- */
-export type NodeType =
-  | 'universe'
-  | 'book'
-  | 'chapter'
-  | 'scene'
-  | 'character'
-  | 'location'
-  | 'item'
-  | 'lore'
-  | 'species'
-  | 'faction'
-  | 'timeline-event'
-  | 'note'
-  | 'plugin-data'
-  | 'ai-model'
-  | 'ai-server'
-  | 'model-performance';
-
-/**
- * Node relationship mapping interface (extended for RAG compatibility).
- */
-export interface NodeRelationship {
-  readonly id?: string;
-  readonly parentId?: string;
-  readonly childIds?: readonly string[];
-  readonly fromNodeId?: string;
-  readonly toNodeId?: string;
-  readonly type?: import('./ragTypes.js').RAGRelationshipType;
-  readonly weight?: number;
-  readonly metadata?: import('./ragTypes.js').RAGRelationshipMetadata;
-  readonly temporal?: import('./ragTypes.js').RAGRelationshipTemporal;
-  readonly privacy?: import('./ragTypes.js').RAGRelationshipPrivacy;
-  readonly timestamps?: import('./ragTypes.js').RAGTimestamps;
-  readonly sourceNodeId?: string;
-  readonly targetNodeId?: string;
-  readonly relationshipType?: string;
-  readonly strength?: number;
-  readonly bidirectional?: boolean;
-}
-
-/**
- * Node object shape (extended for RAG compatibility).
- */
 export interface Node {
-  readonly id: string;
-  readonly type: NodeType | import('./ragTypes.js').RAGNodeType;
-  readonly title: string;
-  readonly parentId?: string | null;
-  readonly metadata: NodeMetadata | import('./ragTypes.js').RAGNodeMetadata;
-  readonly content?: import('./ragTypes.js').RAGNodeContent;
-  readonly summaries?: import('./ragTypes.js').RAGNodeSummaries;
-  readonly embeddings?: number[];
-  readonly privacy?: import('./ragTypes.js').RAGNodePrivacy;
-  readonly temporal?: import('./ragTypes.js').RAGTemporalData;
-  readonly pluginData?: Record<string, any>;
-  readonly timestamps?: import('./ragTypes.js').RAGTimestamps;
-  readonly active?: boolean;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  id: string;
+  type: string;
+  title?: string;
+  parentId?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface NodeInput {
+  type: string;
+  title?: string;
+  parentId?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface NodeMetadata {
+  [key: string]: any;
+}
+
+export type NodeType = 'universe' | 'book' | 'chapter' | 'character' | 'ai-model' | 'ai-server' | 'model-performance';
+
+export interface CharacterChatProcessor {
+  processMessage: (message: string) => Promise<string>;
 }

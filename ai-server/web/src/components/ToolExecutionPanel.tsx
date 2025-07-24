@@ -1,0 +1,91 @@
+import React, { useState, useEffect } from 'react';
+import { listTools, executeTool } from '../utils/apiClient';
+
+const ToolExecutionPanel: React.FC = () => {
+  const [tools, setTools] = useState([]);
+  const [selectedTool, setSelectedTool] = useState('');
+  const [args, setArgs] = useState('');
+  const [result, setResult] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchTools = async () => {
+      try {
+        const toolsList = await listTools();
+        setTools(toolsList);
+      } catch (err) {
+        console.error('Error fetching tools:', err);
+        setError('Failed to fetch tools.');
+      }
+    };
+
+    fetchTools();
+  }, []);
+
+  const handleExecute = async () => {
+    setError('');
+    setResult('');
+    try {
+      const parsedArgs = args ? JSON.parse(args) : {};
+      const executionResult = await executeTool(selectedTool, parsedArgs);
+      setResult(JSON.stringify(executionResult, null, 2));
+    } catch (err) {
+      console.error('Error executing tool:', err);
+      setError('Failed to execute tool. Please check the arguments or try again.');
+    }
+  };
+
+  return (
+    <div className="p-4 bg-gray-100 rounded shadow-md">
+      <h2 className="text-xl font-bold mb-4">Tool Execution Panel</h2>
+
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-2">Select Tool</label>
+        <select
+          className="w-full p-2 border rounded"
+          value={selectedTool}
+          onChange={(e) => setSelectedTool(e.target.value)}
+        >
+          <option value="">-- Select a Tool --</option>
+          {tools.map((tool) => (
+            <option key={tool.name} value={tool.name}>
+              {tool.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-2">Arguments (JSON)</label>
+        <textarea
+          className="w-full p-2 border rounded"
+          rows={4}
+          value={args}
+          onChange={(e) => setArgs(e.target.value)}
+          placeholder="Enter arguments as JSON"
+        />
+      </div>
+
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onClick={handleExecute}
+        disabled={!selectedTool}
+      >
+        Execute Tool
+      </button>
+
+      {result && (
+        <div className="mt-4">
+          <h3 className="text-lg font-bold mb-2">Result</h3>
+          <pre className="bg-gray-200 p-2 rounded overflow-auto">
+            {result}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ToolExecutionPanel;

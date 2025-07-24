@@ -226,7 +226,9 @@ export class RAGRelationshipFactory {
             'relates_to': 'relates_to',
             'depends_on': 'depends_on',
             // Extensibility
-            'custom': 'custom'
+            'custom': 'custom',
+            'duplicate_of': 'duplicate_of',
+            'cross_chunk_link': 'cross_chunk_link'
         };
 
         return inverseMap[type] || type;
@@ -279,7 +281,9 @@ export class RAGRelationshipFactory {
             'relates_to': 0.9,
             'depends_on': 1.0,
             // Extensibility
-            'custom': 1.0
+            'custom': 1.0,
+            'duplicate_of': 8,
+            'cross_chunk_link': 9
         };
 
         strength *= typeMultipliers[relationship.type] || 1.0;

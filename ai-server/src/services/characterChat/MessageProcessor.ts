@@ -5,32 +5,38 @@
  * Pass 1: Context Requirement Analysis
  * Pass 2: Context Gathering & Relevance Scoring
  * Pass 3: Final Response Generation
+
+    private orchestrator: AIOrchestrator;
+    private modelSelector: ModelSelectionService;
+    constructor() {
+/**
+ * Character Chat Message Processing Service
+ * 
+ * Implements a three-pass system for processing user messages:
+ * Pass 1: Context Requirement Analysis
+ * Pass 2: Context Gathering & Relevance Scoring
+ * Pass 3: Final Response Generation
  */
-
-// Local type definitions to avoid cross-project TypeScript issues
-interface ChatMessage {
-    id: string;
-    conversationId: string;
-    characterId: string;
-    content: string;
-    role: 'user' | 'assistant' | 'system';
-    timestamp: Date;
-    // ... other properties as needed
-}
-
+import { AIOrchestrator } from '../../orchestrator.js';
+import { MockDataService, type CharacterInfo, type CharacterMemory } from './MockDataService.js';
+import { ModelSelectionService, type TaskRequirements } from '../aiProcessing/ModelSelectionService.js';
 import {
-    UniversalProcessor,
     AIRequest,
     AIResponse,
-    PassResult,
+    UniversalProcessor,
     ProcessingContext,
+    PassResult,
     QualityGate,
     PassAssessment,
     QualityIssue
 } from '../aiProcessing/index.js';
-import { OllamaService } from '../textToRagParser/ai/ollamaService.js';
-import { MockDataService, type CharacterInfo, type CharacterMemory } from './MockDataService.js';
-import { ModelSelectionService, type TaskRequirements } from '../aiProcessing/ModelSelectionService.js';
+
+// Minimal ChatMessage type for local use
+export interface ChatMessage {
+    role: string;
+    content: string;
+    [key: string]: any;
+}
 
 export interface CharacterChatRequest extends AIRequest {
     characterId: string;
@@ -38,6 +44,7 @@ export interface CharacterChatRequest extends AIRequest {
     conversationHistory: ChatMessage[];
     enableContextVisualization: boolean;
     character?: CharacterInfo;
+    content: string; // Added to match usage in processor
 }
 
 export interface CharacterChatResponse extends AIResponse {
@@ -45,6 +52,7 @@ export interface CharacterChatResponse extends AIResponse {
     contextGathering: ContextGatheringResult;
     finalResponse: FinalResponseResult;
     totalProcessingTime: number;
+    // Removed 'id' property, not present in interface
 }
 
 export interface ContextRequirementAnalysis {
@@ -76,14 +84,12 @@ export interface FinalResponseResult {
         total: number;
     };
 }
-
-export class CharacterChatProcessor extends UniversalProcessor {
-    private ollamaService: OllamaService;
+export class CharacterChatMessageProcessor extends UniversalProcessor {
+    private orchestrator: AIOrchestrator;
     private modelSelector: ModelSelectionService;
-
     constructor() {
         super();
-        this.ollamaService = new OllamaService();
+        this.orchestrator = new AIOrchestrator();
         this.modelSelector = new ModelSelectionService();
     }
 
@@ -505,9 +511,6 @@ export class CharacterChatProcessor extends UniversalProcessor {
                 passType: 'context_gathering',
                 success: true,
                 result: contextGathering,
-                content: contextGathering.contextSummary,
-                qualityScore,
-                confidence: qualityScore,
                 processingTime: Date.now() - startTime,
                 modelUsed: 'context-gatherer'
             };
@@ -823,57 +826,32 @@ Return JSON: {
         confidence: number;
         usage: { prompt: number; completion: number; total: number };
     }> {
-        // Use the model selected by intelligent selection logic
         const selectedModel = options.model;
-
-        console.log(`[MessageProcessor] Generating with selected model: ${selectedModel}`);
-        console.log(`[MessageProcessor] Temperature: ${options.temperature}, MaxTokens: ${options.maxTokens}`);
-        console.log(`[MessageProcessor] Prompt preview: ${options.prompt.substring(0, 100)}...`);
-
+        console.log(`[MessageProcessor] Generating with orchestrator model: ${selectedModel}`);
         try {
-            const response = await this.ollamaService.generateText(options.prompt, {
-                model: selectedModel,
-                temperature: options.temperature,
-                maxTokens: options.maxTokens
-            });
-
-            // Calculate approximate token usage (rough estimate)
+            // Call orchestrator.runModel for inference
+            const result = await this.orchestrator.runModel(
+                selectedModel,
+                options.prompt,
+                { options: { temperature: options.temperature, maxTokens: options.maxTokens } },
+                {} // plugin suggestions, can be extended
+            );
+            // Expect result to have { content, usage, confidence } or similar
+            const responseContent = result.content || result.response || '';
             const promptTokens = Math.ceil(options.prompt.length / 4);
-            const completionTokens = Math.ceil(response.length / 4);
-
+            const completionTokens = Math.ceil(responseContent.length / 4);
             return {
-                content: response,
-                confidence: this.calculateResponseConfidence(response, selectedModel),
-                usage: {
+                content: responseContent,
+                confidence: result.confidence || this.calculateResponseConfidence(responseContent, selectedModel),
+                usage: result.usage || {
                     prompt: promptTokens,
                     completion: completionTokens,
                     total: promptTokens + completionTokens
                 }
             };
         } catch (error) {
-            console.error('[MessageProcessor] Error generating with model:', error);
-
-            // Fallback to simpler model if advanced model fails
-            if (selectedModel !== 'llama3.2') {
-                console.log('[MessageProcessor] Attempting fallback to simpler model...');
-                try {
-                    const fallbackResponse = await this.ollamaService.generateText(options.prompt, {
-                        model: 'llama3.2',
-                        temperature: options.temperature,
-                        maxTokens: options.maxTokens
-                    });
-
-                    return {
-                        content: fallbackResponse,
-                        confidence: 0.6, // Lower confidence for fallback
-                        usage: { prompt: 50, completion: 30, total: 80 }
-                    };
-                } catch (fallbackError) {
-                    console.error('[MessageProcessor] Fallback model also failed:', fallbackError);
-                }
-            }
-
-            // Final fallback mock response
+            console.error('[MessageProcessor] Error generating with orchestrator:', error);
+            // Fallback to mock response
             return {
                 content: this.generateFallbackResponse(options.prompt),
                 confidence: 0.3,

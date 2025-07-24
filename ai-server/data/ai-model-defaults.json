@@ -1,0 +1,5 @@
+{
+    "intentDetectModel": "intent-detect:latest",
+    "responseModel": "nomic-llama-3:latest",
+    "embeddingModel": "nomic-embed-text:latest"
+}

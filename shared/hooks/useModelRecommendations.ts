@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { ModelRecommendation } from '../types';
+
 
 /**
  * useModelRecommendations
@@ -7,7 +7,7 @@ import type { ModelRecommendation } from '../types';
  * Returns loading, error, and recommendations array.
  */
 export default function useModelRecommendations() {
-    const [recommendations, setRecommendations] = useState<ModelRecommendation[]>([]);
+    const [recommendations, setRecommendations] = useState<any[]>([]); // TODO: Replace 'any' with correct type if available
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 

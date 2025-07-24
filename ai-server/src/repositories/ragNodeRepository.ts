@@ -6,6 +6,10 @@ import type {
   Faction,
   TimelineEvent,
   RAGRelationship,
+  Node,
+  NodeInput,
+  NodeType,
+  NodeMetadata
 } from '../../../shared/types/nodeTypes.js';
 
 export async function createItem(item: Item): Promise<Item & { embedding: number[] }> {
@@ -96,7 +100,7 @@ export async function createTimelineEvent(
   event: TimelineEvent
 ): Promise<TimelineEvent & { embedding: number[] }> {
   const { timeline_events } = await getCollections();
-  const embedding = await generateEmbedding(event.title + ' ' + (event.description || ''));
+  const embedding = await generateEmbedding(event.description || '');
   const eventWithEmbedding = { ...event, embedding };
   await timeline_events.insertOne(eventWithEmbedding);
   return eventWithEmbedding;
@@ -207,8 +211,8 @@ export async function updateChapter(
     if (book.id === bookId) {
       const chapters = Array.isArray(book.chapters)
         ? book.chapters.map((chap: Chapter) =>
-            chap.id === chapterId ? { ...chap, ...update, id: chapterId, bookId } : chap
-          )
+          chap.id === chapterId ? { ...chap, ...update, id: chapterId, bookId } : chap
+        )
         : [];
       return { ...book, chapters };
     }

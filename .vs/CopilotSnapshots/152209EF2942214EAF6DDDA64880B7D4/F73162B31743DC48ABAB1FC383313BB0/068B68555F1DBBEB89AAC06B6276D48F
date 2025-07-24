@@ -1,0 +1,376 @@
+﻿/**
+ * RAG Relationship Implementation
+ * 
+ * Core implementation of relationships between RAG nodes with temporal,
+ * privacy, and plugin support.
+ */
+
+import { randomUUID } from 'crypto';
+import {
+    RAGRelationship,
+    RAGRelationshipType,
+    RAGRelationshipMetadata,
+    RAGRelationshipPrivacy,
+    RAGRelationshipTemporal,
+    RAGTimestamps
+} from './types.js';
+
+/**
+ * Relationship creation parameters
+ */
+export interface CreateRAGRelationshipParams {
+    fromNodeId: string;
+    toNodeId: string;
+    type: RAGRelationshipType;
+    weight?: number;
+    metadata: Omit<RAGRelationshipMetadata, 'sourcePlugin'>;
+    temporal?: Omit<RAGRelationshipTemporal, 'active'>;
+    privacy?: Partial<RAGRelationshipPrivacy>;
+}
+
+/**
+ * RAG Relationship factory and utility functions
+ */
+export class RAGRelationshipFactory {
+    /**
+     * Create a new RAG relationship
+     */
+    static create(params: CreateRAGRelationshipParams): RAGRelationship {
+        const now = new Date();
+
+        // Determine if relationship is currently active
+        let active = true;
+        if (params.temporal?.endDate) {
+            const endDate = new Date(params.temporal.endDate);
+            active = endDate > now;
+        }
+
+        const relationship: RAGRelationship = {
+            id: randomUUID(),
+            fromNodeId: params.fromNodeId,
+            toNodeId: params.toNodeId,
+            type: params.type,
+            weight: params.weight || 1.0,
+            metadata: {
+                ...params.metadata
+            },
+            temporal: params.temporal ? {
+                ...params.temporal,
+                active
+            } : undefined,
+            privacy: {
+                encrypted: false,
+                visibility: 'public',
+                ...params.privacy
+            },
+            timestamps: {
+                created: now,
+                modified: now,
+                contentHash: this.generateRelationshipHash(params)
+            }
+        };
+
+        return relationship;
+    }
+
+    /**
+     * Update an existing relationship
+     */
+    static update(
+        existing: RAGRelationship,
+        updates: Partial<Omit<RAGRelationship, 'id' | 'fromNodeId' | 'toNodeId' | 'timestamps'>>
+    ): RAGRelationship {
+        const now = new Date();
+
+        // Update active status if temporal data changed
+        let temporal = existing.temporal;
+        if (updates.temporal) {
+            let active = true;
+            if (updates.temporal.endDate) {
+                const endDate = new Date(updates.temporal.endDate);
+                active = endDate > now;
+            }
+
+            temporal = {
+                ...existing.temporal,
+                ...updates.temporal,
+                active
+            };
+        }
+
+        return {
+            ...existing,
+            ...updates,
+            temporal,
+            timestamps: {
+                ...existing.timestamps,
+                modified: now,
+                contentHash: this.generateRelationshipHash({
+                    fromNodeId: existing.fromNodeId,
+                    toNodeId: existing.toNodeId,
+                    type: updates.type || existing.type,
+                    weight: updates.weight || existing.weight,
+                    metadata: { ...existing.metadata, ...updates.metadata }
+                })
+            }
+        };
+    }
+
+    /**
+     * Generate hash for relationship change detection
+     */
+    private static generateRelationshipHash(params: {
+        fromNodeId: string;
+        toNodeId: string;
+        type: RAGRelationshipType;
+        weight?: number;
+        metadata: any;
+    }): string {
+        const crypto = require('crypto');
+        const hashData = {
+            from: params.fromNodeId,
+            to: params.toNodeId,
+            type: params.type,
+            weight: params.weight || 1.0,
+            metadata: params.metadata
+        };
+        const hashString = JSON.stringify(hashData, Object.keys(hashData).sort());
+        return crypto.createHash('sha256').update(hashString).digest('hex');
+    }
+
+    /**
+     * Validate relationship structure
+     */
+    static validate(relationship: RAGRelationship): { valid: boolean; errors: string[] } {
+        const errors: string[] = [];
+
+        if (!relationship.id) errors.push('Relationship must have an ID');
+        if (!relationship.fromNodeId) errors.push('Relationship must have a source node ID');
+        if (!relationship.toNodeId) errors.push('Relationship must have a target node ID');
+        if (!relationship.type) errors.push('Relationship must have a type');
+        if (relationship.weight < 0 || relationship.weight > 1) {
+            errors.push('Relationship weight must be between 0 and 1');
+        }
+        if (!relationship.metadata) errors.push('Relationship must have metadata');
+        if (!relationship.metadata.universeId) errors.push('Relationship must have a universe ID');
+
+        // Prevent self-referential relationships
+        if (relationship.fromNodeId === relationship.toNodeId) {
+            errors.push('Relationship cannot be self-referential');
+        }
+
+        // Validate temporal data
+        if (relationship.temporal) {
+            if (relationship.temporal.startDate && relationship.temporal.endDate) {
+                const start = new Date(relationship.temporal.startDate);
+                const end = new Date(relationship.temporal.endDate);
+                if (start > end) {
+                    errors.push('Relationship start date cannot be after end date');
+                }
+            }
+        }
+
+        return {
+            valid: errors.length === 0,
+            errors
+        };
+    }
+
+    /**
+     * Check if relationship is currently active
+     */
+    static isActive(relationship: RAGRelationship): boolean {
+        if (!relationship.temporal) return true;
+
+        const now = new Date();
+
+        // Check if relationship has started
+        if (relationship.temporal.startDate) {
+            const startDate = new Date(relationship.temporal.startDate);
+            if (startDate > now) return false;
+        }
+
+        // Check if relationship has ended
+        if (relationship.temporal.endDate) {
+            const endDate = new Date(relationship.temporal.endDate);
+            if (endDate <= now) return false;
+        }
+
+        return relationship.temporal.active;
+    }
+
+    /**
+     * Get the inverse relationship type
+     */
+    static getInverseType(type: RAGRelationshipType): RAGRelationshipType {
+        const inverseMap: Record<RAGRelationshipType, RAGRelationshipType> = {
+            // General/Book domain
+            'semantic': 'semantic',
+            'causal': 'causal',
+            'temporal': 'temporal',
+            'hierarchical': 'hierarchical',
+            'character_interaction': 'character_interaction',
+            'location_contains': 'hierarchical',
+            'plot_dependency': 'causal',
+            'reference': 'reference',
+            'spoken_by': 'addressed_to',
+            'addressed_to': 'spoken_by',
+            'conflict': 'conflict',
+            'alliance': 'alliance',
+            // Coding/Software domain
+            'implements': 'implements',
+            'calls': 'calls',
+            'tests': 'tests',
+            'documents': 'documents',
+            'fixes': 'fixes',
+            'relates_to': 'relates_to',
+            'depends_on': 'depends_on',
+            // Extensibility
+            'custom': 'custom'
+        };
+
+        return inverseMap[type] || type;
+    }
+
+    /**
+     * Check if user has access to this relationship
+     */
+    static hasAccess(relationship: RAGRelationship, userId: string): boolean {
+        switch (relationship.privacy.visibility) {
+            case 'public':
+                return true;
+            case 'private':
+                return false;
+            case 'restricted':
+                return relationship.privacy.accessList?.includes(userId) || false;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Get relationship strength based on type and weight
+     */
+    static getStrength(relationship: RAGRelationship): number {
+        // Base strength from weight
+        let strength = relationship.weight;
+
+        // Adjust based on relationship type importance
+        const typeMultipliers: Record<RAGRelationshipType, number> = {
+            // General/Book domain
+            'semantic': 0.8,
+            'causal': 1.1,
+            'temporal': 0.9,
+            'hierarchical': 1.2,
+            'character_interaction': 1.0,
+            'location_contains': 1.1,
+            'plot_dependency': 1.2,
+            'reference': 0.7,
+            'spoken_by': 1.0,
+            'addressed_to': 1.0,
+            'conflict': 1.0,
+            'alliance': 1.0,
+            // Coding/Software domain
+            'implements': 1.0,
+            'calls': 1.0,
+            'tests': 1.0,
+            'documents': 0.8,
+            'fixes': 1.0,
+            'relates_to': 0.9,
+            'depends_on': 1.0,
+            // Extensibility
+            'custom': 1.0
+        };
+
+        strength *= typeMultipliers[relationship.type] || 1.0;
+
+        // Reduce strength for inactive relationships
+        if (!this.isActive(relationship)) {
+            strength *= 0.5;
+        }
+
+        return Math.min(strength, 1.0);
+    }
+
+    /**
+     * Create a bidirectional relationship pair
+     */
+    static createBidirectional(
+        params: CreateRAGRelationshipParams,
+        createInverse: boolean = true
+    ): RAGRelationship[] {
+        const forward = this.create(params);
+
+        if (!createInverse) {
+            return [forward];
+        }
+
+        // Create inverse relationship
+        const inverseParams: CreateRAGRelationshipParams = {
+            fromNodeId: params.toNodeId,
+            toNodeId: params.fromNodeId,
+            type: this.getInverseType(params.type),
+            weight: params.weight,
+            metadata: {
+                ...params.metadata,
+                description: params.metadata.description ?
+                    `Inverse of: ${params.metadata.description}` :
+                    undefined
+            },
+            temporal: params.temporal,
+            privacy: params.privacy
+        };
+
+        const inverse = this.create(inverseParams);
+
+        return [forward, inverse];
+    }
+
+    /**
+     * Serialize relationship for API response
+     */
+    static serialize(relationship: RAGRelationship, userId: string): Partial<RAGRelationship> {
+        if (!this.hasAccess(relationship, userId)) {
+            return {
+                id: relationship.id,
+                fromNodeId: relationship.fromNodeId,
+                toNodeId: relationship.toNodeId,
+                type: relationship.type,
+                weight: 0,
+                metadata: {
+                    universeId: relationship.metadata.universeId,
+                    description: 'Access Denied'
+                },
+                privacy: {
+                    encrypted: relationship.privacy.encrypted,
+                    visibility: relationship.privacy.visibility
+                },
+                timestamps: {
+                    created: relationship.timestamps.created,
+                    modified: relationship.timestamps.modified
+                }
+            };
+        }
+
+        // Return relationship with sensitive data filtered
+        const serialized = { ...relationship };
+        if (serialized.privacy.accessList) {
+            serialized.privacy = {
+                ...serialized.privacy,
+                accessList: undefined
+            };
+        }
+
+        return serialized;
+    }
+
+    /**
+     * Check if two relationships are equivalent (ignoring direction)
+     */
+    static areEquivalent(rel1: RAGRelationship, rel2: RAGRelationship): boolean {
+        return (
+            (rel1.fromNodeId === rel2.fromNodeId && rel1.toNodeId === rel2.toNodeId) ||
+            (rel1.fromNodeId === rel2.toNodeId && rel1.toNodeId === rel2.fromNodeId)
+        ) && rel1.type === rel2.type && rel1.metadata.universeId === rel2.metadata.universeId;
+    }
+}

@@ -1,0 +1,12 @@
+/**
+ * Barrel file for shared prompts
+ * Re-exports all system, plugin, and universe prompts for unified import.
+ * Usage:
+ *   import { systemPrompts, pluginPrompts, universePrompts } from './prompts';
+ */
+
+export * from './systemPrompts.js';
+export * from './pluginPrompts.js';
+export * from './universePrompts.js';
+
+// Added explicit `.js` extensions to all relative imports in `prompts/index.ts`.

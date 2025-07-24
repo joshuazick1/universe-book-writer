@@ -1,0 +1,33 @@
+﻿import { Request, Response } from 'express';
+import { executeTool } from '../services/toolRegistryService.js';
+import { validateToolRequest } from '../utils/toolExecutionHelper.js';
+
+/**
+ * Controller for handling tool orchestration requests.
+ */
+export class ToolOrchestratorController {
+  /**
+   * Handles a request to execute a tool.
+   * @param req - Express request object.
+   * @param res - Express response object.
+   */
+  static async executeTool(req: Request, res: Response): Promise<void> {
+    try {
+      // Validate the incoming request
+      const { toolName, args } = validateToolRequest(req.body);
+
+      // Execute the tool and get the result
+      const result = await executeTool(toolName, args);
+
+      // Send the result back to the client
+      res.status(200).json({ success: true, result });
+    } catch (error) {
+      // Handle errors and send appropriate response
+      console.error('Error executing tool:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(400).json({ success: false, error: errorMessage });
+    }
+  }
+}
+
+export default ToolOrchestratorController;

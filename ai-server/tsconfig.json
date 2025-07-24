@@ -28,6 +28,7 @@
     "tests/unit/**/*.ts",
     "tests/unit/**/*.test.ts",
     "tests/unit/**/*.js",
-    "../shared/**/*.ts"
+    "../shared/**/*.ts",
+    "../packages/plugin-sdk/src/**/*.ts"
   ]
 }

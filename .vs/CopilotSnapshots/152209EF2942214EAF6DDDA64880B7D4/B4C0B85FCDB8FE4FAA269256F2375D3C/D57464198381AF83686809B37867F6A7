@@ -1,0 +1,47 @@
+﻿import { ToolDefinition } from '../../shared/types/toolTypes.js';
+
+// In-memory registry for tools
+const toolRegistry: Record<string, ToolDefinition> = {};
+
+/**
+ * Registers a new tool in the registry.
+ * @param tool - The tool definition to register.
+ */
+export function registerTool(tool: ToolDefinition): void {
+  if (toolRegistry[tool.name]) {
+    throw new Error(`Tool with name '${tool.name}' is already registered.`);
+  }
+  toolRegistry[tool.name] = tool;
+}
+
+/**
+ * Retrieves a tool definition by name.
+ * @param toolName - The name of the tool to retrieve.
+ * @returns The tool definition.
+ */
+export function getTool(toolName: string): ToolDefinition {
+  const tool = toolRegistry[toolName];
+  if (!tool) {
+    throw new Error(`Tool with name '${toolName}' is not registered.`);
+  }
+  return tool;
+}
+
+/**
+ * Executes a tool by name with the provided arguments.
+ * @param toolName - The name of the tool to execute.
+ * @param args - The arguments to pass to the tool.
+ * @returns The result of the tool execution.
+ */
+export async function executeTool(toolName: string, args: Record<string, any>): Promise<any> {
+  const tool = getTool(toolName);
+  return await tool.execute(args);
+}
+
+/**
+ * Lists all registered tools.
+ * @returns An array of tool definitions.
+ */
+export function listTools(): ToolDefinition[] {
+  return Object.values(toolRegistry);
+}

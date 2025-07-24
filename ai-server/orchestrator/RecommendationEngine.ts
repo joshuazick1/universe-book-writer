@@ -2,7 +2,7 @@
 // Orchestrator logic for providing dynamic model recommendations for a given task/context
 // This is a stub implementation. Replace with real logic as needed.
 
-import { getQualityReport } from '../benchmarking/BenchmarkingManager.js';
+import BenchmarkingManager from '../benchmarking/BenchmarkingManager.js';
 
 export interface RecommendationParams {
     task: string;
@@ -17,9 +17,9 @@ export interface RecommendationParams {
  * @returns Array of recommended model names/ids, ordered by preference
  */
 export async function getModelRecommendations(params: RecommendationParams): Promise<string[]> {
-    const report = await getQualityReport();
+    const report = await BenchmarkingManager.getQualityReport();
     // This is a stub: rank models by quality score for the task
-    const candidates = report.models?.filter((m: any) => m.supportedTasks?.includes(params.task));
+    const candidates = report.filter((m: any) => m.supportedTasks?.includes(params.task));
     if (candidates && candidates.length > 0) {
         candidates.sort((a: any, b: any) => (b.qualityScore || 0) - (a.qualityScore || 0));
         return candidates.map((m: any) => m.name || m.id);

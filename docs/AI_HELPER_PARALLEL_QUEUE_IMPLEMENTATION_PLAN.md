@@ -8,16 +8,42 @@ This document outlines the steps required to implement an AI helper for Universe
 
 ## Files to Create/Update
 
+
 ### Backend
 
 - `ai-server/src/api/aiHelper.ts` (new): Express route/controller for `/api/ai/helper` endpoint.
 - `ai-server/src/orchestrator.ts`: Update to ensure queue logic, request routing, and plugin integration.
 - `ai-server/src/services/characterChat/MessageProcessor.ts`: Update for multi-pass workflow and context handling.
 - `ai-server/src/services/modelPerformanceRAG.service.ts`: Update for usage tracking and model selection insights.
+- `ai-server/src/services/aiHelperService.ts` (new): Multi-pass workflow, plugin context/suggestion, orchestrator queueing.
 - `packages/plugin-sdk/` (update): Ensure plugin hooks for context gathering and suggestion generation.
-- `shared/types/nodeTypes.ts` (update): Add/extend types for universe/book/chapter suggestions.
+- `shared/types/nodeTypes.ts` (update): Add/extend types for universe/book/chapter suggestions and context objects.
+  - Extend interfaces for Universe, Book, Chapter to include suggestion metadata, diff objects, and context enrichment fields.
+  - Add types for AI suggestions, plugin-generated diffs, and context-aware form filling.
+  - Ensure all new types are strictly typed and documented with JSDoc.
 - `shared/context/` (update): Utility functions for context assembly.
+- `shared/prompts/` (new): Centralized prompt storage for all system, plugin, and universe-specific prompts.
+- `shared/prompts/index.ts` (barrel): Import and re-export all prompt files. (See below for static vs. dynamic strategy.)
 - `ai-server/tests/api/aiHelper.test.ts` (new): Unit tests for new API endpoint and orchestration.
+
+### 2.5. Shared Prompt Storage & RAG Integration
+
+- Create and populate `shared/prompts/` with all system, plugin, and universe-specific prompt files.
+- Store prompt metadata (name, type, tags, version, etc.) in each file for discoverability.
+- **Sync all prompt files into RAG as nodes (mandatory):**
+  - Each prompt is stored as a RAG node for versioning, audit, and dynamic context enrichment.
+  - Use the orchestrator embedding controller (`/api/orchestrator/embed`) to generate embeddings for each prompt node.
+  - Embeddings are attached to RAG nodes for semantic search and context-aware retrieval.
+- Provide prompt context to the intent detector for dynamic selection and downstream task routing.
+- Enable users to add their own prompts via the UI, and allow the AI to assist in generating or refining prompts:
+  - Add API endpoints and UI components for user prompt creation, editing, and management.
+  - Integrate AI helper to suggest, generate, or improve prompts based on user goals and context.
+- Update documentation to describe prompt storage, usage, RAG integration, and user/AI prompt creation workflows.
+
+#### Barrel File Strategy
+- For most use cases, keep the barrel file (`shared/prompts/index.ts`) static for strict typing and predictable imports.
+- If you need dynamic loading (e.g., plugin discovery, runtime prompt selection), use `fs` or `import.meta.glob` (Vite) to enumerate files at runtime, but document the tradeoffs (type safety, tree-shaking, etc.).
+- Recommend static barrel for backend/core logic, dynamic for plugin/extension scenarios.
 
 ### Frontend
 
@@ -29,6 +55,7 @@ This document outlines the steps required to implement an AI helper for Universe
 - `ai-server/web/src/components/DiffDisplay.tsx` (new): Inline diff viewer for text suggestions with accept/retry/disapprove controls.
 - `ai-server/web/src/components/ContextScopeIndicator.tsx` (new): UI component to show current context scope (e.g., selected universe).
 
+
 ### Documentation
 
 - `docs/AI_HELPER_PARALLEL_QUEUE_IMPLEMENTATION_PLAN.md` (this file): Update as implementation progresses.
@@ -36,6 +63,7 @@ This document outlines the steps required to implement an AI helper for Universe
 - `docs/PROGRESS.md`: Track milestones and progress.
 - `docs/DECISION_LOG.md`: Log architectural decisions.
 - `README.md` (root and relevant modules): Add usage examples and architectural notes.
+- Document prompt storage, barrel strategy, and RAG integration in `shared/prompts/README.md`.
 
 ---
 

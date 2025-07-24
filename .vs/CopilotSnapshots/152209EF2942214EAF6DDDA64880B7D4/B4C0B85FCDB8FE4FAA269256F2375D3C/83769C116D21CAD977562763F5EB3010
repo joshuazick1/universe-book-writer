@@ -1,0 +1,23 @@
+﻿/**
+ * Validates the tool request payload.
+ * @param payload - The incoming request payload.
+ * @returns An object containing the tool name and arguments.
+ * @throws Error if validation fails.
+ */
+export function validateToolRequest(payload: any): { toolName: string; args: Record<string, any> } {
+  if (!payload || typeof payload !== 'object') {
+    throw new Error('Invalid payload: must be an object.');
+  }
+
+  const { toolName, args } = payload;
+
+  if (!toolName || typeof toolName !== 'string') {
+    throw new Error('Invalid toolName: must be a non-empty string.');
+  }
+
+  if (args && typeof args !== 'object') {
+    throw new Error('Invalid args: must be an object.');
+  }
+
+  return { toolName, args: args || {} };
+}

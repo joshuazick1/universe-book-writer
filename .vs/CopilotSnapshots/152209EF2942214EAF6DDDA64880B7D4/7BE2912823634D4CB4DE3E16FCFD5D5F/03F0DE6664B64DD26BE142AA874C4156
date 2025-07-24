@@ -1,0 +1,10 @@
+﻿/**
+ * Barrel file for shared prompts
+ * Re-exports all system, plugin, and universe prompts for unified import.
+ * Usage:
+ *   import { systemPrompts, pluginPrompts, universePrompts } from './prompts';
+ */
+
+export * from './systemPrompts';
+export * from './pluginPrompts';
+export * from './universePrompts';

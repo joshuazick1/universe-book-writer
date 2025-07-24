@@ -1,0 +1,38 @@
+﻿/**
+ * Plugin Prompts
+ * Prompts contributed by plugins for universe-specific logic.
+ * Each prompt includes metadata for discoverability and RAG integration.
+ */
+
+import type { PromptMetadata } from './systemPrompts.js';
+
+export interface PluginPrompt {
+    metadata: PromptMetadata;
+    text: string;
+}
+
+/**
+ * Example plugin prompts
+ */
+export const pluginPrompts: PluginPrompt[] = [
+    {
+        metadata: {
+            name: 'Star Trek Universe Helper',
+            type: 'plugin',
+            tags: ['star-trek', 'universe'],
+            version: '1.0.0',
+            description: 'Prompt for Star Trek universe-specific suggestions.'
+        },
+        text: 'Assist with Star Trek universe worldbuilding, character creation, and canonical consistency.'
+    },
+    {
+        metadata: {
+            name: 'Star Wars Universe Helper',
+            type: 'plugin',
+            tags: ['star-wars', 'universe'],
+            version: '1.0.0',
+            description: 'Prompt for Star Wars universe-specific suggestions.'
+        },
+        text: 'Assist with Star Wars universe worldbuilding, character creation, and canonical consistency.'
+    }
+];

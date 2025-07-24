@@ -1,4 +1,5 @@
-import { Router } from 'express';
+import * as express from 'express';
+
 import type { Request, Response, NextFunction } from 'express';
 import {
   fetchBooks,
@@ -11,7 +12,7 @@ import {
   deleteChapter,
 } from '../repositories/ragNodeRepository.js';
 
-const router = Router();
+const router: any = express.default.Router();
 
 /**
  * @swagger
@@ -30,17 +31,14 @@ const router = Router();
  *       200:
  *         description: Array of books
  */
-router.get('/', async (req, res, next) => {
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
   const { universeId } = req.query;
   if (!universeId) {
     return res.status(400).json({ error: 'universeId is required' });
   }
-  try {
-    const books = await fetchBooks(universeId as string);
-    res.json(books);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch books' });
-  }
+  fetchBooks(universeId as string)
+    .then(books => res.json(books))
+    .catch(err => res.status(500).json({ error: 'Failed to fetch books' }));
 });
 
 /**
@@ -66,7 +64,7 @@ router.get('/', async (req, res, next) => {
  *       201:
  *         description: Book created
  */
-router.post('/', async (req, res, next) => {
+router.post('/', (req: Request, res: Response, next: NextFunction) => {
   const { universeId } = req.query;
   const { title, ...rest } = req.body;
   if (!universeId) {
@@ -79,12 +77,9 @@ router.post('/', async (req, res, next) => {
   const base64Title = Buffer.from(title.trim()).toString('base64').replace(/=+$/, '');
   const id = `bok-${base64Title}-${Date.now()}`;
   const bookData = { id, type: 'book', universeId, title, ...rest };
-  try {
-    const created = await createBook(universeId as string, bookData);
-    res.status(201).json(created);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to create book' });
-  }
+  createBook(universeId as string, bookData)
+    .then(created => res.status(201).json(created))
+    .catch(err => res.status(500).json({ error: 'Failed to create book' }));
 });
 
 /**
@@ -116,18 +111,17 @@ router.post('/', async (req, res, next) => {
  *       200:
  *         description: Book updated
  */
-router.put('/', async (req, res, next) => {
+router.put('/', (req: Request, res: Response, next: NextFunction) => {
   const { universeId, bookId } = req.query;
   if (!universeId || !bookId) {
     return res.status(400).json({ error: 'universeId and bookId are required' });
   }
-  try {
-    const ok = await updateBook(universeId as string, bookId as string, req.body);
-    if (ok) res.json({ success: true });
-    else res.status(404).json({ error: 'Book not found' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to update book' });
-  }
+  updateBook(universeId as string, bookId as string, req.body)
+    .then(ok => {
+      if (ok) res.json({ success: true });
+      else res.status(404).json({ error: 'Book not found' });
+    })
+    .catch(err => res.status(500).json({ error: 'Failed to update book' }));
 });
 
 /**
@@ -155,19 +149,18 @@ router.put('/', async (req, res, next) => {
  *       404:
  *         description: Book not found
  */
-router.delete('/:bookId', async (req, res, next) => {
+router.delete('/:bookId', (req: Request, res: Response, next: NextFunction) => {
   const { universeId } = req.query;
   const { bookId } = req.params;
   if (!universeId || !bookId) {
     return res.status(400).json({ error: 'universeId and bookId are required' });
   }
-  try {
-    const ok = await deleteBook(universeId as string, bookId as string);
-    if (ok) res.json({ success: true });
-    else res.status(404).json({ error: 'Book not found' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete book' });
-  }
+  deleteBook(universeId as string, bookId as string)
+    .then(ok => {
+      if (ok) res.json({ success: true });
+      else res.status(404).json({ error: 'Book not found' });
+    })
+    .catch(err => res.status(500).json({ error: 'Failed to delete book' }));
 });
 
 export default router;
@@ -194,7 +187,6 @@ export default router;
  *       200:
  *         description: Array of chapters
  */
-// @ts-expect-error Express type inference false positive
 router.get('/chapters', (req: Request, res: Response, next: NextFunction) => {
   const bookId = String(req.query.bookId);
   if (!bookId) {
@@ -228,7 +220,6 @@ router.get('/chapters', (req: Request, res: Response, next: NextFunction) => {
  *       201:
  *         description: Chapter created
  */
-// @ts-expect-error Express type inference false positive
 router.post('/chapters', (req: Request, res: Response, next: NextFunction) => {
   const bookId = String(req.query.bookId);
   if (!bookId) {
@@ -276,7 +267,6 @@ router.post('/chapters', (req: Request, res: Response, next: NextFunction) => {
  *       200:
  *         description: Chapter updated
  */
-// @ts-expect-error Express type inference false positive
 router.put('/chapters', (req: Request, res: Response, next: NextFunction) => {
   const bookId = String(req.query.bookId);
   const chapterId = String(req.query.chapterId);
@@ -316,26 +306,21 @@ router.put('/chapters', (req: Request, res: Response, next: NextFunction) => {
  *       404:
  *         description: Chapter not found
  */
-// @ts-expect-error Express type inference false positive
-router.delete(
-  '/books/:bookId/chapters/:chapterId',
-  (req: Request, res: Response, next: NextFunction) => {
-    const bookId = String(req.params.bookId);
-    const chapterId = String(req.params.chapterId);
-    if (!bookId || !chapterId) {
-      return res.status(400).json({ error: 'bookId and chapterId are required' });
-    }
-    deleteChapter(bookId, chapterId)
-      .then(ok => {
-        if (ok) res.json({ success: true });
-        else res.status(404).json({ error: 'Chapter not found' });
-      })
-      .catch(err => res.status(500).json({ error: 'Failed to delete chapter' }));
+router.delete('/books/:bookId/chapters/:chapterId', (req: Request, res: Response, next: NextFunction) => {
+  const bookId = String(req.params.bookId);
+  const chapterId = String(req.params.chapterId);
+  if (!bookId || !chapterId) {
+    return res.status(400).json({ error: 'bookId and chapterId are required' });
   }
-);
+  deleteChapter(bookId, chapterId)
+    .then(ok => {
+      if (ok) res.json({ success: true });
+      else res.status(404).json({ error: 'Chapter not found' });
+    })
+    .catch(err => res.status(500).json({ error: 'Failed to delete chapter' }));
+});
 
 // --- RESTful routes for chapters ---
-// @ts-expect-error Express type inference false positive
 router.post('/:bookId/chapters', (req: Request, res: Response, next: NextFunction) => {
   const bookId = String(req.params.bookId);
   if (!bookId) {
@@ -354,7 +339,6 @@ router.post('/:bookId/chapters', (req: Request, res: Response, next: NextFunctio
     .catch(next);
 });
 
-// @ts-expect-error Express type inference false positive
 router.get('/:bookId/chapters', (req: Request, res: Response, next: NextFunction) => {
   const bookId = String(req.params.bookId);
   if (!bookId) {
@@ -365,21 +349,16 @@ router.get('/:bookId/chapters', (req: Request, res: Response, next: NextFunction
     .catch(next);
 });
 
-// @ts-expect-error Express type inference false positive
-router.put(
-  '/:bookId/chapters/:chapterId',
-  async (req: Request, res: Response, next: NextFunction) => {
-    const bookId = String(req.params.bookId);
-    const chapterId = String(req.params.chapterId);
-    if (!bookId || !chapterId) {
-      return res.status(400).json({ error: 'bookId and chapterId are required' });
-    }
-    try {
-      const ok = await updateChapter(bookId, chapterId, req.body);
+router.put('/:bookId/chapters/:chapterId', (req: Request, res: Response, next: NextFunction) => {
+  const bookId = String(req.params.bookId);
+  const chapterId = String(req.params.chapterId);
+  if (!bookId || !chapterId) {
+    return res.status(400).json({ error: 'bookId and chapterId are required' });
+  }
+  updateChapter(bookId, chapterId, req.body)
+    .then(ok => {
       if (ok) res.json({ success: true });
       else res.status(404).json({ error: 'Chapter not found' });
-    } catch (err) {
-      res.status(500).json({ error: 'Failed to update chapter' });
-    }
-  }
-);
+    })
+    .catch(err => res.status(500).json({ error: 'Failed to update chapter' }));
+});

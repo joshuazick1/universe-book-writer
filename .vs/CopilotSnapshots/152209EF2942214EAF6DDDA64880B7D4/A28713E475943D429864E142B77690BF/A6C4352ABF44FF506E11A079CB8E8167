@@ -1,0 +1,29 @@
+﻿// ai-server/orchestrator/RecommendationEngine.ts
+// Orchestrator logic for providing dynamic model recommendations for a given task/context
+// This is a stub implementation. Replace with real logic as needed.
+
+import { getQualityReport } from '../benchmarking/BenchmarkingManager.js';
+
+export interface RecommendationParams {
+    task: string;
+    universeId?: string;
+    userId?: string;
+    // Add more fields as needed
+}
+
+/**
+ * Provides a ranked list of recommended models for a given task/context.
+ * @param params Recommendation parameters (task, universeId, userId, ...)
+ * @returns Array of recommended model names/ids, ordered by preference
+ */
+export async function getModelRecommendations(params: RecommendationParams): Promise<string[]> {
+    const report = await getQualityReport();
+    // This is a stub: rank models by quality score for the task
+    const candidates = report.models?.filter((m: any) => m.supportedTasks?.includes(params.task));
+    if (candidates && candidates.length > 0) {
+        candidates.sort((a: any, b: any) => (b.qualityScore || 0) - (a.qualityScore || 0));
+        return candidates.map((m: any) => m.name || m.id);
+    }
+    // Fallback: return a default model
+    return ['default-model'];
+}

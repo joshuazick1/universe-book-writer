@@ -65,7 +65,8 @@
   "include": [
     "./**/*.ts",
     "./**/*.tsx",
-    "scripts/test-runner/**/*.ts"
+    "scripts/test-runner/**/*.ts",
+    "packages/plugin-sdk/src/**/*.ts"
   ],
   "exclude": [
     "**/node_modules",

@@ -1,0 +1,38 @@
+/**
+ * Universe Prompts
+ * Prompts for specific universes, books, or chapters.
+ * Each prompt includes metadata for discoverability and RAG integration.
+ */
+
+import type { PromptMetadata } from './systemPrompts.js';
+
+export interface UniversePrompt {
+    metadata: PromptMetadata;
+    text: string;
+}
+
+/**
+ * Example universe prompts
+ */
+export const universePrompts: UniversePrompt[] = [
+    {
+        metadata: {
+            name: 'Fantasy Worldbuilding',
+            type: 'universe',
+            tags: ['fantasy', 'worldbuilding'],
+            version: '1.0.0',
+            description: 'Prompt for fantasy universe worldbuilding.'
+        },
+        text: 'Help the user create a rich fantasy universe with unique lore, magic systems, and cultures.'
+    },
+    {
+        metadata: {
+            name: 'Sci-Fi Worldbuilding',
+            type: 'universe',
+            tags: ['sci-fi', 'worldbuilding'],
+            version: '1.0.0',
+            description: 'Prompt for science fiction universe worldbuilding.'
+        },
+        text: 'Assist the user in building a science fiction universe with advanced technology, alien species, and interstellar politics.'
+    }
+];

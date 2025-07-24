@@ -1,0 +1,26 @@
+﻿import { Router } from 'express';
+import ToolOrchestratorController from '../controllers/toolOrchestratorController';
+
+const router = Router();
+
+/**
+ * Route to execute a tool.
+ * POST /api/tools/execute
+ */
+router.post('/execute', ToolOrchestratorController.executeTool);
+
+/**
+ * Route to list all registered tools.
+ * GET /api/tools
+ */
+router.get('/', (req, res) => {
+  try {
+    const tools = require('../services/toolRegistryService').listTools();
+    res.status(200).json({ success: true, tools });
+  } catch (error) {
+    console.error('Error listing tools:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+export default router;

@@ -1,0 +1,189 @@
+﻿# Tool-Oriented AI Helper Implementation Plan
+
+## Overview
+This document outlines a modular, tool-based approach for the Universe Book Writer AI helper. The system leverages intent parsing, tool orchestration, and strict typing to provide robust, extensible, and context-aware AI assistance for worldbuilding, writing, and creative workflows.
+
+---
+
+## 1. Request Flow
+
+1. **User submits a request** via chat or form.
+2. **Greeting detection**: If the input is a basic greeting, respond immediately using minimal context (AI identity, universe name, etc.).
+3. **Model/Server Selection (RAG-based, with Retry Logic)**: For all other requests, query the RAG for performance and model nodes:
+   - Retrieve model/server pairs with embeddings and metadata most relevant to the request (e.g., genre, task type).
+   - Rank/filter by latency (performance nodes), quality scores (model nodes, if available), and tokens-per-second (throughput) if available.
+   - If quality scores are missing, fall back to using only latency and throughput for initial selection, and distribute requests across available models to gather quality data over time.
+   - Select the optimal model/server pair for the request, balancing speed, quality (if available), and throughput.
+   - If a model fails to produce a valid JSON response or errors, lower its quality score for structured output and retry with the next best candidate.
+   - Track and update tokens-per-second (throughput) in performance nodes, in addition to latency, for more accurate performance scoring.
+   - **Fallback Strategy for Missing Quality Scores**:
+     - Use latency and throughput as primary metrics for ranking models.
+     - Distribute requests across multiple models to gather quality data over time.
+     - Implement a round-robin or weighted random selection strategy to ensure all models are tested.
+     - Dynamically update quality scores based on post-response grading.
+4. **Intent parsing**: Send the prompt to an "Intent Parser" AI, which:
+   - Receives a list of available tools (with descriptions and input/output schemas).
+   - Returns a plan: which tool(s) to call, in what order, and with what arguments.
+5. **Tool orchestration**: The backend executes the selected tools, aggregates results, and returns them to the user.
+6. **Response Quality Evaluation (Pre-Response)**: Before responding to the user:
+   - Evaluate the response for quality, relevance, and creativity.
+   - If the response is deemed poor (e.g., incomplete, irrelevant, or incoherent), retry with a different model/server pair.
+   - Log retries and their outcomes for debugging and analytics.
+7. **Post-response AI Grading (Background)**: After the user receives their response:
+   - Run a background AI pass to grade the response for quality, relevance, creativity, etc.
+   - Update the model node's quality score in the RAG.
+   - Optionally, incorporate user feedback for supervised improvement.
+
+---
+
+## 2. Tool Definition & Registry
+
+- Each tool is a TypeScript module with:
+  - Name, description, input/output types (strictly typed)
+  - Example usage and edge cases in JSDoc
+  - Registered in a central `toolRegistry.ts` (barrel file)
+- Tools can be logic-based (e.g., count universes), generative (e.g., suggest a new title), or RAG-based (e.g., semantic search).
+- Tools are discoverable by the AI via the intent parser prompt context.
+
+---
+
+## 3. Intent Parser Prompt Design
+
+- The intent parser receives:
+  - The user's request
+  - A list of available tools (name, description, input/output schema)
+  - Current context (universe, book, chapter, etc.)
+- The prompt instructs the AI to:
+  - Select the most relevant tool(s)
+  - Return a JSON plan: `{ "tools": [ { "name": "suggestTitle", "args": { ... } }, ... ] }`
+  - Optionally, explain its reasoning (for debugging)
+- Example prompt excerpt:
+  ```
+  You are an AI assistant for a book writing platform. You have access to the following tools:
+  - suggestTitle: Suggest a new title for a universe, book, or chapter.
+  - countUniverses: Return the number of universes in the current workspace.
+  ...
+  Given the user's request and context, return a JSON object listing the tools to call and their arguments.
+  "User request": "Suggest a better title for my universe."
+  ...
+  ```
+
+---
+
+## 4. Tool Execution Engine
+
+- Receives the plan from the intent parser
+- Validates tool names and arguments
+- Executes each tool in order (can be parallelized if independent)
+- Aggregates results and returns them to the user
+- Handles errors, retries, and fallback logic
+
+---
+
+## 5. System Prompts & Context
+
+- System prompts are modular and context-aware (see `systemPrompts.ts`)
+- Each tool can have its own system prompt for the generative model
+- Context (universe, book, chapter, user, etc.) is passed to both the intent parser and tools
+
+---
+
+## 6. Extensibility & Testing
+
+- New tools can be added by creating a new module and registering it
+- All tools and orchestration logic are unit tested (see `scripts/run-tests-with-output.ts`)
+- Tool registry and intent parser prompt are updated as new tools are added
+
+---
+
+## 7. Example Tool Definitions
+
+```ts
+// suggestTitle.ts
+/**
+ * Suggests a new title for a universe, book, or chapter.
+ * @param context - The current context (universe, book, etc.)
+ * @returns A string suggestion
+ */
+export function suggestTitle(context: { universe?: string; book?: string; chapter?: string }): string { ... }
+
+// countUniverses.ts
+/**
+ * Returns the number of universes in the current workspace.
+ * @returns number
+ */
+export function countUniverses(): number { ... }
+```
+
+---
+
+## 8. Edge Cases & Considerations
+
+- If the intent parser returns an invalid or ambiguous plan, fallback to a default AI response
+- All tool calls are strictly validated for input/output types
+- Tool execution is logged for debugging and analytics
+- The system is designed for plugin-first extensibility (universe-specific tools via plugins)
+- If a response is deemed poor during pre-response evaluation, retry with a different model/server pair before delivering it to the user
+- If no models have quality scores, use latency and throughput as fallback metrics and distribute requests to gather quality data dynamically
+
+---
+
+## 9. Additional Suggestions
+
+### Validation of Tool-Oriented Approach
+- **Proof of Concept**: Build a small prototype with a few tools (e.g., `suggestTitle` and `countUniverses`) to validate the tool orchestration and intent parsing flow.
+- **Performance Testing**: Ensure the tool execution engine can handle concurrent requests efficiently, especially for parallelizable tasks.
+
+### Error Handling and Fallbacks
+- **Graceful Degradation**: Define clear fallback responses for cases where tools fail or the intent parser returns ambiguous results.
+- **Error Logging**: Implement detailed logging for tool execution errors, retries, and fallback logic to aid debugging.
+
+### Tool Registry Enhancements
+- **Versioning**: Add versioning to tools in the `toolRegistry.ts` to manage updates and backward compatibility.
+- **Dependency Mapping**: Include metadata about tool dependencies (e.g., shared utilities, external APIs) to simplify debugging and updates.
+
+### Intent Parser Improvements
+- **Explainability**: Ensure the intent parser can optionally return reasoning for its tool selection to aid debugging and transparency.
+- **Ambiguity Resolution**: Add logic to handle ambiguous user requests by asking clarifying questions or providing multiple options.
+
+### Testing Strategy
+- **End-to-End Tests**: Create end-to-end tests for the entire request flow, from user input to tool execution and response generation.
+- **Mock Tools**: Use mock implementations of tools during testing to isolate and validate the intent parser and orchestration logic.
+
+### Scalability Considerations
+- **Load Balancing**: Ensure the system can distribute requests across multiple servers or instances for scalability.
+- **Caching**: Implement caching for frequently used tools or responses to reduce latency and improve throughput.
+
+### Extensibility Framework
+- **Plugin System**: Define a clear framework for adding new tools or plugins, including guidelines for naming, input/output schemas, and testing.
+- **Tool Categories**: Group tools into categories (e.g., logic-based, generative, RAG-based) to simplify discovery and management.
+
+### User Feedback Integration
+- **Feedback Loop**: Allow users to provide feedback on responses, which can be used to improve tool quality scores and intent parsing accuracy.
+- **Analytics**: Track tool usage and response quality metrics to identify areas for improvement.
+
+### Documentation Enhancements
+- **Tool-Specific Docs**: Include detailed documentation for each tool, including examples, edge cases, and performance considerations.
+- **Developer Guide**: Create a step-by-step guide for developers to add new tools or modify existing ones.
+
+### Security and Compliance
+- **Input Validation**: Ensure all user inputs are validated before being passed to tools to prevent injection attacks or invalid operations.
+- **Data Privacy**: If user data is involved, ensure compliance with data protection regulations (e.g., GDPR, CCPA).
+
+### Performance Monitoring
+- **Real-Time Metrics**: Implement monitoring for latency, throughput, and error rates for each tool and the overall system.
+- **Alerting**: Set up alerts for performance degradation or high error rates.
+
+---
+
+## 10. References
+- `shared/prompts/systemPrompts.ts`
+- `shared/types/`
+- `ai-server/src/orchestrator.ts`
+- `packages/plugin-sdk/`
+- [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling)
+- [LangChain Agents](https://python.langchain.com/docs/modules/agents/)
+
+---
+
+**Last updated:** July 23, 2025

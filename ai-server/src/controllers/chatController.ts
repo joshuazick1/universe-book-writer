@@ -230,8 +230,8 @@ export const processMessage: RequestHandler = async (req: Request, res: Response
             });
             return;
         }
-        const { CharacterChatProcessor } = await import('../services/characterChat/MessageProcessor.js');
-        const processor = new CharacterChatProcessor();
+        const { CharacterChatMessageProcessor } = await import('../services/characterChat/MessageProcessor.js');
+        const processor = new CharacterChatMessageProcessor();
         const chatRequest = {
             id: `test-${Date.now()}`,
             type: 'chat' as const,

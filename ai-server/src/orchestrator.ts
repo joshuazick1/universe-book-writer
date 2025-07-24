@@ -1,3 +1,5 @@
+// Plugin SDK integration
+import { PluginSDK } from '../../packages/plugin-sdk/src/index.js';
 /**
  * Orchestration Layer for AI Server
  *
@@ -15,9 +17,12 @@
 
 import fetch from 'node-fetch';
 import { BenchmarkManager } from './benchmarkManager.js';
+import { PromptSyncService } from './services/promptSyncService.js';
+import { PluginOrchestrationService } from './services/pluginOrchestrationService.js';
 import { logger } from '../../shared/logging/logger.js';
 import { withJobErrorHandling } from './pipeline/utils/jobErrorHandler.js';
 import { emitJobSSEEvent } from './pipeline/utils/sseEvents.js';
+import { executeTool } from './services/toolRegistryService.js';
 
 // Forward declaration to avoid circular dependency
 let ModelPerformanceRAGService: any = null;
@@ -53,6 +58,10 @@ interface RequestQueueEntry<T> {
 }
 
 export class AIOrchestrator {
+    /** Prompt sync service for prompt-to-RAG and embedding */
+    public promptSyncService: PromptSyncService;
+    /** Plugin orchestration service for multi-pass workflows */
+    public pluginOrchestrationService: PluginOrchestrationService;
 
     /**
      * Orchestrator constructor: initializes tag cache on startup
@@ -64,6 +73,9 @@ export class AIOrchestrator {
             this.refreshTagsCache()
                 .catch(() => { });
         });
+        // Initialize new services
+        this.promptSyncService = new PromptSyncService(this);
+        this.pluginOrchestrationService = new PluginOrchestrationService(this);
     }
     /**
      * Wrap a job handler with error handling, retry, and job stealing for distributed jobs.
@@ -88,6 +100,75 @@ export class AIOrchestrator {
             );
             return wrapped({ jobId: opts.jobId });
         };
+    }
+    /**
+     * Run model inference on the best available server for the given model.
+     * @param model - Model name
+     * @param prompt - User prompt
+     * @param context - Assembled context
+     * @param suggestions - Plugin suggestions
+     * @returns Model inference result (response from server)
+     */
+    async runModel(model: string, prompt: string, context: any, suggestions: any): Promise<any> {
+        // Select the best server for the model
+        const server = this.getBestServerForModel(model);
+        if (!server) {
+            throw new Error(`No healthy server available for model '${model}'.`);
+        }
+        // Prepare request payload for /api/generate
+        const payload = {
+            model,
+            prompt,
+            stream: false,
+            format: 'json',
+            options: {
+                temperature: 0.7,
+                top_p: 0.9,
+                num_ctx: 2048,
+                stop: ['</s>'],
+                ...(context?.options || {}),
+            }
+        };
+        // POST to /api/generate endpoint on the selected server
+        const apiUrl = `${server.url}/api/generate`;
+        try {
+            const resp = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!resp.ok) {
+                throw new Error(`Model server responded with status ${resp.status}`);
+            }
+            const result = await resp.json();
+            // Optionally track usage with RAG
+            this.trackUsageWithRAG(server.id, model, { source: 'runModel' });
+            return result;
+        } catch (err) {
+            // Mark failure and propagate error
+            this.markFailure(server.id, model);
+            throw err;
+        }
+    }
+    /**
+     * Gather plugin context for the given assembled context.
+     * @param context - Assembled context object
+     * @returns Plugin context (pass-through for now)
+     */
+    async getPluginContext(context: any): Promise<any> {
+        // If plugins need to transform context, do it here. Otherwise, just return.
+        return context;
+    }
+
+    /**
+     * Generate plugin suggestions based on intent, plugin context, and form state.
+     * @param intent - Detected intent
+     * @param pluginContext - Plugin context
+     * @param formState - Current form state
+     * @returns Plugin suggestions
+     */
+    async getPluginSuggestions(intent: any, pluginContext: any, formState: any): Promise<any> {
+        return PluginSDK.generateSuggestions({ intent, context: pluginContext, formState });
     }
     private servers: AIServer[] = [];
     /** Track in-flight requests per server/model: { '<serverId>:<model>': count } */
@@ -537,6 +618,30 @@ export class AIOrchestrator {
      * @param fn Function to call with (server)
      * @returns The result or throws if all fail or all at max concurrency/queue
      */
+    /**
+     * AI Helper queue request: integrates plugin context/suggestions and routes to best server/model
+     * @param model - Model to use
+     * @param prompt - User prompt
+     * @param context - Assembled context
+     * @param formState - Current form state
+     * @returns AI response and plugin suggestions
+     */
+    async handleAIHelperRequest(model: string, prompt: string, context: any, formState: any): Promise<{ chatResponse: any, suggestions: any }> {
+        // Detect intent
+        const intent = PluginSDK.detectIntent(prompt);
+        // Gather plugin context
+        const pluginContext = await this.getPluginContext(context);
+        // Generate plugin suggestions
+        const suggestions = await this.getPluginSuggestions(intent, pluginContext, formState);
+        // Route to best server/model using queue
+        const chatResponse = await this.tryRequestWithFailover(model, async (server) => {
+            // TODO: Implement actual server call using prompt/context/suggestions
+            // For now, return a mock response
+            return { text: `AI response for prompt: ${prompt}` };
+        });
+        return { chatResponse, suggestions };
+    }
+
     async tryRequestWithFailover<T>(model: string, fn: (server: AIServer) => Promise<T>): Promise<T> {
         const tried: { server: string; error: string }[] = [];
         const candidates = this.servers
@@ -917,3 +1022,11 @@ export class AIOrchestrator {
 
 // Export BenchmarkManager for use in other services
 export { BenchmarkManager };
+
+export class ToolOrchestrator {
+  /**
+   * Executes a tool with the given name and arguments.
+   * @param toolName - The name of the tool to execute.
+   * @param args - The arguments to pass to the tool
+   */
+}

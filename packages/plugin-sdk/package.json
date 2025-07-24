@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "@verseforge/plugin-sdk",
   "version": "0.0.1-alpha.1",
   "private": true,
