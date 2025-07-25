@@ -15,3 +15,4 @@ export type {
     RAGRelationshipPrivacy
 } from './ragTypes.js';
 export * from './models.js';
+export * from './aiQualityBenchmark.js';

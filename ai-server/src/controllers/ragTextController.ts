@@ -5,7 +5,8 @@ import { storeRawText } from '../pipeline/storeRawText.js';
 import { generateId } from '../../../shared/utils/generateId.js';
 import { pipelineTasks, PIPELINE_TASKS } from '../../../shared/utils/pipelineTasks.js';
 // PIPELINE_TASKS now exported from shared/utils/pipelineTasks.ts
-import { selectBestModel } from '../../orchestrator/ModelSelector.js';
+import { selectBestModel, ModelSelectionParams } from '../../orchestrator/ModelSelector.js';
+import { BenchmarkType } from '../../../shared/types/aiQualityBenchmark.js';
 
 // Helper: send SSE event
 function sendSSE(res: Response, event: string, data: any) {
@@ -172,13 +173,21 @@ export const ragTextController = {
             const pipelineSessionId = generateId();
 
             // --- Orchestrator Model Selection ---
+            /**
+             * Select best model for this pipeline (task: 'rag_ingest') using quality benchmarks.
+             * Pass benchmarkType and minQualityScore if available in metadata or request.
+             */
             if (!metadata.model) {
-                // Select best model for this pipeline (task: 'rag_ingest')
-                metadata.model = await selectBestModel({
+                const selectionParams: ModelSelectionParams = {
                     task: 'rag_ingest',
                     universeId: metadata.universeId,
                     userId: metadata.userId,
-                });
+                    benchmarkType: metadata.benchmarkType as BenchmarkType ?? 'task-planning',
+                    minQualityScore: typeof metadata.minQualityScore === 'number' ? metadata.minQualityScore : 0.0,
+                    preferredVendors: metadata.preferredVendors,
+                    maxLatencyMs: metadata.maxLatencyMs,
+                };
+                metadata.model = await selectBestModel(selectionParams);
             }
 
             // --- Prepare pipeline context (step 1 only) ---
@@ -651,11 +660,16 @@ export const ragTextController = {
 
             // --- Orchestrator Model Selection ---
             if (!metadata.model) {
-                metadata.model = await selectBestModel({
+                const selectionParams: ModelSelectionParams = {
                     task: 'rag_ingest',
                     universeId: metadata.universeId,
                     userId: metadata.userId,
-                });
+                    benchmarkType: metadata.benchmarkType as BenchmarkType ?? 'task-planning',
+                    minQualityScore: typeof metadata.minQualityScore === 'number' ? metadata.minQualityScore : 0.0,
+                    preferredVendors: metadata.preferredVendors,
+                    maxLatencyMs: metadata.maxLatencyMs,
+                };
+                metadata.model = await selectBestModel(selectionParams);
             }
 
             // --- Enhanced Streaming: Emit pipeline_overview ---

@@ -1,3 +1,5 @@
+// Manual Benchmark Controller
+import benchmarkManualController from './controllers/benchmarkManualController.js';
 import express from 'express';
 import universeRoutes from './routes/universeRoutes.js';
 import inferRouter from './routes/infer.js';
@@ -7,6 +9,7 @@ import characterRoutes from './routes/characterRoutes.js';
 import cors from 'cors';
 import healthRouter from './routes/health.js';
 import modelsRouter from './routes/models.js';
+import manualModelTestRouter from './routes/manualModelTest.js';
 import generateRouter from './routes/generate.js';
 import configRouter from './routes/config.js';
 import orchestratorConfigRouter from './routes/orchestratorConfig.js';
@@ -70,8 +73,69 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Mount routers
+
+/**
+ * @openapi
+ * /api/benchmark/manual:
+ *   post:
+ *     summary: Run manual benchmarks for a model on one or more servers (ad-hoc, does not update persistent data)
+ *     tags:
+ *       - Benchmarking
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               modelId:
+ *                 type: string
+ *                 description: Model ID to benchmark
+ *               benchmarkTypes:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: List of benchmark types to run
+ *               serverIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Optional list of server IDs to test (if omitted, all discovered servers are used)
+ *             required:
+ *               - modelId
+ *               - benchmarkTypes
+ *     responses:
+ *       200:
+ *         description: Benchmark results for each server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 modelId:
+ *                   type: string
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       serverId:
+ *                         type: string
+ *                       benchmarks:
+ *                         type: object
+ *                         additionalProperties:
+ *                           $ref: '#/components/schemas/QualityBenchmarkScore'
+ *       400:
+ *         description: Invalid request
+ *       404:
+ *         description: No servers found for model
+ *       500:
+ *         description: Internal error
+ */
+app.use(benchmarkManualController);
 app.use('/api', healthRouter);
 app.use('/api/models', modelsRouter);
+app.use('/api/model', manualModelTestRouter);
 app.use('/api/generate', generateRouter);
 app.use('/api/config', configRouter);
 app.use('/api/orchestrator/config', orchestratorConfigRouter);
