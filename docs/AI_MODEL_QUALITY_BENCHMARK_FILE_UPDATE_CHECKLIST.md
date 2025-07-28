@@ -10,7 +10,6 @@ This checklist details all required file updates, edits, and removals for the qu
 - **ai-server/benchmarking/BenchmarkingManager.ts**
   - Replace all in-memory/mock logic with persistent storage (database or service) for model benchmarks.
   - Integrate real server discovery and latency measurement (remove simulated servers/latencies).
-  - Implement actual benchmark execution for each model and benchmark type, migrating any robust evaluation logic from `QualityBenchmarkManager` (e.g., scoring, retries, schema validation, BLEU/ROUGE, etc.).
   - Ensure results are stored in the `ai-model` node, keyed by benchmark type, and are up-to-date.
   - Remove all demo, stub, and placeholder code/comments.
 
@@ -37,11 +36,9 @@ This checklist details all required file updates, edits, and removals for the qu
 - **ai-server/orchestrator/index.ts**
   - Update barrel exports as modules are refactored or replaced.
 
-- **Migration from QualityBenchmarkManager**
 
 
 
-### [x] Logic to Migrate from QualityBenchmarkManager
 
 
 #### Files to Update or Create for Migration
@@ -107,14 +104,11 @@ This checklist details all required file updates, edits, and removals for the qu
 
 ## 4. Removals, Deprecations & Migration Plan
 
-- Remove `ai-server/src/services/benchmarking/QualityBenchmarkManager.ts` and any related files or documentation (including `QUALITY_BENCHMARKING_AGGREGATION_AND_SCORING.md`, `REAL_MODEL_BENCHMARKING_STEPS.md` if specific to the old implementation).
-- Remove or update any imports/usages of `QualityBenchmarkManager` throughout the codebase.
 - Refactor all quality benchmarking logic into `ai-server/benchmarking/BenchmarkingManager.ts` using generic, extensible types and model-centric storage (in `ai-model` node, keyed by benchmark type).
 - Ensure all type definitions for benchmarks are unified and extensible in `shared/types/aiQualityBenchmark.ts` or `ai-server/types/models.ts`.
 - Update all orchestrator, controller, and utility files to use the new benchmarking manager and types.
 - Remove any legacy code or documentation referencing quality benchmarks stored in `ai-performance` nodes.
 - Deprecate any benchmark types or logic that are not generic/extensible.
-- Remove references to `QualityBenchmarkManager` from all documentation and update workflow/architecture docs to reflect the new approach.
 - Add/Update unit tests for the new implementation and remove any tests specific to the old manager.
 
 ---
@@ -131,3 +125,56 @@ This checklist details all required file updates, edits, and removals for the qu
 ## Notes
 - Ensure all updates follow strict TypeScript, documentation, and architectural conventions.
 - Update test coverage and validate all changes in staging before merging.
+
+
+
+
+
+
+
+Your current benchmarks are running, but the results are limited by several issues:
+- Some servers are returning 500 errors or timing out on `/api/generate` (likely due to model loading, RAM, or misconfiguration).
+- BLEU/ROUGE scoring is failing (`bleu is not a function`), so quality scores are not meaningful.
+- Some model outputs are malformed or not valid JSON, causing parsing errors.
+- Benchmarks are not robust to streaming/NDJSON responses or model-specific quirks.
+
+To enhance your benchmarks for better, more actionable results:
+
+### 1. Robust Model API Calls
+- Add retry logic and exponential backoff for transient errors (network, 500, timeouts).
+- Detect and handle model loading delays (Ollama may take 10–30s to load a model).
+- For `/api/generate`, check for streaming/NDJSON and parse accordingly.
+
+### 2. Improve Output Parsing
+- For JSON benchmarks, use a tolerant parser that can extract the first valid JSON object from a messy or NDJSON stream.
+- For text/creative benchmarks, trim and normalize whitespace before scoring.
+
+### 3. Fix BLEU/ROUGE Scoring
+- Ensure your BLEU/ROUGE implementation is correct and available (import a robust library, e.g., `n-bleu`, `rouge-score`).
+- Add error handling so a missing scorer does not zero out the score.
+
+### 4. Quality Benchmarking Improvements
+- For each benchmark type, provide a canonical reference output and compare model output to it.
+- For creative/text tasks, use both automated metrics (BLEU/ROUGE) and simple heuristics (length, keyword presence).
+- For code/TypeScript, use a linter or type checker to validate output.
+
+### 5. Latency/Throughput
+- For latency, always measure both cold (model not loaded) and warm (model loaded) times if possible.
+- For throughput, run multiple requests in parallel and measure average response time.
+
+### 6. Error Reporting & Logging
+- Log all errors with enough context (server, model, input, error message).
+- Return error details in the benchmark result rubric for transparency.
+
+### 7. Adaptive Benchmarking
+- If a server fails repeatedly, mark it as unhealthy and skip further benchmarks until it recovers.
+- If a model is slow to load, increase timeout for that server/model pair.
+
+---
+
+#### Example: Improving `runBenchmarksForServer`
+- Add a helper to robustly call the model API, with retries and streaming/NDJSON support.
+- Use a real BLEU/ROUGE scorer and catch errors.
+- For JSON, extract the first valid object even from a messy response.
+
+Would you like a concrete code patch for any of these improvements (e.g., BLEU/ROUGE fix, robust JSON extraction, or retry logic for model API calls)? If so, specify which area to prioritize first.

@@ -8,30 +8,6 @@
     "models": []
   },
   {
-    "id": "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA",
-    "url": "http://69.145.88.30:11434",
-    "type": "ollama",
-    "healthy": true,
-    "lastResponseTime": null,
-    "models": []
-  },
-  {
-    "id": "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA",
-    "url": "http://173.56.32.53:11434",
-    "type": "ollama",
-    "healthy": true,
-    "lastResponseTime": null,
-    "models": []
-  },
-  {
-    "id": "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ",
-    "url": "http://136.60.21.226:11434",
-    "type": "ollama",
-    "healthy": true,
-    "lastResponseTime": null,
-    "models": []
-  },
-  {
     "id": "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ",
     "url": "http://104.36.84.135:11434",
     "type": "ollama",
@@ -42,14 +18,6 @@
   {
     "id": "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA",
     "url": "http://localhost:11434",
-    "type": "ollama",
-    "healthy": true,
-    "lastResponseTime": null,
-    "models": []
-  },
-  {
-    "id": "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA",
-    "url": "http://98.55.81.232:11434",
     "type": "ollama",
     "healthy": true,
     "lastResponseTime": null,
@@ -160,14 +128,6 @@
     "models": []
   },
   {
-    "id": "srv-aHR0cDovLzQuMTUwLjE3Ni4xMzI6MTE0MzQ",
-    "url": "http://4.150.176.132:11434",
-    "type": "ollama",
-    "healthy": true,
-    "lastResponseTime": null,
-    "models": []
-  },
-  {
     "id": "srv-aHR0cDovLzEyLjIyMS4xNDIuMjA2OjExNDM0",
     "url": "http://12.221.142.206:11434",
     "type": "ollama",
@@ -186,14 +146,6 @@
   {
     "id": "srv-aHR0cDovLzUuMTYxLjE5Ni4yMTE6MTE0MzQ",
     "url": "http://5.161.196.211:11434",
-    "type": "ollama",
-    "healthy": true,
-    "lastResponseTime": null,
-    "models": []
-  },
-  {
-    "id": "srv-aHR0cDovLzIzLjIzOS4xMDcuNjoxMTQzNA",
-    "url": "http://23.239.107.6:11434",
     "type": "ollama",
     "healthy": true,
     "lastResponseTime": null,

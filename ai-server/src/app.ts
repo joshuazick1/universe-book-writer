@@ -202,6 +202,16 @@ app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json(response);
 });
 
+// --- RAG Ready Promise ---
+export let ragReadyResolve: (() => void) | null = null;
+/**
+ * Promise that resolves when the RAG system is fully initialized and synced.
+ * Import this in index.ts to await RAG readiness before running dependent routines.
+ */
+export const ragReadyPromise: Promise<void> = new Promise((resolve) => {
+  ragReadyResolve = resolve;
+});
+
 // Initialize RAG system asynchronously
 async function initializeRAGSystem() {
   try {

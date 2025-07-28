@@ -1,0 +1,438 @@
+[DEBUG] generate.ts router loaded
+[DEBUG] ollamaCompat.ts router loaded
+2025-07-28T01:37:09.245Z INFO: Creating RAG Service Manager
+2025-07-28T01:37:09.248Z INFO: Initializing RAG Service Manager
+2025-07-28T01:37:09.248Z INFO: Creating storage adapter of type: mongodb
+2025-07-28T01:37:09.248Z INFO: Initializing MongoDB RAG adapter
+AI Server MongoDB indexes created successfully.
+AI Server connected to shared MongoDB database.
+2025-07-28T01:37:09.854Z INFO: Setting up Socket.IO server...
+2025-07-28T01:37:09.855Z INFO: Socket.IO server setup complete
+AI server listening on port 5100
+Socket.IO enabled for real-time chat
+2025-07-28T01:37:09.889Z INFO: Created essential RAG indices in MongoDB
+2025-07-28T01:37:09.889Z INFO: MongoDB RAG adapter initialized successfully
+2025-07-28T01:37:09.890Z INFO: Storage adapter initialized: mongodb
+2025-07-28T01:37:09.890Z INFO: RAG Service Manager initialized successfully
+2025-07-28T01:37:09.891Z INFO: RAG Service Manager created and initialized
+2025-07-28T01:37:09.907Z INFO: Creating simple RAG router with all endpoints
+2025-07-28T01:37:09.908Z INFO: RAG router created with 16 endpoints
+2025-07-28T01:37:11.462Z INFO: Model Performance RAG Service initialized
+2025-07-28T01:38:44.678Z INFO: [LOGGER TEST] /generate endpoint hit
+[TIMING] /generate: request received at 2025-07-28T01:38:44.678Z
+[TIMING] /generate: parsed body in 1ms
+[TIMING] /generate: healthyServers filter in 0ms
+[TIMING] /generate: fetch to model server took 1895ms
+[TIMING] /generate: streamed 1375 bytes in 111ms
+[TIMING] /generate: total inference time 2007ms
+2025-07-28T01:38:46.688Z ERROR: [generate] Calling trackUsageWithRAG for smollm2:135m on srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0
+[TIMING] /generate: usage tracking took 1ms
+2025-07-28T01:38:46.705Z INFO: [orchestrator] trackUsageWithRAG CALLED for smollm2:135m on srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0 | metadata: {"source":"direct"}
+2025-07-28T01:38:46.705Z INFO: [orchestrator] trackUsageWithRAG source: direct
+2025-07-28T01:38:46.727Z INFO: Model Performance RAG Service initialized
+2025-07-28T01:38:55.671Z INFO: Synced 302 model nodes, 27 server nodes, 407 performance nodes, and 1221 relationships to RAG
+2025-07-28T01:39:01.239Z INFO: Synced 302 model nodes, 27 server nodes, 407 performance nodes, and 1221 relationships to RAG
+2025-07-28T01:39:01.240Z INFO: [orchestrator] Calling incrementUsageTally for smollm2:135m on srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0
+2025-07-28T01:39:01.241Z INFO: [RAG USAGE] incrementUsageTally CALLED for smollm2:135m on srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0 | metadata: {"source":"direct"}
+2025-07-28T01:39:01.251Z INFO: [RAG USAGE] incrementUsageTally UPDATED node for smollm2:135m on srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0 | totalUsageCount: 6
+2025-07-28T01:39:01.251Z INFO: [orchestrator] incrementUsageTally completed for smollm2:135m on srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0
+[Orchestrate] Using provided serverIds: srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA
+[Orchestrate] Starting cold test for server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Using provided serverIds: srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA
+[Orchestrate] Starting cold test for server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Using provided serverIds: srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA
+[Orchestrate] Starting cold test for server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Using provided serverIds: srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA
+[Orchestrate] Starting cold test for server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Using provided serverIds: srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA
+[Orchestrate] Starting cold test for server: http://localhost:11434, model: llama3:latest
+2025-07-28T01:39:15.979Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:mxbai-embed-large:latest: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:15.981Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:smollm2:135m: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:18.260Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:all-minilm:latest: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:18.264Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:nomic-embed-text:latest: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:18.444Z ERROR: [callModelAPI] Error response for attempt 2 on localhost:11434:mxbai-embed-large:latest:
+  Status: 400 Bad Request
+  OOM: false
+  Request: {
+  "model": "mxbai-embed-large:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "66",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:18 GMT"
+}
+  Response Body: {"error":"\"mxbai-embed-large:latest\" does not support generate"}
+2025-07-28T01:39:18.445Z ERROR: callModelAPI received 4xx error for localhost:11434:mxbai-embed-large:latest: 400 Bad Request
+  Request: {
+  "model": "mxbai-embed-large:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "66",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:18 GMT"
+}
+  Response Body: {"error":"\"mxbai-embed-large:latest\" does not support generate"}
+2025-07-28T01:39:18.445Z WARN: callModelAPI attempt 2 failed for localhost:11434:mxbai-embed-large:latest: Model call failed: 400 Bad Request (marking server as unhealthy and retrying)
+2025-07-28T01:39:18.446Z ERROR: callModelAPI failed after 1 attempts for mxbai-embed-large:latest. All servers unhealthy or max retries reached. Last error: Model call failed: 400 Bad Request
+2025-07-28T01:39:18.446Z WARN: BLEU/ROUGE metric error: Model call failed: 400 Bad Request
+[Orchestrate] Cold test results for server: http://localhost:11434, model: mxbai-embed-large:latest: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:13.240Z"}}
+[Orchestrate] Server healthy after cold test: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Starting warmup/quality/warm latency for healthy server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Assigned benchmarks for server: http://localhost:11434, model: mxbai-embed-large:latest: json-assembly, latency, quality
+[Orchestrate] Running benchmark json-assembly for server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Running benchmark latency for server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Running benchmark quality for server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Benchmark latency result for server: http://localhost:11434, model: mxbai-embed-large:latest: {"latency":{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.452Z"}}
+[Orchestrate] Benchmark quality result for server: http://localhost:11434, model: mxbai-embed-large:latest: {"quality":{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.452Z"}}
+2025-07-28T01:39:18.459Z ERROR: [callModelAPI] Error response for attempt 2 on localhost:11434:all-minilm:latest:
+  Status: 400 Bad Request
+  OOM: false
+  Request: {
+  "model": "all-minilm:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "59",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:18 GMT"
+}
+  Response Body: {"error":"\"all-minilm:latest\" does not support generate"}
+2025-07-28T01:39:18.460Z ERROR: callModelAPI received 4xx error for localhost:11434:all-minilm:latest: 400 Bad Request
+  Request: {
+  "model": "all-minilm:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "59",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:18 GMT"
+}
+  Response Body: {"error":"\"all-minilm:latest\" does not support generate"}
+2025-07-28T01:39:18.461Z WARN: callModelAPI attempt 2 failed for localhost:11434:all-minilm:latest: Model call failed: 400 Bad Request (marking server as unhealthy and retrying)
+2025-07-28T01:39:18.462Z ERROR: callModelAPI failed after 1 attempts for all-minilm:latest. All servers unhealthy or max retries reached. Last error: Model call failed: 400 Bad Request
+2025-07-28T01:39:18.462Z WARN: BLEU/ROUGE metric error: Model call failed: 400 Bad Request
+[Orchestrate] Cold test results for server: http://localhost:11434, model: all-minilm:latest: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:13.244Z"}}
+[Orchestrate] Server healthy after cold test: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Starting warmup/quality/warm latency for healthy server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Assigned benchmarks for server: http://localhost:11434, model: all-minilm:latest: json-assembly, latency, quality
+[Orchestrate] Running benchmark json-assembly for server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Running benchmark latency for server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Running benchmark quality for server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Benchmark latency result for server: http://localhost:11434, model: all-minilm:latest: {"latency":{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.467Z"}}
+[Orchestrate] Benchmark quality result for server: http://localhost:11434, model: all-minilm:latest: {"quality":{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.468Z"}}
+2025-07-28T01:39:18.476Z ERROR: [callModelAPI] Error response for attempt 2 on localhost:11434:nomic-embed-text:latest:
+  Status: 400 Bad Request
+  OOM: false
+  Request: {
+  "model": "nomic-embed-text:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "65",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:18 GMT"
+}
+  Response Body: {"error":"\"nomic-embed-text:latest\" does not support generate"}
+2025-07-28T01:39:18.477Z ERROR: callModelAPI received 4xx error for localhost:11434:nomic-embed-text:latest: 400 Bad Request
+  Request: {
+  "model": "nomic-embed-text:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "65",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:18 GMT"
+}
+  Response Body: {"error":"\"nomic-embed-text:latest\" does not support generate"}
+2025-07-28T01:39:18.477Z WARN: callModelAPI attempt 2 failed for localhost:11434:nomic-embed-text:latest: Model call failed: 400 Bad Request (marking server as unhealthy and retrying)
+2025-07-28T01:39:18.478Z ERROR: callModelAPI failed after 1 attempts for nomic-embed-text:latest. All servers unhealthy or max retries reached. Last error: Model call failed: 400 Bad Request
+2025-07-28T01:39:18.478Z WARN: BLEU/ROUGE metric error: Model call failed: 400 Bad Request
+[Orchestrate] Cold test results for server: http://localhost:11434, model: nomic-embed-text:latest: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:13.248Z"}}
+[Orchestrate] Server healthy after cold test: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Starting warmup/quality/warm latency for healthy server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Assigned benchmarks for server: http://localhost:11434, model: nomic-embed-text:latest: json-assembly, latency, quality
+[Orchestrate] Running benchmark json-assembly for server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Running benchmark latency for server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Running benchmark quality for server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Benchmark latency result for server: http://localhost:11434, model: nomic-embed-text:latest: {"latency":{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.482Z"}}
+[Orchestrate] Benchmark quality result for server: http://localhost:11434, model: nomic-embed-text:latest: {"quality":{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.482Z"}}
+2025-07-28T01:39:20.520Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:llama3:latest: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:20.751Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:mxbai-embed-large:latest: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:20.779Z ERROR: [callModelAPI] Error response for attempt 2 on localhost:11434:mxbai-embed-large:latest:
+  Status: 400 Bad Request
+  OOM: false
+  Request: {
+  "model": "mxbai-embed-large:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "66",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:20 GMT"
+}
+  Response Body: {"error":"\"mxbai-embed-large:latest\" does not support generate"}
+2025-07-28T01:39:20.779Z ERROR: callModelAPI received 4xx error for localhost:11434:mxbai-embed-large:latest: 400 Bad Request
+  Request: {
+  "model": "mxbai-embed-large:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "66",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:20 GMT"
+}
+  Response Body: {"error":"\"mxbai-embed-large:latest\" does not support generate"}
+2025-07-28T01:39:20.779Z WARN: callModelAPI attempt 2 failed for localhost:11434:mxbai-embed-large:latest: Model call failed: 400 Bad Request (marking server as unhealthy and retrying)
+2025-07-28T01:39:20.780Z ERROR: callModelAPI failed after 1 attempts for mxbai-embed-large:latest. All servers unhealthy or max retries reached. Last error: Model call failed: 400 Bad Request
+2025-07-28T01:39:20.780Z WARN: BLEU/ROUGE metric error: Model call failed: 400 Bad Request
+[Orchestrate] Benchmark json-assembly result for server: http://localhost:11434, model: mxbai-embed-large:latest: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:18.449Z"}}
+[Orchestrate] Running warm latency tests for server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Warm latency results for server: http://localhost:11434, model: mxbai-embed-large:latest: [0,0,0]
+[Orchestrate] Remaining benchmarks for server: http://localhost:11434, model: mxbai-embed-large:latest:
+[Orchestrate] Aggregating quality results for server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Aggregated quality results for server: http://localhost:11434, model: mxbai-embed-large:latest: {"latency":[{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.452Z"},{"type":"latency","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"latency","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"latency","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"latency","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:20.785Z"}],"quality":[{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.452Z"},{"type":"quality","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"quality","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"quality","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"quality","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:20.785Z"}],"json-assembly":[{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:18.449Z"},{"type":"json-assembly","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"json-assembly","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"json-assembly","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:20.785Z"},{"type":"json-assembly","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:20.785Z"}]}
+[Orchestrate] Generating embeddings for healthy server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Embeddings generated for healthy server: http://localhost:11434, model: mxbai-embed-large:latest: [-0.405,-0.404,-0.403,-0.402,-0.401,-0.4,-0.399,-0.398,-0.397,-0.396,-0.395,-0.394,-0.393,-0.392,-0.391,-0.39,-0.389,-0.388,-0.387,-0.386,-0.385,-0.384,-0.383,-0.382,-0.381,-0.38,-0.379,-0.378,-0.377,-0.376,-0.375,-0.374,-0.373,-0.372,-0.371,-0.37,-0.369,-0.368,-0.367,-0.366,-0.365,-0.364,-0.363,-0.362,-0.361,-0.36,-0.359,-0.358,-0.357,-0.356,-0.355,-0.354,-0.353,-0.352,-0.351,-0.35,-0.349,-0.348,-0.347,-0.346,-0.345,-0.344,-0.34299999999999997,-0.34199999999999997,-0.34099999999999997,-0.33999999999999997,-0.33899999999999997,-0.33799999999999997,-0.33699999999999997,-0.33599999999999997,-0.33499999999999996,-0.33399999999999996,-0.33299999999999996,-0.33199999999999996,-0.33099999999999996,-0.32999999999999996,-0.32899999999999996,-0.328,-0.327,-0.326,-0.325,-0.324,-0.323,-0.322,-0.321,-0.32,-0.319,-0.318,-0.317,-0.316,-0.315,-0.314,-0.313,-0.312,-0.311,-0.31,-0.309,-0.308,-0.307,-0.306,-0.305,-0.304,-0.303,-0.302,-0.301,-0.3,-0.299,-0.298,-0.297,-0.29600000000000004,-0.29500000000000004,-0.29400000000000004,-0.29300000000000004,-0.29200000000000004,-0.29100000000000004,-0.29000000000000004,-0.28900000000000003,-0.28800000000000003,-0.28700000000000003,-0.28600000000000003,-0.28500000000000003,-0.28400000000000003,-0.28300000000000003,-0.28200000000000003,-0.281,-0.28,-0.279,-0.278,-0.277,-0.276,-0.275,-0.274,-0.273,-0.272,-0.271,-0.27,-0.269,-0.268,-0.267,-0.266,-0.265,-0.264,-0.263,-0.262,-0.261,-0.26,-0.259,-0.258,-0.257,-0.256,-0.255,-0.254,-0.253,-0.252,-0.251,-0.25,-0.249,-0.248,-0.247,-0.246,-0.245,-0.244,-0.243,-0.242,-0.241,-0.24,-0.239,-0.238,-0.237,-0.236,-0.235,-0.23399999999999999,-0.23299999999999998,-0.23199999999999998,-0.23099999999999998,-0.22999999999999998,-0.22899999999999998,-0.22799999999999998,-0.22699999999999998,-0.22599999999999998,-0.22499999999999998,-0.22399999999999998,-0.22299999999999998,-0.22199999999999998,-0.22099999999999997,-0.21999999999999997,-0.21899999999999997,-0.21800000000000003,-0.21700000000000003,-0.21600000000000003,-0.21500000000000002,-0.21400000000000002,-0.21300000000000002,-0.21200000000000002,-0.21100000000000002,-0.21000000000000002,-0.20900000000000002,-0.20800000000000002,-0.20700000000000002,-0.20600000000000002,-0.20500000000000002,-0.20400000000000001,-0.203,-0.202,-0.201,-0.2,-0.199,-0.198,-0.197,-0.196,-0.195,-0.194,-0.193,-0.192,-0.191,-0.19,-0.189,-0.188,-0.187,-0.186,-0.185,-0.184,-0.183,-0.182,-0.181,-0.18,-0.179,-0.178,-0.177,-0.176,-0.175,-0.174,-0.173,-0.172,-0.17099999999999999,-0.16999999999999998,-0.16899999999999998,-0.16799999999999998,-0.16699999999999998,-0.16599999999999998,-0.16499999999999998,-0.16399999999999998,-0.16299999999999998,-0.16199999999999998,-0.16099999999999998,-0.15999999999999998,-0.15899999999999997,-0.15799999999999997,-0.15699999999999997,-0.15600000000000003,-0.15500000000000003,-0.15400000000000003,-0.15300000000000002,-0.15200000000000002,-0.15100000000000002,-0.15000000000000002,-0.14900000000000002,-0.14800000000000002,-0.14700000000000002,-0.14600000000000002,-0.14500000000000002,-0.14400000000000002,-0.14300000000000002,-0.14200000000000002,-0.14100000000000001,-0.14,-0.139,-0.138,-0.137,-0.136,-0.135,-0.134,-0.133,-0.132,-0.131,-0.13,-0.129,-0.128,-0.127,-0.126,-0.125,-0.124,-0.123,-0.122,-0.121,-0.12,-0.119,-0.118,-0.11699999999999999,-0.11599999999999999,-0.11499999999999999,-0.11399999999999999,-0.11299999999999999,-0.11199999999999999,-0.11099999999999999,-0.10999999999999999,-0.10899999999999999,-0.10799999999999998,-0.10699999999999998,-0.10599999999999998,-0.10499999999999998,-0.10399999999999998,-0.10299999999999998,-0.10199999999999998,-0.10099999999999998,-0.09999999999999998,-0.09899999999999998,-0.09799999999999998,-0.09699999999999998,-0.09599999999999997,-0.09499999999999997,-0.09399999999999997,-0.09300000000000003,-0.09200000000000003,-0.09100000000000003,-0.09000000000000002,-0.08900000000000002,-0.08800000000000002,-0.08700000000000002,-0.08600000000000002,-0.08500000000000002,-0.08400000000000002,-0.08300000000000002,-0.08200000000000002,-0.08100000000000002,-0.08000000000000002,-0.07900000000000001,-0.07800000000000001,-0.07700000000000001,-0.07600000000000001,-0.07500000000000001,-0.07400000000000001,-0.07300000000000001,-0.07200000000000001,-0.07100000000000001,-0.07,-0.069,-0.068,-0.067,-0.066,-0.065,-0.064,-0.063,-0.062,-0.061,-0.06,-0.059,-0.057999999999999996,-0.056999999999999995,-0.055999999999999994,-0.05499999999999999,-0.05399999999999999,-0.05299999999999999,-0.05199999999999999,-0.05099999999999999,-0.04999999999999999,-0.04899999999999999,-0.04799999999999999,-0.046999999999999986,-0.045999999999999985,-0.044999999999999984,-0.043999999999999984,-0.04299999999999998,-0.04199999999999998,-0.04099999999999998,-0.03999999999999998,-0.03899999999999998,-0.03799999999999998,-0.03699999999999998,-0.035999999999999976,-0.034999999999999976,-0.033999999999999975,-0.032999999999999974,-0.03199999999999997,-0.031000000000000028,-0.030000000000000027,-0.029000000000000026,-0.028000000000000025,-0.027000000000000024,-0.026000000000000023,-0.025000000000000022,-0.02400000000000002,-0.02300000000000002,-0.02200000000000002]
+[Orchestrate] Persisting healthy node for server: http://localhost:11434, model: mxbai-embed-large:latest
+[Orchestrate] Aggregating model-performance nodes to ai-model node for model: mxbai-embed-large:latest
+[Orchestrate] Aggregation to ai-model node complete for model: mxbai-embed-large:latest
+2025-07-28T01:39:22.810Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:all-minilm:latest: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:22.871Z ERROR: [callModelAPI] Error response for attempt 2 on localhost:11434:all-minilm:latest:
+  Status: 400 Bad Request
+  OOM: false
+  Request: {
+  "model": "all-minilm:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "59",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:22 GMT"
+}
+  Response Body: {"error":"\"all-minilm:latest\" does not support generate"}
+2025-07-28T01:39:22.873Z ERROR: callModelAPI received 4xx error for localhost:11434:all-minilm:latest: 400 Bad Request
+  Request: {
+  "model": "all-minilm:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "59",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:22 GMT"
+}
+  Response Body: {"error":"\"all-minilm:latest\" does not support generate"}
+2025-07-28T01:39:22.875Z WARN: callModelAPI attempt 2 failed for localhost:11434:all-minilm:latest: Model call failed: 400 Bad Request (marking server as unhealthy and retrying)
+2025-07-28T01:39:22.876Z ERROR: callModelAPI failed after 1 attempts for all-minilm:latest. All servers unhealthy or max retries reached. Last error: Model call failed: 400 Bad Request
+2025-07-28T01:39:22.879Z WARN: BLEU/ROUGE metric error: Model call failed: 400 Bad Request
+[Orchestrate] Benchmark json-assembly result for server: http://localhost:11434, model: all-minilm:latest: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:18.463Z"}}
+[Orchestrate] Running warm latency tests for server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Warm latency results for server: http://localhost:11434, model: all-minilm:latest: [0,0,0]
+[Orchestrate] Remaining benchmarks for server: http://localhost:11434, model: all-minilm:latest:
+[Orchestrate] Aggregating quality results for server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Aggregated quality results for server: http://localhost:11434, model: all-minilm:latest: {"latency":[{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.467Z"},{"type":"latency","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"latency","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"latency","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"latency","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:22.892Z"}],"quality":[{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.468Z"},{"type":"quality","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"quality","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"quality","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"quality","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:22.892Z"}],"json-assembly":[{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:18.463Z"},{"type":"json-assembly","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"json-assembly","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"json-assembly","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:22.892Z"},{"type":"json-assembly","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:22.892Z"}]}
+[Orchestrate] Generating embeddings for healthy server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Embeddings generated for healthy server: http://localhost:11434, model: all-minilm:latest: [0.051000000000000045,0.052000000000000046,0.05300000000000005,0.05400000000000005,0.05500000000000005,0.05600000000000005,0.05700000000000005,0.05800000000000005,0.05900000000000005,0.06000000000000005,0.061000000000000054,0.062000000000000055,0.06299999999999994,0.06399999999999995,0.06499999999999995,0.06599999999999995,0.06699999999999995,0.06799999999999995,0.06899999999999995,0.06999999999999995,0.07099999999999995,0.07199999999999995,0.07299999999999995,0.07399999999999995,0.07499999999999996,0.07599999999999996,0.07699999999999996,0.07799999999999996,0.07899999999999996,0.07999999999999996,0.08099999999999996,0.08199999999999996,0.08299999999999996,0.08399999999999996,0.08499999999999996,0.08599999999999997,0.08699999999999997,0.08799999999999997,0.08899999999999997,0.08999999999999997,0.09099999999999997,0.09199999999999997,0.09299999999999997,0.09399999999999997,0.09499999999999997,0.09599999999999997,0.09699999999999998,0.09799999999999998,0.09899999999999998,0.09999999999999998,0.10099999999999998,0.10199999999999998,0.10299999999999998,0.10399999999999998,0.10499999999999998,0.10599999999999998,0.10699999999999998,0.10799999999999998,0.10899999999999999,0.10999999999999999,0.11099999999999999,0.11199999999999999,0.11299999999999999,0.11399999999999999,0.11499999999999999,0.11599999999999999,0.11699999999999999,0.118,0.119,0.12,0.121,0.122,0.123,0.124,0.125,0.126,0.127,0.128,0.129,0.13,0.131,0.132,0.133,0.134,0.135,0.136,0.137,0.138,0.139,0.14,0.14100000000000001,0.14200000000000002,0.14300000000000002,0.14400000000000002,0.14500000000000002,0.14600000000000002,0.14700000000000002,0.14800000000000002,0.14900000000000002,0.15000000000000002,0.15100000000000002,0.15200000000000002,0.15300000000000002,0.15400000000000003,0.15500000000000003,0.15600000000000003,0.15700000000000003,0.15800000000000003,0.15900000000000003,0.16000000000000003,0.16100000000000003,0.16200000000000003,0.16300000000000003,0.16400000000000003,0.16500000000000004,0.16600000000000004,0.16700000000000004,0.16800000000000004,0.16900000000000004,0.17000000000000004,0.17100000000000004,0.17200000000000004,0.17300000000000004,0.17400000000000004,0.17500000000000004,0.17600000000000005,0.17700000000000005,0.17800000000000005,0.17900000000000005,0.18000000000000005,0.18100000000000005,0.18200000000000005,0.18300000000000005,0.18400000000000005,0.18500000000000005,0.18600000000000005,0.18700000000000006,0.18799999999999994,0.18899999999999995,0.18999999999999995,0.19099999999999995,0.19199999999999995,0.19299999999999995,0.19399999999999995,0.19499999999999995,0.19599999999999995,0.19699999999999995,0.19799999999999995,0.19899999999999995,0.19999999999999996,0.20099999999999996,0.20199999999999996,0.20299999999999996,0.20399999999999996,0.20499999999999996,0.20599999999999996,0.20699999999999996,0.20799999999999996,0.20899999999999996,0.20999999999999996,0.21099999999999997,0.21199999999999997,0.21299999999999997,0.21399999999999997,0.21499999999999997,0.21599999999999997,0.21699999999999997,0.21799999999999997,0.21899999999999997,0.21999999999999997,0.22099999999999997,0.22199999999999998,0.22299999999999998,0.22399999999999998,0.22499999999999998,0.22599999999999998,0.22699999999999998,0.22799999999999998,0.22899999999999998,0.22999999999999998,0.23099999999999998,0.23199999999999998,0.23299999999999998,0.23399999999999999,0.235,0.236,0.237,0.238,0.239,0.24,0.241,0.242,0.243,0.244,0.245,0.246,0.247,0.248,0.249,0.25,0.251,0.252,0.253,0.254,0.255,0.256,0.257,0.258,0.259,0.26,0.261,0.262,0.263,0.264,0.265,0.266,0.267,0.268,0.269,0.27,0.271,0.272,0.273,0.274,0.275,0.276,0.277,0.278,0.279,0.28,0.281,0.28200000000000003,0.28300000000000003,0.28400000000000003,0.28500000000000003,0.28600000000000003,0.28700000000000003,0.28800000000000003,0.28900000000000003,0.29000000000000004,0.29100000000000004,0.29200000000000004,0.29300000000000004,0.29400000000000004,0.29500000000000004,0.29600000000000004,0.29700000000000004,0.29800000000000004,0.29900000000000004,0.30000000000000004,0.30100000000000005,0.30200000000000005,0.30300000000000005,0.30400000000000005,0.30500000000000005,0.30600000000000005,0.30700000000000005,0.30800000000000005,0.30900000000000005,0.31000000000000005,0.31100000000000005,0.31200000000000006,0.31299999999999994,0.31399999999999995,0.31499999999999995,0.31599999999999995,0.31699999999999995,0.31799999999999995,0.31899999999999995,0.31999999999999995,0.32099999999999995,0.32199999999999995,0.32299999999999995,0.32399999999999995,0.32499999999999996,0.32599999999999996,0.32699999999999996,0.32799999999999996,0.32899999999999996,0.32999999999999996,0.33099999999999996,0.33199999999999996,0.33299999999999996,0.33399999999999996,0.33499999999999996,0.33599999999999997,0.33699999999999997,0.33799999999999997,0.33899999999999997,0.33999999999999997,0.34099999999999997,0.34199999999999997,0.34299999999999997,0.344,0.345,0.346,0.347,0.348,0.349,0.35,0.351,0.352,0.353,0.354,0.355,0.356,0.357,0.358,0.359,0.36,0.361,0.362,0.363,0.364,0.365,0.366,0.367,0.368,0.369,0.37,0.371,0.372,0.373,0.374,0.375,0.376,0.377,0.378,0.379,0.38,0.381,0.382,0.383,0.384,0.385,0.386,0.387,0.388,0.389,0.39,0.391,0.392,0.393,0.394,0.395,0.396,0.397,0.398,0.399,0.4,0.401,0.402,0.403,0.404,0.405,0.406,0.40700000000000003,0.40800000000000003,0.40900000000000003,0.41000000000000003,0.41100000000000003,0.41200000000000003,0.41300000000000003,0.41400000000000003,0.41500000000000004,0.41600000000000004,0.41700000000000004,0.41800000000000004,0.41900000000000004,0.42000000000000004,0.42100000000000004,0.42200000000000004,0.42300000000000004,0.42400000000000004,0.42500000000000004,0.42600000000000005,0.42700000000000005,0.42800000000000005,0.42900000000000005,0.43000000000000005,0.43100000000000005,0.43200000000000005,0.43300000000000005,0.43400000000000005]
+[Orchestrate] Persisting healthy node for server: http://localhost:11434, model: all-minilm:latest
+[Orchestrate] Aggregating model-performance nodes to ai-model node for model: all-minilm:latest
+[Orchestrate] Aggregation to ai-model node complete for model: all-minilm:latest
+2025-07-28T01:39:23.090Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:nomic-embed-text:latest: fetch failed (marking server as unhealthy and retrying)
+2025-07-28T01:39:23.172Z ERROR: [callModelAPI] Error response for attempt 2 on localhost:11434:nomic-embed-text:latest:
+  Status: 400 Bad Request
+  OOM: false
+  Request: {
+  "model": "nomic-embed-text:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "65",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:23 GMT"
+}
+  Response Body: {"error":"\"nomic-embed-text:latest\" does not support generate"}
+2025-07-28T01:39:23.174Z ERROR: callModelAPI received 4xx error for localhost:11434:nomic-embed-text:latest: 400 Bad Request
+  Request: {
+  "model": "nomic-embed-text:latest",
+  "prompt": "Generate a JSON object for a Star Trek character with name, rank, and backstory."
+}
+  Response Headers: {
+  "content-length": "65",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Mon, 28 Jul 2025 01:39:23 GMT"
+}
+  Response Body: {"error":"\"nomic-embed-text:latest\" does not support generate"}
+2025-07-28T01:39:23.180Z WARN: callModelAPI attempt 2 failed for localhost:11434:nomic-embed-text:latest: Model call failed: 400 Bad Request (marking server as unhealthy and retrying)
+2025-07-28T01:39:23.182Z ERROR: callModelAPI failed after 1 attempts for nomic-embed-text:latest. All servers unhealthy or max retries reached. Last error: Model call failed: 400 Bad Request
+2025-07-28T01:39:23.186Z WARN: BLEU/ROUGE metric error: Model call failed: 400 Bad Request
+[Orchestrate] Benchmark json-assembly result for server: http://localhost:11434, model: nomic-embed-text:latest: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:18.480Z"}}
+[Orchestrate] Running warm latency tests for server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Warm latency results for server: http://localhost:11434, model: nomic-embed-text:latest: [0,0,0]
+[Orchestrate] Remaining benchmarks for server: http://localhost:11434, model: nomic-embed-text:latest:
+[Orchestrate] Aggregating quality results for server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Aggregated quality results for server: http://localhost:11434, model: nomic-embed-text:latest: {"latency":[{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.482Z"},{"type":"latency","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:23.190Z"},{"type":"latency","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:23.190Z"},{"type":"latency","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:23.190Z"},{"type":"latency","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:23.190Z"}],"quality":[{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:18.482Z"},{"type":"quality","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:23.191Z"},{"type":"quality","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:23.191Z"},{"type":"quality","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:23.191Z"},{"type":"quality","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:23.191Z"}],"json-assembly":[{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:18.480Z"},{"type":"json-assembly","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:23.191Z"},{"type":"json-assembly","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:23.191Z"},{"type":"json-assembly","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:23.191Z"},{"type":"json-assembly","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:23.191Z"}]}
+[Orchestrate] Generating embeddings for healthy server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Embeddings generated for healthy server: http://localhost:11434, model: nomic-embed-text:latest: [0.367,0.368,0.369,0.37,0.371,0.372,0.373,0.374,0.375,0.376,0.377,0.378,0.379,0.38,0.381,0.382,0.383,0.384,0.385,0.386,0.387,0.388,0.389,0.39,0.391,0.392,0.393,0.394,0.395,0.396,0.397,0.398,0.399,0.4,0.401,0.402,0.403,0.404,0.405,0.406,0.40700000000000003,0.40800000000000003,0.40900000000000003,0.41000000000000003,0.41100000000000003,0.41200000000000003,0.41300000000000003,0.41400000000000003,0.41500000000000004,0.41600000000000004,0.41700000000000004,0.41800000000000004,0.41900000000000004,0.42000000000000004,0.42100000000000004,0.42200000000000004,0.42300000000000004,0.42400000000000004,0.42500000000000004,0.42600000000000005,0.42700000000000005,0.42800000000000005,0.42900000000000005,0.43000000000000005,0.43100000000000005,0.43200000000000005,0.43300000000000005,0.43400000000000005,0.43500000000000005,0.43600000000000005,0.43700000000000006,0.43799999999999994,0.43899999999999995,0.43999999999999995,0.44099999999999995,0.44199999999999995,0.44299999999999995,0.44399999999999995,0.44499999999999995,0.44599999999999995,0.44699999999999995,0.44799999999999995,0.44899999999999995,0.44999999999999996,0.45099999999999996,0.45199999999999996,0.45299999999999996,0.45399999999999996,0.45499999999999996,0.45599999999999996,0.45699999999999996,0.45799999999999996,0.45899999999999996,0.45999999999999996,0.46099999999999997,0.46199999999999997,0.46299999999999997,0.46399999999999997,0.46499999999999997,0.46599999999999997,0.46699999999999997,0.46799999999999997,0.469,0.47,0.471,0.472,0.473,0.474,0.475,0.476,0.477,0.478,0.479,0.48,0.481,0.482,0.483,0.484,0.485,0.486,0.487,0.488,0.489,0.49,0.491,0.492,0.493,0.494,0.495,0.496,0.497,0.498,0.499,-0.5,-0.499,-0.498,-0.497,-0.496,-0.495,-0.494,-0.493,-0.492,-0.491,-0.49,-0.489,-0.488,-0.487,-0.486,-0.485,-0.484,-0.483,-0.482,-0.481,-0.48,-0.479,-0.478,-0.477,-0.476,-0.475,-0.474,-0.473,-0.472,-0.471,-0.47,-0.469,-0.46799999999999997,-0.46699999999999997,-0.46599999999999997,-0.46499999999999997,-0.464,-0.463,-0.462,-0.461,-0.46,-0.459,-0.458,-0.457,-0.456,-0.455,-0.454,-0.453,-0.452,-0.451,-0.45,-0.449,-0.448,-0.447,-0.446,-0.445,-0.444,-0.443,-0.442,-0.441,-0.44,-0.439,-0.438,-0.437,-0.436,-0.435,-0.434,-0.433,-0.432,-0.431,-0.43,-0.429,-0.428,-0.427,-0.426,-0.425,-0.424,-0.423,-0.422,-0.421,-0.42,-0.419,-0.418,-0.417,-0.416,-0.415,-0.41400000000000003,-0.41300000000000003,-0.41200000000000003,-0.41100000000000003,-0.41000000000000003,-0.40900000000000003,-0.40800000000000003,-0.40700000000000003,-0.406,-0.405,-0.404,-0.403,-0.402,-0.401,-0.4,-0.399,-0.398,-0.397,-0.396,-0.395,-0.394,-0.393,-0.392,-0.391,-0.39,-0.389,-0.388,-0.387,-0.386,-0.385,-0.384,-0.383,-0.382,-0.381,-0.38,-0.379,-0.378,-0.377,-0.376,-0.375,-0.374,-0.373,-0.372,-0.371,-0.37,-0.369,-0.368,-0.367,-0.366,-0.365,-0.364,-0.363,-0.362,-0.361,-0.36,-0.359,-0.358,-0.357,-0.356,-0.355,-0.354,-0.353,-0.352,-0.351,-0.35,-0.349,-0.348,-0.347,-0.346,-0.345,-0.344,-0.34299999999999997,-0.34199999999999997,-0.34099999999999997,-0.33999999999999997,-0.33899999999999997,-0.33799999999999997,-0.33699999999999997,-0.33599999999999997,-0.33499999999999996,-0.33399999999999996,-0.33299999999999996,-0.33199999999999996,-0.33099999999999996,-0.32999999999999996,-0.32899999999999996,-0.328,-0.327,-0.326,-0.325,-0.324,-0.323,-0.322,-0.321,-0.32,-0.319,-0.318,-0.317,-0.316,-0.315,-0.314,-0.313,-0.312,-0.311,-0.31,-0.309,-0.308,-0.307,-0.306,-0.305,-0.304,-0.303,-0.302,-0.301,-0.3,-0.299,-0.298,-0.297,-0.29600000000000004,-0.29500000000000004,-0.29400000000000004,-0.29300000000000004,-0.29200000000000004,-0.29100000000000004,-0.29000000000000004,-0.28900000000000003,-0.28800000000000003,-0.28700000000000003,-0.28600000000000003,-0.28500000000000003,-0.28400000000000003,-0.28300000000000003,-0.28200000000000003,-0.281,-0.28,-0.279,-0.278,-0.277,-0.276,-0.275,-0.274,-0.273,-0.272,-0.271,-0.27,-0.269,-0.268,-0.267,-0.266,-0.265,-0.264,-0.263,-0.262,-0.261,-0.26,-0.259,-0.258,-0.257,-0.256,-0.255,-0.254,-0.253,-0.252,-0.251,-0.25]
+[Orchestrate] Persisting healthy node for server: http://localhost:11434, model: nomic-embed-text:latest
+[Orchestrate] Aggregating model-performance nodes to ai-model node for model: nomic-embed-text:latest
+[Orchestrate] Aggregation to ai-model node complete for model: nomic-embed-text:latest
+[callModelAPI] Concatenated NDJSON response: <<Star Trek Character Information>>
+
+
+{
+    "name": "Captain's Hope",
+    "rank": "Lieutenant",
+    "backstory": {
+        "born_in": "1970s",
+        "deceased_by: death in 2038"
+    }
+}
+2025-07-28T01:39:25.339Z ERROR: [callModelAPI] Failed to parse extracted JSON: Expected ':' after property name in JSON at position 146 (line 7 column 5)
+2025-07-28T01:39:25.340Z ERROR: callModelAPI failed after 1 attempts for smollm2:135m. All servers unhealthy or max retries reached. Last error: Expected ':' after property name in JSON at position 146 (line 7 column 5)
+2025-07-28T01:39:25.340Z WARN: BLEU/ROUGE metric error: Expected ':' after property name in JSON at position 146 (line 7 column 5)
+[Orchestrate] Cold test results for server: http://localhost:11434, model: smollm2:135m: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:39:13.225Z"}}
+[Orchestrate] Server healthy after cold test: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Starting warmup/quality/warm latency for healthy server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Assigned benchmarks for server: http://localhost:11434, model: smollm2:135m: json-assembly, latency, quality
+[Orchestrate] Running benchmark json-assembly for server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Running benchmark latency for server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Running benchmark quality for server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Benchmark latency result for server: http://localhost:11434, model: smollm2:135m: {"latency":{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:25.344Z"}}
+[Orchestrate] Benchmark quality result for server: http://localhost:11434, model: smollm2:135m: {"quality":{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:25.344Z"}}
+2025-07-28T01:39:28.050Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:smollm2:135m: fetch failed (marking server as unhealthy and retrying)
+[callModelAPI] Concatenated NDJSON response: ```json
+{
+  "name": "Hippie",
+  "rank": 3,
+  "backstory": {
+    "age": "120 years old"
+  },
+  "abilities": [
+    {
+      "type": "Skill",
+      "description": "Pursuit of knowledge and power through the use of research and discovery methods."
+    },
+    {
+      "type": "Compassion",
+      "description": "Doubts of living in a post-scarcity society and seeking for the true purpose of life"
+    }
+  ]
+}
+[callModelAPI] Extracted JSON for downstream use: {
+  "name": "Hippie",
+  "rank": 3,
+  "backstory": {
+    "age": "120 years old"
+  },
+  "abilities": [
+    {
+      "type": "Skill",
+      "description": "Pursuit of knowledge and power through the use of research and discovery methods."
+    },
+    {
+      "type": "Compassion",
+      "description": "Doubts of living in a post-scarcity society and seeking for the true purpose of life"
+    }
+  ]
+}
+2025-07-28T01:39:36.488Z WARN: [JSONAssembly] JSON schema validation failed for model=smollm2:135m server=http://localhost:11434: [{"instancePath":"/rank","schemaPath":"#/properties/rank/type","keyword":"type","params":{"type":"string"},"message":"must be string"}]
+[Orchestrate] Benchmark json-assembly result for server: http://localhost:11434, model: smollm2:135m: {"json-assembly":{"type":"json-assembly","score":0.2042553191489362,"rubric":"","timestamp":"2025-07-28T01:39:25.341Z"}}
+[Orchestrate] Running warm latency tests for server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Warm latency results for server: http://localhost:11434, model: smollm2:135m: [0,0,0]
+[Orchestrate] Remaining benchmarks for server: http://localhost:11434, model: smollm2:135m:
+[Orchestrate] Aggregating quality results for server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Aggregated quality results for server: http://localhost:11434, model: smollm2:135m: {"latency":[{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:25.344Z"},{"type":"latency","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"latency","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"latency","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"latency","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:36.492Z"}],"quality":[{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:39:25.344Z"},{"type":"quality","score":0,"rubric":"average","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"quality","score":0,"rubric":"median","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"quality","score":0,"rubric":"min","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"quality","score":0,"rubric":"max","timestamp":"2025-07-28T01:39:36.492Z"}],"json-assembly":[{"type":"json-assembly","score":0.2042553191489362,"rubric":"","timestamp":"2025-07-28T01:39:25.341Z"},{"type":"json-assembly","score":0.2042553191489362,"rubric":"average","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"json-assembly","score":0.2042553191489362,"rubric":"median","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"json-assembly","score":0.2042553191489362,"rubric":"min","timestamp":"2025-07-28T01:39:36.492Z"},{"type":"json-assembly","score":0.2042553191489362,"rubric":"max","timestamp":"2025-07-28T01:39:36.492Z"}]}
+[Orchestrate] Generating embeddings for healthy server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Embeddings generated for healthy server: http://localhost:11434, model: smollm2:135m: [-0.239,-0.238,-0.237,-0.236,-0.235,-0.23399999999999999,-0.23299999999999998,-0.23199999999999998,-0.23099999999999998,-0.22999999999999998,-0.22899999999999998,-0.22799999999999998,-0.22699999999999998,-0.22599999999999998,-0.22499999999999998,-0.22399999999999998,-0.22299999999999998,-0.22199999999999998,-0.22099999999999997,-0.21999999999999997,-0.21899999999999997,-0.21800000000000003,-0.21700000000000003,-0.21600000000000003,-0.21500000000000002,-0.21400000000000002,-0.21300000000000002,-0.21200000000000002,-0.21100000000000002,-0.21000000000000002,-0.20900000000000002,-0.20800000000000002,-0.20700000000000002,-0.20600000000000002,-0.20500000000000002,-0.20400000000000001,-0.203,-0.202,-0.201,-0.2,-0.199,-0.198,-0.197,-0.196,-0.195,-0.194,-0.193,-0.192,-0.191,-0.19,-0.189,-0.188,-0.187,-0.186,-0.185,-0.184,-0.183,-0.182,-0.181,-0.18,-0.179,-0.178,-0.177,-0.176,-0.175,-0.174,-0.173,-0.172,-0.17099999999999999,-0.16999999999999998,-0.16899999999999998,-0.16799999999999998,-0.16699999999999998,-0.16599999999999998,-0.16499999999999998,-0.16399999999999998,-0.16299999999999998,-0.16199999999999998,-0.16099999999999998,-0.15999999999999998,-0.15899999999999997,-0.15799999999999997,-0.15699999999999997,-0.15600000000000003,-0.15500000000000003,-0.15400000000000003,-0.15300000000000002,-0.15200000000000002,-0.15100000000000002,-0.15000000000000002,-0.14900000000000002,-0.14800000000000002,-0.14700000000000002,-0.14600000000000002,-0.14500000000000002,-0.14400000000000002,-0.14300000000000002,-0.14200000000000002,-0.14100000000000001,-0.14,-0.139,-0.138,-0.137,-0.136,-0.135,-0.134,-0.133,-0.132,-0.131,-0.13,-0.129,-0.128,-0.127,-0.126,-0.125,-0.124,-0.123,-0.122,-0.121,-0.12,-0.119,-0.118,-0.11699999999999999,-0.11599999999999999,-0.11499999999999999,-0.11399999999999999,-0.11299999999999999,-0.11199999999999999,-0.11099999999999999,-0.10999999999999999,-0.10899999999999999,-0.10799999999999998,-0.10699999999999998,-0.10599999999999998,-0.10499999999999998,-0.10399999999999998,-0.10299999999999998,-0.10199999999999998,-0.10099999999999998,-0.09999999999999998,-0.09899999999999998,-0.09799999999999998,-0.09699999999999998,-0.09599999999999997,-0.09499999999999997,-0.09399999999999997,-0.09300000000000003,-0.09200000000000003,-0.09100000000000003,-0.09000000000000002,-0.08900000000000002,-0.08800000000000002,-0.08700000000000002,-0.08600000000000002,-0.08500000000000002,-0.08400000000000002,-0.08300000000000002,-0.08200000000000002,-0.08100000000000002,-0.08000000000000002,-0.07900000000000001,-0.07800000000000001,-0.07700000000000001,-0.07600000000000001,-0.07500000000000001,-0.07400000000000001,-0.07300000000000001,-0.07200000000000001,-0.07100000000000001,-0.07,-0.069,-0.068,-0.067,-0.066,-0.065,-0.064,-0.063,-0.062,-0.061,-0.06,-0.059,-0.057999999999999996,-0.056999999999999995,-0.055999999999999994,-0.05499999999999999,-0.05399999999999999,-0.05299999999999999,-0.05199999999999999,-0.05099999999999999,-0.04999999999999999,-0.04899999999999999,-0.04799999999999999,-0.046999999999999986,-0.045999999999999985,-0.044999999999999984,-0.043999999999999984,-0.04299999999999998,-0.04199999999999998,-0.04099999999999998,-0.03999999999999998,-0.03899999999999998,-0.03799999999999998,-0.03699999999999998,-0.035999999999999976,-0.034999999999999976,-0.033999999999999975,-0.032999999999999974,-0.03199999999999997,-0.031000000000000028,-0.030000000000000027,-0.029000000000000026,-0.028000000000000025,-0.027000000000000024,-0.026000000000000023,-0.025000000000000022,-0.02400000000000002,-0.02300000000000002,-0.02200000000000002,-0.02100000000000002,-0.020000000000000018,-0.019000000000000017,-0.018000000000000016,-0.017000000000000015,-0.016000000000000014,-0.015000000000000013,-0.014000000000000012,-0.013000000000000012,-0.01200000000000001,-0.01100000000000001,-0.010000000000000009,-0.009000000000000008,-0.008000000000000007,-0.007000000000000006,-0.006000000000000005,-0.0050000000000000044,-0.0040000000000000036,-0.0030000000000000027,-0.0020000000000000018,-0.0010000000000000009,0,0.0010000000000000009,0.0020000000000000018,0.0030000000000000027,0.0040000000000000036,0.0050000000000000044,0.006000000000000005,0.007000000000000006,0.008000000000000007,0.009000000000000008,0.010000000000000009,0.01100000000000001,0.01200000000000001,0.013000000000000012,0.014000000000000012,0.015000000000000013,0.016000000000000014,0.017000000000000015,0.018000000000000016,0.019000000000000017,0.020000000000000018,0.02100000000000002,0.02200000000000002,0.02300000000000002,0.02400000000000002,0.025000000000000022,0.026000000000000023,0.027000000000000024,0.028000000000000025,0.029000000000000026,0.030000000000000027,0.031000000000000028,0.03200000000000003,0.03300000000000003,0.03400000000000003,0.03500000000000003,0.03600000000000003,0.03700000000000003,0.038000000000000034,0.039000000000000035,0.040000000000000036,0.041000000000000036,0.04200000000000004,0.04300000000000004,0.04400000000000004,0.04500000000000004,0.04600000000000004,0.04700000000000004,0.04800000000000004,0.049000000000000044,0.050000000000000044,0.051000000000000045,0.052000000000000046,0.05300000000000005,0.05400000000000005,0.05500000000000005,0.05600000000000005,0.05700000000000005,0.05800000000000005,0.05900000000000005,0.06000000000000005,0.061000000000000054,0.062000000000000055,0.06299999999999994,0.06399999999999995,0.06499999999999995,0.06599999999999995,0.06699999999999995,0.06799999999999995,0.06899999999999995,0.06999999999999995,0.07099999999999995,0.07199999999999995,0.07299999999999995,0.07399999999999995,0.07499999999999996,0.07599999999999996,0.07699999999999996,0.07799999999999996,0.07899999999999996,0.07999999999999996,0.08099999999999996,0.08199999999999996,0.08299999999999996,0.08399999999999996,0.08499999999999996,0.08599999999999997,0.08699999999999997,0.08799999999999997,0.08899999999999997,0.08999999999999997,0.09099999999999997,0.09199999999999997,0.09299999999999997,0.09399999999999997,0.09499999999999997,0.09599999999999997,0.09699999999999998,0.09799999999999998,0.09899999999999998,0.09999999999999998,0.10099999999999998,0.10199999999999998,0.10299999999999998,0.10399999999999998,0.10499999999999998,0.10599999999999998,0.10699999999999998,0.10799999999999998,0.10899999999999999,0.10999999999999999,0.11099999999999999,0.11199999999999999,0.11299999999999999,0.11399999999999999,0.11499999999999999,0.11599999999999999,0.11699999999999999,0.118,0.119,0.12,0.121,0.122,0.123,0.124,0.125,0.126,0.127,0.128,0.129,0.13,0.131,0.132,0.133,0.134,0.135,0.136,0.137,0.138,0.139,0.14,0.14100000000000001,0.14200000000000002,0.14300000000000002,0.14400000000000002]
+[Orchestrate] Persisting healthy node for server: http://localhost:11434, model: smollm2:135m
+[Orchestrate] Aggregating model-performance nodes to ai-model node for model: smollm2:135m
+[Orchestrate] Aggregation to ai-model node complete for model: smollm2:135m
+[callModelAPI] Concatenated NDJSON response: Here is a JSON object representing the Star Trek character T'Pol:
+
+```json
+{
+  "name": "T'Pol",
+  "rank": "Vulcan Sub-Commander",
+  "backstory": {
+    "species": "Vulcan",
+    "birthplace": "T'Than",
+    " upbringing": "Raised by her parents, T'Mir and T'Penash",
+    "education": "Attended the Vulcan Academy of Sciences",
+    "career": "Served as a Vulcan ambassador to Earth and later joined Starfleet as a sub-commander",
+    "personality": {
+      "logical": true,
+      "emotionally stoic": true,
+      "dedicated to duty": true
+    },
+    "conflict": "Struggled with her own emotions and the influence of humans on Vulcan logic"
+  }
+}
+```
+
+In this JSON object, I've included the character's name, rank, and a backstory section that provides more information about T'Pol's life. The backstory includes details such as her species, birthplace, upbringing, education, career, personality traits, and a conflict she faced.
+[callModelAPI] Extracted JSON for downstream use: {
+  "name": "T'Pol",
+  "rank": "Vulcan Sub-Commander",
+  "backstory": {
+    "species": "Vulcan",
+    "birthplace": "T'Than",
+    " upbringing": "Raised by her parents, T'Mir and T'Penash",
+    "education": "Attended the Vulcan Academy of Sciences",
+    "career": "Served as a Vulcan ambassador to Earth and later joined Starfleet as a sub-commander",
+    "personality": {
+      "logical": true,
+      "emotionally stoic": true,
+      "dedicated to duty": true
+    },
+    "conflict": "Struggled with her own emotions and the influence of humans on Vulcan logic"
+  }
+}
+2025-07-28T01:42:23.020Z WARN: [JSONAssembly] JSON schema validation failed for model=llama3:latest server=http://localhost:11434: [{"instancePath":"/backstory","schemaPath":"#/properties/backstory/type","keyword":"type","params":{"type":"string"},"message":"must be string"}]
+[Orchestrate] Cold test results for server: http://localhost:11434, model: llama3:latest: {"json-assembly":{"type":"json-assembly","score":0.20530973451327433,"rubric":"","timestamp":"2025-07-28T01:39:13.251Z"}}
+[Orchestrate] Server healthy after cold test: http://localhost:11434, model: llama3:latest
+[Orchestrate] Starting warmup/quality/warm latency for healthy server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Assigned benchmarks for server: http://localhost:11434, model: llama3:latest: json-assembly, latency, quality
+[Orchestrate] Running benchmark json-assembly for server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Running benchmark latency for server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Running benchmark quality for server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Benchmark latency result for server: http://localhost:11434, model: llama3:latest: {"latency":{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:42:23.036Z"}}
+[Orchestrate] Benchmark quality result for server: http://localhost:11434, model: llama3:latest: {"quality":{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:42:23.036Z"}}
+2025-07-28T01:42:25.792Z WARN: callModelAPI attempt 1 failed for http://localhost:11434:llama3:latest: fetch failed (marking server as unhealthy and retrying)
+[callModelAPI] Concatenated NDJSON response: Here is a JSON object for the Star Trek character, T'Pol:
+
+```
+{
+  "name": "T'Pol",
+  "rank": "Vulcan Subcommander",
+  "backstory": {
+    "origin": "Chenmo, Vulcan",
+    "family": "Mother: T'Mir; Father: Unknown",
+    "education": ["Vulcan Academy"],
+    "priorities": ["Logic", "Duty"],
+    "personality traits": ["Reserved", "Introspective", "Honorable"]
+  },
+  "characteristics": {
+    "age": 40,
+    "height": 5'8\"",
+    "weight": 120 lbs,
+    "eye color": "Green",
+    "hair color": "None (Vulcan)"
+  }
+}
+```
+
+This JSON object includes the character's name, rank, and a backstory section with information about their origin, family, education, priorities, and personality traits. The characteristics section provides physical details such as age, height, weight, eye color, and hair color.
+2025-07-28T01:44:34.767Z ERROR: [callModelAPI] Failed to parse extracted JSON: Expected ',' or '}' after property value in JSON at position 352 (line 13 column 16)
+2025-07-28T01:44:34.767Z ERROR: callModelAPI failed after 1 attempts for llama3:latest. All servers unhealthy or max retries reached. Last error: Expected ',' or '}' after property value in JSON at position 352 (line 13 column 16)
+2025-07-28T01:44:34.768Z WARN: BLEU/ROUGE metric error: Expected ',' or '}' after property value in JSON at position 352 (line 13 column 16)
+[Orchestrate] Benchmark json-assembly result for server: http://localhost:11434, model: llama3:latest: {"json-assembly":{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:42:23.026Z"}}
+[Orchestrate] Running warm latency tests for server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Warm latency results for server: http://localhost:11434, model: llama3:latest: [0,0,0]
+[Orchestrate] Remaining benchmarks for server: http://localhost:11434, model: llama3:latest:
+[Orchestrate] Aggregating quality results for server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Aggregated quality results for server: http://localhost:11434, model: llama3:latest: {"latency":[{"type":"latency","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:42:23.036Z"},{"type":"latency","score":0,"rubric":"average","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"latency","score":0,"rubric":"median","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"latency","score":0,"rubric":"min","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"latency","score":0,"rubric":"max","timestamp":"2025-07-28T01:44:34.769Z"}],"quality":[{"type":"quality","score":0,"rubric":"Unknown benchmark type","timestamp":"2025-07-28T01:42:23.036Z"},{"type":"quality","score":0,"rubric":"average","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"quality","score":0,"rubric":"median","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"quality","score":0,"rubric":"min","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"quality","score":0,"rubric":"max","timestamp":"2025-07-28T01:44:34.769Z"}],"json-assembly":[{"type":"json-assembly","score":0,"rubric":"","timestamp":"2025-07-28T01:42:23.026Z"},{"type":"json-assembly","score":0,"rubric":"average","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"json-assembly","score":0,"rubric":"median","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"json-assembly","score":0,"rubric":"min","timestamp":"2025-07-28T01:44:34.769Z"},{"type":"json-assembly","score":0,"rubric":"max","timestamp":"2025-07-28T01:44:34.769Z"}]}
+[Orchestrate] Generating embeddings for healthy server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Embeddings generated for healthy server: http://localhost:11434, model: llama3:latest: [0.30000000000000004,0.30100000000000005,0.30200000000000005,0.30300000000000005,0.30400000000000005,0.30500000000000005,0.30600000000000005,0.30700000000000005,0.30800000000000005,0.30900000000000005,0.31000000000000005,0.31100000000000005,0.31200000000000006,0.31299999999999994,0.31399999999999995,0.31499999999999995,0.31599999999999995,0.31699999999999995,0.31799999999999995,0.31899999999999995,0.31999999999999995,0.32099999999999995,0.32199999999999995,0.32299999999999995,0.32399999999999995,0.32499999999999996,0.32599999999999996,0.32699999999999996,0.32799999999999996,0.32899999999999996,0.32999999999999996,0.33099999999999996,0.33199999999999996,0.33299999999999996,0.33399999999999996,0.33499999999999996,0.33599999999999997,0.33699999999999997,0.33799999999999997,0.33899999999999997,0.33999999999999997,0.34099999999999997,0.34199999999999997,0.34299999999999997,0.344,0.345,0.346,0.347,0.348,0.349,0.35,0.351,0.352,0.353,0.354,0.355,0.356,0.357,0.358,0.359,0.36,0.361,0.362,0.363,0.364,0.365,0.366,0.367,0.368,0.369,0.37,0.371,0.372,0.373,0.374,0.375,0.376,0.377,0.378,0.379,0.38,0.381,0.382,0.383,0.384,0.385,0.386,0.387,0.388,0.389,0.39,0.391,0.392,0.393,0.394,0.395,0.396,0.397,0.398,0.399,0.4,0.401,0.402,0.403,0.404,0.405,0.406,0.40700000000000003,0.40800000000000003,0.40900000000000003,0.41000000000000003,0.41100000000000003,0.41200000000000003,0.41300000000000003,0.41400000000000003,0.41500000000000004,0.41600000000000004,0.41700000000000004,0.41800000000000004,0.41900000000000004,0.42000000000000004,0.42100000000000004,0.42200000000000004,0.42300000000000004,0.42400000000000004,0.42500000000000004,0.42600000000000005,0.42700000000000005,0.42800000000000005,0.42900000000000005,0.43000000000000005,0.43100000000000005,0.43200000000000005,0.43300000000000005,0.43400000000000005,0.43500000000000005,0.43600000000000005,0.43700000000000006,0.43799999999999994,0.43899999999999995,0.43999999999999995,0.44099999999999995,0.44199999999999995,0.44299999999999995,0.44399999999999995,0.44499999999999995,0.44599999999999995,0.44699999999999995,0.44799999999999995,0.44899999999999995,0.44999999999999996,0.45099999999999996,0.45199999999999996,0.45299999999999996,0.45399999999999996,0.45499999999999996,0.45599999999999996,0.45699999999999996,0.45799999999999996,0.45899999999999996,0.45999999999999996,0.46099999999999997,0.46199999999999997,0.46299999999999997,0.46399999999999997,0.46499999999999997,0.46599999999999997,0.46699999999999997,0.46799999999999997,0.469,0.47,0.471,0.472,0.473,0.474,0.475,0.476,0.477,0.478,0.479,0.48,0.481,0.482,0.483,0.484,0.485,0.486,0.487,0.488,0.489,0.49,0.491,0.492,0.493,0.494,0.495,0.496,0.497,0.498,0.499,-0.5,-0.499,-0.498,-0.497,-0.496,-0.495,-0.494,-0.493,-0.492,-0.491,-0.49,-0.489,-0.488,-0.487,-0.486,-0.485,-0.484,-0.483,-0.482,-0.481,-0.48,-0.479,-0.478,-0.477,-0.476,-0.475,-0.474,-0.473,-0.472,-0.471,-0.47,-0.469,-0.46799999999999997,-0.46699999999999997,-0.46599999999999997,-0.46499999999999997,-0.464,-0.463,-0.462,-0.461,-0.46,-0.459,-0.458,-0.457,-0.456,-0.455,-0.454,-0.453,-0.452,-0.451,-0.45,-0.449,-0.448,-0.447,-0.446,-0.445,-0.444,-0.443,-0.442,-0.441,-0.44,-0.439,-0.438,-0.437,-0.436,-0.435,-0.434,-0.433,-0.432,-0.431,-0.43,-0.429,-0.428,-0.427,-0.426,-0.425,-0.424,-0.423,-0.422,-0.421,-0.42,-0.419,-0.418,-0.417,-0.416,-0.415,-0.41400000000000003,-0.41300000000000003,-0.41200000000000003,-0.41100000000000003,-0.41000000000000003,-0.40900000000000003,-0.40800000000000003,-0.40700000000000003,-0.406,-0.405,-0.404,-0.403,-0.402,-0.401,-0.4,-0.399,-0.398,-0.397,-0.396,-0.395,-0.394,-0.393,-0.392,-0.391,-0.39,-0.389,-0.388,-0.387,-0.386,-0.385,-0.384,-0.383,-0.382,-0.381,-0.38,-0.379,-0.378,-0.377,-0.376,-0.375,-0.374,-0.373,-0.372,-0.371,-0.37,-0.369,-0.368,-0.367,-0.366,-0.365,-0.364,-0.363,-0.362,-0.361,-0.36,-0.359,-0.358,-0.357,-0.356,-0.355,-0.354,-0.353,-0.352,-0.351,-0.35,-0.349,-0.348,-0.347,-0.346,-0.345,-0.344,-0.34299999999999997,-0.34199999999999997,-0.34099999999999997,-0.33999999999999997,-0.33899999999999997,-0.33799999999999997,-0.33699999999999997,-0.33599999999999997,-0.33499999999999996,-0.33399999999999996,-0.33299999999999996,-0.33199999999999996,-0.33099999999999996,-0.32999999999999996,-0.32899999999999996,-0.328,-0.327,-0.326,-0.325,-0.324,-0.323,-0.322,-0.321,-0.32,-0.319,-0.318,-0.317]
+[Orchestrate] Persisting healthy node for server: http://localhost:11434, model: llama3:latest
+[Orchestrate] Aggregating model-performance nodes to ai-model node for model: llama3:latest
+[Orchestrate] Aggregation to ai-model node complete for model: llama3:latest

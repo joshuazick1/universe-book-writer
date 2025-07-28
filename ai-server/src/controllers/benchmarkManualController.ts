@@ -5,6 +5,9 @@
  * Allows ad-hoc benchmarking of a model on one or more servers, for one or more benchmark types.
  * Does NOT update persistent RAG/model selection data.
  *
+ * NOTE: Manual runs are intentionally designed to NOT write to the RAG or persistent ai-model nodes.
+ * All results are returned in the response only and not persisted for model selection or analytics.
+ *
  * Request body:
  *   {
  *     modelId: string,
@@ -21,77 +24,121 @@
  *     }>
  *   }
  */
-import { Router } from 'express';
-import { runBenchmarksForServer } from '../../benchmarking/benchmarkRunner.js';
+import { Router, Request, Response } from 'express';
+import { orchestrateEnhancedBenchmarks } from '../../benchmarking/orchestrateEnhancedBenchmarks.js';
 import { BenchmarkType, QualityBenchmarkScore } from '../../../shared/types/aiQualityBenchmark.js';
-import { getServersForModel, getServerLatency } from '../../orchestrator/serverDiscovery.js';
+import { getServersForModel, markServerUnhealthy } from '../../orchestrator/serverDiscovery.js';
 import getOrchestratorInstance from '../orchestrator-instance.js';
+import { ensureNode, getNode } from '../../../shared/node/nodeService.js';
 
 const router = Router();
 
 // Allow 'latency' as a special test type (not part of BenchmarkType)
 const LATENCY_TEST = 'latency';
 
-router.post('/api/benchmark/manual', async (req, res) => {
+router.post('/api/benchmark/manual', async (req: Request, res: Response): Promise<void> => {
     try {
-        const { modelId, benchmarkTypes, serverIds } = req.body as {
+        const { modelId, benchmarkTypes, warmupSlotsPerServer, serverIds } = req.body as {
             modelId: string;
-            benchmarkTypes: (BenchmarkType | typeof LATENCY_TEST)[];
+            benchmarkTypes: BenchmarkType[];
+            warmupSlotsPerServer?: number;
             serverIds?: string[];
         };
-        if (!modelId || !Array.isArray(benchmarkTypes) || benchmarkTypes.length === 0) {
-            return res.status(400).json({ error: 'modelId and benchmarkTypes[] are required.' });
-        }
-        // Discover servers for model
-        let servers: string[];
-        if (serverIds && serverIds.length > 0) {
-            servers = serverIds;
-        } else {
-            // Use orchestrator logic to pick fastest server for quality tests
-            const orchestrator = req.app?.locals?.orchestrator || getOrchestratorInstance();
-            const healthyServers = orchestrator.getServers().filter((s: any) => s.healthy && s.models.includes(modelId));
-            if (!healthyServers || healthyServers.length === 0) {
-                return res.status(404).json({ error: 'No servers found for model.' });
-            }
-            // If latency is requested, run latency on all servers
-            if (benchmarkTypes.includes(LATENCY_TEST)) {
-                servers = healthyServers.map((s: any) => s.url.replace(/^https?:\/\//, ''));
-            } else {
-                // Pick fastest server (lowest latency)
-                let fastestServer = healthyServers[0];
-                let minLatency = Number.POSITIVE_INFINITY;
-                for (const s of healthyServers) {
-                    try {
-                        const latency = await getServerLatency(s.url.replace(/^https?:\/\//, ''), modelId);
-                        if (latency < minLatency) {
-                            minLatency = latency;
-                            fastestServer = s;
-                        }
-                    } catch { }
-                }
-                servers = [fastestServer.url.replace(/^https?:\/\//, '')];
-            }
-        }
-        // For each server, run requested tests
-        const results: Array<{ serverId: string; latencyMs?: number; benchmarks: Record<BenchmarkType, QualityBenchmarkScore> }> = [];
-        for (const serverId of servers) {
-            let latencyMs: number | undefined = undefined;
-            if (benchmarkTypes.includes(LATENCY_TEST)) {
-                try {
-                    latencyMs = await getServerLatency(serverId, modelId);
-                } catch { }
-            }
-            // Only pass valid BenchmarkType values to the runner
-            const qualityTypes = benchmarkTypes.filter((t): t is BenchmarkType => t !== LATENCY_TEST);
-            let benchmarks: Record<BenchmarkType, QualityBenchmarkScore> = {} as Record<BenchmarkType, QualityBenchmarkScore>;
-            if (qualityTypes.length > 0) {
-                benchmarks = await runBenchmarksForServer(modelId, serverId, qualityTypes);
-            }
-            results.push({ serverId, latencyMs, benchmarks });
-        }
-        return res.json({ modelId, results });
+        // Use orchestrateEnhancedBenchmarks for full-featured, parallel, aggregated benchmarking
+        const results = await orchestrateEnhancedBenchmarks(
+            modelId,
+            benchmarkTypes,
+            warmupSlotsPerServer ?? 3,
+            serverIds
+        );
+        res.json({ modelId, results });
     } catch (err) {
-        return res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+});
+
+
+// POST /api/benchmark/all-models
+// Runs selected benchmarks across all discovered models (healthy servers)
+router.post('/api/benchmark/all-models', async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { benchmarkTypes, warmupSlotsPerServer } = req.body as {
+            benchmarkTypes: BenchmarkType[];
+            warmupSlotsPerServer?: number;
+        };
+        const orchestrator = getOrchestratorInstance();
+        const allModels = orchestrator.getAllModels();
+        const results: any[] = [];
+        // Validate model availability on at least one healthy server before benchmarking
+        await Promise.all(
+            allModels.map(async (modelId) => {
+                const servers = orchestrator.getServers().filter(s => s.healthy && s.models.includes(modelId));
+                if (servers.length === 0) {
+                    results.push({ modelId, error: 'Model not available on any healthy server.' });
+                    return;
+                }
+                try {
+                    const modelResults = await orchestrateEnhancedBenchmarks(
+                        modelId,
+                        benchmarkTypes,
+                        warmupSlotsPerServer ?? 3
+                    );
+                    results.push({ modelId, results: modelResults });
+                } catch (err) {
+                    results.push({ modelId, error: err instanceof Error ? err.message : String(err) });
+                }
+            })
+        );
+        res.json({ results });
+    } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+});
+
+// POST /api/benchmark/server-models/:serverId
+// Runs selected benchmarks on all models of a particular server
+router.post('/api/benchmark/server-models/:serverId', async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { benchmarkTypes, warmupSlotsPerServer } = req.body as {
+            benchmarkTypes: BenchmarkType[];
+            warmupSlotsPerServer?: number;
+        };
+        const { serverId } = req.params;
+        const orchestrator = getOrchestratorInstance();
+        const server = orchestrator.getServers().find(s => s.id === serverId);
+        if (!server) {
+            res.status(404).json({ error: `Server not found: ${serverId}` });
+            return;
+        }
+        if (!server.healthy) {
+            res.status(400).json({ error: `Server ${serverId} is not healthy.` });
+            return;
+        }
+        // Use orchestrateEnhancedBenchmarks, overriding servers to just the selected one
+        const results: any[] = [];
+        await Promise.all(
+            server.models.map(async (modelId) => {
+                // Validate model availability on the server
+                if (!server.models.includes(modelId)) {
+                    results.push({ modelId, error: 'Model not available on this server.' });
+                    return;
+                }
+                try {
+                    const modelResults = await orchestrateEnhancedBenchmarks(
+                        modelId,
+                        benchmarkTypes,
+                        warmupSlotsPerServer ?? 3,
+                        [serverId]
+                    );
+                    results.push({ modelId, results: modelResults });
+                } catch (err) {
+                    results.push({ modelId, error: err instanceof Error ? err.message : String(err) });
+                }
+            })
+        );
+        res.json({ serverId, results });
+    } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
     }
 });
 

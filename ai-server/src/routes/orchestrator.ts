@@ -17,6 +17,7 @@ import {
   getRagModelPerformance,
   getRagBestModels,
   getRagUsageStats,
+  getRagDiagnosticNodes,
 } from '../controllers/ragController.js';
 
 import { orchestratorEmbed } from '../controllers/orchestratorEmbeddingController.js';
@@ -66,5 +67,8 @@ router.get('/rag/usage-stats', getRagUsageStats as any);
 
 // Embedding endpoint
 router.post('/embed', asyncHandler(orchestratorEmbed));
+
+// Diagnostic endpoint: List the first 10 nodes of any type from the RAG storage
+router.get('/rag/diagnostic-nodes', asyncHandler(getRagDiagnosticNodes));
 
 export default router;

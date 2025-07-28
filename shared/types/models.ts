@@ -13,11 +13,19 @@ export interface ModelRecommendation {
 
 export type ModelId = string;
 
+import type { LatencyMetrics, ThroughputMetrics } from './aiQualityBenchmark';
+
 export interface ModelQualityReport {
     readonly modelId: ModelId;
     readonly accuracy: number;
-    readonly latency: number;
-    readonly throughput: number;
+    /**
+     * Latency metrics (cold, warm, warmup, all warm times)
+     */
+    readonly latency: LatencyMetrics;
+    /**
+     * Throughput metrics (average, all times)
+     */
+    readonly throughput: ThroughputMetrics;
     readonly lastBenchmarked: string;
 }
 

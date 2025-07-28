@@ -8,6 +8,15 @@ import { emitJobSSEEvent } from './pipeline/utils/sseEvents.js';
  */
 
 import { AIServer, ServerModelBenchmark } from './orchestrator.js';
+import { markServerUnhealthy } from '../orchestrator/serverDiscovery.js';
+
+/**
+ * ServerModelBenchmark type must include optional qualityScore for RAG integration.
+ * If not present in orchestrator.js, extend locally for now.
+ */
+export interface ServerModelBenchmarkWithQuality extends ServerModelBenchmark {
+    qualityScore?: number;
+}
 import { saveBenchmarksToDisk, loadBenchmarksFromDisk } from './orchestrator-benchmark-persistence.js';
 import fs from 'fs';
 import path from 'path';
@@ -37,7 +46,7 @@ export class BenchmarkManager {
     }
 
     /** Write a debug log entry to the benchmarkManager log file */
-    private logDebug(msg: string) {
+    public logDebug(msg: string) {
         const line = `[${new Date().toISOString()}] ${msg}\n`;
         try {
             fs.mkdirSync(path.dirname(this.debugLogPath), { recursive: true });
@@ -237,23 +246,87 @@ export class BenchmarkManager {
      * Benchmark a specific server/model pair. Throws an error with {ramOverage:true} or message containing 'ram'/'memory' if RAM overage occurs.
      * Replace this stub with real logic that can detect RAM/memory errors.
      */
+    /**
+     * Benchmark a specific server/model pair. If a 500 or obvious failure occurs, mark as unhealthy in RAG.
+     * Also, save quality scores to RAG if available.
+     */
+    /**
+     * Benchmark a specific server/model pair using real logic.
+     * - Measures latency and throughput by sending real requests to the server/model endpoint.
+     * - Handles RAM/memory errors and 500s, marking as unhealthy in RAG.
+     * - Saves qualityScore to RAG if available.
+     */
     async benchmarkServerModel(server: AIServer, model: string) {
-        // Simulate RAM overage for demonstration: 10% chance
-        if (Math.random() < 0.1) {
-            const err: any = new Error('RAM overage detected during benchmark');
-            err.ramOverage = true;
+        // Real benchmarking logic: send a real request to the server/model endpoint
+        const start = Date.now();
+        let latency = 0;
+        let throughput = 0;
+        let qualityScore: number | undefined = undefined;
+        let error: any = null;
+        try {
+            // Example: POST /benchmark endpoint on the server, with model name
+            // You may need to adjust the endpoint and payload to match your server API
+            const url = `${server.url.replace(/\/$/, '')}/benchmark`;
+            const payload = { model };
+            const fetch = (global as any).fetch || require('node-fetch');
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                timeout: 20000 // 20s timeout
+            });
+            if (!response.ok) {
+                error = new Error(`Benchmark failed: HTTP ${response.status}`);
+                error.status = response.status;
+                await markServerUnhealthy(model, server.id, `Benchmark HTTP error: ${response.status}`);
+                this.logDebug(`[BENCHMARK] Marked server ${server.id} as unhealthy for model ${model} (HTTP error)`);
+                throw error;
+            }
+            const result = await response.json();
+            // Expecting result: { latencyMs, throughput, qualityScore? }
+            latency = typeof result.latencyMs === 'number' ? result.latencyMs : Date.now() - start;
+            throughput = typeof result.throughput === 'number' ? result.throughput : 1;
+            if (typeof result.qualityScore === 'number') qualityScore = result.qualityScore;
+            // RAM/memory error detection (if server returns such info)
+            if (result.ramOverage || /ram|memory/i.test(result.error || '')) {
+                error = new Error('RAM overage detected during benchmark');
+                error.ramOverage = true;
+                await markServerUnhealthy(model, server.id, 'RAM overage detected during benchmark');
+                this.logDebug(`[BENCHMARK] Marked server ${server.id} as unhealthy for model ${model} (RAM overage)`);
+                throw error;
+            }
+            // Save benchmark result
+            const bench: ServerModelBenchmarkWithQuality = {
+                latencyMs: latency,
+                throughput,
+                lastTested: Date.now(),
+                ...(qualityScore !== undefined ? { qualityScore } : {})
+            };
+            this.setBenchmark(server.id, model, bench);
+            // Save quality score to RAG (if available)
+            try {
+                const orchestrator = (global as any).orchestratorInstance;
+                if (orchestrator && orchestrator.getRAGService) {
+                    const ragService = await orchestrator.getRAGService();
+                    if (ragService && ragService.syncServerModelPerformance) {
+                        await ragService.syncServerModelPerformance(server.id, model, bench);
+                    }
+                }
+            } catch (ragErr) {
+                this.logDebug(`Failed to sync quality score to RAG: ${ragErr}`);
+            }
+        } catch (err: any) {
+            // On 500, timeout, or obvious failure, mark as unhealthy in RAG
+            this.logDebug(`Benchmark failed for ${server.id}:${model}: ${err?.message}`);
+            try {
+                await markServerUnhealthy(model, server.id, err?.message || 'Benchmark failure');
+                this.logDebug(`[BENCHMARK] Marked server ${server.id} as unhealthy for model ${model} (exception)`);
+            } catch (ragErr) {
+                this.logDebug(`Failed to mark unhealthy in RAG: ${ragErr}`);
+            }
             throw err;
         }
-        // Simulate benchmark (replace with real tests)
-        const latency = Math.random() * 200 + 50;
-        const throughput = Math.random() * 5 + 1;
-        this.setBenchmark(server.id, model, {
-            latencyMs: latency,
-            throughput,
-            lastTested: Date.now(),
-        });
     }
-
     /**
      * Run a benchmark for all servers/models (latency, throughput, etc.)
      * This is a stub; real implementation should measure actual metrics.

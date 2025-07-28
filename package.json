@@ -97,6 +97,7 @@
     "react-hook-form": "^7.57.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^6.30.1",
+    "rouge": "^1.0.3",
     "socket.io": "^4.7.5",
     "strip-ansi-cli": "^4.0.0",
     "tough-cookie": "^5.1.2",

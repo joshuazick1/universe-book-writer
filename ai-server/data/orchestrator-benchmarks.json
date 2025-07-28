@@ -2170,19 +2170,19 @@
     "lastTested": 1752203776416
   },
   "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:nomic-embed-text:latest": {
-    "latencyMs": 124.55749059320564,
-    "throughput": 5.087200382832452,
-    "lastTested": 1753308565167
+    "latencyMs": 197.20396444278188,
+    "throughput": 3.417341269667763,
+    "lastTested": 1753477956557
   },
   "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:smollm2:135m": {
-    "latencyMs": 186.60730136016684,
-    "throughput": 1.0810731344228433,
-    "lastTested": 1753308565150
+    "latencyMs": 62.507011692904825,
+    "throughput": 1.6197044334189383,
+    "lastTested": 1753477956536
   },
   "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:llama3:latest": {
-    "latencyMs": 97.0960276835556,
-    "throughput": 3.5208585033806488,
-    "lastTested": 1753308565171
+    "latencyMs": 205.62531840178352,
+    "throughput": 5.631986251382109,
+    "lastTested": 1753477956564
   },
   "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA:llama3.1:8b": {
     "latencyMs": 156.3716509226786,
@@ -2965,9 +2965,9 @@
     "lastTested": 1753159325299
   },
   "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:mxbai-embed-large:latest": {
-    "latencyMs": 159.29167339593332,
-    "throughput": 5.303573889410417,
-    "lastTested": 1753308565158
+    "latencyMs": 220.10909624320075,
+    "throughput": 3.6833809681171217,
+    "lastTested": 1753477956549
   },
   "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA:all-minilm:latest": {
     "latencyMs": 101.42447917833479,

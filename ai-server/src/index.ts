@@ -1,3 +1,4 @@
+import type { BenchmarkType } from '../../shared/types/aiQualityBenchmark.js';
 /**
  * AI Server Backend Entry Point (Scaffold)
  *
@@ -9,13 +10,12 @@
  */
 
 import { createServer } from 'http';
-import app from './app.js';
+import app, { ragReadyPromise } from './app.js';
 import { setupSocketIO } from './socket/socket-setup.js';
 
 import { logger } from '../../shared/logging/logger.js';
-import { BenchmarkManager } from './benchmarkManager.js';
-import { QualityBenchmarkManager } from './services/benchmarking/QualityBenchmarkManager.js';
-import { getOrchestratorInstance } from './orchestrator-instance.js';
+import benchmarkingManager from '../benchmarking/BenchmarkingManager.js';
+import { scheduleNextQualityBenchmark } from '../benchmarking/scheduleNextQualityBenchmark.js';
 
 const port = process.env.PORT || 5100;
 
@@ -40,21 +40,69 @@ export function startServer(customPort?: number | string, logger: (msg: string) 
 }
 
 
+
+
+
 if (process.env.NODE_ENV !== 'test') {
   const server = startServer();
 
-  // --- Quality Benchmark Automation Bootstrap ---
-  try {
-    const orchestrator = getOrchestratorInstance();
-    const benchmarkManager = new BenchmarkManager();
-    // Pass orchestrator to QualityBenchmarkManager for model/server discovery
-    const qualityBenchmarkManager = new QualityBenchmarkManager(benchmarkManager, orchestrator);
-    // Optionally, set orchestrator again if needed (for hot reloads)
-    qualityBenchmarkManager.setOrchestrator(orchestrator);
-    logger.info('QualityBenchmarkManager initialized with orchestrator for automated benchmark scheduling.');
-  } catch (err) {
-    logger.error('Failed to initialize QualityBenchmarkManager for automated benchmarks: ' + (err instanceof Error ? err.message : String(err)));
-  }
+  // --- Benchmarking Startup Routine (after RAG sync) ---
+  (async () => {
+    await ragReadyPromise;
+    // Short delay to ensure all async RAG setup is done
+    setTimeout(async () => {
+      try {
+        // --- Initial and startup benchmarks are temporarily disabled ---
+        // let allBenchmarks = await benchmarkingManager.getAllModelBenchmarks();
+        // if (!allBenchmarks.length) {
+        //   // No benchmarks exist, discover all models and run initial benchmarks
+        //   const { getOrchestratorInstance } = await import('./orchestrator-instance.js');
+        //   const orchestrator = getOrchestratorInstance();
+        //   const allModels = orchestrator.getAllModels();
+        //   logger.info(`[Startup] No model benchmarks found. Running initial benchmarks for ${allModels.length} discovered models via /api/benchmark/manual...`);
+        //   // Use shared function to run manual benchmarks for each model (no API call)
+        //   const { runManualBenchmarksForModel } = await import('../benchmarking/benchmarkUtils.js');
+        //   const manualBenchmarks = [
+        //     [],
+        //     ['json-assembly', 'task-planning', 'creative-writing', 'typescript-quality']
+        //   ];
+        //   for (const modelId of allModels) {
+        //     for (const benchmarkTypes of manualBenchmarks) {
+        //       try {
+        //         await runManualBenchmarksForModel({ modelId, benchmarkTypes: benchmarkTypes as (BenchmarkType | 'latency')[] });
+        //         logger.info(`[Startup] Manual benchmark succeeded for model ${modelId} types ${benchmarkTypes.join(', ')}`);
+        //       } catch (err) {
+        //         logger.error(`[Startup] Error running manual benchmark for model ${modelId}: ${err instanceof Error ? err.message : String(err)}`);
+        //       }
+        //     }
+        //   }
+        //   // Refresh benchmarks after initial run
+        //   allBenchmarks = await benchmarkingManager.getAllModelBenchmarks();
+        // }
+        // const { runManualBenchmarksForModel } = await import('../benchmarking/benchmarkUtils.js');
+        // for (const modelBench of allBenchmarks) {
+        //   const { modelId, benchmarks } = modelBench;
+        //   // Always run all benchmarks (latency + all quality types)
+        //   const allBenchmarkTypes = [
+        //     'latency',
+        //     'json-assembly',
+        //     'task-planning',
+        //     'creative-writing',
+        //     'typescript-quality'
+        //   ] as (BenchmarkType | 'latency')[];
+        //   await runManualBenchmarksForModel({ modelId, benchmarkTypes: allBenchmarkTypes });
+        //   const benchmarkArr = benchmarks ? Object.values(benchmarks) : [];
+        //   const schedule = scheduleNextQualityBenchmark(benchmarkArr);
+        //   if (schedule.shouldRun) {
+        //     await runManualBenchmarksForModel({ modelId, benchmarkTypes: allBenchmarkTypes });
+        //   }
+        // }
+        // logger.info('[Startup] Completed initial latency and quality benchmark checks.');
+      } catch (err) {
+        logger.error('[Startup] Error during initial benchmark checks: ' + (err instanceof Error ? err.message : String(err)));
+      }
+    }, 1000);
+  })();
 
   // Graceful shutdown handling
   async function gracefulShutdown(signal: string) {

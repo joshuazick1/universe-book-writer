@@ -5,7 +5,6 @@
  * Prioritizes user experience by preserving fast servers for real-time requests.
  */
 
-import { QualityBenchmarkManager, ModelQualityProfile } from '../benchmarking/QualityBenchmarkManager.js';
 import { BenchmarkManager } from '../../orchestrator.js';
 import { logger } from '../../../../shared/logging/logger.js';
 
@@ -47,7 +46,6 @@ export interface ModelCapability {
 }
 
 export class EnhancedModelSelectionService {
-    private qualityBenchmarkManager: QualityBenchmarkManager;
     private benchmarkManager: BenchmarkManager;
     private serviceName = 'EnhancedModelSelectionService';
     private modelCapabilities: Map<string, ModelCapability> = new Map();
@@ -63,10 +61,8 @@ export class EnhancedModelSelectionService {
     }> = [];
 
     constructor(
-        qualityBenchmarkManager: QualityBenchmarkManager,
         benchmarkManager: BenchmarkManager
     ) {
-        this.qualityBenchmarkManager = qualityBenchmarkManager;
         this.benchmarkManager = benchmarkManager;
         // Initialize service
 
@@ -85,9 +81,27 @@ export class EnhancedModelSelectionService {
             throw new Error('No models available');
         }
 
-        // Get performance data
-        const latencyData = this.getServerPerformanceMetrics();
-        const modelProfiles = this.getAllModelQualityProfiles();
+        // Get performance data from BenchmarkManager for all available models
+        const latencyData: Record<string, { latencyMs: number; throughput?: number }> = {};
+        for (const model of availableModels) {
+            // Find the best (lowest latency) server for this model
+            // If you want to consider all servers, you could aggregate, but here we use the best
+            let bestLatency = Infinity;
+            let bestThroughput = 0;
+            for (const [key, bench] of (this.benchmarkManager as any).benchmarks?.entries?.() || []) {
+                // key is `${serverId}:${modelName}`
+                const [serverId, modelName] = key.split(':');
+                if (modelName === model && bench && typeof bench.latencyMs === 'number') {
+                    if (bench.latencyMs < bestLatency) {
+                        bestLatency = bench.latencyMs;
+                        bestThroughput = bench.throughput ?? 0;
+                    }
+                }
+            }
+            if (bestLatency !== Infinity) {
+                latencyData[model] = { latencyMs: bestLatency, throughput: bestThroughput };
+            }
+        }
 
         // Score each model
         const modelScores: Array<{
@@ -101,7 +115,7 @@ export class EnhancedModelSelectionService {
         }> = [];
 
         for (const model of availableModels) {
-            const score = await this.calculateModelScore(model, criteria, latencyData, modelProfiles);
+            const score = await this.calculateModelScore(model, criteria, latencyData);
             modelScores.push(score);
         }
 
@@ -142,7 +156,6 @@ export class EnhancedModelSelectionService {
         model: string,
         criteria: ModelSelectionCriteria,
         latencyData: Record<string, any>,
-        modelProfiles: Map<string, ModelQualityProfile>
     ): Promise<{
         model: string;
         totalScore: number;
@@ -153,7 +166,7 @@ export class EnhancedModelSelectionService {
         serverInfo: any;
     }> {
         const latencyInfo = latencyData[model] || { latencyMs: 5000, throughput: 0.1 };
-        const qualityProfile = modelProfiles.get(model);
+        // Quality profile lookup is now handled via benchmarkManager qualityScore
         const capability = this.modelCapabilities.get(model);
 
         // Server classification
@@ -164,11 +177,20 @@ export class EnhancedModelSelectionService {
             load: latencyInfo.throughput || 0.1
         };
 
-        // Quality scoring
-        let qualityScore = 0.5; // Default neutral
-        if (qualityProfile && qualityProfile.qualityData) {
-            qualityScore = qualityProfile.qualityData.overallQuality || 0.7;
+        // Quality scoring: use qualityScore from BenchmarkManager if available
+        let qualityScore = 0.7;
+        // Find the best (lowest latency) server for this model in the benchmarks
+        let bestQuality = 0.7;
+        for (const [key, bench] of (this.benchmarkManager as any).benchmarks?.entries?.() || []) {
+            // key is `${serverId}:${modelName}`
+            const [serverId, modelName] = key.split(':');
+            if (modelName === model && bench && typeof bench.qualityScore === 'number') {
+                if (bench.qualityScore > bestQuality) {
+                    bestQuality = bench.qualityScore;
+                }
+            }
         }
+        qualityScore = bestQuality;
 
         // Speed scoring (lower latency = higher score)
         const speedScore = Math.max(0.1, Math.min(1.0, 1000 / latencyInfo.latencyMs));
@@ -224,7 +246,6 @@ export class EnhancedModelSelectionService {
             serverInfo
         };
     }
-
     /**
      * Calculate weights based on criteria
      */
@@ -550,32 +571,20 @@ export class EnhancedModelSelectionService {
      */
     async getAvailableModels(): Promise<string[]> {
         try {
-            // This should integrate with your existing model discovery
-            const serverMetrics = this.getServerPerformanceMetrics();
-            return Object.keys(serverMetrics);
+            // Return all unique model names that have benchmarks
+            const models = new Set<string>();
+            for (const key of (this.benchmarkManager as any).benchmarks?.keys?.() || []) {
+                const parts = key.split(':');
+                if (parts.length === 2) {
+                    models.add(parts[1]);
+                }
+            }
+            return Array.from(models);
         } catch (error) {
             logger.error(`Failed to get available models: ${error}`);
             return [];
         }
     }
 
-    /**
-     * Get all model quality profiles
-     */
-    private getAllModelQualityProfiles(): Map<string, ModelQualityProfile> {
-        const profiles = new Map<string, ModelQualityProfile>();
-
-        // Get profiles from quality benchmark manager
-        // This is a simplified implementation - in practice you'd iterate through all known models
-        return profiles;
-    }
-
-    /**
-     * Get server performance metrics (stub implementation)
-     */
-    private getServerPerformanceMetrics(): Record<string, any> {
-        // TODO: Implement actual server performance metrics collection
-        // For now, return empty object as fallback
-        return {};
-    }
+    // Removed getAllModelQualityProfiles and getServerPerformanceMetrics after unwiring QualityBenchmarkManager
 }

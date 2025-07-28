@@ -11,6 +11,7 @@ import { ensureNode } from '../../../shared/node/nodeService.js';
 import { BenchmarkManager } from '../benchmarkManager.js';
 import { AIOrchestrator } from '../orchestrator.js';
 import { logger } from '../../../shared/logging/logger.js';
+import { ragReadyResolve } from '../app.js';
 import type {
     RAGNode,
     RAGRelationship,
@@ -55,6 +56,20 @@ export class ModelPerformanceRAGService {
     private benchmarkManager: BenchmarkManager;
     private ragManager: any;
     private syncInterval: NodeJS.Timeout | null = null;
+
+    /**
+     * Public getter for orchestrator (for orchestrator-wide queries)
+     */
+    public getOrchestrator(): AIOrchestrator {
+        return this.orchestrator;
+    }
+
+    /**
+     * Public getter for ragManager (for orchestrator-wide queries)
+     */
+    public getRagManager(): any {
+        return this.ragManager;
+    }
 
     constructor(orchestrator: AIOrchestrator) {
         this.orchestrator = orchestrator;
@@ -143,6 +158,8 @@ export class ModelPerformanceRAGService {
             }
 
             logger.info(`Synced ${synced.modelNodes} model nodes, ${synced.serverNodes} server nodes, ${synced.performanceNodes} performance nodes, and ${synced.relationships} relationships to RAG`);
+            // Signal RAG is fully synced for startup routines
+            if (typeof ragReadyResolve === 'function') ragReadyResolve();
 
         } catch (error) {
             logger.error(`Failed to sync benchmark data to RAG: ${error}`);
@@ -210,6 +227,111 @@ export class ModelPerformanceRAGService {
     }
 
     /**
+     * Update health status for a model/server pair directly on the model-performance node.
+     * @param serverId The server identifier
+     * @param modelName The model name
+     * @param status Health status (e.g., 'unhealthy', 'healthy')
+     * @param reason Reason for the health status (e.g., error message, OOM, etc.)
+     * @param expiryMs Optional: milliseconds after which the unhealthy status expires (default: 24h)
+     */
+    async syncModelServerHealthStatus(
+        serverId: string,
+        modelName: string,
+        status: 'unhealthy' | 'healthy',
+        reason: string,
+        expiryMs: number = 24 * 60 * 60 * 1000
+    ): Promise<void> {
+        const now = new Date();
+        const nodeId = `performance:${serverId}:${modelName}`;
+        let unhealthyCount = 1;
+        let baseExpiryMs = expiryMs;
+        let createdTime = now;
+        let previousReportedAt: string | undefined = undefined;
+        let lastHealthStatus: string | undefined = undefined;
+        let node: any = null;
+        try {
+            node = await this.ragManager.getNode(nodeId);
+            if (node && node.content && node.content.attributes) {
+                const health = node.content.attributes.health || {};
+                unhealthyCount = (health.unhealthyCount || 0) + (status === 'unhealthy' ? 1 : 0);
+                baseExpiryMs = health.baseExpiryMs || expiryMs;
+                createdTime = health.createdTime ? new Date(health.createdTime) : now;
+                previousReportedAt = health.reportedAt;
+                lastHealthStatus = health.status;
+                this.benchmarkManager?.logDebug(`[HEALTH] Found existing model-performance node for ${serverId}:${modelName} with health: ${JSON.stringify(health)}`);
+            } else {
+                this.benchmarkManager?.logDebug(`[HEALTH] No existing model-performance node found for ${serverId}:${modelName}`);
+            }
+        } catch (err) {
+            this.benchmarkManager?.logDebug(`[HEALTH] Error fetching model-performance node for ${serverId}:${modelName}: ${err}`);
+        }
+        // Exponential backoff: double expiry for each additional unhealthy mark (max 30 days)
+        const maxExpiryMs = 30 * 24 * 60 * 60 * 1000;
+        const calculatedExpiryMs = Math.min(baseExpiryMs * Math.pow(2, unhealthyCount - 1), maxExpiryMs);
+        const expiresAt = new Date(now.getTime() + calculatedExpiryMs);
+        // Update or create the model-performance node with health info
+        const healthUpdate = {
+            status,
+            reason,
+            reportedAt: now.toISOString(),
+            previousReportedAt,
+            expiresAt: expiresAt.toISOString(),
+            unhealthyCount,
+            baseExpiryMs,
+            createdTime,
+            modified: now,
+            active: status === 'unhealthy',
+        };
+        if (node) {
+            // Update health field in attributes
+            const updatedAttributes = {
+                ...node.content.attributes,
+                health: healthUpdate
+            };
+            await this.ragManager.updateNode(nodeId, {
+                content: {
+                    ...node.content,
+                    attributes: updatedAttributes
+                },
+                timestamps: {
+                    ...node.timestamps,
+                    modified: now
+                }
+            });
+            this.benchmarkManager?.logDebug(`[HEALTH] Updated health for model-performance node ${nodeId}: serverId=${serverId}, modelName=${modelName}, health=${JSON.stringify(healthUpdate)}`);
+            this.benchmarkManager?.logDebug(`[HEALTH] Full updated node: ${JSON.stringify({ nodeId, serverId, modelName, updatedAttributes })}`);
+        } else {
+            // Create a new model-performance node with health info
+            const newNode = {
+                id: nodeId,
+                type: 'model-performance',
+                title: `${modelName} Performance on ${serverId}`,
+                content: {
+                    description: `Performance and usage tracking for ${modelName} on server ${serverId}`,
+                    attributes: {
+                        serverId,
+                        modelName,
+                        health: healthUpdate
+                    }
+                },
+                metadata: {
+                    universeId: 'system',
+                    ownerId: 'system',
+                    sourcePlugin: 'ai-orchestrator',
+                },
+                timestamps: {
+                    created: now,
+                    modified: now
+                },
+                active: true
+            };
+            await this.ragManager.createNode(newNode);
+            this.benchmarkManager?.logDebug(`[HEALTH] Created new model-performance node with health for ${nodeId}: serverId=${serverId}, modelName=${modelName}, health=${JSON.stringify(healthUpdate)}`);
+            this.benchmarkManager?.logDebug(`[HEALTH] Full created node: ${JSON.stringify(newNode)}`);
+        }
+    }
+
+    /**
      * Create relationships between performance data and system components
      */
     private async createPerformanceRelationships(
@@ -217,7 +339,8 @@ export class ModelPerformanceRAGService {
         modelName: string,
         benchmark: ServerModelBenchmark
     ): Promise<void> {
-
+        // ...existing code...
+        const { estimateResourceAllocation } = await import('./estimateResourceAllocation.js');
         const performanceNodeId = `performance:${serverId}:${modelName}`;
         const serverNodeId = `server:${serverId}`;
         const modelNodeId = `model:${modelName}`;
@@ -236,7 +359,7 @@ export class ModelPerformanceRAGService {
                 attributes: {
                     relationshipType: 'hosting',
                     deploymentStatus: 'active',
-                    resourceAllocation: this.estimateResourceAllocation(serverId, modelName)
+                    resourceAllocation: estimateResourceAllocation(serverId, modelName)
                 }
             },
             privacy: {
@@ -249,118 +372,7 @@ export class ModelPerformanceRAGService {
             }
         };
 
-        // 2. Server generates Performance data relationship
-        const serverPerformance: RAGRelationship = {
-            id: `${serverNodeId}:generates:${performanceNodeId}`,
-            type: 'causal',
-            fromNodeId: serverNodeId,
-            toNodeId: performanceNodeId,
-            weight: 1.0,
-            metadata: {
-                description: 'Server generates performance metrics for model execution',
-                universeId: 'system',
-                sourcePlugin: 'ai-orchestrator',
-                attributes: {
-                    relationshipType: 'performance-generation',
-                    dataFrequency: 'continuous',
-                    lastUpdate: new Date(benchmark.lastTested).toISOString()
-                }
-            },
-            privacy: {
-                encrypted: false,
-                visibility: 'public' as const
-            },
-            timestamps: {
-                created: new Date(),
-                modified: new Date()
-            }
-        };
-
-        // 3. Model exhibits Performance characteristics relationship  
-        const modelPerformance: RAGRelationship = {
-            id: `${modelNodeId}:exhibits:${performanceNodeId}`,
-            type: 'reference',
-            fromNodeId: modelNodeId,
-            toNodeId: performanceNodeId,
-            weight: 0.8, // Slightly lower weight as this is context-dependent
-            metadata: {
-                description: 'Model exhibits these performance characteristics on this server',
-                universeId: 'system',
-                sourcePlugin: 'ai-orchestrator',
-                attributes: {
-                    relationshipType: 'performance-exhibition',
-                    context: `${modelName} running on ${serverId}`,
-                    performanceClass: this.categorizeLatency(benchmark.latencyMs),
-                    qualityScore: this.estimateQualityScore(benchmark)
-                }
-            },
-            privacy: {
-                encrypted: false,
-                visibility: 'public' as const
-            },
-            timestamps: {
-                created: new Date(),
-                modified: new Date()
-            }
-        };
-
-        // Upsert relationships
-        const relationships = [serverHostsModel, serverPerformance, modelPerformance];
-        for (const relationship of relationships) {
-            const existingRel = await this.ragManager.getRelationship(relationship.id);
-            if (existingRel) {
-                const { id, timestamps, ...updateData } = relationship;
-                await this.ragManager.updateRelationship(relationship.id, updateData);
-            } else {
-                const { timestamps, ...relData } = relationship;
-                await this.ragManager.createRelationship(relData);
-            }
-        }
-
-        //
     }
-
-    /**
-     * Estimate resource allocation for a model on a server
-     */
-    private estimateResourceAllocation(serverId: string, modelName: string): string {
-        const server = this.orchestrator.getServers().find(s => s.id === serverId);
-        const modelCount = server?.models?.length || 1;
-        const paramSize = this.estimateParameterSize(modelName);
-
-        if (modelCount === 1) return 'dedicated';
-        if (paramSize === 'large') return 'high-share';
-        if (paramSize === 'small') return 'low-share';
-        return 'balanced-share';
-    }
-
-    /**
-     * Calculate performance trends for a server/model pair
-     */
-    private calculatePerformanceTrends(serverId: string, modelName: string): ModelPerformanceNode['trends'] {
-        // This would access recent latency data from BenchmarkManager
-        // For now, return calculated estimates
-
-        const recentBenchmarks = (this.benchmarkManager as any).recentLatencies?.get(`${serverId}:${modelName}`) || [];
-
-        return {
-            improvingLatency: this.isLatencyImproving(recentBenchmarks),
-            consistentThroughput: this.isThroughputConsistent(recentBenchmarks),
-            recentFailures: this.countRecentFailures(serverId, modelName)
-        };
-    }
-
-    /**
-     * Infer contextual performance characteristics
-     */
-    private inferContextualPerformance(benchmark: ServerModelBenchmark): ModelPerformanceNode['contextualPerformance'] {
-        return {
-            inputComplexity: this.categorizeComplexityFromLatency(benchmark.latencyMs),
-            outputQuality: this.inferQualityFromThroughput(benchmark.throughput),
-            resourceUsage: this.categorizeResourceUsage(benchmark.latencyMs, benchmark.throughput)
-        };
-    }
-
     /**
      * Generate embeddings for performance data
      */

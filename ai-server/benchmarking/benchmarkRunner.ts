@@ -3,7 +3,8 @@
  * Shared utility to run one or more benchmarks for a model/server pair.
  * Does not persist results. Used by both BenchmarkingManager and manual controller.
  */
-import benchmarkingManager from './BenchmarkingManager.js';
+
+import { benchmarkTypeMap } from './benchmarkUtils.js';
 import { BenchmarkType, QualityBenchmarkScore } from '../../shared/types/aiQualityBenchmark.js';
 
 /**
@@ -24,25 +25,13 @@ export async function runBenchmarksForServer(
         let rubric = '';
         let timestamp = new Date().toISOString();
         try {
-            switch (type) {
-                case 'json-assembly':
-                    score = await (benchmarkingManager as any).evaluateJSONAssembly(modelId, serverId);
-                    rubric = 'JSON schema, BLEU/ROUGE, structure';
-                    break;
-                case 'task-planning':
-                    score = await (benchmarkingManager as any).evaluateTaskPlanning(modelId, serverId);
-                    rubric = 'Task adherence, BLEU/ROUGE, relevance';
-                    break;
-                case 'creative-writing':
-                    score = await (benchmarkingManager as any).evaluateCreativeWriting(modelId, serverId);
-                    rubric = 'Creativity, detail, BLEU/ROUGE';
-                    break;
-                case 'typescript-quality':
-                    score = await (benchmarkingManager as any).evaluateTypescriptQuality(modelId, serverId);
-                    rubric = 'Syntax, correctness, BLEU/ROUGE';
-                    break;
-                default:
-                    rubric = 'Unknown benchmark type';
+            const fn = benchmarkTypeMap[type];
+            if (typeof fn === 'function') {
+                // Use a default or custom prompt if needed
+                score = await fn(modelId, serverId);
+                rubric = '';
+            } else {
+                rubric = 'Unknown benchmark type';
             }
         } catch (err) {
             rubric = `Error: ${(err instanceof Error ? err.message : String(err))}`;
