@@ -77,7 +77,6 @@ export interface DiffObject {
   summary?: string;
   metadata?: Record<string, unknown>;
 }
-// ...existing code...
 /**
  * CharGenMemory - Character Generator Memory format (used by mongoGeneratorService)
  * This type is used for persistent storage and conversion between CharacterMemory and DB format.
@@ -103,7 +102,10 @@ export interface CharGenMemory {
     gapFillingContext?: CharacterMemory['gapFillingContext'];
   };
 }
-// ...existing code...
+/**
+ * CharacterMemory - Character memory format (used by AI for gap filling and user interaction)
+ * This type is used for in-memory representation of character memories.
+ */
 export interface CharacterMemory {
   id: string;
   characterId: string;
@@ -209,6 +211,8 @@ export interface Universe {
   readonly diffs?: DiffObject[];
   /** Context enrichment for universe node */
   readonly contextEnrichment?: UniverseContextEnrichment;
+  /** Semantic vector embeddings for universe node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -248,6 +252,8 @@ export interface Book {
   readonly diffs?: DiffObject[];
   /** Context enrichment for book node */
   readonly contextEnrichment?: BookContextEnrichment;
+  /** Semantic vector embeddings for book node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -292,6 +298,8 @@ export interface Chapter {
   readonly diffs?: DiffObject[];
   /** Context enrichment for chapter node */
   readonly contextEnrichment?: ChapterContextEnrichment;
+  /** Semantic vector embeddings for chapter node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -351,6 +359,8 @@ export interface Character {
   readonly appearanceSectionIds?: readonly string[];
   readonly description?: string;
   readonly metadata?: Record<string, unknown>;
+  /** Semantic vector embeddings for character node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -373,6 +383,8 @@ export interface Location {
   readonly name: string;
   readonly description?: string;
   readonly metadata?: Record<string, unknown>;
+  /** Semantic vector embeddings for location node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -395,6 +407,8 @@ export interface Item {
   readonly name: string;
   readonly description?: string;
   readonly metadata?: Record<string, unknown>;
+  /** Semantic vector embeddings for item node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -419,6 +433,8 @@ export interface Lore {
   readonly summary?: string;
   readonly content?: string;
   readonly metadata?: Record<string, unknown>;
+  /** Semantic vector embeddings for lore node */
+  readonly embeddings?: number[];
 }
 // Re-export RAGRelationship for repository/service use
 // Removed re-export of RAGRelationship from ragTypes.js; now defined in this file.
@@ -443,6 +459,8 @@ export interface Species {
   readonly name: string;
   readonly description?: string;
   readonly metadata?: Record<string, unknown>;
+  /** Semantic vector embeddings for species node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -465,6 +483,8 @@ export interface Faction {
   readonly name: string;
   readonly description?: string;
   readonly metadata?: Record<string, unknown>;
+  /** Semantic vector embeddings for faction node */
+  readonly embeddings?: number[];
 }
 
 /**
@@ -485,6 +505,8 @@ export interface TimelineEvent {
   readonly universeId: string;
   readonly description: string;
   readonly metadata?: Record<string, unknown>;
+  /** Semantic vector embeddings for timeline event node */
+  readonly embeddings?: number[];
 }
 
 export interface Node {
@@ -493,6 +515,27 @@ export interface Node {
   title?: string;
   parentId?: string;
   metadata?: Record<string, any>;
+  /** Array of benchmark score entries for model-performance nodes */
+  scores?: Array<{
+    runCode: string;
+    timestamp: string;
+    coldLatency?: number;
+    warmLatencies?: number[];
+    qualityResults?: Partial<Record<string, any>>;
+  }>;
+  /** Aggregated quality score for ai-model nodes */
+  avgQualityScore?: number;
+  /** Best (lowest) latency for ai-model nodes */
+  bestLatency?: number;
+  /** Last aggregation run code */
+  lastAggregatedRun?: string;
+  /** Last aggregation timestamp */
+  lastAggregatedAt?: string;
+  /** Semantic vector embeddings for node */
+  embeddings?: number[];
+  benchmarks?: Record<string, any>;
+  modelId?: string;
+  serverId?: string;
 }
 
 export interface NodeInput {
@@ -500,13 +543,32 @@ export interface NodeInput {
   title?: string;
   parentId?: string;
   metadata?: Record<string, any>;
+  attributes?: Record<string, any>;
+  /** Array of benchmark score entries for model-performance nodes */
+  scores?: Array<{
+    runCode: string;
+    timestamp: string;
+    coldLatency?: number;
+    warmLatencies?: number[];
+    qualityResults?: Partial<Record<string, any>>;
+  }>;
+  /** Aggregated quality score for ai-model nodes */
+  avgQualityScore?: number;
+  /** Best (lowest) latency for ai-model nodes */
+  bestLatency?: number;
+  /** Last aggregation run code */
+  lastAggregatedRun?: string;
+  /** Last aggregation timestamp */
+  lastAggregatedAt?: string;
+  /** Semantic vector embeddings for node input */
+  embeddings?: number[];
 }
 
 export interface NodeMetadata {
   [key: string]: any;
 }
 
-export type NodeType = 'universe' | 'book' | 'chapter' | 'character' | 'ai-model' | 'ai-server' | 'model-performance';
+export type NodeType = 'universe' | 'book' | 'chapter' | 'character' | 'location' | 'item' | 'lore' | 'species' | 'faction' | 'timelineEvent' | 'ai-model' | 'model-performance' | 'ai-server';
 
 export interface CharacterChatProcessor {
   processMessage: (message: string) => Promise<string>;

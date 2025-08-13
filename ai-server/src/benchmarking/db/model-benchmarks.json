@@ -1,0 +1,2096 @@
+{
+  "hf.co/microsoft/Phi-3-mini-4k-instruct-gguf:latest": {
+    "modelId": "hf.co/microsoft/Phi-3-mini-4k-instruct-gguf:latest",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:50:04.617Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:50:04.617Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:50:04.617Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:50:04.618Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "hf.co/mixedbread-ai/mxbai-embed-large-v1:latest": {
+    "modelId": "hf.co/mixedbread-ai/mxbai-embed-large-v1:latest",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:50:13.299Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:50:13.299Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:50:13.299Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:50:13.300Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "hf.co/bullerwins/FLUX.1-Kontext-dev-GGUF:latest": {
+    "modelId": "hf.co/bullerwins/FLUX.1-Kontext-dev-GGUF:latest",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:50:22.005Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:50:22.005Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:50:22.005Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:50:22.005Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "granite-embedding:30m": {
+    "modelId": "granite-embedding:30m",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:50:30.613Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:50:30.613Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:50:30.613Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:50:30.613Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "granite-embedding:278m": {
+    "modelId": "granite-embedding:278m",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "llava-llama3:8b": {
+    "modelId": "llava-llama3:8b",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "moondream:1.8b": {
+    "modelId": "moondream:1.8b",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "llava:13b": {
+    "modelId": "llava:13b",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "llava:34b": {
+    "modelId": "llava:34b",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "granite3.2-vision:2b": {
+    "modelId": "granite3.2-vision:2b",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "llava-phi3:3.8b": {
+    "modelId": "llava-phi3:3.8b",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "llama4:16x17b": {
+    "modelId": "llama4:16x17b",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:51:09.578Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:51:09.578Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:51:09.579Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:51:09.579Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "llama4:128x17b": {
+    "modelId": "llama4:128x17b",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:51:18.279Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:51:18.279Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:51:18.279Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:51:18.279Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "qwen2.5vl:32b": {
+    "modelId": "qwen2.5vl:32b",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:51:26.944Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:51:26.944Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:51:26.945Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:51:26.945Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "qwen2.5vl:3b": {
+    "modelId": "qwen2.5vl:3b",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:51:35.675Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:51:35.675Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:51:35.675Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:51:35.676Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "qwen2.5vl:7b": {
+    "modelId": "qwen2.5vl:7b",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:51:53.194Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:51:53.194Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:51:53.194Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:51:53.195Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999,
+      "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "qwen2.5vl:72b": {
+    "modelId": "qwen2.5vl:72b",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:52:01.832Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:52:01.833Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:52:01.833Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:52:01.833Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "phi4-reasoning:14b": {
+    "modelId": "phi4-reasoning:14b",
+    "benchmarks": {
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateJSONAssembly is not a function",
+        "timestamp": "2025-07-26T21:52:10.446Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTaskPlanning is not a function",
+        "timestamp": "2025-07-26T21:52:10.447Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateCreativeWriting is not a function",
+        "timestamp": "2025-07-26T21:52:10.447Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Error: benchmarkingManager.evaluateTypescriptQuality is not a function",
+        "timestamp": "2025-07-26T21:52:10.448Z"
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "phi4-mini-reasoning:latest": {
+    "modelId": "phi4-mini-reasoning:latest",
+    "benchmarks": {},
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 9999
+    },
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  },
+  "llama3:latest": {
+    "modelId": "llama3:latest",
+    "benchmarks": {
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:11.709Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:12.705Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:13.654Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:17.671Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:18.726Z"
+      },
+      "question-answering": {
+        "type": "question-answering",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:19.730Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:20.736Z"
+      },
+      "code-generation": {
+        "type": "code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:21.697Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:22.757Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:23.782Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:24.771Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:25.796Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:26.897Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:29.061Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:30.924Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:32.860Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://159.89.92.29:11434": {
+        "tagsLatency": 42,
+        "versionLatency": 96,
+        "psLatency": 39,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 0,
+        "averageResponseTime": 9999,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "http://159.89.92.29:11434": 42
+    },
+    "serverLatencyDetails": {
+      "http://159.89.92.29:11434": {
+        "cold": 42,
+        "warmAvg": 96,
+        "warmup": 39,
+        "warmAll": [
+          42,
+          96
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "test-model": {
+    "modelId": "test-model",
+    "benchmarks": {},
+    "serverLatencyMetrics": {
+      "http://localhost:11434": {
+        "tagsLatency": 29,
+        "versionLatency": 4,
+        "psLatency": 3,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {},
+    "serverWarmPerformance": {},
+    "serverLatencies": {},
+    "serverLatencyDetails": {
+      "http://localhost:11434": {
+        "cold": 0,
+        "warmAvg": 0,
+        "warmup": 0,
+        "warmAll": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "serverThroughput": {
+      "http://localhost:11434": {
+        "average": 0,
+        "all": [
+          0
+        ]
+      }
+    }
+  },
+  "nomic-embed-text:latest": {
+    "modelId": "nomic-embed-text:latest",
+    "benchmarks": {
+      "embedding-quality": {
+        "type": "embedding-quality",
+        "score": 1,
+        "rubric": "Embedding quality evaluation:\n✓ Dimension consistency: 768 dimensions across all embeddings\n- Similarity test: 0.849 (expected: 0.8) - ✓\n- Similarity test: 0.861 (expected: 0.7) - ✓\n- Similarity test: 0.872 (expected: 0.75) - ✓\n- Similarity test: 0.862 (expected: 0.8) - ✓\n- Similarity test: 0.385 (expected: 0.3) - ✓\n- Similarity test: 0.513 (expected: 0.2) - ✗\nSemantic similarity accuracy: 86.8%\n✓ Vector norms are reasonable (avg: 21.396)\n✓ No zero vectors detected\n✓ Good performance: 93ms per embedding\n✓ Bonus: Excellent overall embedding quality and performance\n\nFinal score: 100.0%",
+        "timestamp": "2025-08-02T05:20:09.638Z",
+        "embeddingMetrics": {
+          "dimensions": 768,
+          "embeddingsPerSecond": 10.778443113772456,
+          "semanticSimilarityScore": 0.8682055457483365,
+          "clusteringQualityScore": 1,
+          "vectorConsistencyScore": 1
+        }
+      },
+      "embedding-speed": {
+        "type": "embedding-speed",
+        "score": 1,
+        "rubric": "Embedding speed evaluation:\nText 1: 136ms\nText 2: 106ms\nText 3: 86ms\nText 4: 86ms\nText 5: 92ms\n✓ Excellent speed: 101ms avg\n✓ Consistent performance (CV: 18.6%)\n✓ High throughput: 9.9 emb/sec\n\nFinal score: 100.0%",
+        "timestamp": "2025-08-02T05:20:10.307Z",
+        "embeddingMetrics": {
+          "dimensions": 0,
+          "embeddingsPerSecond": 9.881422924901186,
+          "semanticSimilarityScore": 0,
+          "clusteringQualityScore": 0,
+          "vectorConsistencyScore": 1
+        }
+      },
+      "vector-similarity": {
+        "type": "vector-similarity",
+        "score": 0,
+        "rubric": "vector-similarity benchmark not yet implemented",
+        "timestamp": "2025-08-02T05:20:10.800Z",
+        "embeddingMetrics": {
+          "dimensions": 0,
+          "embeddingsPerSecond": 0,
+          "semanticSimilarityScore": 0,
+          "clusteringQualityScore": 0,
+          "vectorConsistencyScore": 0
+        }
+      },
+      "embedding-dimensions": {
+        "type": "embedding-dimensions",
+        "score": 0,
+        "rubric": "embedding-dimensions benchmark not yet implemented",
+        "timestamp": "2025-08-02T05:20:11.810Z",
+        "embeddingMetrics": {
+          "dimensions": 0,
+          "embeddingsPerSecond": 0,
+          "semanticSimilarityScore": 0,
+          "clusteringQualityScore": 0,
+          "vectorConsistencyScore": 0
+        }
+      },
+      "embedding-clustering": {
+        "type": "embedding-clustering",
+        "score": 0,
+        "rubric": "embedding-clustering benchmark not yet implemented",
+        "timestamp": "2025-08-02T05:20:12.825Z",
+        "embeddingMetrics": {
+          "dimensions": 0,
+          "embeddingsPerSecond": 0,
+          "semanticSimilarityScore": 0,
+          "clusteringQualityScore": 0,
+          "vectorConsistencyScore": 0
+        }
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://localhost:11434": {
+        "tagsLatency": 12,
+        "versionLatency": 2,
+        "psLatency": 0,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {},
+    "serverWarmPerformance": {},
+    "serverLatencies": {
+      "http://localhost:11434": 12
+    },
+    "serverLatencyDetails": {
+      "http://localhost:11434": {
+        "cold": 12,
+        "warmAvg": 2,
+        "warmup": 0,
+        "warmAll": [
+          12,
+          2
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "llama3.2:3b-instruct-q4_K_M": {
+    "modelId": "llama3.2:3b-instruct-q4_K_M",
+    "benchmarks": {},
+    "serverLatencyMetrics": {
+      "http://localhost:11434": {
+        "tagsLatency": 24,
+        "versionLatency": 13,
+        "psLatency": 0,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "http://localhost:11434": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "http://localhost:11434": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 0,
+        "averageResponseTime": 9999,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "http://localhost:11434": 24
+    },
+    "serverLatencyDetails": {
+      "http://localhost:11434": {
+        "cold": 24,
+        "warmAvg": 13,
+        "warmup": 0,
+        "warmAll": [
+          24,
+          13
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "llama3.1:8b-instruct-q4_K_M": {
+    "modelId": "llama3.1:8b-instruct-q4_K_M",
+    "benchmarks": {
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:25.572Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:26.781Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:28.794Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:34.648Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:35.662Z"
+      },
+      "question-answering": {
+        "type": "question-answering",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:36.655Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:37.705Z"
+      },
+      "code-generation": {
+        "type": "code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:39.648Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:40.659Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:41.653Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:42.727Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:43.716Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:44.778Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:46.832Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:48.789Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:50.801Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://159.89.92.29:11434": {
+        "tagsLatency": 70,
+        "versionLatency": 111,
+        "psLatency": 46,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 0,
+        "averageResponseTime": 9999,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "http://159.89.92.29:11434": 70
+    },
+    "serverLatencyDetails": {
+      "http://159.89.92.29:11434": {
+        "cold": 70,
+        "warmAvg": 111,
+        "warmup": 46,
+        "warmAll": [
+          70,
+          111
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "starcoder2:15b": {
+    "modelId": "starcoder2:15b",
+    "benchmarks": {
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:57.321Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:58.331Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:44:59.333Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:02.374Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:03.376Z"
+      },
+      "question-answering": {
+        "type": "question-answering",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:04.432Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:05.385Z"
+      },
+      "code-generation": {
+        "type": "code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:06.416Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:07.434Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:08.438Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:09.476Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:10.460Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:11.441Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:12.428Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:13.412Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:14.433Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://159.89.92.29:11434": {
+        "tagsLatency": 41,
+        "versionLatency": 87,
+        "psLatency": 39,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 0,
+        "averageResponseTime": 9999,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "http://159.89.92.29:11434": 41
+    },
+    "serverLatencyDetails": {
+      "http://159.89.92.29:11434": {
+        "cold": 41,
+        "warmAvg": 87,
+        "warmup": 39,
+        "warmAll": [
+          41,
+          87
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "deepseek-r1:latest": {
+    "modelId": "deepseek-r1:latest",
+    "benchmarks": {
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:20.858Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:21.858Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:22.824Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:26.841Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:27.928Z"
+      },
+      "question-answering": {
+        "type": "question-answering",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:28.933Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:29.968Z"
+      },
+      "code-generation": {
+        "type": "code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:30.997Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:32.032Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:32.949Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:33.933Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:34.938Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:35.904Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:36.979Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:38.068Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:45:38.988Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://159.89.92.29:11434": {
+        "tagsLatency": 42,
+        "versionLatency": 85,
+        "psLatency": 40,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 0,
+        "averageResponseTime": 9999,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "http://159.89.92.29:11434": 42
+    },
+    "serverLatencyDetails": {
+      "http://159.89.92.29:11434": {
+        "cold": 42,
+        "warmAvg": 85,
+        "warmup": 40,
+        "warmAll": [
+          42,
+          85
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "smollm2:135m": {
+    "modelId": "smollm2:135m",
+    "benchmarks": {
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "protocol-compliance": {
+        "type": "protocol-compliance",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "emotional-depth": {
+        "type": "emotional-depth",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "pacing-rhythm": {
+        "type": "pacing-rhythm",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "genre-adherence": {
+        "type": "genre-adherence",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "conflict-resolution": {
+        "type": "conflict-resolution",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "narrative-voice": {
+        "type": "narrative-voice",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "scene-transitions": {
+        "type": "scene-transitions",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "thematic-consistency": {
+        "type": "thematic-consistency",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "code-style-consistency": {
+        "type": "code-style-consistency",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "variable-naming": {
+        "type": "variable-naming",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "comment-quality": {
+        "type": "comment-quality",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "error-handling": {
+        "type": "error-handling",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "performance-awareness": {
+        "type": "performance-awareness",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "security-consciousness": {
+        "type": "security-consciousness",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "maintainability": {
+        "type": "maintainability",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "embedding-quality": {
+        "type": "embedding-quality",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "embedding-speed": {
+        "type": "embedding-speed",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "vector-similarity": {
+        "type": "vector-similarity",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "embedding-dimensions": {
+        "type": "embedding-dimensions",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      },
+      "embedding-clustering": {
+        "type": "embedding-clustering",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:26:17.054Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "tagsLatency": 148,
+        "versionLatency": 114,
+        "psLatency": 117,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 109,
+        "averageResponseTime": 184,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 148
+    },
+    "serverLatencyDetails": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "cold": 148,
+        "warmAvg": 114,
+        "warmup": 117,
+        "warmAll": [
+          148,
+          114
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "mario:latest": {
+    "modelId": "mario:latest",
+    "benchmarks": {
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:11.234Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:12.284Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:13.400Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:19.339Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:20.348Z"
+      },
+      "question-answering": {
+        "type": "question-answering",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:22.323Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:23.420Z"
+      },
+      "code-generation": {
+        "type": "code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:25.326Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:26.351Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:27.333Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:28.396Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:30.345Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:31.389Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:32.434Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:34.372Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:46:35.404Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://159.89.92.29:11434": {
+        "tagsLatency": 41,
+        "versionLatency": 44,
+        "psLatency": 49,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 0,
+        "averageResponseTime": 9999,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "http://159.89.92.29:11434": 41
+    },
+    "serverLatencyDetails": {
+      "http://159.89.92.29:11434": {
+        "cold": 41,
+        "warmAvg": 44,
+        "warmup": 49,
+        "warmAll": [
+          41,
+          44
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "llama3.2:latest": {
+    "modelId": "llama3.2:latest",
+    "benchmarks": {
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "protocol-compliance": {
+        "type": "protocol-compliance",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "emotional-depth": {
+        "type": "emotional-depth",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "pacing-rhythm": {
+        "type": "pacing-rhythm",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "genre-adherence": {
+        "type": "genre-adherence",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "conflict-resolution": {
+        "type": "conflict-resolution",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "narrative-voice": {
+        "type": "narrative-voice",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "scene-transitions": {
+        "type": "scene-transitions",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "thematic-consistency": {
+        "type": "thematic-consistency",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "code-style-consistency": {
+        "type": "code-style-consistency",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "variable-naming": {
+        "type": "variable-naming",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "comment-quality": {
+        "type": "comment-quality",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "error-handling": {
+        "type": "error-handling",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "performance-awareness": {
+        "type": "performance-awareness",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "security-consciousness": {
+        "type": "security-consciousness",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "maintainability": {
+        "type": "maintainability",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "embedding-quality": {
+        "type": "embedding-quality",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "embedding-speed": {
+        "type": "embedding-speed",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "vector-similarity": {
+        "type": "vector-similarity",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "embedding-dimensions": {
+        "type": "embedding-dimensions",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      },
+      "embedding-clustering": {
+        "type": "embedding-clustering",
+        "score": 0,
+        "rubric": "Not yet benchmarked",
+        "timestamp": "2025-08-07T20:56:51.270Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "tagsLatency": 147,
+        "versionLatency": 231,
+        "psLatency": 205,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 98,
+        "averageResponseTime": 203.33333333333334,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": 147
+    },
+    "serverLatencyDetails": {
+      "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0": {
+        "cold": 147,
+        "warmAvg": 231,
+        "warmup": 205,
+        "warmAll": [
+          147,
+          231
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "huihui_ai/deepseek-r1-abliterated:latest": {
+    "modelId": "huihui_ai/deepseek-r1-abliterated:latest",
+    "benchmarks": {
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:39.771Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:40.756Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:41.852Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:45.777Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:46.804Z"
+      },
+      "question-answering": {
+        "type": "question-answering",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:47.936Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:48.828Z"
+      },
+      "code-generation": {
+        "type": "code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:49.885Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:50.943Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:51.984Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:52.962Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:53.974Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:54.960Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:55.886Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:56.954Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "auto-generated",
+        "timestamp": "2025-08-05T22:47:57.933Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://159.89.92.29:11434": {
+        "tagsLatency": 43,
+        "versionLatency": 77,
+        "psLatency": 40,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 2500,
+        "loadingOverhead": 5000,
+        "totalResponseTime": 7500,
+        "tokensPerSecond": 15
+      }
+    },
+    "serverWarmPerformance": {
+      "http://159.89.92.29:11434": {
+        "timeToFirstToken": 0,
+        "tokensPerSecond": 0,
+        "averageResponseTime": 9999,
+        "consistencyScore": 0.8
+      }
+    },
+    "serverLatencies": {
+      "http://159.89.92.29:11434": 43
+    },
+    "serverLatencyDetails": {
+      "http://159.89.92.29:11434": {
+        "cold": 43,
+        "warmAvg": 77,
+        "warmup": 40,
+        "warmAll": [
+          43,
+          77
+        ]
+      }
+    },
+    "serverThroughput": {}
+  },
+  "mistral:latest": {
+    "modelId": "mistral:latest",
+    "benchmarks": {
+      "character-consistency": {
+        "type": "character-consistency",
+        "score": 0,
+        "rubric": "Automated character-consistency evaluation",
+        "timestamp": "2025-08-06T21:00:48.563Z"
+      },
+      "dialogue-generation": {
+        "type": "dialogue-generation",
+        "score": 0,
+        "rubric": "Automated dialogue-generation evaluation",
+        "timestamp": "2025-08-06T21:00:48.563Z"
+      },
+      "creative-writing": {
+        "type": "creative-writing",
+        "score": 0.9697792399458861,
+        "rubric": "Automated creative-writing evaluation",
+        "timestamp": "2025-08-06T21:00:48.564Z"
+      },
+      "plot-coherence": {
+        "type": "plot-coherence",
+        "score": 0,
+        "rubric": "Automated plot-coherence evaluation",
+        "timestamp": "2025-08-06T21:00:48.564Z"
+      },
+      "world-building": {
+        "type": "world-building",
+        "score": 0,
+        "rubric": "Automated world-building evaluation",
+        "timestamp": "2025-08-06T21:00:48.564Z"
+      },
+      "json-assembly": {
+        "type": "json-assembly",
+        "score": 0,
+        "rubric": "Automated json-assembly evaluation",
+        "timestamp": "2025-08-06T21:00:48.565Z"
+      },
+      "task-planning": {
+        "type": "task-planning",
+        "score": 0,
+        "rubric": "Automated task-planning evaluation",
+        "timestamp": "2025-08-06T21:00:48.565Z"
+      },
+      "typescript-quality": {
+        "type": "typescript-quality",
+        "score": 0,
+        "rubric": "Automated typescript-quality evaluation",
+        "timestamp": "2025-08-06T21:00:48.565Z"
+      },
+      "style-transfer": {
+        "type": "style-transfer",
+        "score": 0,
+        "rubric": "Automated style-transfer evaluation",
+        "timestamp": "2025-08-06T21:00:48.565Z"
+      },
+      "long-form-generation": {
+        "type": "long-form-generation",
+        "score": 0,
+        "rubric": "Automated long-form-generation evaluation",
+        "timestamp": "2025-08-06T21:00:48.566Z"
+      },
+      "summarization": {
+        "type": "summarization",
+        "score": 0,
+        "rubric": "Automated summarization evaluation",
+        "timestamp": "2025-08-06T21:00:48.566Z"
+      },
+      "fact-extraction": {
+        "type": "fact-extraction",
+        "score": 0,
+        "rubric": "Automated fact-extraction evaluation",
+        "timestamp": "2025-08-06T21:00:48.566Z"
+      },
+      "content-moderation": {
+        "type": "content-moderation",
+        "score": 0,
+        "rubric": "Automated content-moderation evaluation",
+        "timestamp": "2025-08-06T21:00:48.567Z"
+      },
+      "permissive-content": {
+        "type": "permissive-content",
+        "score": 0,
+        "rubric": "Automated permissive-content evaluation",
+        "timestamp": "2025-08-06T21:00:48.567Z"
+      },
+      "advanced-code-generation": {
+        "type": "advanced-code-generation",
+        "score": 0,
+        "rubric": "Automated advanced-code-generation evaluation",
+        "timestamp": "2025-08-06T21:00:48.567Z"
+      },
+      "node-graph-construction": {
+        "type": "node-graph-construction",
+        "score": 0,
+        "rubric": "Automated node-graph-construction evaluation",
+        "timestamp": "2025-08-06T21:00:48.568Z"
+      }
+    },
+    "serverLatencyMetrics": {
+      "http://209.145.63.44:11434": {
+        "tagsLatency": 75,
+        "versionLatency": 68,
+        "psLatency": 33,
+        "healthScore": 1
+      }
+    },
+    "serverColdPerformance": {},
+    "serverWarmPerformance": {},
+    "serverLatencies": {},
+    "serverLatencyDetails": {},
+    "serverThroughput": {}
+  }
+}

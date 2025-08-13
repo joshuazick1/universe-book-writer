@@ -1,93 +1,88 @@
 /**
- * Node Service - Shared Utility
- *
- * Provides core node creation, retrieval, and update logic for use across backend, ai-server, and plugins.
- *
- * @module shared/node/nodeService
- * @see docs/SHARED_DIRECTORY_STREAMLINED_UPDATE_GUIDE.md
+ * Fetch a node by its unique id.
+ * @param id Node id
+ * @returns Node or undefined if not found
  */
-
+export async function getNodeById(id: string): Promise<Node | undefined> {
+    const db: Db = (sharedDatabaseConnection as any).db;
+    if (!db) throw new Error('MongoDB database connection not initialized');
+    // Search both collections since type is unknown
+    const collections = [db.collection('nodes'), db.collection('system_nodes')];
+    for (const collection of collections) {
+        const node = await collection.findOne({ id });
+        // Validate that the result has at least id and type fields
+        if (node && typeof node.id === 'string' && typeof node.type === 'string') {
+            return node as unknown as Node;
+        }
+    }
+    return undefined;
+}
 import { v4 as uuidv4 } from 'uuid';
-import { promises as fs } from 'fs';
-import path from 'path';
+import type { Collection, Db } from 'mongodb';
 import type { Node, NodeInput, NodeMetadata, NodeType } from '../types/nodeTypes.ts';
+import { sharedDatabaseConnection } from '../database/database.config.js';
 
-// Extend Node type for persistence (createdAt/updatedAt)
 export interface PersistentNode extends Node {
     createdAt: string;
     updatedAt: string;
 }
 
-/**
- * Ensures a node exists with the given properties. Creates if not found.
- * @param input - Node input data (type, title, parentId, metadata)
- * @returns The ensured node object
- * @example
- * const universeNode = await ensureNode({ type: 'universe', title: 'Star Trek', metadata: { universeId: 'st' } });
- */
+// Helper to get the MongoDB collection for nodes
+function getNodeCollection(nodeType?: NodeType): Collection<PersistentNode> {
+    // Use a public .db property or adapt as needed
+    const db: Db = (sharedDatabaseConnection as any).db;
+    if (!db) throw new Error('MongoDB database connection not initialized');
+    // Route system node types to 'system_nodes' collection
+    const systemTypes = ['ai-model', 'ai-server', 'model-performance'];
+    if (nodeType && systemTypes.includes(nodeType)) {
+        return db.collection('system_nodes');
+    }
+    return db.collection('nodes');
+}
+
 export async function ensureNode(input: NodeInput): Promise<Node> {
-    // Validate input.type is a valid NodeType (runtime check for extra safety)
     const validTypes: readonly string[] = [
-        'universe',
-        'book',
-        'chapter',
-        'scene',
-        'character',
-        'location',
-        'item',
-        'note',
-        'plugin-data',
-        'ai-model',
-        'ai-server',
-        'model-performance',
+        'universe', 'book', 'chapter', 'scene', 'character', 'location', 'item', 'note',
+        'plugin-data', 'ai-model', 'ai-server', 'model-performance',
     ];
     if (!validTypes.includes(input.type)) {
         throw new TypeError(`Invalid node type: ${input.type}`);
     }
 
-    // Simple persistent storage: local JSON file (per environment)
-    const DB_PATH = path.resolve(process.cwd(), 'node-data.json');
-    let nodes: PersistentNode[] = [];
-    try {
-        const raw = await fs.readFile(DB_PATH, 'utf8');
-        nodes = JSON.parse(raw);
-    } catch (err) {
-        // File does not exist or is invalid, start fresh
-        nodes = [];
-    }
+    const collection = getNodeCollection(input.type as NodeType);
 
-    // Unique key logic: for model-performance, use type+title+metadata.serverId+metadata.modelName
-    let match: Node | undefined;
+    // Unique key logic
+    let query: any;
     if (
         input.type === 'model-performance' &&
         input.metadata &&
         typeof input.metadata.serverId !== 'undefined' &&
         typeof input.metadata.modelName !== 'undefined'
     ) {
-        match = nodes.find(n =>
-            n.type === 'model-performance' &&
-            n.metadata &&
-            n.metadata.serverId === input.metadata!.serverId &&
-            n.metadata.modelName === input.metadata!.modelName
-        );
+        query = {
+            type: 'model-performance',
+            'metadata.serverId': input.metadata.serverId,
+            'metadata.modelName': input.metadata.modelName,
+        };
     } else {
-        // Fallback: match by type+title+parentId
-        match = nodes.find(n =>
-            n.type === input.type &&
-            n.title === input.title &&
-            n.parentId === (input.parentId ?? undefined)
-        );
+        query = {
+            type: input.type,
+            title: input.title,
+        };
+        if (input.parentId) query.parentId = input.parentId;
     }
 
+    const match = await collection.findOne(query);
     if (match) {
-        // Update metadata if needed
-        match.metadata = { ...match.metadata, ...input.metadata };
-        (match as PersistentNode).updatedAt = new Date().toISOString();
-        await fs.writeFile(DB_PATH, JSON.stringify(nodes, null, 2), 'utf8');
-        return match;
+        const updatedNode: PersistentNode = {
+            ...match,
+            metadata: { ...match.metadata, ...input.metadata },
+            updatedAt: new Date().toISOString(),
+        };
+        await collection.updateOne({ id: match.id }, { $set: updatedNode });
+        return updatedNode;
     }
 
-    // Create new node
     const now = new Date().toISOString();
     const node: PersistentNode = {
         id: uuidv4(),
@@ -98,53 +93,22 @@ export async function ensureNode(input: NodeInput): Promise<Node> {
         createdAt: now,
         updatedAt: now,
     };
-    nodes.push(node);
-    await fs.writeFile(DB_PATH, JSON.stringify(nodes, null, 2), 'utf8');
+    await collection.insertOne(node);
     return node;
 }
 
-/**
- * Node input shape for creation/upsert.
- * @typedef {Object} NodeInput
- * @property {NodeType} type - Node type (e.g., 'universe', 'book', 'chapter')
- * @property {string} title - Node title
- * @property {string} [parentId] - Optional parent node ID
- * @property {NodeMetadata} [metadata] - Optional metadata
- */
-
-/**
- * Node object shape.
- * @typedef {Object} Node
- * @property {string} id - Node unique ID
- * @property {string} type - Node type
- * @property {string} title - Node title
- * @property {string|null} parentId - Parent node ID or null
- * @property {NodeMetadata} metadata - Node metadata
- * @property {string} createdAt - ISO timestamp
- * @property {string} updatedAt - ISO timestamp
- */
-
-/**
- * Retrieves a node by type and title (and optional parentId) from persistent storage.
- * @param query - { type, title, parentId? }
- * @returns The found node or undefined if not found
- * @example
- * const node = await getNode({ type: 'ai-model', title: 'llama3.2:latest' });
- */
 export async function getNode(query: { type: NodeType; title: string; parentId?: string }): Promise<Node | undefined> {
-    const DB_PATH = path.resolve(process.cwd(), 'node-data.json');
-    let nodes: PersistentNode[] = [];
-    try {
-        const raw = await fs.readFile(DB_PATH, 'utf8');
-        nodes = JSON.parse(raw);
-    } catch (err) {
-        // File does not exist or is invalid, treat as no nodes
-        return undefined;
-    }
-    // Match by type, title, and parentId (if provided)
-    return nodes.find(n =>
-        n.type === query.type &&
-        n.title === query.title &&
-        (typeof query.parentId === 'undefined' ? true : n.parentId === query.parentId)
-    );
+    const collection = getNodeCollection(query.type as NodeType);
+    const mongoQuery: any = {
+        type: query.type,
+        title: query.title,
+    };
+    if (query.parentId) mongoQuery.parentId = query.parentId;
+    return await collection.findOne(mongoQuery) ?? undefined;
+}
+
+export async function queryNodesByType(nodeType: NodeType): Promise<Node[]> {
+    const collection = getNodeCollection(nodeType);
+    const nodes = await collection.find({ type: nodeType }).toArray();
+    return nodes;
 }

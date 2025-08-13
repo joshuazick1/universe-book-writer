@@ -1,5 +1,5 @@
 import express from 'express';
-import { validateRagTextIngestion } from '../../middleware/validation.js';
+import { validateRagTextIngestion } from '../../../../shared/validation/validator.js';
 import { ragTextController } from '../../controllers/ragTextController.js';
 
 /**

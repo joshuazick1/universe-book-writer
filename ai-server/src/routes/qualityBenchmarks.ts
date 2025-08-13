@@ -5,7 +5,8 @@
  */
 
 import express, { Request, Response, RequestHandler } from 'express';
-import { BenchmarkManager } from '../orchestrator.js';
+import { BenchmarkManager } from '../benchmarkManager.js';
+import type { ModelSelectionCriteria, ModelSelectionResult } from '../../../shared/types/models.js';
 
 const router = express.Router();
 const benchmarkManager = new BenchmarkManager();

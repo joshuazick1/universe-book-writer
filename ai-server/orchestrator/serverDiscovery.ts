@@ -11,7 +11,18 @@ import { getModelPerformanceRAGService } from '../src/services/modelPerformanceR
 export async function markServerUnhealthy(modelId: string, serverId: string, reason = 'unknown', expiryMs = 24 * 60 * 60 * 1000): Promise<void> {
     const orchestrator = getOrchestratorInstance();
     const ragService = await getModelPerformanceRAGService(orchestrator);
-    await ragService.syncModelServerHealthStatus(serverId, modelId, 'unhealthy', reason, expiryMs);
+    const ragManager = ragService.getRagManager();
+    const benchmarkManager = ragService['benchmarkManager'];
+    const { HealthStatusService } = await import('../src/services/healthStatusService.js');
+    await HealthStatusService.syncModelServerHealthStatus({
+        ragManager,
+        benchmarkManager,
+        serverId,
+        modelName: modelId,
+        status: 'unhealthy',
+        reason,
+        expiryMs
+    });
     // Optionally, log or trigger additional hooks here
 }
 

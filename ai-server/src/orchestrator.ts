@@ -23,6 +23,7 @@ import { logger } from '../../shared/logging/logger.js';
 import { withJobErrorHandling } from './pipeline/utils/jobErrorHandler.js';
 import { emitJobSSEEvent } from './pipeline/utils/sseEvents.js';
 import { executeTool } from './services/toolRegistryService.js';
+import { ServerInfo } from 'shared/types/server';
 
 // Forward declaration to avoid circular dependency
 let ModelPerformanceRAGService: any = null;
@@ -51,11 +52,7 @@ export interface ServerModelBenchmark {
 /**
  * Request queue entry for a server/model
  */
-interface RequestQueueEntry<T> {
-    resolve: (value: T | PromiseLike<T>) => void;
-    reject: (reason?: any) => void;
-    fn: (server: AIServer) => Promise<T>;
-}
+// Use RequestQueueEntry from queueSystem.ts
 
 export class AIOrchestrator {
     /** Prompt sync service for prompt-to-RAG and embedding */
@@ -203,10 +200,21 @@ export class AIOrchestrator {
     private cooldownMs = 2 * 60 * 1000; // 2 minutes, configurable
     /** Timestamp of last orchestrator activity */
     private lastActivity: number = Date.now();
-    /** FIFO queue per server/model: { '<serverId>:<model>': RequestQueueEntry[] } */
-    private requestQueues: Map<string, RequestQueueEntry<any>[]> = new Map();
-    /** Max queue length per server/model (configurable, default 10) */
-    private maxQueueLength = 10;
+
+    /**
+     * Broadcast queue status to all WebSocket clients
+     */
+    public broadcastQueueStatus(): void {
+        try {
+            // Dynamically import to avoid circular dependency
+            const { emitQueueStatus } = require('./server.js');
+            if (typeof emitQueueStatus === 'function') {
+                emitQueueStatus();
+            }
+        } catch (err) {
+            // Ignore if not available
+        }
+    }
     /** Cached model map and last update timestamp */
     private modelMapCache: { map: Record<string, string[]>; updated: number } = { map: {}, updated: 0 };
     /** Cached tags aggregation and last update timestamp */
@@ -314,9 +322,12 @@ export class AIOrchestrator {
         this.tagsCache.updated = 0;
     }
 
-    /** Remove a server by ID */
-    removeServer(id: string) {
-        this.servers = this.servers.filter(s => s.id !== id);
+    /** Removes a server from the registry and the servers list.
+     * @param serverId - The ID of the server to remove.
+     */
+    removeServer(serverId: string): void {
+        this.serverRegistry.delete(serverId);
+        this.servers = this.servers.filter(s => s.id !== serverId);
     }
 
     /** Get all registered servers (deduplicated by id) */
@@ -540,6 +551,36 @@ export class AIOrchestrator {
     /** Store interval handles for scheduled benchmarks (now managed by BenchmarkManager) */
 
     /**
+     * Tracks server health and caches model availability.
+     */
+    private serverRegistry: Map<string, ServerInfo> = new Map();
+
+    /**
+     * Adds or updates a server in the registry.
+     * @param server - The server information to add or update.
+     */
+    addOrUpdateServer(server: ServerInfo): void {
+        this.serverRegistry.set(server.id, server);
+    }
+
+    /**
+     * Retrieves server information by ID.
+     * @param serverId - The ID of the server to retrieve.
+     * @returns The server information or undefined if not found.
+     */
+    getServerInfo(serverId: string): ServerInfo | undefined {
+        return this.serverRegistry.get(serverId);
+    }
+
+    /**
+     * Retrieves all healthy servers.
+     * @returns An array of healthy servers.
+     */
+    getHealthyServers(): ServerInfo[] {
+        return Array.from(this.serverRegistry.values()).filter(server => server.isHealthy);
+    }
+
+    /**
      * Find the best server for a given model, considering health, cooldown, concurrency, and benchmarks
      * Implements fair load distribution: least-connections, then lowest latency
      * Returns the healthy server with available concurrency and lowest benchmarked latency
@@ -567,49 +608,16 @@ export class AIOrchestrator {
     }
 
     /**
-     * Enqueue a request for a server/model, or reject if queue is full
+     * Get queue status - simplified without old queue system
      */
-    private enqueueRequest<T>(serverId: string, model: string, entry: RequestQueueEntry<T>) {
-        const key = `${serverId}:${model}`;
-        const queue = this.requestQueues.get(key) || [];
-        if (queue.length >= this.maxQueueLength) {
-            entry.reject({
-                status: 429,
-                message: `Too many requests for model '${model}' on server '${serverId}'. Please retry later.`,
-                retryAfter: 5
-            });
-            return;
-        }
-        queue.push(entry);
-        this.requestQueues.set(key, queue);
+    public getQueueStatus() {
+        // Return empty array since we're transitioning to new queue system
+        return [];
     }
 
-    /**
-     * Dequeue and process the next request for a server/model if possible
-     */
-    private async processNextInQueue(serverId: string, model: string) {
-        const key = `${serverId}:${model}`;
-        const queue = this.requestQueues.get(key);
-        if (!queue || queue.length === 0) return;
-        const server = this.servers.find(s => s.id === serverId);
-        if (!server || !server.healthy) return;
-        const max = server.maxConcurrency ?? 4;
-        if (this.getInFlight(serverId, model) >= max) return;
-        const entry = queue.shift();
-        if (queue.length === 0) this.requestQueues.delete(key);
-        if (!entry) return;
-        this.incrementInFlight(serverId, model);
-        try {
-            const result = await entry.fn(server);
-            this.decrementInFlight(serverId, model);
-            entry.resolve(result);
-        } catch (err) {
-            this.decrementInFlight(serverId, model);
-            entry.reject(err);
-        } finally {
-            // Process next in queue
-            this.processNextInQueue(serverId, model);
-        }
+    public getJobStatus(jobId: string) {
+        // Return null since we're transitioning to new queue system
+        return null;
     }
 
     /**
@@ -694,15 +702,8 @@ export class AIOrchestrator {
                 }
             }
         }
-        // If all are at max concurrency, try to enqueue on the best candidate (least-connections)
-        const best = candidates[0];
-        return new Promise<T>((resolve, reject) => {
-            this.enqueueRequest<T>(best.id, model, {
-                resolve,
-                reject,
-                fn
-            });
-        });
+        // If all are at max concurrency, throw error since we're transitioning to new queue system
+        throw new Error(`All servers for model '${model}' are at max concurrency. Tried: ${tried.map(t => `${t.server} (${t.error})`).join(', ')}`);
     }
 
     /** Mark a server/model as failed and start cooldown */
@@ -877,6 +878,7 @@ export class AIOrchestrator {
         try {
             const ragService = await this.getRAGService();
             if (!ragService) {
+                console.error('[orchestrator] RAG service unavailable');
                 return null;
             }
 
@@ -940,11 +942,10 @@ export class AIOrchestrator {
             this.performanceRAGService = null;
         }
 
-        // Clear all maps and queues
+        // Clear all maps and caches
         this.inFlight.clear();
         this.failureCooldown.clear();
         this.permanentBan.clear();
-        this.requestQueues.clear();
         this.modelMapCache = { map: {}, updated: 0 };
         this.tagsCache = { tags: {}, updated: 0 };
 
@@ -1018,15 +1019,4 @@ export class AIOrchestrator {
     async resyncFromRAG() {
         await this.loadActiveServersFromRAG();
     }
-}
-
-// Export BenchmarkManager for use in other services
-export { BenchmarkManager };
-
-export class ToolOrchestrator {
-  /**
-   * Executes a tool with the given name and arguments.
-   * @param toolName - The name of the tool to execute.
-   * @param args - The arguments to pass to the tool
-   */
 }

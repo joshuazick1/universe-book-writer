@@ -11,11 +11,11 @@ import type { BenchmarkType } from '../../shared/types/aiQualityBenchmark.js';
 
 import { createServer } from 'http';
 import app, { ragReadyPromise } from './app.js';
-import { setupSocketIO } from './socket/socket-setup.js';
+import { setupQueueWebSocket } from './queueWebSocket.js';
 
 import { logger } from '../../shared/logging/logger.js';
-import benchmarkingManager from '../benchmarking/BenchmarkingManager.js';
-import { scheduleNextQualityBenchmark } from '../benchmarking/scheduleNextQualityBenchmark.js';
+import getBenchmarkingManager from './benchmarking/BenchmarkingManager.js';
+import { scheduleNextQualityBenchmark } from './benchmarking/scheduleNextQualityBenchmark.js';
 
 const port = process.env.PORT || 5100;
 
@@ -29,8 +29,8 @@ export function startServer(customPort?: number | string, logger: (msg: string) 
   // Create HTTP server
   const httpServer = createServer(app);
 
-  // Setup Socket.IO
-  const io = setupSocketIO(httpServer);
+  // Setup Queue WebSocket (Socket.IO)
+  const queueSocket = setupQueueWebSocket(app, httpServer);
 
   // Start listening
   return httpServer.listen(listenPort, () => {

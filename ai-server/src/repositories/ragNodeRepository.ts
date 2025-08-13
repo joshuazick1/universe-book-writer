@@ -22,7 +22,18 @@ export async function createItem(item: Item): Promise<Item & { embedding: number
 
 export async function updateItem(id: string, update: Partial<Item>): Promise<boolean> {
   const { items } = await getCollections();
-  const result = await items.updateOne({ id }, { $set: update });
+  // Re-generate embedding if name or description is updated
+  let embedding: number[] | undefined;
+  if (update.name || update.description) {
+    const item = await items.findOne({ id });
+    const name = update.name ?? item?.name ?? '';
+    const description = update.description ?? item?.description ?? '';
+    embedding = await generateEmbedding(name + ' ' + description);
+  }
+  const result = await items.updateOne(
+    { id },
+    { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+  );
   return result.modifiedCount > 0;
 }
 
@@ -43,7 +54,17 @@ export async function createLore(lore: Lore): Promise<Lore & { embedding: number
 
 export async function updateLore(id: string, update: Partial<Lore>): Promise<boolean> {
   const { lore: loreCollection } = await getCollections();
-  const result = await loreCollection.updateOne({ id }, { $set: update });
+  let embedding: number[] | undefined;
+  if (update.title || update.description) {
+    const lore = await loreCollection.findOne({ id });
+    const title = update.title ?? lore?.title ?? '';
+    const description = update.description ?? lore?.description ?? '';
+    embedding = await generateEmbedding(title + ' ' + description);
+  }
+  const result = await loreCollection.updateOne(
+    { id },
+    { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+  );
   return result.modifiedCount > 0;
 }
 
@@ -64,7 +85,17 @@ export async function createSpecies(species: Species): Promise<Species & { embed
 
 export async function updateSpecies(id: string, update: Partial<Species>): Promise<boolean> {
   const { species: speciesCollection } = await getCollections();
-  const result = await speciesCollection.updateOne({ id }, { $set: update });
+  let embedding: number[] | undefined;
+  if (update.name || update.description) {
+    const species = await speciesCollection.findOne({ id });
+    const name = update.name ?? species?.name ?? '';
+    const description = update.description ?? species?.description ?? '';
+    embedding = await generateEmbedding(name + ' ' + description);
+  }
+  const result = await speciesCollection.updateOne(
+    { id },
+    { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+  );
   return result.modifiedCount > 0;
 }
 
@@ -85,7 +116,17 @@ export async function createFaction(faction: Faction): Promise<Faction & { embed
 
 export async function updateFaction(id: string, update: Partial<Faction>): Promise<boolean> {
   const { factions } = await getCollections();
-  const result = await factions.updateOne({ id }, { $set: update });
+  let embedding: number[] | undefined;
+  if (update.name || update.description) {
+    const faction = await factions.findOne({ id });
+    const name = update.name ?? faction?.name ?? '';
+    const description = update.description ?? faction?.description ?? '';
+    embedding = await generateEmbedding(name + ' ' + description);
+  }
+  const result = await factions.updateOne(
+    { id },
+    { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+  );
   return result.modifiedCount > 0;
 }
 
@@ -111,7 +152,16 @@ export async function updateTimelineEvent(
   update: Partial<TimelineEvent>
 ): Promise<boolean> {
   const { timeline_events } = await getCollections();
-  const result = await timeline_events.updateOne({ id }, { $set: update });
+  let embedding: number[] | undefined;
+  if (update.description) {
+    const event = await timeline_events.findOne({ id });
+    const description = update.description ?? event?.description ?? '';
+    embedding = await generateEmbedding(description);
+  }
+  const result = await timeline_events.updateOne(
+    { id },
+    { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+  );
   return result.modifiedCount > 0;
 }
 
@@ -148,7 +198,7 @@ export async function deleteRelationshipNode(id: string): Promise<boolean> {
 
 import type { Universe, Book, Chapter, Character } from '../../../shared/types/nodeTypes.js';
 import { generateEmbedding } from '../services/embeddingService.js';
-import { getCollections } from '../config/database.config.js';
+import { getCollections } from '../../../shared/database/database.config.js';
 import { ObjectId } from 'mongodb';
 // import only once above
 
@@ -206,12 +256,21 @@ export async function updateChapter(
   // Find the universe containing the book
   const universe = await universes.findOne({ 'books.id': bookId });
   if (!universe) return false;
+  // Re-generate embedding if title or description is updated
+  let embedding: number[] | undefined;
+  const book = universe.books.find((b: any) => b.id === bookId);
+  const chapter = book?.chapters?.find((chap: any) => chap.id === chapterId);
+  const title = update.title ?? chapter?.title ?? '';
+  const description = update.description ?? chapter?.description ?? '';
+  if (update.title || update.description) {
+    embedding = await generateEmbedding(title + ' ' + description);
+  }
   // Update the chapter in the book
   const books = (universe.books as Book[]).map(book => {
     if (book.id === bookId) {
       const chapters = Array.isArray(book.chapters)
         ? book.chapters.map((chap: Chapter) =>
-          chap.id === chapterId ? { ...chap, ...update, id: chapterId, bookId } : chap
+          chap.id === chapterId ? { ...chap, ...update, id: chapterId, bookId, ...(embedding ? { embedding } : {}) } : chap
         )
         : [];
       return { ...book, chapters };
@@ -352,14 +411,27 @@ export async function createUniverse(universe: Universe): Promise<Universe> {
 
 export async function updateUniverse(id: string, update: Partial<Universe>): Promise<boolean> {
   const { universes } = await getCollections();
+  let embedding: number[] | undefined;
+  if (update.title || (update.metadata && update.metadata.description)) {
+    const universe = await universes.findOne({ id });
+    const title = update.title ?? universe?.title ?? '';
+    const description = update.metadata?.description ?? universe?.metadata?.description ?? '';
+    embedding = await generateEmbedding(title + ' ' + description);
+  }
   // Try update by id (string)
-  let result = await universes.updateOne({ id }, { $set: update });
+  let result = await universes.updateOne(
+    { id },
+    { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+  );
   if (result.modifiedCount > 0) return true;
   // Try update by _id (ObjectId)
   let objectId: ObjectId | undefined;
   if (ObjectId.isValid(id)) {
     objectId = new ObjectId(id);
-    result = await universes.updateOne({ _id: objectId }, { $set: update });
+    result = await universes.updateOne(
+      { _id: objectId },
+      { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+    );
     if (result.modifiedCount > 0) return true;
   }
   return false;
@@ -408,9 +480,18 @@ export async function updateBook(
   update: Partial<Book>
 ): Promise<boolean> {
   const { universes } = await getCollections();
+  let embedding: number[] | undefined;
+  if (update.title || (update.metadata && update.metadata.description)) {
+    // Find the book to get previous values
+    const universe = await universes.findOne({ id: universeId });
+    const book = universe?.books?.find((b: any) => b.id === bookId);
+    const title = update.title ?? book?.title ?? '';
+    const description = update.metadata?.description ?? book?.metadata?.description ?? '';
+    embedding = await generateEmbedding(title + ' ' + description);
+  }
   const result = await universes.updateOne(
     { id: universeId, 'books.id': bookId },
-    { $set: { 'books.$': { ...update, id: bookId, universeId } } }
+    { $set: { 'books.$': { ...update, id: bookId, universeId, ...(embedding ? { embedding } : {}) } } }
   );
   return result.modifiedCount > 0;
 }
@@ -455,7 +536,17 @@ export async function createLocation(
 
 export async function updateLocation(id: string, update: Partial<Location>): Promise<boolean> {
   const { locations } = await getCollections();
-  const result = await locations.updateOne({ id }, { $set: update });
+  let embedding: number[] | undefined;
+  if (update.name || update.description) {
+    const location = await locations.findOne({ id });
+    const name = update.name ?? location?.name ?? '';
+    const description = update.description ?? location?.description ?? '';
+    embedding = await generateEmbedding(name + ' ' + description);
+  }
+  const result = await locations.updateOne(
+    { id },
+    { $set: { ...update, ...(embedding ? { embedding } : {}) } }
+  );
   return result.modifiedCount > 0;
 }
 
@@ -499,7 +590,17 @@ export async function updateCharacter(id: string, update: Partial<Character>): P
       (canonicalUpdate as any)[key] = (update as any)[key];
     }
   }
-  const result = await generated_characters.updateOne({ id }, { $set: canonicalUpdate });
+  let embedding: number[] | undefined;
+  if (update.name || update.description) {
+    const character = await generated_characters.findOne({ id });
+    const name = update.name ?? character?.name ?? '';
+    const description = update.description ?? character?.description ?? '';
+    embedding = await generateEmbedding(name + ' ' + description);
+  }
+  const result = await generated_characters.updateOne(
+    { id },
+    { $set: { ...canonicalUpdate, ...(embedding ? { embedding } : {}) } }
+  );
   return result.modifiedCount > 0;
 }
 

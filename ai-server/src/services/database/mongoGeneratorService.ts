@@ -42,7 +42,7 @@ export async function getSharedMemoriesByCharacter(characterId: string): Promise
  */
 
 import { ObjectId, Collection } from 'mongodb';
-import { getCollections } from '../../config/database.config.js';
+import { getCollections } from '../../../../shared/database/database.config.js';
 import type {
     GeneratedUniverse,
     UniverseGenerationRequest

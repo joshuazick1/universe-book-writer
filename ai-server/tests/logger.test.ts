@@ -1,7 +1,12 @@
 import { jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
-import { logInfo, logWarn, logError, logDebug } from '../src/logger';
+import logger from '../../shared/logging/logger.js';
+
+const logInfo = logger.info.bind(logger);
+const logWarn = logger.warn.bind(logger);
+const logError = logger.error.bind(logger);
+const logDebug = logger.debug.bind(logger);
 
 describe('logger.ts', () => {
     it('should create the log file if it does not exist', () => {

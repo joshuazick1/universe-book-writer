@@ -2,7 +2,7 @@
 // Orchestrator logic for providing dynamic model recommendations for a given task/context
 // Production-ready: integrates real benchmark and latency data, robust filtering, and ranking.
 
-import BenchmarkingManager from '../benchmarking/BenchmarkingManager.js';
+import getBenchmarkingManager from '../src/benchmarking/BenchmarkingManager.js';
 import { BenchmarkType, ModelQualityBenchmarks } from '../../shared/types/aiQualityBenchmark.js';
 
 export interface RecommendationParams {
@@ -24,7 +24,7 @@ export interface RecommendationParams {
  * @returns Array of recommended model names/ids, ordered by preference
  */
 export async function getModelRecommendations(params: RecommendationParams): Promise<string[]> {
-    const allBenchmarks: readonly ModelQualityBenchmarks[] = await BenchmarkingManager.getAllModelBenchmarks();
+    const allBenchmarks: readonly ModelQualityBenchmarks[] = await getBenchmarkingManager().getAllModelBenchmarks();
     if (!Array.isArray(allBenchmarks) || allBenchmarks.length === 0) return ['default-model'];
 
     const benchmarkType: BenchmarkType = params.benchmarkType ?? 'task-planning';

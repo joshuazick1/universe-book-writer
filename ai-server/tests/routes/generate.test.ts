@@ -4,7 +4,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
-import { AIOrchestrator } from '../../src/orchestrator';
+import { AIOrchestrator } from '../../src/orchestrator.js';
 // Always import the router dynamically in beforeEach
 
 // --- PATCH: Always mock node-fetch for all tests ---
@@ -40,7 +40,7 @@ describe('POST /api/generate', () => {
 
 
     it('returns 400 if model or prompt is missing', async () => {
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).post('/api/generate').send({ model: '', prompt: '' });
         expect(res.status).toBe(400);
@@ -50,7 +50,7 @@ describe('POST /api/generate', () => {
 
 
     it('returns 404 if no healthy servers for model', async () => {
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         // No servers added
         const res = await request(app).post('/api/generate').send({ model: 'foo', prompt: 'bar' });
@@ -60,7 +60,7 @@ describe('POST /api/generate', () => {
 
 
     it('handles /stream route with 404', async () => {
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).get('/api/generate/stream');
         expect(res.status).toBe(404);
@@ -74,7 +74,7 @@ describe('POST /api/generate', () => {
         orchestrator.getServers()[0].healthy = true;
         orchestrator.getServers()[0].models = ['foo'];
         orchestrator.tryRequestWithFailover = jest.fn(() => { throw new Error('model not found'); });
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).post('/api/generate').send({ model: 'foo', prompt: 'bar' });
         expect(res.status).toBe(404);
@@ -87,7 +87,7 @@ describe('POST /api/generate', () => {
         orchestrator.getServers()[0].healthy = true;
         orchestrator.getServers()[0].models = ['foo'];
         orchestrator.tryRequestWithFailover = jest.fn(() => { throw new Error('server down'); });
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).post('/api/generate').send({ model: 'foo', prompt: 'bar' });
         expect(res.status).toBe(502);
@@ -109,7 +109,7 @@ describe('POST /api/generate', () => {
             headers: { get: () => 'application/json' },
             json: async () => ({ result: 'ok' })
         }));
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).post('/api/generate').send({ model: 'foo', prompt: 'bar' });
         expect(res.status).toBe(200);
@@ -130,7 +130,7 @@ describe('POST /api/generate', () => {
             headers: { get: () => 'application/x-ndjson' },
             text: async () => '{"response":"a"}\n{"response":"b","done":true,"done_reason":"stop"}\n'
         }));
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).post('/api/generate').send({ model: 'foo', prompt: 'bar' });
         expect(res.status).toBe(200);
@@ -159,7 +159,7 @@ describe('POST /api/generate', () => {
                 }
             }
         }));
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).post('/api/generate').send({ model: 'foo', prompt: 'bar', stream: true });
         expect(res.status).toBe(200);
@@ -181,7 +181,7 @@ describe('POST /api/generate', () => {
             headers: { get: () => 'application/json' },
             json: async () => ({ error: 'model not found' })
         }));
-        generateRouter = (await import('../../src/routes/generate')).default;
+        generateRouter = (await import('../../src/routes/generate.js')).default;
         app.use('/api/generate', generateRouter);
         const res = await request(app).post('/api/generate').send({ model: 'foo', prompt: 'bar' });
         expect(res.status).toBe(404);

@@ -9,7 +9,8 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "isolatedModules": true
+    "isolatedModules": true,
+    "experimentalDecorators": true
   },
   "references": [
     {
@@ -17,7 +18,8 @@
     }
   ],
   "files": [
-    "src/config/database.config.ts"
+    "src/config/database.config.ts",
+    "../shared/database/database.config.ts"
   ],
   "include": [
     "src/**/*",
@@ -26,10 +28,11 @@
     "types/**/*.ts",
     "services/**/*.ts",
     "tests/**/*",
-    "tests/unit/**/*.ts",
-    "tests/unit/**/*.test.ts",
-    "tests/unit/**/*.js",
     "../shared/**/*.ts",
     "../packages/plugin-sdk/src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

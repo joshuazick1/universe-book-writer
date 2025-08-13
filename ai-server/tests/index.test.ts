@@ -1,4 +1,4 @@
-import app from '../src/index';
+import app from '../src/index.js';
 import http from 'http';
 
 describe('AI Server index.ts startup/shutdown', () => {

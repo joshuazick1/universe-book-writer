@@ -118,3 +118,49 @@ Provide a real-time visualization of the benchmarking queue, job status, and ser
 - Update the queue system to support server-specific jobs and embedding benchmarks.
 - Implement backend queue status endpoints and frontend visualizer component.
 - Update documentation and tests throughout the migration.
+
+
+
+The migration file list cannot be appended using the automated patch tool due to a context matching issue at the end of the file. Here is the exact section to add after the "Next Steps" in BENCHMARK_QUEUE_MIGRATION_PLAN.md:
+
+---
+
+## Files to Update or Create for Migration
+
+### Backend (ai-server)
+- orchestrateEnhancedBenchmarks.ts: Refactor orchestration logic to use the centralized queue system.
+- orchestrator.ts: Update queue implementation for server-specific jobs, embedding benchmarks, and job metadata.
+- `ai-server/models/*/README.md`: Document model configurations and any changes for embedding models.
+- aiQualityBenchmark.ts: Update benchmark types and schemas for new job types and embedding benchmarks.
+- RAG_Distributed_Queue_Implementation_Plan.md: Update queue architecture and integration details.
+- CLEAN_BACKEND_ARCHITECTURE_PLAN.md: Document new orchestration and queue integration.
+
+### Frontend
+- `ai-server/web/src/components/QueueVisualizer.tsx` (new): Create a React component for real-time queue visualization.
+- README.md: Add usage instructions, screenshots, and accessibility notes for the visualizer.
+- `frontend/README.md`: Reference new queue visualizer and API endpoints.
+
+### Shared
+- nodeService.ts: Ensure node creation for benchmark results is up-to-date.
+- README.md: Document new shared types and services.
+
+### API & Integration
+- `ai-server/src/api/queue.ts` (new or update existing): Expose queue status endpoints (`/api/queue/status`, `/api/queue/jobs`).
+- API_DOCUMENTATION.md: Document new/updated endpoints with request/response examples.
+
+### Tests
+- `ai-server/benchmarking/__tests__/orchestrateEnhancedBenchmarks.test.ts`: Update or add tests for queue-based orchestration.
+- `ai-server/src/orchestrator.test.ts`: Add/modify tests for server-specific and embedding jobs.
+- `shared/types/__tests__/aiQualityBenchmark.test.ts`: Add/modify tests for new benchmark types.
+- run-tests-with-output.ts: Ensure test runner covers new/updated test suites.
+
+### Documentation
+- BENCHMARK_QUEUE_MIGRATION_PLAN.md: Update with implementation progress, file paths, and integration notes.
+- PROGRESS.md: Log completion of migration steps.
+- DECISION_LOG.md: Record architectural decisions and rationale.
+- MODULAR_DIRECTORY_STRUCTURE.md: Update directory tree to reflect new/changed files.
+
+---
+
+This list covers all code, test, and documentation files required for a complete migration and integration of the new benchmarking queue system.  
+You can copy and paste this section directly after the "Next Steps" in your migration plan. If you want, I can try a manual file edit instead.

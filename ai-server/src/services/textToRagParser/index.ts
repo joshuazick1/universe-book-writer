@@ -12,6 +12,7 @@ import {
     ParsingOptions
 } from './core/interfaces.js';
 import { logger } from '../../../../shared/logging/logger.js';
+import { initService } from '../../../../shared/async/index.js';
 
 export interface TextToRAGServiceConfig {
     aiServerUrl?: string;
@@ -43,20 +44,11 @@ export class TextToRAGParserService extends EventEmitter {
         if (this.isInitialized) {
             return;
         }
-
-        try {
-            logger.info('Initializing Text-to-RAG Parser Service...');
-
+        await initService('Text-to-RAG Parser Service', async () => {
             // Initialize parser engine (which will initialize RAG service)
             await this.parserEngine.initialize();
-
             this.isInitialized = true;
-            logger.info('Text-to-RAG Parser Service initialized successfully');
-
-        } catch (error) {
-            logger.error(`Failed to initialize Text-to-RAG Parser Service: ${error}`);
-            throw error;
-        }
+        });
     }
 
     /**
@@ -246,6 +238,6 @@ export function getTextToRAGParserService(config?: TextToRAGServiceConfig): Text
  */
 export async function initializeTextToRAGParserService(config?: TextToRAGServiceConfig): Promise<TextToRAGParserService> {
     const service = getTextToRAGParserService(config);
-    await service.initialize();
+    await initService('TextToRAGParserServiceSingleton', async () => service.initialize());
     return service;
 }

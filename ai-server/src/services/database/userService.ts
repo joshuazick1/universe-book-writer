@@ -1,4 +1,4 @@
-import { getCollections } from '../../config/database.config.js';
+import { getCollections } from '../../../../shared/database/database.config.js';
 import { ObjectId } from 'mongodb';
 
 export interface UserRecord {

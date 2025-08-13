@@ -5,45 +5,11 @@
  * Prioritizes user experience by preserving fast servers for real-time requests.
  */
 
-import { BenchmarkManager } from '../../orchestrator.js';
+import { BenchmarkManager } from '../../benchmarkManager.js';
 import { logger } from '../../../../shared/logging/logger.js';
+import type { ModelSelectionCriteria, ModelSelectionResult, ModelCapability } from '../../../../shared/types/models.js';
 
-export interface ModelSelectionCriteria {
-    taskType: 'chat' | 'writing' | 'character-generation' | 'world-building' | 'analysis' | 'editing' | 'json-generation' | 'rag-processing';
-    complexityLevel: 'trivial' | 'simple' | 'moderate' | 'complex' | 'expert';
-    qualityRequirement: 'draft' | 'standard' | 'publication' | 'professional';
-    maxLatencyMs?: number;
-    prioritizeQuality: boolean;
-    prioritizeSpeed: boolean;
-    userTier?: 'free' | 'premium' | 'enterprise';
-}
-
-export interface ModelSelectionResult {
-    selectedModel: string;
-    confidence: number; // 0-1
-    reasoning: string;
-    alternatives: Array<{
-        model: string;
-        score: number;
-        tradeoff: string;
-    }>;
-    estimatedLatencyMs: number;
-    estimatedQualityScore: number;
-    serverInfo: {
-        isSlowServer: boolean;
-        latencyMs: number;
-        load: number;
-    };
-}
-
-export interface ModelCapability {
-    modelEndpoint: string;
-    strengths: string[];
-    weaknesses: string[];
-    optimalUseCases: string[];
-    resourceRequirements: 'low' | 'medium' | 'high';
-    reliabilityScore: number; // 0-1
-}
+// Types now imported from shared/types/model.js
 
 export class EnhancedModelSelectionService {
     private benchmarkManager: BenchmarkManager;

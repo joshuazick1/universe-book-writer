@@ -49,7 +49,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             timestamps: {
                 created: new Date('2024-01-01'),
                 modified: new Date('2024-01-01')
-            }
+            },
+            active: true
         };
 
         await adapter.storeNode(node);
@@ -71,7 +72,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'star-wars', ownerId: 'user-1', sensitivity: 'public', tags: [], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         const node2: RAGNode = {
@@ -83,7 +85,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'star-wars', ownerId: 'user-1', sensitivity: 'public', tags: [], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         await adapter.storeNode(node1);
@@ -129,7 +132,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'star-wars', ownerId: 'user-1', sensitivity: 'public', tags: [], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         const node2: RAGNode = {
@@ -141,7 +145,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'star-wars', ownerId: 'user-1', sensitivity: 'public', tags: [], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         await adapter.storeNode(node1);
@@ -176,7 +181,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'star-wars', ownerId: 'user-1', sensitivity: 'public', tags: ['jedi', 'master'], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         const node2: RAGNode = {
@@ -188,7 +194,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'star-wars', ownerId: 'user-1', sensitivity: 'public', tags: ['jedi', 'master'], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         await adapter.storeNode(node1);
@@ -212,7 +219,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'star-wars', ownerId: 'user-1', sensitivity: 'public', tags: [], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         await adapter.storeNode(node);
@@ -242,7 +250,8 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
             embeddings: [],
             metadata: { universeId: 'test', ownerId: 'user-1', sensitivity: 'public', tags: [], version: 1 },
             privacy: { encrypted: false, shareable: true },
-            timestamps: { created: new Date(), modified: new Date() }
+            timestamps: { created: new Date(), modified: new Date() },
+            active: true
         };
 
         await adapter.storeNode(node);
@@ -252,3 +261,4 @@ describe('InMemoryRagAdapter - Basic Tests', () => {
         expect(adapter.getNodeCount()).toBe(0);
     });
 });
+

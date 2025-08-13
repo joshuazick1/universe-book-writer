@@ -1,5 +1,3 @@
-// Manual Benchmark Controller
-import benchmarkManualController from './controllers/benchmarkManualController.js';
 import express from 'express';
 import universeRoutes from './routes/universeRoutes.js';
 import inferRouter from './routes/infer.js';
@@ -22,6 +20,7 @@ import benchmarksRouter from './routes/benchmarks.js';
 import orchestratorRouter from './routes/orchestrator.js';
 import modelMapRouter from './routes/modelMap.js';
 import performanceRouter from './routes/performance.js';
+import queueRouter from './routes/queue.js';
 import { getRAGServiceManager } from './rag/instance.js';
 import { setRagManager } from './services/ragNodeService.js';
 import {
@@ -31,48 +30,82 @@ import {
   eventsStreamRouter,
 } from './routes/rag/index.js';
 import { logger } from '../../shared/logging/logger.js';
+import { initService } from '../../shared/async/initService.js';
+import { validate } from '../../shared/validation/validator.js';
+import { errorHandler } from '../../shared/express/errorHandler.js';
+// Removed unused imports: jsonParser, corsMiddleware, requestLogger
 import type { Request, Response, NextFunction } from 'express';
 //import { generateRouter } from './routes/generation/index.js';
 import { universeRouter, characterRouter, messageRouter } from './routes/chat/index.js';
-import { sharedDatabaseConnection } from './config/database.config.js';
+import { sharedDatabaseConnection } from '../../shared/database/database.config.js';
 import { sharedMemoryRouter } from './routes/memory/index.js';
 import aiHelperRouter from './routes/aiHelper.js';
 import toolRoutes from './routes/toolRoutes.js';
 import { registerAllTools } from './tools/registerAllTools.js';
+import generateEnhancedRouter from './routes/generate-enhanced.js';
+import manualBenchmarkRouter from './routes/manualBenchmark.js';
+import workerRouter from './routes/worker.js';
+import schedulerRouter from './routes/scheduler.js';
+
+// Declare flags at the top of the file to track initialization states
+let isRAGServiceManagerInitialized = false;
+let isMongoDBRAGAdapterInitialized = false;
+
 
 const app = express();
 // Ensure JSON body parsing is available for all routes
 app.use(express.json({ limit: '10mb' }));
 app.use(cors());
-// Mount shared memory endpoints for downstream use (after app is declared)
-app.use('/api/shared-memories', sharedMemoryRouter);
 
-// Mount AI helper endpoint
-app.use('/api/ai', aiHelperRouter);
+// Canonical API base path
+const API = '/api';
 
-// LLM Evaluation endpoint
-app.use('/api/llm', llmRouter);
-// Model inference endpoint
-app.use('/api/infer', inferRouter);
+// Centralized route registry
+const ROUTES: Array<{ path: string; router: any }> = [
+  { path: `${API}/shared-memories`, router: sharedMemoryRouter },
+  { path: `${API}/ai`, router: aiHelperRouter },
+  { path: `${API}/llm`, router: llmRouter },
+  { path: `${API}/infer`, router: inferRouter },
+  { path: `${API}/universes`, router: universeRoutes },
+  { path: `${API}/rag/universes`, router: universeRoutes },
+  { path: `${API}/books`, router: bookRoutes },
+  { path: `${API}/characters`, router: characterRoutes },
+  { path: `${API}/queue`, router: queueRouter },
+  { path: `${API}`, router: healthRouter },
+  { path: `${API}/models`, router: modelsRouter },
+  { path: `${API}/model`, router: manualModelTestRouter },
+  { path: `${API}/generate`, router: generateRouter },
+  { path: `${API}/config`, router: configRouter },
+  { path: `${API}/orchestrator/config`, router: orchestratorConfigRouter },
+  { path: `${API}/servers`, router: serversRouter },
+  { path: `${API}/chat/universe`, router: universeRouter },
+  { path: `${API}/chat/character`, router: characterRouter },
+  { path: `${API}/chat/message`, router: messageRouter },
+  { path: `${API}/tags`, router: tagsRouter },
+  { path: `${API}/orchestrator/benchmarks`, router: benchmarksRouter },
+  { path: `${API}/orchestrator/performance`, router: performanceRouter },
+  { path: `${API}/orchestrator`, router: orchestratorRouter },
+  { path: `${API}/orchestrator`, router: modelMapRouter },
+  { path: `${API}`, router: ollamaCompatRouter },
+  { path: `${API}/v1`, router: openaiCompatRouter },
+  { path: `${API}/user/api-keys`, router: userApiKeyRouter },
+  { path: `${API}/sample`, router: populateSampleDataRouter },
+  { path: `${API}/rag/ingest/text`, router: ingestTextRouter },
+  { path: `${API}/rag/ingest/text/stream`, router: ingestTextStreamRouter },
+  { path: `${API}/rag/ingest/code`, router: ingestCodeRouter },
+  { path: `${API}/rag/events/stream`, router: eventsStreamRouter },
+  { path: `${API}/rag`, router: manualPostChunkingRouter },
+  { path: `${API}/tools`, router: toolRoutes },
+  { path: `${API}/generate-enhanced`, router: generateEnhancedRouter },
+  { path: `${API}/manual`, router: manualBenchmarkRouter },
+  { path: `${API}/worker`, router: workerRouter },
+  { path: `${API}/scheduler`, router: schedulerRouter },
+];
 
-// Backend-cached Universe/Book/Chapter/Character API endpoints
-app.use('/api/universes', universeRoutes);
-// Alias for backend RAG integration compatibility
-app.use('/api/rag/universes', universeRoutes);
-// Mount /api/books routes for book CRUD only
-app.use('/api/books', bookRoutes);
-// All book and chapter endpoints are now handled by bookRoutes
-app.use('/api/characters', characterRoutes);
-
-// Specialized debugging for orchestrator health/model aggregation issues
-import { getOrchestratorInstance } from './orchestrator-instance.js';
-app.use((req: Request, res: Response, next: NextFunction) => {
-  if (req.originalUrl.startsWith('/api/tags') || req.originalUrl.startsWith('/api/show')) {
-  }
-  next();
-});
-
-// Mount routers
+// Register all routes from the registry
+for (const { path, router } of ROUTES) {
+  app.use(path, router);
+}
 
 /**
  * @openapi
@@ -132,15 +165,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
  *       500:
  *         description: Internal error
  */
-app.use(benchmarkManualController);
 app.use('/api', healthRouter);
 app.use('/api/models', modelsRouter);
 app.use('/api/model', manualModelTestRouter);
-app.use('/api/generate', generateRouter);
+app.use('/api/generate', generateRouter); // Only mount once
 app.use('/api/config', configRouter);
 app.use('/api/orchestrator/config', orchestratorConfigRouter);
 app.use('/api/servers', serversRouter);
-app.use('/api/generate', generateRouter);
+// Removed duplicate /api/generate mount
 app.use('/api/chat/universe', universeRouter);
 app.use('/api/chat/character', characterRouter);
 app.use('/api/chat/message', messageRouter);
@@ -149,11 +181,9 @@ app.use('/api/orchestrator/benchmarks', benchmarksRouter);
 app.use('/api/orchestrator/performance', performanceRouter);
 app.use('/api/orchestrator', orchestratorRouter);
 app.use('/api/orchestrator', modelMapRouter);
-app.use('/', ollamaCompatRouter);
-app.use('/api', ollamaCompatRouter);
+app.use('/api', ollamaCompatRouter); // Only mount under /api
 
-app.use('/v1', openaiCompatRouter);
-app.use('/api/v1', openaiCompatRouter);
+app.use('/api/v1', openaiCompatRouter); // Only mount under /api/v1
 
 // User API key management endpoints
 // Mount API key management routes under /api/user/api-keys for correct frontend access
@@ -175,6 +205,18 @@ app.use('/api/rag', manualPostChunkingRouter);
 
 // Register tool routes
 app.use('/api/tools', toolRoutes);
+
+// Mount enhanced generate endpoint
+app.use('/api/generate-enhanced', generateEnhancedRouter);
+
+// Mount manual benchmark testing routes
+app.use('/api/manual', manualBenchmarkRouter);
+
+// Mount worker management routes
+app.use('/api/worker', workerRouter);
+
+// Mount scheduler routes
+app.use('/api/scheduler', schedulerRouter);
 
 // Enhanced Error handler
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
@@ -212,85 +254,74 @@ export const ragReadyPromise: Promise<void> = new Promise((resolve) => {
   ragReadyResolve = resolve;
 });
 
-// Initialize RAG system asynchronously
-async function initializeRAGSystem() {
-  try {
-    const ragServiceManager = await getRAGServiceManager();
-    // Set the singleton for ragNodeService (required for all RAG node/relationship CRUD)
-    setRagManager(ragServiceManager);
-    const { createSimpleRAGRouter } = await import('./rag/routes/simple-rag.routes.js');
-    const ragRouter = createSimpleRAGRouter(ragServiceManager);
-    app.use('/api/rag', ragRouter);
-  } catch (error) {
-    logger.error(
-      `Failed to initialize RAG system: ${error instanceof Error ? error.message : String(error)}`
-    );
+// --- Service initialization guard ---
+const initializedServices = new Set<string>();
+async function ensureInitialized(name: string, factory: () => Promise<void>) {
+  if (initializedServices.has(name)) {
+    logger.warn(`${name} is already initialized. Skipping redundant initialization.`);
+    return;
   }
+  await factory();
+  initializedServices.add(name);
 }
 
-initializeRAGSystem().catch(error => {
-  logger.error(
-    `RAG system initialization failed: ${error instanceof Error ? error.message : String(error)}`
-  );
-});
+initService('RAG System', () => ensureInitialized('RAG System', async () => {
+  const ragServiceManager = await getRAGServiceManager();
+  setRagManager(ragServiceManager);
+  const { createSimpleRAGRouter } = await import('./rag/routes/simple-rag.routes.js');
+  const ragRouter = createSimpleRAGRouter(ragServiceManager);
+  app.use('/api/rag', ragRouter);
+  if (typeof ragReadyResolve === 'function') ragReadyResolve();
+}));
 
-// Initialize Performance RAG system asynchronously
-async function initializePerformanceRAGSystem() {
-  try {
-    const { getOrchestratorInstance } = await import('./orchestrator-instance.js');
-    const orchestrator = getOrchestratorInstance();
-    const { getModelPerformanceRAGService } = await import(
-      './services/modelPerformanceRAG.service.js'
-    );
-    await getModelPerformanceRAGService(orchestrator);
-  } catch (error) {
-    logger.error(
-      `Failed to initialize Performance RAG system: ${error instanceof Error ? error.message : String(error)}`
-    );
-  }
-}
 
-setTimeout(() => {
-  initializePerformanceRAGSystem().catch(error => {
-    logger.error(
-      `Performance RAG system initialization failed: ${error instanceof Error ? error.message : String(error)}`
-    );
-  });
-}, 2000);
+initService('Performance RAG System', () => ensureInitialized('Performance RAG System', async () => {
+  const { getOrchestratorInstance } = await import('./orchestrator-instance.js');
+  const orchestrator = getOrchestratorInstance();
+  const { getModelPerformanceRAGService } = await import('./services/modelPerformanceRAG.service.js');
+  await getModelPerformanceRAGService(orchestrator);
+}));
 
-// Initialize Character Memory system asynchronously
-async function initializeCharacterMemorySystem() {
-  try {
-    const characterMemoryRouter = await import('./routes/characterMemory.js');
-    app.use('/api/memory', characterMemoryRouter.default);
-  } catch (error) {
-    logger.error(
-      `Failed to initialize Character Memory system: ${error instanceof Error ? error.message : String(error)}`
-    );
-  }
-}
 
-initializeCharacterMemorySystem().catch(error => {
-  logger.error(
-    `Character Memory system initialization failed: ${error instanceof Error ? error.message : String(error)}`
-  );
-});
+initService('Character Memory System', () => ensureInitialized('Character Memory System', async () => {
+  const characterMemoryRouter = await import('./routes/characterMemory.js');
+  app.use('/api/memory', characterMemoryRouter.default);
+}));
 
-// Initialize database connection
-async function initializeDatabase() {
+
+initService('MongoDB RAG Adapter', () => ensureInitialized('MongoDB RAG Adapter', async () => {
+  logger.info('Initializing MongoDB RAG adapter...');
+  // Add MongoDB RAG adapter initialization logic here
+}));
+
+// --- Startup sequence: ensure DB is connected before initializing RAG and other services ---
+async function startup() {
   try {
     await sharedDatabaseConnection.connect();
+    logger.info('MongoDB connection established before service initialization.');
+
+    // Initialize server registry and register all known servers
+    const { serverRegistryLoader } = await import('./services/server-registry-loader.service.js');
+    await serverRegistryLoader.loadAndRegisterServers();
+
+    // RAG and Performance RAG system initialization now handled by shared initService above
+
+    // Register all tools before starting the server
+    registerAllTools();
+
   } catch (error) {
     logger.error(
-      `Failed to connect to MongoDB database: ${error instanceof Error ? error.message : String(error)}`
+      `Startup failed: ${error instanceof Error ? error.message : String(error)}`
     );
     process.exit(1);
   }
 }
 
-await initializeDatabase();
 
-// Register all tools before starting the server
-registerAllTools();
+// --- Error handling and 404 fallback ---
+app.use(errorHandler);
+app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
+
+await startup();
 
 export default app;

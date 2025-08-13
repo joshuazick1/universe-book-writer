@@ -21,6 +21,8 @@ import {
 } from '../controllers/ragController.js';
 
 import { orchestratorEmbed } from '../controllers/orchestratorEmbeddingController.js';
+import { runAllBenchmarks } from '../controllers/benchmarkController.js';
+import type { ModelSelectionCriteria, ModelSelectionResult } from '../../../shared/types/models.js';
 
 /**
  * Orchestrator API routes for model and server management.
@@ -35,6 +37,7 @@ import { orchestratorEmbed } from '../controllers/orchestratorEmbeddingControlle
  *   POST   /api/orchestrator/servers/add     - Add a new server (with config)
  *   DELETE /api/orchestrator/servers/:id     - Remove a server
  *   PATCH  /api/orchestrator/servers/:id     - Update server config (concurrency, health, etc.)
+ *   POST   /api/orchestrator/benchmarks/run-all - Run all benchmarks across all servers and models
  */
 
 // Utility to wrap async route handlers for Express
@@ -67,6 +70,9 @@ router.get('/rag/usage-stats', getRagUsageStats as any);
 
 // Embedding endpoint
 router.post('/embed', asyncHandler(orchestratorEmbed));
+
+// New endpoint to run all benchmarks across all servers and models
+router.post('/benchmarks/run-all', asyncHandler(runAllBenchmarks));
 
 // Diagnostic endpoint: List the first 10 nodes of any type from the RAG storage
 router.get('/rag/diagnostic-nodes', asyncHandler(getRagDiagnosticNodes));

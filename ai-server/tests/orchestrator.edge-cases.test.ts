@@ -1,4 +1,4 @@
-import { AIOrchestrator, AIServer } from '../src/orchestrator';
+import { AIOrchestrator, AIServer } from '../src/orchestrator.js';
 
 describe('AIOrchestrator edge cases', () => {
     let orchestrator: AIOrchestrator;

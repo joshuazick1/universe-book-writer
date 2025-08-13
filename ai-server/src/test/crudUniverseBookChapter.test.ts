@@ -5,10 +5,8 @@
  * Includes assertions, cleanup logic, and timeouts.
  */
 
-import { getCollections } from '../config/database.config.js';
-import { Universe } from '../models/Universe.js';
-import { Book } from '../models/Book.js';
-import { Chapter } from '../models/Chapter.js';
+import { getCollections } from '../../../shared/database/database.config.js';
+import type { Universe, Book, Chapter } from '../../../shared/types/nodeTypes.js';
 import {
     createUniverse,
     updateUniverse,

@@ -33,6 +33,36 @@ export class RagNodeEncryptionService extends BaseEncryptionService {
         decrypted += decipher.final('utf8');
         return decrypted;
     }
+
+    async encryptContent(content: string, context: string[], sensitivity?: string, strategyId?: string): Promise<any> {
+        // Implementation for abstract method
+        const key = await this.generateKey();
+        const encrypted = await this.encrypt(content, key);
+        return {
+            encryptedData: encrypted,
+            key,
+            sensitivity: sensitivity || 'medium',
+            strategyId: strategyId || 'default'
+        };
+    }
+
+    async decryptContent(encryptedData: any, context: string[]): Promise<string> {
+        // Implementation for abstract method
+        return await this.decrypt(encryptedData.encryptedData, encryptedData.key);
+    }
+
+    classifyAndEncrypt(content: string, nodeType: string, metadata: any): { classification: any; shouldEncrypt: boolean; recommendedStrategy?: string } {
+        // Implementation for abstract method
+        return {
+            classification: { type: nodeType, sensitivity: 'medium' },
+            shouldEncrypt: true,
+            recommendedStrategy: 'default'
+        };
+    }
+
+    private async generateKey(): Promise<string> {
+        return randomBytes(32).toString('hex');
+    }
 }
 
 export default RagNodeEncryptionService;

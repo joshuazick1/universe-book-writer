@@ -5,6 +5,7 @@ import type {
 import type { RAGStorageBackend } from './services/storage.service.js';
 import { StorageAdapterFactory, type StorageAdapterConfig } from './adapters/factory.js';
 import { logger } from '../../../shared/logging/logger.js';
+import { initService } from '../../../shared/async/index.js';
 
 /**
  * Configuration for the RAG service manager
@@ -30,19 +31,11 @@ export class RAGServiceManager {
      * Initialize the RAG service manager
      */
     async initialize(): Promise<void> {
-        try {
-            logger.info('Initializing RAG Service Manager');
-
+        await initService('RAG Service Manager', async () => {
             // Initialize storage adapter
             this.storage = await StorageAdapterFactory.createAdapter(this.config.storage);
-            logger.info(`Storage adapter initialized: ${this.config.storage.type}`);
-
             this.initialized = true;
-            logger.info('RAG Service Manager initialized successfully');
-        } catch (error) {
-            logger.error(`Failed to initialize RAG Service Manager: ${error instanceof Error ? error.message : String(error)}`);
-            throw error;
-        }
+        });
     }
 
     /**

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { generateGapFillingMemory, approveGapFillingMemory } from '../../controllers/gapFillingController.js';
 // TODO: Implement and import validation middleware for gap-filling
-import { validateCharacterId, validateGapFillingRequest, validateGapFillingApproval } from '../../middleware/validation.js';
+import { validateCharacterId, validateGapFillingRequest, validateGapFillingApproval } from '../../../../shared/validation/validator.js';
 
 /**
  * Gap-Filling Memory Routes

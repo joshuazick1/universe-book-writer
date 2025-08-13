@@ -12,8 +12,8 @@ let persistenceMock: any;
 
 beforeAll(async () => {
     persistenceMock = await import('../src/orchestrator-persistence.js');
-    orchestratorInstance = await import('../src/orchestrator-instance');
-    AIOrchestrator = (await import('../src/orchestrator')).AIOrchestrator;
+    orchestratorInstance = await import('../src/orchestrator-instance.js');
+    AIOrchestrator = (await import('../src/orchestrator.js')).AIOrchestrator;
 });
 
 describe('orchestrator-instance.ts', () => {

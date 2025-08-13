@@ -25,6 +25,7 @@ interface RAGPerformanceData {
         averageLatency?: number;
         stabilityScore?: number;
         qualityScore?: number;
+        qualityBreakdown?: Record<string, { avg: number; min: number; max: number }>;
     };
     usageFrequency: {
         last24h: number;
@@ -57,6 +58,7 @@ const BenchmarksTab: React.FC = () => {
     const [taskType, setTaskType] = useState<string>('general');
     const [maxLatency, setMaxLatency] = useState<string>('');
     const [minThroughput, setMinThroughput] = useState<string>('');
+    const [serverData, setServerData] = useState<any[]>([]);
 
     const fetchBenchmarks = async () => {
         setLoading(true);
@@ -129,9 +131,61 @@ const BenchmarksTab: React.FC = () => {
         }
     };
 
+    // Fetch hierarchical benchmark data
+    const fetchHierarchicalData = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const modelPerformanceRes = await fetch("/api/performance/models");
+            const aiModelRes = await fetch("/api/performance/models/ai-model");
+            const aiServerRes = await fetch("/api/performance/servers");
+
+            if (modelPerformanceRes.ok && aiModelRes.ok && aiServerRes.ok) {
+                const modelPerformanceData = await modelPerformanceRes.json();
+                const aiModelData = await aiModelRes.json();
+                const aiServerData = await aiServerRes.json();
+
+                setRAGPerformanceData(modelPerformanceData.performanceData || []);
+                setBestModels(aiModelData.models || []);
+                setServerData(aiServerData.servers || []);
+            } else {
+                setError("Failed to fetch hierarchical benchmark data");
+            }
+        } catch (e) {
+            setError("Error fetching hierarchical benchmark data");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Real-time updates using WebSocket
+    useEffect(() => {
+        const socket = new WebSocket("ws://localhost:5100/api/updates");
+
+        socket.onmessage = (event) => {
+            const updatedData = JSON.parse(event.data);
+            if (updatedData.type === "model-performance") {
+                setRAGPerformanceData((prev) => [...prev, updatedData]);
+            } else if (updatedData.type === "ai-model") {
+                setBestModels((prev) => [...prev, updatedData]);
+            } else if (updatedData.type === "ai-server") {
+                setServerData((prev) => [...prev, updatedData]);
+            }
+        };
+
+        socket.onerror = () => {
+            console.error("WebSocket error");
+        };
+
+        return () => {
+            socket.close();
+        };
+    }, []);
+
     useEffect(() => {
         fetchBenchmarks();
         fetchRAGAnalytics();
+        fetchHierarchicalData();
     }, []);
 
     useEffect(() => {
@@ -139,6 +193,16 @@ const BenchmarksTab: React.FC = () => {
             fetchBestModels();
         }
     }, [tab, taskType, maxLatency, minThroughput]);
+
+    // Add quality scores to the displayed data
+    const renderQualityScores = (qualityBreakdown?: Record<string, { avg: number; min: number; max: number }>) => {
+        if (!qualityBreakdown) return <p>No quality scores available</p>;
+        return Object.entries(qualityBreakdown).map(([taskType, scores]) => (
+            <div key={taskType}>
+                <strong>{taskType}</strong>: Avg: {scores.avg}, Min: {scores.min}, Max: {scores.max}
+            </div>
+        ));
+    };
 
     return (
         <div className="max-w-6xl mx-auto">
@@ -236,6 +300,23 @@ const BenchmarksTab: React.FC = () => {
                             </table>
                         </div>
                     )}
+                    <div className="mt-6">
+                        <h3 className="text-lg font-semibold mb-4">Hierarchical Benchmark Data</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <h4 className="font-medium">Model Performance</h4>
+                                <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(ragPerformanceData, null, 2)}</pre>
+                            </div>
+                            <div>
+                                <h4 className="font-medium">AI Models</h4>
+                                <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(bestModels, null, 2)}</pre>
+                            </div>
+                            <div>
+                                <h4 className="font-medium">AI Servers</h4>
+                                <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(serverData, null, 2)}</pre>
+                            </div>
+                        </div>
+                    </div>
                 </>
             ) : tab === 'rag-analytics' ? (
                 <div>
@@ -302,6 +383,13 @@ const BenchmarksTab: React.FC = () => {
                                     </table>
                                 </div>
                             </div>
+                            {ragPerformanceData.map((data) => (
+                                <div key={data.id} className="bg-white border rounded-lg p-4">
+                                    <h3 className="text-lg font-semibold mb-2">{data.modelName}</h3>
+                                    <p className="text-sm text-gray-500 mb-4">Quality Scores:</p>
+                                    {renderQualityScores(data.performanceMetrics.qualityBreakdown)}
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>

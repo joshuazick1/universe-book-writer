@@ -8,6 +8,9 @@ import RAGTab from "./components/RAGTab";
 import CharacterChatInterface from "./pages/character-chat/CharacterChatInterface";
 import CharacterChatSetup from "./pages/character-chat/CharacterChatSetup";
 import Dashboard from "./components/Dashboard.js";
+import BenchmarkDashboard from "./components/BenchmarkDashboard";
+
+import QueueVisualizer from "./components/QueueVisualizer";
 
 const TABS = [
     { key: "dashboard", label: "Universe Dashboard" },
@@ -17,7 +20,9 @@ const TABS = [
     { key: "servers", label: "Servers" },
     { key: "models", label: "Models" },
     { key: "benchmarks", label: "Benchmarks" },
+    { key: "queue", label: "Queue Visualizer" },
     { key: "logs", label: "Logs" },
+    { key: "benchmark-dashboard", label: "Benchmark Dashboard" },
 ];
 
 const App: React.FC = () => {
@@ -74,6 +79,7 @@ const App: React.FC = () => {
             </nav>
             <section>
                 {tab === "dashboard" && <Dashboard />}
+                {tab === "benchmark-dashboard" && <BenchmarkDashboard />}
                 {tab === "character-chat" && (
                     <>
                         {chatState.mode === 'setup' ? (
@@ -108,6 +114,7 @@ const App: React.FC = () => {
                 {tab === "servers" && <ServersTab />}
                 {tab === "models" && <ModelsTab />}
                 {tab === "benchmarks" && <BenchmarksTab />}
+                {tab === "queue" && <QueueVisualizer />}
                 {tab === "logs" && <div>TODO: Request/Response Logs</div>}
             </section>
             <div className="text-xs text-gray-400 mt-8">

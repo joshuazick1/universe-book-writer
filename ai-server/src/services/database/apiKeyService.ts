@@ -1,5 +1,5 @@
 import { ObjectId, Collection } from 'mongodb';
-import { getCollections } from '../../config/database.config.js';
+import { getCollections } from '../../../../shared/database/database.config.js';
 
 export interface ApiKeyRecord {
     _id?: ObjectId;

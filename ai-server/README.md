@@ -117,6 +117,38 @@ export const DEFAULT_OLLAMA_CONFIG: OllamaConfig = {
 - `POST /api/orchestrator/benchmarks/server` — Benchmark a specific server/model
 - `GET /api/orchestrator/health` — Health and status for all servers
 
+### Enhanced Benchmarking System
+
+The AI Server includes a sophisticated benchmarking system designed specifically for book writing and creative applications:
+
+#### Performance Metrics Categories
+1. **Server Infrastructure**
+   - Cold Performance: Tests with model freshly loaded/not cached
+   - Server Latency: HTTP endpoint response times (not model prompts)
+   - Warmup Tests: Intelligent selection of 3 priority benchmarks
+
+2. **Model Quality Assessment**  
+   - Warm Performance: Tests after model is properly warmed up
+   - Specialized scoring using BLEU/ROUGE metrics for text quality
+
+#### Book Writing Benchmarks
+- **character-consistency**: Evaluates character trait maintenance across scenes
+- **plot-coherence**: Assesses logical story progression and cause-effect relationships
+- **world-building**: Tests fictional universe creation with consistent rules
+- **dialogue-generation**: Quick conversational ability assessment
+- **creative-writing**: General creative assessment and style evaluation
+- **emotional-depth**: Character emotional development and reader engagement
+- **pacing-rhythm**: Story flow and narrative tension management
+
+#### Technical Benchmarks
+- **json-assembly**: Structured data generation reliability
+- **task-planning**: Multi-step reasoning and organization
+- **typescript-quality**: Code generation and technical documentation
+- **style-transfer**: Adaptability to different writing styles
+- **summarization**: Content compression while preserving key information
+
+The system uses a queue-based workflow with intelligent dependency management and priority ordering optimized for book writing applications.
+
 ---
 
 ## Model Management: Orchestrator Mode

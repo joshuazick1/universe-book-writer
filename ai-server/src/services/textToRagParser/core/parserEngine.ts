@@ -25,6 +25,7 @@ import { ConfidenceFilter } from '../processors/confidenceFilter.js';
 import { RelationshipExtractor } from '../parsers/relationshipExtractor.js';
 import { getRAGServiceManager } from '../../../rag/instance.js';
 import { logger } from '../../../../../shared/logging/logger.js';
+import { initService } from '../../../../../shared/async/index.js';
 
 export class ParserEngine extends EventEmitter {
     private primaryParser: PrimaryParser;
@@ -55,13 +56,9 @@ export class ParserEngine extends EventEmitter {
      * Initialize the parser engine
      */
     async initialize(): Promise<void> {
-        try {
+        await initService('TextToRAGParserEngine', async () => {
             this.ragService = await getRAGServiceManager();
-            logger.info('Enhanced parser engine initialized successfully');
-        } catch (error) {
-            logger.error(`Failed to initialize parser engine: ${error}`);
-            throw error;
-        }
+        });
     }
 
     /**

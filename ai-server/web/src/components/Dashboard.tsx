@@ -125,13 +125,12 @@ const Dashboard: React.FC = () => {
     const handleCreateBook = async () => {
         if (!newBookTitle.trim() || !selectedUniverse) return;
         await retryAsync(() =>
-            fetch('/api/books', {
+            fetch(`/api/books?universeId=${encodeURIComponent(selectedUniverse)}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     type: 'book',
                     title: newBookTitle,
-                    universeId: selectedUniverse,
                     metadata: {},
                 }),
             })

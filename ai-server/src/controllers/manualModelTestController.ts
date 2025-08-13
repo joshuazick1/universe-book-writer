@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import { BenchmarkType, QualityBenchmarkScore } from '../../../shared/types/aiQualityBenchmark.js';
-// Assume this utility sends a prompt to the AI and returns the response
-// import { sendPromptToAI } from '../services/aiPromptService.js';
+import { sendPromptToAI } from '../services/aiPromptService.js';
 
 /**
  * POST /api/model/manual-test
@@ -23,7 +22,7 @@ export async function manualModelTest(req: Request, res: Response) {
         // Score the response (stub: use length or simple heuristic)
         const score: QualityBenchmarkScore = {
             type: benchmarkType,
-            score: Math.min(1, aiResponse.length / 1000), // Example: normalize by length
+            score: Math.min(1, aiResponse.text.length / 1000), // Example: normalize by length
             rubric: 'Length-based score (stub)',
             timestamp: new Date().toISOString(),
         };

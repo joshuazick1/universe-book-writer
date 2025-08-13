@@ -1,0 +1,345 @@
+[
+  {
+    "id": "srv-aHR0cDovL2xvY2FsaG9zdDoxMTQzNA",
+    "url": "http://localhost:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": 216.63248669391052,
+    "models": [
+      "deepseek-r1:1.5b",
+      "smollm2:135m",
+      "mxbai-embed-large:latest",
+      "all-minilm:latest",
+      "nomic-embed-text:latest",
+      "llama3:latest"
+    ]
+  },
+  {
+    "id": "srv-aHR0cDovLzEwNC4zNi44NC4xMzU6MTE0MzQ",
+    "url": "http://104.36.84.135:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI4OjExNDM0",
+    "url": "http://12.221.142.228:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzM0LjQ2LjE0NS4xMjE6MTE0MzQ",
+    "url": "http://34.46.145.121:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEwOC4xODEuMTk3LjY4OjExNDM0",
+    "url": "http://108.181.197.68:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzIzLjk1LjE5Mi4yNDI6MTE0MzQ",
+    "url": "http://23.95.192.242:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzM1LjEzMi4xNDguMTI4OjExNDM0",
+    "url": "http://35.132.148.128:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzg2LjM4LjE4Mi45OjExNDM0",
+    "url": "http://86.38.182.9:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzIwMy4yMDIuMjM3LjEwNjoxMTQzNA",
+    "url": "http://203.202.237.106:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEzNi42MC4yMS4yMjY6MTE0MzQ",
+    "url": "http://136.60.21.226:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzUuMTYxLjE5Ni4yMTE6MTE0MzQ",
+    "url": "http://5.161.196.211:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE1OS44OS45Mi4yOToxMTQzNA",
+    "url": "http://159.89.92.29:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzIzLjIzOS4xMDcuNjoxMTQzNA",
+    "url": "http://23.239.107.6:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE2Ny43MS4yNTIuMTU1OjExNDM0",
+    "url": "http://167.71.252.155:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzM1LjIyMi41NS40OToxMTQzNA",
+    "url": "http://35.222.55.49:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE2Mi44NC4yMzUuMzQ6MTE0MzQ",
+    "url": "http://162.84.235.34:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzM0LjE3Mi4xNjMuMTM1OjExNDM0",
+    "url": "http://34.172.163.135:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzc2LjI0Ny4xMzEuMTYxOjExNDM0",
+    "url": "http://76.247.131.161:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE3OC4xNTYuMTMzLjEwNToxMTQzNA",
+    "url": "http://178.156.133.105:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEzNC4xOTkuMjUwLjEzMDoxMTQzNA",
+    "url": "http://134.199.250.130:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE3My41Ni4zMi41MzoxMTQzNA",
+    "url": "http://173.56.32.53:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE2NS4yMjcuMTAzLjgyOjExNDM0",
+    "url": "http://165.227.103.82:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzg5LjExNi40OC4xMDU6MTE0MzQ",
+    "url": "http://89.116.48.105:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE0Ni4xOTAuMTU4LjE5NjoxMTQzNA",
+    "url": "http://146.190.158.196:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzc0LjI0OS44Mi41NDoxMTQzNA",
+    "url": "http://74.249.82.54:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEwNy4xNDkuMjEyLjExNDoxMTQzNA",
+    "url": "http://107.149.212.114:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEyLjIyMS4xNDIuMjI3OjExNDM0",
+    "url": "http://12.221.142.227:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzY2LjE5OS4yMjQuNDA6MTE0MzQ",
+    "url": "http://66.199.224.40:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzIwOS4xNDUuNjMuNDQ6MTE0MzQ",
+    "url": "http://209.145.63.44:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzQuMTUwLjE3Ni4xMzI6MTE0MzQ",
+    "url": "http://4.150.176.132:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzM1LjI0My4yMjYuMjQ2OjExNDM0",
+    "url": "http://35.243.226.246:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzk4LjU1LjgxLjIzMjoxMTQzNA",
+    "url": "http://98.55.81.232:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzY5LjE0NS44OC4zMDoxMTQzNA",
+    "url": "http://69.145.88.30:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzIwLjI0Mi4xODkuMTA1OjExNDM0",
+    "url": "http://20.242.189.105:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE2Mi4yNDMuOTAuMTY5OjExNDM0",
+    "url": "http://162.243.90.169:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEyLjIyMS4xNDIuMjA2OjExNDM0",
+    "url": "http://12.221.142.206:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzg5LjIxMy4xODAuOTI6MTE0MzQ",
+    "url": "http://89.213.180.92:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzE1NC4yMDIuMTE4LjMyOjExNDM0",
+    "url": "http://154.202.118.32:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzY2LjI5LjEyOC41MzoxMTQzNA",
+    "url": "http://66.29.128.53:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEzMC41MS4yMS4yMjg6MTE0MzQ",
+    "url": "http://130.51.21.228:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzEzMi4xNDUuMTgxLjc2OjExNDM0",
+    "url": "http://132.145.181.76:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  },
+  {
+    "id": "srv-aHR0cDovLzM0LjI3Ljk0LjE0OjExNDM0",
+    "url": "http://34.27.94.14:11434",
+    "type": "ollama",
+    "healthy": true,
+    "lastResponseTime": null,
+    "models": []
+  }
+]

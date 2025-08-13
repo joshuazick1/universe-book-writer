@@ -1,3 +1,54 @@
+---
+
+## Queue System API
+
+### GET /api/queue/status
+Returns the current status of all benchmarking and orchestration queues.
+
+**Response Example:**
+```json
+[
+  {
+    "serverId": "server-1",
+    "model": "llama-2",
+    "jobs": [
+      {
+        "metadata": {
+          "jobId": "server-1:llama-2:1623456789:abc123",
+          "status": "pending",
+          "retries": 0,
+          "timestamps": { "enqueued": 1623456789000 },
+          "serverId": "server-1",
+          "model": "llama-2",
+          "type": "benchmark"
+        }
+      }
+    ]
+  }
+]
+```
+
+### GET /api/queue/jobs/{jobId}
+Returns the status and metadata for a specific job in the queue.
+
+**Response Example:**
+```json
+{
+  "metadata": {
+    "jobId": "server-1:llama-2:1623456789:abc123",
+    "status": "active",
+    "retries": 1,
+    "timestamps": { "enqueued": 1623456789000, "started": 1623456790000 },
+    "serverId": "server-1",
+    "model": "llama-2",
+    "type": "benchmark"
+  }
+}
+```
+
+**Notes:**
+- These endpoints are used by the frontend QueueVisualizer for real-time updates.
+- All job metadata is strictly typed and includes status, timestamps, and assignment.
 # Backend API Documentation
 
 ## Table of Contents

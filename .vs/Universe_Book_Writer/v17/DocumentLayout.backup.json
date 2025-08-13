@@ -3,20 +3,120 @@
   "WorkspaceRootPath": "C:\\Users\\jzick\\Universe_Book_Writer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\Dashboard.tsx||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\web\\src\\components\\Dashboard.tsx||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\docs\\UNIFIED_IMPLEMENTATION_PLAN.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docs\\UNIFIED_IMPLEMENTATION_PLAN.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\bookRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\routes\\bookRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\types\\nodeTypes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\types\\nodeTypes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorEmbeddingController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\controllers\\orchestratorEmbeddingController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\components\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\components\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\scripts\\run-tests-with-output.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:scripts\\run-tests-with-output.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\types\\toolTypes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\types\\toolTypes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\orchestrator\\RecommendationEngine.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\orchestrator\\RecommendationEngine.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\toolRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\routes\\toolRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\services\\toolRegistryService.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\services\\toolRegistryService.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\utils\\toolExecutionHelper.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\utils\\toolExecutionHelper.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\orchestrator.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\orchestrator.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\docs\\TOOL_ORIENTED_AI_HELPER_IMPLEMENTATION_PLAN.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docs\\TOOL_ORIENTED_AI_HELPER_IMPLEMENTATION_PLAN.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\toolOrchestratorController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\controllers\\toolOrchestratorController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\hooks\\useToolRegistry.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\web\\src\\hooks\\useToolRegistry.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\ToolExecutionPanel.tsx||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\web\\src\\components\\ToolExecutionPanel.tsx||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\utils\\toolFriendlyNames.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\web\\src\\utils\\toolFriendlyNames.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\app.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\app.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\repositories\\toolRepository.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\repositories\\toolRepository.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\api\\swagger.yaml||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\api\\swagger.yaml||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\hooks\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\hooks\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\rag\\core\\relationship.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\rag\\core\\relationship.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\hooks\\useModelRecommendations.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\hooks\\useModelRecommendations.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\prompts\\index.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\pluginPrompts.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\prompts\\pluginPrompts.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\universePrompts.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:shared\\prompts\\universePrompts.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\repositories\\ragNodeRepository.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\repositories\\ragNodeRepository.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\characterRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\routes\\characterRoutes.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\orchestrator.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\routes\\orchestrator.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\controllers\\orchestratorController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\benchmarkController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ai-server\\src\\controllers\\benchmarkController.ts||{3B902123-F8A7-4915-9F01-361F908088D0}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +126,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,53 +134,358 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Dashboard.tsx",
-              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\Dashboard.tsx",
-              "RelativeDocumentMoniker": "ai-server\\web\\src\\components\\Dashboard.tsx",
-              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\Dashboard.tsx",
-              "RelativeToolTip": "ai-server\\web\\src\\components\\Dashboard.tsx",
-              "ViewState": "AgIAAGACAAAAAAAAAAAhwAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 28,
+              "Title": "benchmarkController.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\benchmarkController.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\controllers\\benchmarkController.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\benchmarkController.ts",
+              "RelativeToolTip": "ai-server\\src\\controllers\\benchmarkController.ts",
+              "ViewState": "AgIAABUAAAAAAAAAAIBJwBcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-07-23T18:04:29.029Z",
+              "WhenOpened": "2025-08-03T20:06:56.132Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "bookRoutes.ts",
-              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\bookRoutes.ts",
-              "RelativeDocumentMoniker": "ai-server\\src\\routes\\bookRoutes.ts",
-              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\bookRoutes.ts",
-              "RelativeToolTip": "ai-server\\src\\routes\\bookRoutes.ts",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 27,
+              "Title": "orchestratorController.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorController.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\controllers\\orchestratorController.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorController.ts",
+              "RelativeToolTip": "ai-server\\src\\controllers\\orchestratorController.ts",
+              "ViewState": "AgIAAA4AAAAAAAAAAIBJwBAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-07-23T05:24:44.274Z",
+              "WhenOpened": "2025-08-03T20:05:45.993Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "orchestrator.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\orchestrator.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\routes\\orchestrator.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\orchestrator.ts",
+              "RelativeToolTip": "ai-server\\src\\routes\\orchestrator.ts",
+              "ViewState": "AgIAAE4AAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-08-03T20:05:16.162Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UNIFIED_IMPLEMENTATION_PLAN.md",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\docs\\UNIFIED_IMPLEMENTATION_PLAN.md",
+              "RelativeDocumentMoniker": "docs\\UNIFIED_IMPLEMENTATION_PLAN.md",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\docs\\UNIFIED_IMPLEMENTATION_PLAN.md",
+              "RelativeToolTip": "docs\\UNIFIED_IMPLEMENTATION_PLAN.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-08-03T20:02:55.721Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "characterRoutes.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\characterRoutes.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\routes\\characterRoutes.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\characterRoutes.ts",
+              "RelativeToolTip": "ai-server\\src\\routes\\characterRoutes.ts",
+              "ViewState": "AgIAAEUBAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:16:23.194Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ragNodeRepository.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\repositories\\ragNodeRepository.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\repositories\\ragNodeRepository.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\repositories\\ragNodeRepository.ts",
+              "RelativeToolTip": "ai-server\\src\\repositories\\ragNodeRepository.ts",
+              "ViewState": "AgIAACcCAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:16:02.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "index.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\components\\index.ts",
+              "RelativeDocumentMoniker": "shared\\components\\index.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\components\\index.ts",
+              "RelativeToolTip": "shared\\components\\index.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:13:53.069Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "universePrompts.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\universePrompts.ts",
+              "RelativeDocumentMoniker": "shared\\prompts\\universePrompts.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\universePrompts.ts",
+              "RelativeToolTip": "shared\\prompts\\universePrompts.ts",
+              "ViewState": "AgIAACUAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:12:24.435Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "pluginPrompts.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\pluginPrompts.ts",
+              "RelativeDocumentMoniker": "shared\\prompts\\pluginPrompts.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\pluginPrompts.ts",
+              "RelativeToolTip": "shared\\prompts\\pluginPrompts.ts",
+              "ViewState": "AgIAACUAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:12:18.009Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "nodeTypes.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\types\\nodeTypes.ts",
+              "RelativeDocumentMoniker": "shared\\types\\nodeTypes.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\types\\nodeTypes.ts",
+              "RelativeToolTip": "shared\\types\\nodeTypes.ts",
+              "ViewState": "AgIAAIEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:11:34.49Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "index.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\index.ts",
+              "RelativeDocumentMoniker": "shared\\prompts\\index.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\prompts\\index.ts",
+              "RelativeToolTip": "shared\\prompts\\index.ts",
+              "ViewState": "AgIAAAoAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:11:02.918Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "useModelRecommendations.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\hooks\\useModelRecommendations.ts",
+              "RelativeDocumentMoniker": "shared\\hooks\\useModelRecommendations.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\hooks\\useModelRecommendations.ts",
+              "RelativeToolTip": "shared\\hooks\\useModelRecommendations.ts",
+              "ViewState": "AgIAACMAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:10:54.932Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "relationship.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\rag\\core\\relationship.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\rag\\core\\relationship.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\rag\\core\\relationship.ts",
+              "RelativeToolTip": "ai-server\\src\\rag\\core\\relationship.ts",
+              "ViewState": "AgIAAHoBAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T04:10:01.23Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "index.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\hooks\\index.ts",
+              "RelativeDocumentMoniker": "shared\\hooks\\index.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\hooks\\index.ts",
+              "RelativeToolTip": "shared\\hooks\\index.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAABBwAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:35:04.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "index.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\index.ts",
+              "RelativeDocumentMoniker": "shared\\index.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\index.ts",
+              "RelativeToolTip": "shared\\index.ts",
+              "ViewState": "AgIAAAIAAAAAAAAAAIBJwAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:34:04.636Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RecommendationEngine.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\orchestrator\\RecommendationEngine.ts",
+              "RelativeDocumentMoniker": "ai-server\\orchestrator\\RecommendationEngine.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\orchestrator\\RecommendationEngine.ts",
+              "RelativeToolTip": "ai-server\\orchestrator\\RecommendationEngine.ts",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAEwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:30:16.575Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "toolExecutionHelper.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\utils\\toolExecutionHelper.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\utils\\toolExecutionHelper.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\utils\\toolExecutionHelper.ts",
+              "RelativeToolTip": "ai-server\\src\\utils\\toolExecutionHelper.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:29:24.505Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "swagger.yaml",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\api\\swagger.yaml",
+              "RelativeDocumentMoniker": "ai-server\\src\\api\\swagger.yaml",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\api\\swagger.yaml",
+              "RelativeToolTip": "ai-server\\src\\api\\swagger.yaml",
+              "ViewState": "AgIAAIUAAAAAAAAAAEBVwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2025-07-24T03:20:07.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "toolRepository.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\repositories\\toolRepository.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\repositories\\toolRepository.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\repositories\\toolRepository.ts",
+              "RelativeToolTip": "ai-server\\src\\repositories\\toolRepository.ts",
+              "ViewState": "AgIAADoAAAAAAAAAAABBwDsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:19:29.718Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "orchestrator.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\orchestrator.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\orchestrator.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\orchestrator.ts",
+              "RelativeToolTip": "ai-server\\src\\orchestrator.ts",
+              "ViewState": "AgIAAPIDAAAAAAAAAAAAAAgEAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:16:45.934Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "app.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\app.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\app.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\app.ts",
+              "RelativeToolTip": "ai-server\\src\\app.ts",
+              "ViewState": "AgIAANkAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:15:25.967Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "run-tests-with-output.ts",
-              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\scripts\\run-tests-with-output.ts",
-              "RelativeDocumentMoniker": "scripts\\run-tests-with-output.ts",
-              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\scripts\\run-tests-with-output.ts",
-              "RelativeToolTip": "scripts\\run-tests-with-output.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "toolTypes.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\types\\toolTypes.ts",
+              "RelativeDocumentMoniker": "shared\\types\\toolTypes.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\shared\\types\\toolTypes.ts",
+              "RelativeToolTip": "shared\\types\\toolTypes.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-07-23T01:32:50.952Z"
+              "WhenOpened": "2025-07-24T03:14:57.117Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "orchestratorEmbeddingController.ts",
-              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
-              "RelativeDocumentMoniker": "ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
-              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
-              "RelativeToolTip": "ai-server\\src\\controllers\\orchestratorEmbeddingController.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 13,
+              "Title": "toolFriendlyNames.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\utils\\toolFriendlyNames.ts",
+              "RelativeDocumentMoniker": "ai-server\\web\\src\\utils\\toolFriendlyNames.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\utils\\toolFriendlyNames.ts",
+              "RelativeToolTip": "ai-server\\web\\src\\utils\\toolFriendlyNames.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-07-23T01:17:01.532Z"
+              "WhenOpened": "2025-07-24T03:14:30.187Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "useToolRegistry.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\hooks\\useToolRegistry.ts",
+              "RelativeDocumentMoniker": "ai-server\\web\\src\\hooks\\useToolRegistry.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\hooks\\useToolRegistry.ts",
+              "RelativeToolTip": "ai-server\\web\\src\\hooks\\useToolRegistry.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:13:26.854Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ToolExecutionPanel.tsx",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\ToolExecutionPanel.tsx",
+              "RelativeDocumentMoniker": "ai-server\\web\\src\\components\\ToolExecutionPanel.tsx",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\web\\src\\components\\ToolExecutionPanel.tsx",
+              "RelativeToolTip": "ai-server\\web\\src\\components\\ToolExecutionPanel.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:13:01.9Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "toolRoutes.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\toolRoutes.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\routes\\toolRoutes.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\routes\\toolRoutes.ts",
+              "RelativeToolTip": "ai-server\\src\\routes\\toolRoutes.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:12:11.983Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "toolRegistryService.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\services\\toolRegistryService.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\services\\toolRegistryService.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\services\\toolRegistryService.ts",
+              "RelativeToolTip": "ai-server\\src\\services\\toolRegistryService.ts",
+              "ViewState": "AgIAACgAAAAAAAAAAAAAAC8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:11:48.149Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "toolOrchestratorController.ts",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\toolOrchestratorController.ts",
+              "RelativeDocumentMoniker": "ai-server\\src\\controllers\\toolOrchestratorController.ts",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\ai-server\\src\\controllers\\toolOrchestratorController.ts",
+              "RelativeToolTip": "ai-server\\src\\controllers\\toolOrchestratorController.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-24T03:10:59.035Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TOOL_ORIENTED_AI_HELPER_IMPLEMENTATION_PLAN.md",
+              "DocumentMoniker": "C:\\Users\\jzick\\Universe_Book_Writer\\docs\\TOOL_ORIENTED_AI_HELPER_IMPLEMENTATION_PLAN.md",
+              "RelativeDocumentMoniker": "docs\\TOOL_ORIENTED_AI_HELPER_IMPLEMENTATION_PLAN.md",
+              "ToolTip": "C:\\Users\\jzick\\Universe_Book_Writer\\docs\\TOOL_ORIENTED_AI_HELPER_IMPLEMENTATION_PLAN.md",
+              "RelativeToolTip": "docs\\TOOL_ORIENTED_AI_HELPER_IMPLEMENTATION_PLAN.md",
+              "ViewState": "AgIAANMAAAAAAAAAAAAMwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-07-24T02:54:14.166Z"
             }
           ]
         }

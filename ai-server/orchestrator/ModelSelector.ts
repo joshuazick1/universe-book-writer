@@ -2,8 +2,8 @@
 // Orchestrator logic for selecting the best model for a given task
 // This is a stub implementation. Replace with real logic as needed.
 
-import BenchmarkingManager from '../benchmarking/BenchmarkingManager.js';
-import { BenchmarkType } from '../../shared/types/aiQualityBenchmark.js';
+import getBenchmarkingManager from '../src/benchmarking/BenchmarkingManager.js';
+import { BenchmarkType } from 'shared/types/aiQualityBenchmark.js';
 
 export interface ModelSelectionParams {
     task: string;
@@ -33,7 +33,7 @@ export interface ModelSelectionParams {
  */
 
 export async function selectBestModel(params: ModelSelectionParams): Promise<string> {
-    const allBenchmarks = await BenchmarkingManager.getAllModelBenchmarks();
+    const allBenchmarks = await getBenchmarkingManager().getAllModelBenchmarks();
     if (!Array.isArray(allBenchmarks) || allBenchmarks.length === 0) return 'default-model';
 
     // Determine which benchmark type to use for quality

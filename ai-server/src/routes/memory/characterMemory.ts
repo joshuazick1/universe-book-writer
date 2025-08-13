@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getCharacterMemories } from '../../controllers/characterMemoryController.js';
-import { validateCharacterId, validateCharacterMemory } from '../../middleware/validation.js';
+import { validateCharacterId, validateCharacterMemory } from '../../../../shared/validation/validator.js';
 
 /**
  * Character Memory Routes

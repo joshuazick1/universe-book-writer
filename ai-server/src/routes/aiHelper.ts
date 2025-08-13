@@ -31,11 +31,11 @@ router.post('/helper', async (req: Request, res: Response) => {
         const orchestrator = getOrchestratorInstance();
         // Dynamic model selection based on context and available models
         let model = 'llama3.2:latest'; // fallback
-        if (allPrompts.length > 0 && context && context.formState && context.formState.genre) {
+        if (allPrompts.length > 0 && context && context.formState && (context.formState as any).genre) {
             // Example: select model based on genre or other context
-            if (context.formState.genre === 'Fantasy') {
+            if ((context.formState as any).genre === 'Fantasy') {
                 model = 'llama3.2:latest';
-            } else if (context.formState.genre === 'Sci-Fi') {
+            } else if ((context.formState as any).genre === 'Sci-Fi') {
                 model = 'llama3.2:latest';
             } else {
                 // Use orchestrator's best model selection logic

@@ -4,7 +4,7 @@ import {
     getSharedMemoriesByTime,
     getSharedMemoriesByCharacter
 } from '../../controllers/sharedMemoryController.js';
-import { validateCharacterId } from '../../middleware/validation.js';
+import { validateCharacterId } from '../../../../shared/validation/validator.js';
 
 /**
  * Shared Memory Routes

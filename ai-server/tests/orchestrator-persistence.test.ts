@@ -17,8 +17,8 @@ type AIServer = {
 };
 
 beforeAll(async () => {
-    persistence = await import('../src/orchestrator-persistence');
-    orchestratorTypes = await import('../src/orchestrator');
+    persistence = await import('../src/orchestrator-persistence.js');
+    orchestratorTypes = await import('../src/orchestrator.js');
 });
 
 

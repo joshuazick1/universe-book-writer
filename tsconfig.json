@@ -18,6 +18,15 @@
     "paths": {
       "@/*": [
         "./packages/*"
+      ],
+      "shared/types/universal-job": [
+        "shared/types/universal-job.ts"
+      ],
+      "shared/types/server": [
+        "shared/types/server.ts"
+      ],
+      "shared/types/model-selection": [
+        "shared/types/model-selection.ts"
       ]
     },
     "jsx": "react-jsx",
@@ -63,10 +72,16 @@
     }
   ],
   "include": [
-    "./**/*.ts",
-    "./**/*.tsx",
-    "scripts/test-runner/**/*.ts",
-    "packages/plugin-sdk/src/**/*.ts"
+    "shared/**/*",
+    "ai-server/**/*",
+    "backend/**/*",
+    "collaboration-server/**/*",
+    "frontend/**/*",
+    "packages/**/*",
+    "scripts/test-runner/**/*",
+    "scripts/run-tests-with-output.ts",
+    "scripts/config/**/*",
+    "scripts/validators/**/*"
   ],
   "exclude": [
     "**/node_modules",
@@ -91,6 +106,8 @@
     "commitlint.config.js",
     "**/scripts/**/*.js",
     "**/scripts/**/*.mjs",
+    "!scripts/test-runner/**/*",
+    "!scripts/run-tests-with-output.ts",
     "**/migrate-mongo-config.js",
     "backend/plugins/test-core.plugin.js",
     "backend/tests/jest.env.mjs",

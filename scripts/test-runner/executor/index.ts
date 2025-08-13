@@ -61,36 +61,120 @@ export async function executeSuite(
 
 /**
  * Actually spawn Jest for a single suite (test file).
+ * Updated to work with Jest projects and proper test discovery.
  */
 function runJestForSuite(
     suitePath: string,
-    options: { jestBin?: string; testNamePattern?: string;[key: string]: any }
+    options: { jestBin?: string; testNamePattern?: string; testPathPattern?: string;[key: string]: any }
 ): Promise<{ output: string; status: 'passed' | 'failed' | 'skipped'; duration: number; error?: Error }> {
     return new Promise((resolve, reject) => {
-        const jestBin = options.jestBin || 'node_modules/.bin/jest';
-        const args = [suitePath, '--runInBand', '--forceExit', '--detectOpenHandles'];
+        // Use the correct Jest command for this project
+        let jestCommand = options.jestBin;
+        if (!jestCommand) {
+            // Use the same Jest command as the project's test:console script
+            jestCommand = 'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js';
+        }
+
+        // Build Jest arguments
+        const args = ['--runInBand', '--forceExit', '--detectOpenHandles'];
+
+        // Determine which project this suite belongs to
+        const projectMap: Record<string, string> = {
+            'backend': 'backend',
+            'frontend': 'frontend',
+            'ai-server': 'ai-server',
+            'collaboration-server': 'collaboration-server',
+            'packages': 'packages',
+            'shared': 'shared',
+            'e2e': 'e2e'
+        };
+
+        // Find the project for this suite
+        let targetProject = 'backend'; // default
+        for (const [projectName, projectPath] of Object.entries(projectMap)) {
+            if (suitePath.includes(projectPath)) {
+                targetProject = projectName;
+                break;
+            }
+        }
+
+        // Add the project filter
+        args.push('--selectProjects', targetProject);
+
+        // Create a more specific test pattern from the file path
+        const fileName = suitePath.split(/[/\\]/).pop()?.replace(/\.test\.(ts|js)$/, '') || '';
+
+        // Use a simpler pattern that matches what we tested manually
+        if (fileName) {
+            args.push('--testPathPattern', fileName);
+        }
+
+        // Add verbose output if requested
+        if (options.verbose) {
+            args.push('--verbose');
+        }
+
         if (options.testNamePattern) {
             args.push('--testNamePattern', options.testNamePattern);
         }
+
+        // Add timeout to prevent hanging
+        args.push('--testTimeout', '30000');
+
+        console.log(`🔍 Executing: ${jestCommand} ${args.join(' ')}`);
+        console.log(`📁 Target project: ${targetProject}, file pattern: ${fileName}`);
+
         const start = Date.now();
-        const proc = spawn(jestBin, args, { shell: true });
+
+        // Split the command into command and initial args
+        const [command, ...commandArgs] = jestCommand.split(' ');
+        const allArgs = [...commandArgs, ...args];
+
+        const proc = spawn(command, allArgs, {
+            shell: true,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            cwd: process.cwd()
+        });
+
+        // Set a timeout to prevent hanging
+        const timeout = setTimeout(() => {
+            console.log(`⏰ Test timeout for: ${fileName}`);
+            proc.kill('SIGTERM');
+        }, 60000); // 60 second timeout
+
         let output = '';
         proc.stdout.on('data', d => (output += d.toString()));
         proc.stderr.on('data', d => (output += d.toString()));
+
         proc.on('close', code => {
+            clearTimeout(timeout);
             const duration = Date.now() - start;
-            // Parse output for pass/fail/skipped
+
+            // Enhanced output parsing for Jest results
             let status: 'passed' | 'failed' | 'skipped' = 'failed';
-            if (/\bPASS\b/.test(output)) status = 'passed';
-            else if (/\bSKIP\b|skipped/.test(output)) status = 'skipped';
-            else status = 'failed';
-            if (code === 0 && status === 'passed') {
-                resolve({ output, status, duration });
+
+            if (output.includes('No tests found')) {
+                status = 'skipped';
+                console.log(`⏭️ No tests found for: ${fileName}`);
+            } else if (/Tests:\s+\d+\s+passed/i.test(output) && !/Tests:\s+\d+\s+failed/i.test(output)) {
+                status = 'passed';
+                console.log(`✅ Tests passed for: ${fileName}`);
+            } else if (/Tests:\s+\d+\s+failed/i.test(output)) {
+                status = 'failed';
+                console.log(`❌ Tests failed for: ${fileName}`);
+            } else if (code === 0) {
+                status = 'passed';
+                console.log(`✅ Exit code 0 for: ${fileName}`);
             } else {
-                resolve({ output, status, duration, error: new Error('Test failed') });
+                status = 'failed';
+                console.log(`❌ Exit code ${code} for: ${fileName}`);
             }
+
+            resolve({ output, status, duration, error: code !== 0 ? new Error(`Jest exited with code ${code}`) : undefined });
         });
+
         proc.on('error', err => {
+            console.error(`🚨 Spawn error for ${fileName}:`, err);
             reject(err);
         });
     });

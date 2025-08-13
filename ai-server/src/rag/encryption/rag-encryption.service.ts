@@ -5,8 +5,9 @@
  * preserving graph structure while protecting content.
  */
 
-import { BaseEncryptionService, EncryptedData, HierarchicalKeyManager } from './base-encryption.service.js';
+import { encrypt, decrypt } from '../../../../shared/encryption/encryptionService.js';
 import { RAGNode, RAGRelationship, RAGNodePrivacy } from '../core/types.js';
+import { EncryptedData, BaseEncryptionService, HierarchicalKeyManager } from '../../../../shared/encryption/base-encryption.service.js';
 
 /**
  * Encrypted RAG node data

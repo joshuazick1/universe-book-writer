@@ -1,0 +1,80 @@
+﻿import { Router } from 'express';
+import {
+  addModelToFleet,
+  addModelToServer,
+  removeModel,
+  uploadModel,
+  listModelVersions,
+} from '../controllers/modelsController.js';
+import {
+  addServer,
+  removeServer,
+  updateServer,
+  getModelMap,
+} from '../controllers/serversController.js';
+import {
+  getRagAnalytics,
+  getRagModelPerformance,
+  getRagBestModels,
+  getRagUsageStats,
+  getRagDiagnosticNodes,
+} from '../controllers/ragController.js';
+
+import { orchestratorEmbed } from '../controllers/orchestratorEmbeddingController.js';
+import { runAllBenchmarks } from '../controllers/benchmarkController.js';
+import type { ModelSelectionCriteria, ModelSelectionResult } from '../../../shared/types/models.js';
+
+/**
+ * Orchestrator API routes for model and server management.
+ * Implements endpoints for adding/removing/uploading models, managing servers, and listing model versions.
+ * All logic is delegated to the orchestrator instance and application layer per CLEAN_BACKEND_ARCHITECTURE_PLAN.md.
+ *
+ * Endpoints:
+ *   POST   /api/orchestrator/models/add      - Add a model to a specific server
+ *   DELETE /api/orchestrator/models/:model   - Remove a model from a specific server or all servers
+ *   POST   /api/orchestrator/models/upload   - Upload a new model (with versioning support)
+ *   GET    /api/orchestrator/models/versions - List all versions of a model
+ *   POST   /api/orchestrator/servers/add     - Add a new server (with config)
+ *   DELETE /api/orchestrator/servers/:id     - Remove a server
+ *   PATCH  /api/orchestrator/servers/:id     - Update server config (concurrency, health, etc.)
+ *   POST   /api/orchestrator/benchmarks/run-all - Run all benchmarks across all servers and models
+ */
+
+// Utility to wrap async route handlers for Express
+function asyncHandler(fn: any) {
+  return function (req: any, res: any, next: any) {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
+
+const router = Router();
+
+// Model endpoints
+router.post('/models/add-fleet', addModelToFleet as any);
+router.post('/models/add', addModelToServer as any);
+router.delete('/models/:model', removeModel as any);
+router.post('/models/upload', uploadModel as any);
+router.get('/models/versions', listModelVersions as any);
+
+// Server endpoints
+router.post('/servers/add', addServer as any);
+router.delete('/servers/:id', removeServer as any);
+router.patch('/servers/:id', updateServer as any);
+router.get('/model-map', getModelMap as any);
+
+// RAG endpoints
+router.get('/rag/analytics', getRagAnalytics as any);
+router.get('/rag/model-performance', getRagModelPerformance as any);
+router.get('/rag/best-models', getRagBestModels as any);
+router.get('/rag/usage-stats', getRagUsageStats as any);
+
+// Embedding endpoint
+router.post('/embed', asyncHandler(orchestratorEmbed));
+
+// New endpoint to run all benchmarks across all servers and models
+router.post('/benchmarks/run-all', asyncHandler(runAllBenchmarks));
+
+// Diagnostic endpoint: List the first 10 nodes of any type from the RAG storage
+router.get('/rag/diagnostic-nodes', asyncHandler(getRagDiagnosticNodes));
+
+export default router;

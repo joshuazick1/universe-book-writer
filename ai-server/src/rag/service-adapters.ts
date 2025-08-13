@@ -6,6 +6,7 @@
  */
 
 import { RAGServiceManager } from './manager.js';
+import type { ModelSelectionCriteria, ModelSelectionResult } from '../../../shared/types/models.js';
 import {
     RAGNode,
     RAGRelationship,

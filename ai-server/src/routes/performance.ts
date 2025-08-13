@@ -9,6 +9,7 @@ import { Router } from 'express';
 import { getOrchestratorInstance } from '../orchestrator-instance.js';
 import { getModelPerformanceRAGService } from '../services/modelPerformanceRAG.service.js';
 import { logger } from '../../../shared/logging/logger.js';
+import type { ModelSelectionCriteria, ModelSelectionResult } from '../../../shared/types/models.js';
 
 const router = Router();
 
@@ -113,7 +114,7 @@ router.get('/models/:modelName', async (req, res) => {
             `model ${modelName} performance metrics latency throughput trends`
         );
 
-        const modelPerformance = performanceNodes.filter(node =>
+        const modelPerformance = performanceNodes.filter((node: any) =>
             node.content?.modelName === modelName
         );
 
@@ -136,12 +137,12 @@ router.get('/models/:modelName', async (req, res) => {
                 lastUpdated: node.metadata?.lastUpdated
             })),
             summary: {
-                averageLatency: modelPerformance.reduce((sum, node) =>
+                averageLatency: modelPerformance.reduce((sum: number, node: any) =>
                     sum + node.content.performanceMetrics.latencyMs, 0) / modelPerformance.length,
-                averageThroughput: modelPerformance.reduce((sum, node) =>
+                averageThroughput: modelPerformance.reduce((sum: number, node: any) =>
                     sum + node.content.performanceMetrics.throughput, 0) / modelPerformance.length,
                 totalServers: modelPerformance.length,
-                bestServer: modelPerformance.reduce((best, current) =>
+                bestServer: modelPerformance.reduce((best: any, current: any) =>
                     current.content.performanceMetrics.latencyMs < best.content.performanceMetrics.latencyMs
                         ? current : best
                 ).content.serverId
@@ -188,12 +189,12 @@ router.post('/query', async (req, res) => {
         // Apply additional filters if provided
         let filteredResults = results;
         if (filters.serverId) {
-            filteredResults = results.filter(node =>
+            filteredResults = results.filter((node: any) =>
                 node.content?.serverId === filters.serverId
             );
         }
         if (filters.minLatency || filters.maxLatency) {
-            filteredResults = filteredResults.filter(node => {
+            filteredResults = filteredResults.filter((node: any) => {
                 const latency = node.content?.performanceMetrics?.latencyMs;
                 if (!latency) return false;
                 if (filters.minLatency && latency < filters.minLatency) return false;
@@ -245,7 +246,7 @@ router.get('/recommendations/:taskType', async (req, res) => {
         const recommendations = await performanceService.getBestModelsForTask(taskType, requirements);
 
         // Enhance recommendations with additional context
-        const enhancedRecommendations = recommendations.slice(0, parseInt(limit as string)).map(rec => ({
+        const enhancedRecommendations = recommendations.slice(0, parseInt(limit as string)).map((rec: any) => ({
             ...rec,
             recommendation: {
                 reason: `Optimized for ${taskType} with ${quality} quality requirements`,
